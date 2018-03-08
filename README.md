@@ -9,4 +9,5 @@
 |         	|                             	|             	|   	|   	|
 
 [About EDI Standards](http://ediacademy.com/blog/edi-x12-standard/)
+
 [EDI formats](https://www.spscommerce.com/resources/edi-documents-transactions/)
