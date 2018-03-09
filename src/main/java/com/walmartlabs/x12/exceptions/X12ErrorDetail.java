@@ -38,12 +38,15 @@ public class X12ErrorDetail {
     public String getSegmentId() {
         return segmentId;
     }
+
     public String getElementId() {
         return elementId;
     }
+
     public Integer getLineNumber() {
         return lineNumber;
     }
+
     public String getMessage() {
         return message;
     }
