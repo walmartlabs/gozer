@@ -16,13 +16,178 @@
  */
 package com.walmartlabs.x12.dex.dx894;
 
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class DefaultDex894ValidatorTest {
 
-    @Test
-    public void test() {
-        // TODO
+    DefaultDex894Validator dexValidator;
+
+    @Before
+    public void init() {
+        dexValidator = new DefaultDex894Validator();
     }
 
+    @Test
+    public void test_validate() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(5);
+        dex.setTransactions(this.generateTransactions(5));
+
+        Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
+        assertNotNull(errorSet);
+        assertEquals(0, errorSet.size());
+    }
+
+    @Test
+    public void test_validate_transactionCountWrong() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(2);
+        dex.setTransactions(this.generateTransactions(5));
+
+        Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
+        assertNotNull(errorSet);
+        assertEquals(1, errorSet.size());
+        assertEquals("DXE", errorSet.stream().findFirst().get().getSegmentId());
+    }
+
+    @Test
+    public void test_validate_segmentCountWrong() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(5);
+        dex.setTransactions(this.generateTransactions(5));
+        dex.getTransactions().get(2).setActualNumberOfSegments(2);
+        dex.getTransactions().get(2).setExpectedNumberOfSegments(8);
+
+        Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
+        assertNotNull(errorSet);
+        assertEquals(1, errorSet.size());
+        assertEquals("SE", errorSet.stream().findFirst().get().getSegmentId());
+    }
+
+    @Test
+    public void test_compareTransactionSegmentCounts() {
+        Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
+
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+        assertNull(ed);
+    }
+
+    @Test
+    public void test_compareTransactionSegmentCounts_expected_lessThan_Actual() {
+        Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
+        dexTx.setExpectedNumberOfSegments(5);
+        dexTx.setActualNumberOfSegments(10);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+
+        assertNotNull(ed);
+        assertEquals("SE", ed.getSegmentId());
+    }
+
+    @Test
+    public void test_compareTransactionSegmentCounts_expected_moreThan_Actual() {
+        Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
+        dexTx.setExpectedNumberOfSegments(10);
+        dexTx.setActualNumberOfSegments(5);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+
+        assertNotNull(ed);
+        assertEquals("SE", ed.getSegmentId());
+    }
+
+    @Test
+    public void test_compareTransactionSegmentCounts_zero() {
+        Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
+        dexTx.setExpectedNumberOfSegments(0);
+        dexTx.setActualNumberOfSegments(0);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+
+        assertNull(ed);
+    }
+
+    @Test
+    public void test_compareTransactionSegmentCounts_null() {
+        Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
+        dexTx.setExpectedNumberOfSegments(null);
+        dexTx.setActualNumberOfSegments(null);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+
+        assertNull(ed);
+    }
+
+    @Test
+    public void test_compareTransactionCounts() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(5);
+        dex.setTransactions(this.generateTransactions(5));
+
+        X12ErrorDetail ed = dexValidator.compareTransactionCounts(dex);
+        assertNull(ed);
+    }
+
+    @Test
+    public void test_compareTransactionCounts_expected_lessThan_Actual() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(2);
+        dex.setTransactions(this.generateTransactions(5));
+
+        X12ErrorDetail ed = dexValidator.compareTransactionCounts(dex);
+        assertNotNull(ed);
+        assertEquals("DXE", ed.getSegmentId());
+    }
+
+    @Test
+    public void test_compareTransactionCounts_expected_moreThan_Actual() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(12);
+        dex.setTransactions(this.generateTransactions(5));
+
+        X12ErrorDetail ed = dexValidator.compareTransactionCounts(dex);
+        assertNotNull(ed);
+        assertEquals("DXE", ed.getSegmentId());
+    }
+
+    @Test
+    public void test_compareTransactionCounts_zero() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(0);
+        dex.setTransactions(this.generateTransactions(0));
+
+        X12ErrorDetail ed = dexValidator.compareTransactionCounts(dex);
+        assertNull(ed);
+    }
+
+    @Test
+    public void test_compareTransactionCounts_noList() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(0);
+        dex.setTransactions(null);
+
+        X12ErrorDetail ed = dexValidator.compareTransactionCounts(dex);
+        assertNull(ed);
+    }
+
+
+    protected List<Dex894TransactionSet> generateTransactions(int numTx) {
+        List<Dex894TransactionSet> dexTxList = new ArrayList<>();
+
+        for (int i = 0; i < numTx; i++) {
+            Dex894TransactionSet dexTx = new Dex894TransactionSet();
+            dexTx.setSupplierNumber("invoice-" + numTx);
+            dexTx.setExpectedNumberOfSegments(10);
+            dexTx.setActualNumberOfSegments(10);
+            dexTxList.add(dexTx);
+        }
+
+        return dexTxList;
+    }
 }
