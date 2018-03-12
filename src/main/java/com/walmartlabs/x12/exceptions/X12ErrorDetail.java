@@ -54,10 +54,10 @@ public class X12ErrorDetail {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("DEX error:");
-        sb.append("segmentId:").append(segmentId);
-        sb.append("elementId:").append(elementId);
-        sb.append("line number:").append(lineNumber);
-        sb.append("message:").append(message);
+        sb.append("\nsegmentId: ").append(segmentId);
+        sb.append("\nelementId: ").append(elementId);
+        sb.append("\nline number: ").append(lineNumber);
+        sb.append("\nmessage: ").append(message);
         return sb.toString();
     }
 

@@ -70,7 +70,8 @@ public class DefaultDex894Validator implements Dex894Validator {
      */
     protected X12ErrorDetail compareTransactionSegmentCounts(Dex894TransactionSet dexTx) {
         X12ErrorDetail detail = null;
-        if (dexTx.getExpectedNumberOfSegments() != dexTx.getActualNumberOfSegments()) {
+        if (dexTx.getExpectedNumberOfSegments() != null && dexTx.getActualNumberOfSegments() != null
+                && !dexTx.getExpectedNumberOfSegments().equals(dexTx.getActualNumberOfSegments())) {
             StringBuilder sb = new StringBuilder();
             sb.append("expected ").append(dexTx.getExpectedNumberOfSegments());
             sb.append(" but got ").append(dexTx.getActualNumberOfSegments());
