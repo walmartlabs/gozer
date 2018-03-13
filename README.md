@@ -4,13 +4,12 @@ The EDI X12 Standard provides a uniform way for companies to exchange informatio
 
 This open source library, available through @WalmartLabs, provides Java based classes that can parse various X12 file formats into a representative Java object model. It's primary focus is on those formats related to the Supply Chain sector.
 
-## Parsers
+## Supported X12 Format Parsers
 
-| X12     	| Name                        	| Description 	|
-|---------	|-----------------------------	|-------------	|
-| DEX 894 	| Delivery/Return Base Record 	| x           	|
-| TBD     	| X                           	| x           	|
-|         	|                             	|             	|
+| X12     	| Name                        	| Description 	 |
+|---------	|-----------------------------	|-------------	 |
+| DEX 894 	| Delivery/Return Base Record 	| DSD deliveries |
+|         	|                             	|             	 |
 
 ## Getting Started
 
