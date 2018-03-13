@@ -30,6 +30,7 @@ public class DefaultDex894Validator implements Dex894Validator {
         if (dex != null) {
             // DXE validations
             errors.add(this.compareTransactionCounts(dex));
+            errors.add(this.checkForDuplicateInvoiceNumbers(dex));
 
             List<Dex894TransactionSet> dexTxList = dex.getTransactions();
             for (Dex894TransactionSet dexTx : dexTxList) {
@@ -47,6 +48,28 @@ public class DefaultDex894Validator implements Dex894Validator {
         // SE validations
         errors.add(this.compareTransactionSegmentCounts(dexTx));
         return errors;
+    }
+
+    /**
+     * insure the G8202 supplier number is not duplicated
+     * within the DEX transmission
+     */
+    protected X12ErrorDetail checkForDuplicateInvoiceNumbers(Dex894 dex) {
+        X12ErrorDetail detail = null;
+        List<Dex894TransactionSet> dexTxList = dex.getTransactions();
+        if (dexTxList != null) {
+            long duplicatedInvoiceCount = dexTxList.stream()
+                .map(dexTx -> dexTx.getSupplierNumber())
+                .collect(Collectors.groupingBy(suppNum -> suppNum, Collectors.counting()))
+                .values().stream()
+                .filter(count -> count > 1)
+                .count();
+
+            if (duplicatedInvoiceCount > 0) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8202", "duplicate invoice numbers on DEX");
+            }
+        }
+        return detail;
     }
 
     /**

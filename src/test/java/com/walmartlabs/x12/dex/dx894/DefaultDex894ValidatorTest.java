@@ -175,13 +175,48 @@ public class DefaultDex894ValidatorTest {
         assertNull(ed);
     }
 
+    @Test
+    public void test_checkForDuplicateInvoiceNumbers() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(3);
+        dex.setTransactions(this.generateTransactions(3));
+
+        X12ErrorDetail ed = dexValidator.checkForDuplicateInvoiceNumbers(dex);
+        assertNull(ed);
+    }
+
+    @Test
+    public void test_checkForDuplicateInvoiceNumbersWithDuplicate() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(5);
+        dex.setTransactions(this.generateTransactions(5));
+
+        // create dupe scenario
+        String supplierNumber = dex.getTransactions().get(4).getSupplierNumber();
+        dex.getTransactions().get(2).setSupplierNumber(supplierNumber);
+
+        X12ErrorDetail ed = dexValidator.checkForDuplicateInvoiceNumbers(dex);
+        assertNotNull(ed);
+        assertEquals("G82", ed.getSegmentId());
+        assertEquals("duplicate invoice numbers on DEX", ed.getMessage());
+    }
+
+    @Test
+    public void test_checkForDuplicateInvoiceNumbers_noList() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(0);
+        dex.setTransactions(null);
+
+        X12ErrorDetail ed = dexValidator.checkForDuplicateInvoiceNumbers(dex);
+        assertNull(ed);
+    }
 
     protected List<Dex894TransactionSet> generateTransactions(int numTx) {
         List<Dex894TransactionSet> dexTxList = new ArrayList<>();
 
         for (int i = 0; i < numTx; i++) {
             Dex894TransactionSet dexTx = new Dex894TransactionSet();
-            dexTx.setSupplierNumber("invoice-" + numTx);
+            dexTx.setSupplierNumber("invoice-" + i);
             dexTx.setExpectedNumberOfSegments(10);
             dexTx.setActualNumberOfSegments(10);
             dexTxList.add(dexTx);
