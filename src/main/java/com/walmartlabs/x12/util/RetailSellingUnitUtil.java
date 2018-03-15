@@ -51,7 +51,7 @@ public class RetailSellingUnitUtil {
         if (retailNumber != null && retailNumber.length() > 0) {
             String retailNumberPadded = retailNumber;
             while (retailNumberPadded.length() < UPC_LIMIT) {
-                retailNumberPadded = "0" + retailNumberPadded;
+                retailNumberPadded = new StringBuilder("0").append(retailNumberPadded).toString();
             }
             return retailNumberPadded;
         } else {
