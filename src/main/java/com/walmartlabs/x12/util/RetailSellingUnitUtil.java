@@ -27,7 +27,7 @@ public class RetailSellingUnitUtil {
      */
     public String convertRetailNumberToItf14(String retailNumber) {
         String itf14 = null;
-        if (retailNumber != null) {
+        if (retailNumber != null && retailNumber.length() > 0) {
             if (retailNumber.length() < GTIN_SIZE) {
                 // assuming there is no checksum on the value
                 String paddedRetailNumber = this.padRetailNumber(retailNumber);

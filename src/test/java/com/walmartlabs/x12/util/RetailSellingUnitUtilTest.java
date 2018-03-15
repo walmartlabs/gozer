@@ -19,6 +19,20 @@ public class RetailSellingUnitUtilTest {
     }
 
     @Test
+    public void test_retailNumber_null() {
+        String retailNumber = null;
+        String itf14 = util.convertRetailNumberToItf14(retailNumber);
+        assertNull(itf14);
+    }
+
+    @Test
+    public void test_retailNumber_empty() {
+        String retailNumber = "";
+        String itf14 = util.convertRetailNumberToItf14(retailNumber);
+        assertNull(itf14);
+    }
+
+    @Test
     public void test_retailNumber_largerThanFourteenDigits() {
         String retailNumber = "123456789012345";
         String itf14 = util.convertRetailNumberToItf14(retailNumber);
