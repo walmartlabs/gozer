@@ -28,11 +28,30 @@ Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
 
 ```
 
+After parsing and validating an X12 formatted message, various utilities can be used for post-processing the data. 
+For example 
+
+```java
+// get an item from the DEX object 
+// that was returned from the parser
+Dex894Item dexItem = dex.getItems().get(0);
+
+// convert the UPC in G8304 to a 14 digit GTIN
+String itf14 = util.convertRetailNumberToItf14(dexItem.getUpc());
+
+```
+
 ## More Information
 
 [About EDI Standards](http://ediacademy.com/blog/edi-x12-standard/)
 
 [EDI formats](https://www.spscommerce.com/resources/edi-documents-transactions/)
+
+[GTIN formats](https://www.gtin.info/)
+
+[Converting between GTIN formats](https://www.free-barcode-generator.net/ean-14/)
+
+[ITF-14 format](https://www.free-barcode-generator.net/itf-14/)
 
 ## Licensing
 Copyright 2018 WalmartLabs
