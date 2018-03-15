@@ -124,6 +124,25 @@ public class DefaultDex894ParserTransactionTest {
     }
 
     @Test
+    public void testParseG83SimpleItemWithCases() {
+        Dex894Item dexItem = new Dex894Item();
+        dexParser.parseG83("G83*2*1*CA*007800001181***007800001181*14*2*12z12P Dt 7Up***", dexItem);
+        assertEquals("2", dexItem.getItemSequenceNumber());
+        assertEquals("1.000", dexItem.getQuantity().toString());
+        assertEquals(UnitMeasure.CA, dexItem.getUom());
+        assertEquals("007800001181", dexItem.getUpc());
+        assertEquals(null, dexItem.getConsumerProductQualifier());
+        assertEquals("", dexItem.getConsumerProductId());
+        assertEquals("007800001181", dexItem.getCaseUpc());
+        assertEquals("14.00", dexItem.getItemListCost().toString());
+        assertEquals("2", dexItem.getPackCount().toString());
+        assertEquals("12z12P Dt 7Up", dexItem.getItemDescription());
+        assertEquals(null, dexItem.getCaseProductQualifier());
+        assertEquals(null, dexItem.getCaseProductId());
+        assertEquals(null, dexItem.getInnerPackCount());
+    }
+
+    @Test
     public void testParseG83WithDescription() {
         Dex894Item dexItem = new Dex894Item();
         dexParser.parseG83("G83*1*48*EA*001410008547****1.83**DESCRIPTION", dexItem);
