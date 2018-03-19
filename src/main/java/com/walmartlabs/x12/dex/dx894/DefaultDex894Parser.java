@@ -378,7 +378,11 @@ public class DefaultDex894Parser implements Dex894Parser {
             dexItem.setItemSequenceNumber(elements.get(1));
             dexItem.setQuantity(this.convertStringToBigDecimal(elements.get(2), 3));
             dexItem.setUom(UnitMeasure.convertUnitMeasure(elements.get(3)));
-            dexItem.setUpc(elements.get(4));
+            if (elements.size() >= 5) {
+                // G8304: UPC Consumer Package Code
+                // no longer used starting w/ version 5010
+                dexItem.setUpc(elements.get(4));
+            }
             if (elements.size() >= 6) {
                 // G8305: Product Qualifier for G8306
                 String g8305 = elements.get(5);
@@ -392,6 +396,7 @@ public class DefaultDex894Parser implements Dex894Parser {
             }
             if (elements.size() >= 8) {
                 // G8307: 12 digit UPC Case Code
+                // no longer used starting w/ version 5010
                 dexItem.setCaseUpc(elements.get(7));
             }
             if (elements.size() >= 9) {
