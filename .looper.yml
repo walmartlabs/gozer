@@ -1,0 +1,11 @@
+tools:
+  jdk: 8
+  maven: 3.5.0
+triggers:
+  - manual: Build
+
+flows:
+  default:
+    try:
+      - exposeVars(maven)
+      - mvn -U clean deploy cobertura:cobertura dependency:tree -Dbuild.number=${BUILD_NUMBER} -Dcobertura.report.format=xml
