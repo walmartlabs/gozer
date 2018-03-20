@@ -74,6 +74,22 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validate_transactionControlNumbersMismatched() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(5);
+        dex.setTransactions(this.generateTransactions(5));
+
+        Dex894TransactionSet dexTx = dex.getTransactions().get(2);
+        dexTx.setHeaderControlNumber("1234");
+        dexTx.setTrailerControlNumber("4321");
+
+        Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
+        assertNotNull(errorSet);
+        assertEquals(1, errorSet.size());
+        assertEquals("SE", errorSet.stream().findFirst().get().getSegmentId());
+    }
+
+    @Test
     public void test_compareTransactionSegmentCounts() {
         Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
 
@@ -216,6 +232,8 @@ public class DefaultDex894ValidatorTest {
 
         for (int i = 0; i < numTx; i++) {
             Dex894TransactionSet dexTx = new Dex894TransactionSet();
+            dexTx.setHeaderControlNumber("569145631");
+            dexTx.setTrailerControlNumber("569145631");
             dexTx.setSupplierNumber("invoice-" + i);
             dexTx.setExpectedNumberOfSegments(10);
             dexTx.setActualNumberOfSegments(10);

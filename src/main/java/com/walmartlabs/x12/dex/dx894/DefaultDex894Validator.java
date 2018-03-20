@@ -47,6 +47,7 @@ public class DefaultDex894Validator implements Dex894Validator {
         Set<X12ErrorDetail> errors = new HashSet<>();
         // SE validations
         errors.add(this.compareTransactionSegmentCounts(dexTx));
+        errors.add(this.compareTransactionControlNumbers(dexTx));
         return errors;
     }
 
@@ -97,6 +98,20 @@ public class DefaultDex894Validator implements Dex894Validator {
             StringBuilder sb = new StringBuilder();
             sb.append("expected ").append(dexTx.getExpectedNumberOfSegments());
             sb.append(" but got ").append(dexTx.getActualNumberOfSegments());
+            detail = new X12ErrorDetail(DefaultDex894Parser.TRANSACTION_SET_TRAILER_ID, "", sb.toString());
+        }
+        return detail;
+    }
+
+    /**
+     * compare the DEX transaction control numbers on ST and SE segments
+     */
+    protected X12ErrorDetail compareTransactionControlNumbers(Dex894TransactionSet dexTx) {
+        X12ErrorDetail detail = null;
+        if (!dexTx.getHeaderControlNumber().equals(dexTx.getTrailerControlNumber())) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("mismatched transaction control numbers: header(").append(dexTx.getHeaderControlNumber());
+            sb.append(") and trailer(").append(dexTx.getTrailerControlNumber()).append(")");
             detail = new X12ErrorDetail(DefaultDex894Parser.TRANSACTION_SET_TRAILER_ID, "", sb.toString());
         }
         return detail;
