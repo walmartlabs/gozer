@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class DefaultDex894ParserTest {
 
@@ -91,6 +92,23 @@ public class DefaultDex894ParserTest {
         dexParser.convertStringToBigDecimal("X", 2);
     }
 
+    @Test
+    public void testParsingShipment_null() throws IOException {
+        String dexTransmission = null;
+        assertNull(dexParser.parse(dexTransmission));
+    }
+
+    @Test
+    public void testParsingShipment_empty() throws IOException {
+        String dexTransmission = "";
+        assertNull(dexParser.parse(dexTransmission));
+    }
+
+    @Test(expected = X12ParserException.class)
+    public void testParsingShipment_invalid() throws IOException {
+        String dexTransmission = "invalid";
+        dexParser.parse(dexTransmission);
+    }
 
     @Test(expected = X12ParserException.class)
     public void testParsingShipmentWithMissingDxe() throws IOException {

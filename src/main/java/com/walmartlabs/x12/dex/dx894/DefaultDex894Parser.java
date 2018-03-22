@@ -62,9 +62,10 @@ public class DefaultDex894Parser implements Dex894Parser {
      */
     @Override
     public Dex894 parse(String sourceData) {
-        Dex894 dex = new Dex894();
+        Dex894 dex = null;
 
         if (!StringUtils.isEmpty(sourceData)) {
+            dex = new Dex894();
             List<String> dexLines = this.splitDexIntoSegments(sourceData);
 
             if (!this.isValidEnvelope(dexLines)) {
