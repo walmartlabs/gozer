@@ -6,10 +6,10 @@ This open source library, available through @WalmartLabs, provides Java based cl
 
 ## Supported X12 Format Parsers
 
-| X12     	| Name                        	| Description 	 |
-|---------	|-----------------------------	|-------------	 |
-| DEX 894 	| Delivery/Return Base Record 	| DSD deliveries |
-|         	|                             	|             	 |
+| X12     	| Name                        	| Description 	 | X12 Version(s) |
+|---------	|-----------------------------	|-------------	 |--------------  |
+| DEX 894 	| Delivery/Return Base Record 	| DSD deliveries | 4010,5010      |
+|         	|                             	|             	 |                |
 
 ## Getting Started
 
