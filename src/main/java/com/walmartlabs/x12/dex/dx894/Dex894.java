@@ -25,6 +25,7 @@ public class Dex894 {
     private String functionalId;
     // DXS03
     private String version;
+    private Integer versionNumber;
     // DXS04
     private String headerTransmissionControlNumber;
     // DXS05
@@ -119,6 +120,14 @@ public class Dex894 {
 
     public void setTransactions(List<Dex894TransactionSet> transactions) {
         this.transactions = transactions;
+    }
+
+    public Integer getVersionNumber() {
+        return versionNumber;
+    }
+
+    public void setVersionNumber(Integer versionNumber) {
+        this.versionNumber = versionNumber;
     }
 
 }
