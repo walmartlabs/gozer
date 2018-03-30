@@ -19,9 +19,11 @@ import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -93,7 +95,7 @@ public class DefaultDex894ValidatorTest {
     public void test_compareTransactionSegmentCounts() {
         Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
 
-        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(4010, dexTx);
         assertNull(ed);
     }
 
@@ -102,7 +104,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
         dexTx.setExpectedNumberOfSegments(5);
         dexTx.setActualNumberOfSegments(10);
-        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(4010, dexTx);
 
         assertNotNull(ed);
         assertEquals("SE", ed.getSegmentId());
@@ -113,7 +115,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
         dexTx.setExpectedNumberOfSegments(10);
         dexTx.setActualNumberOfSegments(5);
-        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(4010, dexTx);
 
         assertNotNull(ed);
         assertEquals("SE", ed.getSegmentId());
@@ -124,7 +126,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
         dexTx.setExpectedNumberOfSegments(0);
         dexTx.setActualNumberOfSegments(0);
-        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(4010, dexTx);
 
         assertNull(ed);
     }
@@ -134,7 +136,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateTransactions(1).get(0);
         dexTx.setExpectedNumberOfSegments(null);
         dexTx.setActualNumberOfSegments(null);
-        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(dexTx);
+        X12ErrorDetail ed = dexValidator.compareTransactionSegmentCounts(4010, dexTx);
 
         assertNull(ed);
     }
@@ -227,19 +229,226 @@ public class DefaultDex894ValidatorTest {
         assertNull(ed);
     }
 
+    @Test
+    public void test_validateItems_null() {
+        Dex894TransactionSet dexTx = null;
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateItems_with_case_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateItems_with_case_upc_missing_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA);
+        dexItem.setCaseUpc(null);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8307", xed.getElementId());
+        assertEquals("missing case UPC", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_with_case_upc_missing_pack_count_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA);
+        dexItem.setPackCount(null);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8309", xed.getElementId());
+        assertEquals("missing case count", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_with_case_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA, 5010);
+        dexItem.setCaseUpc(null);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateItems_with_case_upc_missing_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA, 5010);
+        dexItem.setUom(UnitMeasure.CA);
+        dexItem.setCaseUpc(null);
+        dexItem.setCaseProductQualifier(ProductQualifier.UK);
+        dexItem.setCaseProductId(null);
+        dexItem.setPackCount(10);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8312", xed.getElementId());
+        assertEquals("missing case UPC", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_with_case_upc_qualifier_missing_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA, 5010);
+        dexItem.setUom(UnitMeasure.CA);
+        dexItem.setCaseUpc(null);
+        dexItem.setCaseProductQualifier(null);
+        dexItem.setCaseProductId("00014100085478");
+        dexItem.setPackCount(10);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8311", xed.getElementId());
+        assertEquals("missing case qualifier", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_with_case_upc_missing_pack_count_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA, 5010);
+        dexItem.setUom(UnitMeasure.CA);
+        dexItem.setCaseUpc(null);
+        dexItem.setCaseProductQualifier(ProductQualifier.UK);
+        dexItem.setCaseProductId("00014100085478");
+        dexItem.setPackCount(null);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8309", xed.getElementId());
+        assertEquals("missing case count", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_with_case_upc_missing_pack_count_5010_with_4010_data() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        // case of an item
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.CA, 4010);
+        dexTx.addItem(dexItem);
+        // eaches of an item
+        dexTx.addItem(this.generateOneItem("2", UnitMeasure.EA, 4010));
+
+        // validate a 4010 data set w/ 5010
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(2, errors.size());
+        List<X12ErrorDetail> list = errors.stream()
+            .sorted((o1,o2) -> o1.getElementId().compareTo(o2.getElementId()))
+            .collect(Collectors.toList());
+        X12ErrorDetail xed = list.get(0);
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8305", xed.getElementId());
+        assertEquals("missing consumer qualifier", xed.getMessage());
+
+        xed = list.get(1);
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8311", xed.getElementId());
+        assertEquals("missing case qualifier", xed.getMessage());
+    }
+
+
     protected List<Dex894TransactionSet> generateTransactions(int numTx) {
         List<Dex894TransactionSet> dexTxList = new ArrayList<>();
 
         for (int i = 0; i < numTx; i++) {
-            Dex894TransactionSet dexTx = new Dex894TransactionSet();
-            dexTx.setHeaderControlNumber("569145631");
-            dexTx.setTrailerControlNumber("569145631");
-            dexTx.setSupplierNumber("invoice-" + i);
-            dexTx.setExpectedNumberOfSegments(10);
-            dexTx.setActualNumberOfSegments(10);
-            dexTxList.add(dexTx);
+            dexTxList.add(this.generateOneTransaction("invoice-" + i));
         }
 
         return dexTxList;
+    }
+
+    protected Dex894TransactionSet generateOneTransaction(String invoiceNumber) {
+        Dex894TransactionSet dexTx = new Dex894TransactionSet();
+        dexTx.setHeaderControlNumber("569145631");
+        dexTx.setTrailerControlNumber("569145631");
+        dexTx.setSupplierNumber(invoiceNumber);
+        dexTx.setExpectedNumberOfSegments(10);
+        dexTx.setActualNumberOfSegments(10);
+
+        return dexTx;
+    }
+
+    protected Dex894Item generateOneItem(String seqNumber, UnitMeasure uom) {
+        return this.generateOneItem(seqNumber, uom, 4010);
+    }
+
+    protected Dex894Item generateOneItem(String seqNumber, UnitMeasure uom, int dexVersion) {
+        Dex894Item dexItem = new Dex894Item();
+        dexItem.setItemSequenceNumber(seqNumber);
+        dexItem.setQuantity(new BigDecimal(5));
+        dexItem.setUom(uom);
+        if (dexVersion <= 4010) {
+            dexItem.setUpc("492130600210");
+            if (UnitMeasure.CA.equals(uom)) {
+                dexItem.setCaseUpc("492130600210");
+                dexItem.setPackCount(4);
+            }
+        } else {
+            dexItem.setConsumerProductQualifier(ProductQualifier.UP);
+            dexItem.setConsumerProductId("492130600210");
+            if (UnitMeasure.CA.equals(uom)) {
+                dexItem.setCaseProductQualifier(ProductQualifier.UP);
+                dexItem.setCaseProductId("492130600210");
+                dexItem.setPackCount(4);
+            }
+        }
+        dexItem.setItemDescription("Guinness Extra Stout 12 oz, 6 pk");
+
+        return dexItem;
     }
 }

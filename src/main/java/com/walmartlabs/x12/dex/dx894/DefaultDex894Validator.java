@@ -16,6 +16,7 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DefaultDex894Validator implements Dex894Validator {
+
+    public static final int DEX_4010 = 4010;
+    public static final int DEX_5010 = 5010;
 
     @Override
     public Set<X12ErrorDetail> validate(Dex894 dex) {
@@ -34,21 +38,25 @@ public class DefaultDex894Validator implements Dex894Validator {
 
             List<Dex894TransactionSet> dexTxList = dex.getTransactions();
             for (Dex894TransactionSet dexTx : dexTxList) {
-                errors.addAll(this.validateDexTransaction(dexTx));
+                errors.addAll(this.validateDexTransaction(dex.getVersionNumber(), dexTx));
             }
         }
-        // remove all of the null details
-        return errors.stream()
-            .filter(detail -> detail != null)
-            .collect(Collectors.toSet());
+        return this.removeNullValues(errors);
     }
 
-    protected Set<X12ErrorDetail> validateDexTransaction(Dex894TransactionSet dexTx) {
-        Set<X12ErrorDetail> errors = new HashSet<>();
-        // SE validations
-        errors.add(this.compareTransactionSegmentCounts(dexTx));
-        errors.add(this.compareTransactionControlNumbers(dexTx));
-        return errors;
+    /**
+     * compare the actual number of DEX transactions/invoices w/ the expected count
+     */
+    protected X12ErrorDetail compareTransactionCounts(Dex894 dex) {
+        X12ErrorDetail detail = null;
+        int actualTransactionCount = (dex.getTransactions() != null ? dex.getTransactions().size() : 0);
+        if (dex.getNumberOfTransactions() != actualTransactionCount) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("expected ").append(dex.getNumberOfTransactions());
+            sb.append(" but got ").append(actualTransactionCount);
+            detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "", sb.toString());
+        }
+        return detail;
     }
 
     /**
@@ -74,24 +82,45 @@ public class DefaultDex894Validator implements Dex894Validator {
     }
 
     /**
-     * compare the actual number of DEX transactions/invoices w/ the expected count
+     * validate each Transaction in the DEX transmission
+     * @param dexVersion
+     * @param dexTx
+     * @return
      */
-    protected X12ErrorDetail compareTransactionCounts(Dex894 dex) {
-        X12ErrorDetail detail = null;
-        int actualTransactionCount = (dex.getTransactions() != null ? dex.getTransactions().size() : 0);
-        if (dex.getNumberOfTransactions() != actualTransactionCount) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("expected ").append(dex.getNumberOfTransactions());
-            sb.append(" but got ").append(actualTransactionCount);
-            detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "", sb.toString());
+    protected Set<X12ErrorDetail> validateDexTransaction(Integer dexVersion, Dex894TransactionSet dexTx) {
+        Set<X12ErrorDetail> errors = new HashSet<>();
+        // SE validations
+        errors.addAll(this.validateItems(dexVersion, dexTx));
+        errors.add(this.compareTransactionSegmentCounts(dexVersion, dexTx));
+        errors.add(this.compareTransactionControlNumbers(dexVersion, dexTx));
+        return errors;
+    }
+
+    /**
+     * validate each Item in the DEX Transaction
+     * @param dexTx
+     * @return
+     */
+    protected Set<X12ErrorDetail> validateItems(Integer dexVersion, Dex894TransactionSet dexTx) {
+        Set<X12ErrorDetail> errors = new HashSet<>();
+        if (dexTx != null) {
+            List<Dex894Item> dexItems = dexTx.getItems();
+            if (dexItems != null) {
+                for (Dex894Item dexItem : dexItems) {
+                    errors.add(this.checkItemIdentifier(dexVersion, dexItem));
+                    errors.add(this.checkCaseUpc(dexVersion, dexItem));
+                    errors.add(this.checkCaseCount(dexVersion, dexItem));
+                }
+            }
         }
-        return detail;
+
+        return this.removeNullValues(errors);
     }
 
     /**
      * compare the actual number of DEX transactions segments w/ the expected count
      */
-    protected X12ErrorDetail compareTransactionSegmentCounts(Dex894TransactionSet dexTx) {
+    protected X12ErrorDetail compareTransactionSegmentCounts(Integer dexVersion, Dex894TransactionSet dexTx) {
         X12ErrorDetail detail = null;
         if (dexTx.getExpectedNumberOfSegments() != null && dexTx.getActualNumberOfSegments() != null
                 && !dexTx.getExpectedNumberOfSegments().equals(dexTx.getActualNumberOfSegments())) {
@@ -106,7 +135,7 @@ public class DefaultDex894Validator implements Dex894Validator {
     /**
      * compare the DEX transaction control numbers on ST and SE segments
      */
-    protected X12ErrorDetail compareTransactionControlNumbers(Dex894TransactionSet dexTx) {
+    protected X12ErrorDetail compareTransactionControlNumbers(Integer dexVersion, Dex894TransactionSet dexTx) {
         X12ErrorDetail detail = null;
         if (!dexTx.getHeaderControlNumber().equals(dexTx.getTrailerControlNumber())) {
             StringBuilder sb = new StringBuilder();
@@ -117,4 +146,75 @@ public class DefaultDex894Validator implements Dex894Validator {
         return detail;
     }
 
+
+    /**
+     * if G8303 is not CA then make sure we have:
+     * version 4010 = G8304
+     * version 5010 = G8305 and G8306
+     */
+    protected X12ErrorDetail checkItemIdentifier(Integer dexVersion, Dex894Item dexItem) {
+        X12ErrorDetail detail = null;
+        if (dexItem != null) {
+            if (!UnitMeasure.CA.equals(dexItem.getUom())) {
+                if (dexVersion <= DEX_4010) {
+                    if (StringUtils.isEmpty(dexItem.getUpc())) {
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8304", "missing consumer UPC");
+                    }
+                } else {
+                    if (dexItem.getConsumerProductQualifier() == null) {
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8305", "missing consumer qualifier");
+                    } else if (StringUtils.isEmpty(dexItem.getConsumerProductId())) {
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8306", "missing consumer UPC");
+                    }
+                }
+            }
+        }
+        return detail;
+    }
+
+    /**
+     * if G8303 is CA then make sure we have:
+     * version 4010 = G8307
+     * version 5010 = G8311 & G8312
+     */
+    protected X12ErrorDetail checkCaseUpc(Integer dexVersion, Dex894Item dexItem) {
+        X12ErrorDetail detail = null;
+        if (dexItem != null) {
+            if (UnitMeasure.CA.equals(dexItem.getUom())) {
+                if (dexVersion <= DEX_4010) {
+                    if (StringUtils.isEmpty(dexItem.getCaseUpc())) {
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8307", "missing case UPC");
+                    }
+                } else {
+                    if (dexItem.getCaseProductQualifier() == null) {
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8311", "missing case qualifier");
+                    } else if (StringUtils.isEmpty(dexItem.getCaseProductId())) {
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8312", "missing case UPC");
+                    }
+                }
+            }
+        }
+        return detail;
+    }
+
+    /**
+     * if G8303 is CA then make sure we have G8309
+     */
+    protected X12ErrorDetail checkCaseCount(Integer dexVersion, Dex894Item dexItem) {
+        X12ErrorDetail detail = null;
+        if (dexItem != null) {
+            if (UnitMeasure.CA.equals(dexItem.getUom())) {
+                if (dexItem.getPackCount() == null) {
+                    detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8309", "missing case count");
+                }
+            }
+        }
+        return detail;
+    }
+
+    protected Set<X12ErrorDetail> removeNullValues(Set<X12ErrorDetail> errors) {
+        return errors.stream()
+                .filter(detail -> detail != null)
+                .collect(Collectors.toSet());
+    }
 }

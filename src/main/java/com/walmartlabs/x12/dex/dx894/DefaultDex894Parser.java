@@ -17,6 +17,7 @@ package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.util.VersionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -279,6 +280,7 @@ public class DefaultDex894Parser implements Dex894Parser {
             dex.setSenderCommId(elements.get(1));
             dex.setFunctionalId(elements.get(2));
             dex.setVersion(elements.get(3));
+            this.parseVersion(dex);
             dex.setHeaderTransmissionControlNumber(elements.get(4));
             if (elements.size() >= 6) {
                 // optional
@@ -291,6 +293,10 @@ public class DefaultDex894Parser implements Dex894Parser {
         } else {
             throwParserException(APPLICATION_HEADER_ID, elements.get(0));
         }
+    }
+
+    protected void parseVersion(Dex894 dex) {
+        dex.setVersionNumber(VersionUtil.parseVersion(dex.getVersion()));
     }
 
     /**
