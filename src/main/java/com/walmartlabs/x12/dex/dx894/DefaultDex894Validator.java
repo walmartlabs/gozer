@@ -89,11 +89,13 @@ public class DefaultDex894Validator implements Dex894Validator {
      */
     protected Set<X12ErrorDetail> validateDexTransaction(Integer dexVersion, Dex894TransactionSet dexTx) {
         Set<X12ErrorDetail> errors = new HashSet<>();
+
         // SE validations
         errors.addAll(this.validateItems(dexVersion, dexTx));
         errors.add(this.compareTransactionSegmentCounts(dexVersion, dexTx));
         errors.add(this.compareTransactionControlNumbers(dexVersion, dexTx));
-        return errors;
+
+        return this.removeNullValues(errors);
     }
 
     /**
@@ -103,10 +105,13 @@ public class DefaultDex894Validator implements Dex894Validator {
      */
     protected Set<X12ErrorDetail> validateItems(Integer dexVersion, Dex894TransactionSet dexTx) {
         Set<X12ErrorDetail> errors = new HashSet<>();
+
         if (dexTx != null) {
             List<Dex894Item> dexItems = dexTx.getItems();
             if (dexItems != null) {
                 for (Dex894Item dexItem : dexItems) {
+                    errors.add(this.checkQuantity(dexVersion, dexItem));
+                    errors.add(this.checkUnitMeasure(dexVersion, dexItem));
                     errors.add(this.checkItemIdentifier(dexVersion, dexItem));
                     errors.add(this.checkCaseUpc(dexVersion, dexItem));
                     errors.add(this.checkCaseCount(dexVersion, dexItem));
@@ -122,6 +127,7 @@ public class DefaultDex894Validator implements Dex894Validator {
      */
     protected X12ErrorDetail compareTransactionSegmentCounts(Integer dexVersion, Dex894TransactionSet dexTx) {
         X12ErrorDetail detail = null;
+
         if (dexTx.getExpectedNumberOfSegments() != null && dexTx.getActualNumberOfSegments() != null
                 && !dexTx.getExpectedNumberOfSegments().equals(dexTx.getActualNumberOfSegments())) {
             StringBuilder sb = new StringBuilder();
@@ -129,6 +135,7 @@ public class DefaultDex894Validator implements Dex894Validator {
             sb.append(" but got ").append(dexTx.getActualNumberOfSegments());
             detail = new X12ErrorDetail(DefaultDex894Parser.TRANSACTION_SET_TRAILER_ID, "", sb.toString());
         }
+
         return detail;
     }
 
@@ -137,15 +144,52 @@ public class DefaultDex894Validator implements Dex894Validator {
      */
     protected X12ErrorDetail compareTransactionControlNumbers(Integer dexVersion, Dex894TransactionSet dexTx) {
         X12ErrorDetail detail = null;
-        if (!dexTx.getHeaderControlNumber().equals(dexTx.getTrailerControlNumber())) {
+
+        if (dexTx.getHeaderControlNumber() != null && dexTx.getTrailerControlNumber() != null
+                && !dexTx.getHeaderControlNumber().equals(dexTx.getTrailerControlNumber())) {
             StringBuilder sb = new StringBuilder();
             sb.append("mismatched transaction control numbers: header(").append(dexTx.getHeaderControlNumber());
             sb.append(") and trailer(").append(dexTx.getTrailerControlNumber()).append(")");
             detail = new X12ErrorDetail(DefaultDex894Parser.TRANSACTION_SET_TRAILER_ID, "", sb.toString());
         }
+
         return detail;
     }
 
+
+    /**
+     * make sure G8302 is a valid value
+     *
+     */
+    protected X12ErrorDetail checkQuantity(Integer dexVersion, Dex894Item dexItem) {
+        X12ErrorDetail detail = null;
+
+        if (dexItem != null) {
+            if (dexItem.getQuantity() == null) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8302", "missing quantity");
+            } else if (dexItem.getQuantity().signum() < 0) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8302", "quantity must be positive");
+            }
+        }
+
+        return detail;
+    }
+
+    /**
+     * make sure G8303 is a valid value
+     *
+     */
+    protected X12ErrorDetail checkUnitMeasure(Integer dexVersion, Dex894Item dexItem) {
+        X12ErrorDetail detail = null;
+
+        if (dexItem != null) {
+            if (dexItem.getUom() == null || UnitMeasure.UNKNOWN.equals(dexItem.getUom())) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8303", "missing/unknown unit of measure");
+            }
+        }
+
+        return detail;
+    }
 
     /**
      * if G8303 is not CA then make sure we have:

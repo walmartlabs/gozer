@@ -239,6 +239,171 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validateItems_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateItems_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateItems_missing_quantity_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA);
+        dexItem.setQuantity(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8302", xed.getElementId());
+        assertEquals("missing quantity", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_missing_quantity_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
+        dexItem.setQuantity(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8302", xed.getElementId());
+        assertEquals("missing quantity", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_missing_uom_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA);
+        dexItem.setUom(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8303", xed.getElementId());
+        assertEquals("missing/unknown unit of measure", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_missing_uom_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
+        dexItem.setUom(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8303", xed.getElementId());
+        assertEquals("missing/unknown unit of measure", xed.getMessage());
+    }
+
+
+    @Test
+    public void test_validateItems_null_upc_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA);
+        dexItem.setUpc(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8304", xed.getElementId());
+        assertEquals("missing consumer UPC", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_empty_upc_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA);
+        dexItem.setUpc("");
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8304", xed.getElementId());
+        assertEquals("missing consumer UPC", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_null_product_id_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
+        dexItem.setConsumerProductId(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8306", xed.getElementId());
+        assertEquals("missing consumer UPC", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_empty_product_id_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
+        dexItem.setConsumerProductId("");
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8306", xed.getElementId());
+        assertEquals("missing consumer UPC", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_missing_product_type_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
+        dexItem.setConsumerProductQualifier(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8305", xed.getElementId());
+        assertEquals("missing consumer qualifier", xed.getMessage());
+    }
+
+    @Test
     public void test_validateItems_with_case_4010() {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         // case of an item
