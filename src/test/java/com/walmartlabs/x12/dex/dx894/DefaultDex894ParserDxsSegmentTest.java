@@ -61,7 +61,7 @@ public class DefaultDex894ParserDxsSegmentTest {
     public void testParseApplicationHeaderWithMissingSenderCommId() {
         Dex894 dex = new Dex894();
         dexParser.parseApplicationHeader("DXS**DX*004010UCS*1*9254850000", dex);
-        assertEquals("", dex.getSenderCommId());
+        assertEquals(null, dex.getSenderCommId());
         assertEquals("DX", dex.getFunctionalId());
         assertEquals("004010UCS", dex.getVersion());
         assertEquals("1", dex.getHeaderTransmissionControlNumber());
@@ -81,10 +81,16 @@ public class DefaultDex894ParserDxsSegmentTest {
         assertEquals(null, dex.getTestIndicator());
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void testParseApplicationHeaderInvalid() {
         Dex894 dex = new Dex894();
         dexParser.parseApplicationHeader("DXS*DX*004010UCS*1", dex);
+        assertEquals("DX", dex.getSenderCommId());
+        assertEquals("004010UCS", dex.getFunctionalId());
+        assertEquals("1", dex.getVersion());
+        assertEquals(null, dex.getHeaderTransmissionControlNumber());
+        assertEquals(null, dex.getReceiverCommId());
+        assertEquals(null, dex.getTestIndicator());
     }
 
     /*
@@ -102,7 +108,7 @@ public class DefaultDex894ParserDxsSegmentTest {
     public void testParseApplicationTrailerWithMissingControlNumber() {
         Dex894 dex = new Dex894();
         dexParser.parseApplicationTrailer("DXE**2", dex);
-        assertEquals("", dex.getTrailerTransmissionControlNumber());
+        assertEquals(null, dex.getTrailerTransmissionControlNumber());
         assertEquals(new Integer(2), dex.getNumberOfTransactions());
     }
 

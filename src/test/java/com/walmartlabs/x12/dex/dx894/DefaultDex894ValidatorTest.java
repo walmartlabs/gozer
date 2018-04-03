@@ -239,6 +239,146 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validateTransactions_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateTransactions_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateTransactions_null_supplier_number_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setSupplierNumber(null);
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8202", xed.getElementId());
+        assertEquals("missing supplier number", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_null_supplier_number_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setSupplierNumber(null);
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8202", xed.getElementId());
+        assertEquals("missing supplier number", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_missing_supplier_number_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setSupplierNumber("");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8202", xed.getElementId());
+        assertEquals("missing supplier number", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_missing_supplier_number_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setSupplierNumber("");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8202", xed.getElementId());
+        assertEquals("missing supplier number", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_null_supplier_date_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setTransactionDate(null);
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8207", xed.getElementId());
+        assertEquals("missing supplier date", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_null_supplier_date_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setTransactionDate(null);
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8207", xed.getElementId());
+        assertEquals("missing supplier date", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_missing_supplier_date_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setTransactionDate("");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8207", xed.getElementId());
+        assertEquals("missing supplier date", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_missing_supplier_date_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setTransactionDate("");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8207", xed.getElementId());
+        assertEquals("missing supplier date", xed.getMessage());
+    }
+
+    @Test
     public void test_validateItems_4010() {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
@@ -291,6 +431,39 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validateItems_negative_quantity_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA);
+        dexItem.setQuantity(dexItem.getQuantity().negate());
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8302", xed.getElementId());
+        assertEquals("quantity must be positive", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_negative_quantity_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
+        dexItem.setQuantity(dexItem.getQuantity().negate());
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8302", xed.getElementId());
+        assertEquals("quantity must be positive", xed.getMessage());
+    }
+
+
+    @Test
     public void test_validateItems_missing_uom_4010() {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA);
@@ -311,6 +484,38 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
         dexItem.setUom(null);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8303", xed.getElementId());
+        assertEquals("missing/unknown unit of measure", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_unknown_uom_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA);
+        dexItem.setUom(UnitMeasure.UNKNOWN);
+        dexTx.addItem(dexItem);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateItems(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G83", xed.getSegmentId());
+        assertEquals("G8303", xed.getElementId());
+        assertEquals("missing/unknown unit of measure", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateItems_unknown_uom_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        Dex894Item dexItem = this.generateOneItem("1", UnitMeasure.EA, 5010);
+        dexItem.setUom(UnitMeasure.UNKNOWN);
         dexTx.addItem(dexItem);
 
         Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
@@ -582,6 +787,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setHeaderControlNumber("569145631");
         dexTx.setTrailerControlNumber("569145631");
         dexTx.setSupplierNumber(invoiceNumber);
+        dexTx.setTransactionDate("19770525");
         dexTx.setExpectedNumberOfSegments(10);
         dexTx.setActualNumberOfSegments(10);
 

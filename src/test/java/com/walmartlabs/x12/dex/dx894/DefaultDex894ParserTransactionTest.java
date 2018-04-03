@@ -41,17 +41,19 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals("569145629", dexTx.getHeaderControlNumber());
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void testParseTransactionSetHeaderMissingControlNumber() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         dexParser.parseTransactionSetHeader("ST*894*", dexTx);
+        assertEquals("894", dexTx.getTransactionSetIdentifierCode());
+        assertEquals(null, dexTx.getHeaderControlNumber());
     }
 
     @Test
     public void testParseTransactionSetHeaderMissingIdCode() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         dexParser.parseTransactionSetHeader("ST**569145629", dexTx);
-        assertEquals("", dexTx.getTransactionSetIdentifierCode());
+        assertEquals(null, dexTx.getTransactionSetIdentifierCode());
         assertEquals("569145629", dexTx.getHeaderControlNumber());
     }
 
@@ -113,8 +115,8 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008547", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("1.83", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
@@ -132,7 +134,7 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(UnitMeasure.CA, dexItem.getUom());
         assertEquals("007800001181", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getConsumerProductId());
         assertEquals("007800001181", dexItem.getCaseUpc());
         assertEquals("14.00", dexItem.getItemListCost().toString());
         assertEquals("2", dexItem.getPackCount().toString());
@@ -151,8 +153,8 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008547", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("1.83", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals("DESCRIPTION", dexItem.getItemDescription());
@@ -210,10 +212,12 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals("569145629", dexTx.getTrailerControlNumber());
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void testParseTransactionSetTrailerMissingControlNumber() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         dexParser.parseTransactionSetTrailer("SE*10*", dexTx);
+        assertEquals(new Integer(10), dexTx.getExpectedNumberOfSegments());
+        assertEquals(null, dexTx.getTrailerControlNumber());
     }
 
     @Test

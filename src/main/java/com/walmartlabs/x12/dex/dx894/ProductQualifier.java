@@ -45,15 +45,19 @@ public enum ProductQualifier {
      * @return
      */
     public static ProductQualifier convertyProductQualifier(String productQualifierCode) {
-        ProductQualifier returnEnum = ProductQualifier.UNKNOWN;
+        if (productQualifierCode == null) {
+            return null;
+        } else {
+            ProductQualifier returnEnum = ProductQualifier.UNKNOWN;
 
-        try {
-            returnEnum = ProductQualifier.valueOf(productQualifierCode);
-        } catch (Exception e) {
-            // illegal value so returning UNKNOWN
+            try {
+                returnEnum = ProductQualifier.valueOf(productQualifierCode);
+            } catch (Exception e) {
+                // illegal value so returning UNKNOWN
+            }
+
+            return returnEnum;
         }
-
-        return returnEnum;
     }
 
 }

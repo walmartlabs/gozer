@@ -51,15 +51,19 @@ public enum UnitMeasure {
      * @return
      */
     public static UnitMeasure convertUnitMeasure(String uom) {
-        UnitMeasure returnEnum = UnitMeasure.UNKNOWN;
+        if (uom == null) {
+            return null;
+        } else {
+            UnitMeasure returnEnum = UnitMeasure.UNKNOWN;
 
-        try {
-            returnEnum = UnitMeasure.valueOf(uom);
-        } catch (Exception e) {
-            // illegal value so returning UNKNOWN
+            try {
+                returnEnum = UnitMeasure.valueOf(uom);
+            } catch (Exception e) {
+                // illegal value so returning UNKNOWN
+            }
+
+            return returnEnum;
         }
-
-        return returnEnum;
     }
 
 }

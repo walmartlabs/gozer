@@ -185,8 +185,8 @@ public class DefaultDex894ParserTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008782", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("4.80", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
@@ -203,8 +203,8 @@ public class DefaultDex894ParserTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008783", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("4.80", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
@@ -221,8 +221,8 @@ public class DefaultDex894ParserTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410007884", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("2.58", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
@@ -239,8 +239,8 @@ public class DefaultDex894ParserTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008548", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("1.83", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
@@ -317,8 +317,8 @@ public class DefaultDex894ParserTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008547", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("1.83", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
@@ -366,8 +366,8 @@ public class DefaultDex894ParserTest {
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410004616", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
-        assertEquals("", dexItem.getConsumerProductId());
-        assertEquals("", dexItem.getCaseUpc());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
         assertEquals("5.17", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());

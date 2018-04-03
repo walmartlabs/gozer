@@ -276,22 +276,18 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseApplicationHeader(String headerSegment, Dex894 dex) {
         LOGGER.debug(this.segmentIdentifier(headerSegment));
         List<String> elements = this.splitSegment(headerSegment);
-        if (APPLICATION_HEADER_ID.equals(elements.get(0))) {
-            dex.setSenderCommId(elements.get(1));
-            dex.setFunctionalId(elements.get(2));
-            dex.setVersion(elements.get(3));
+
+        String segmentIdentifer = this.retreiveElementFromSegment(elements, 0);
+        if (APPLICATION_HEADER_ID.equals(segmentIdentifer)) {
+            dex.setSenderCommId(this.retreiveElementFromSegment(elements, 1));
+            dex.setFunctionalId(this.retreiveElementFromSegment(elements, 2));
+            dex.setVersion(this.retreiveElementFromSegment(elements, 3));
             this.parseVersion(dex);
-            dex.setHeaderTransmissionControlNumber(elements.get(4));
-            if (elements.size() >= 6) {
-                // optional
-                dex.setReceiverCommId(elements.get(5));
-            }
-            if (elements.size() >= 7) {
-                // optional
-                dex.setTestIndicator(elements.get(6));
-            }
+            dex.setHeaderTransmissionControlNumber(this.retreiveElementFromSegment(elements, 4));
+            dex.setReceiverCommId(this.retreiveElementFromSegment(elements, 5));
+            dex.setTestIndicator(this.retreiveElementFromSegment(elements, 6));
         } else {
-            throwParserException(APPLICATION_HEADER_ID, elements.get(0));
+            throwParserException(APPLICATION_HEADER_ID, segmentIdentifer);
         }
     }
 
@@ -311,11 +307,13 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseTransactionSetHeader(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (TRANSACTION_SET_HEADER_ID.equals(elements.get(0))) {
-            dexTx.setTransactionSetIdentifierCode(elements.get(1));
-            dexTx.setHeaderControlNumber(elements.get(2));
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (TRANSACTION_SET_HEADER_ID.equals(segmentIdentifier)) {
+            dexTx.setTransactionSetIdentifierCode(this.retreiveElementFromSegment(elements, 1));
+            dexTx.setHeaderControlNumber(this.retreiveElementFromSegment(elements, 2));
         } else {
-            throwParserException(TRANSACTION_SET_HEADER_ID, elements.get(0));
+            throwParserException(TRANSACTION_SET_HEADER_ID, segmentIdentifier);
         }
 
     }
@@ -330,24 +328,20 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseG82(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (G82_ID.equals(elements.get(0))) {
-            dexTx.setDebitCreditFlag(elements.get(1));
-            dexTx.setSupplierNumber(elements.get(2));
-            dexTx.setReceiverDuns(elements.get(3));
-            dexTx.setReceiverLocation(elements.get(4));
-            dexTx.setSupplierDuns(elements.get(5));
-            dexTx.setSupplierLocation(elements.get(6));
-            dexTx.setTransactionDate(elements.get(7));
-            if (elements.size() >= 9) {
-                // optional
-                dexTx.setPurchaseOrderNumber(elements.get(8));
-            }
-            if (elements.size() >= 10) {
-                // optional
-                dexTx.setPurchaseOrderDate(elements.get(9));
-            }
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (G82_ID.equals(segmentIdentifier)) {
+            dexTx.setDebitCreditFlag(this.retreiveElementFromSegment(elements, 1));
+            dexTx.setSupplierNumber(this.retreiveElementFromSegment(elements, 2));
+            dexTx.setReceiverDuns(this.retreiveElementFromSegment(elements, 3));
+            dexTx.setReceiverLocation(this.retreiveElementFromSegment(elements, 4));
+            dexTx.setSupplierDuns(this.retreiveElementFromSegment(elements, 5));
+            dexTx.setSupplierLocation(this.retreiveElementFromSegment(elements, 6));
+            dexTx.setTransactionDate(this.retreiveElementFromSegment(elements, 7));
+            dexTx.setPurchaseOrderNumber(this.retreiveElementFromSegment(elements, 8));
+            dexTx.setPurchaseOrderDate(this.retreiveElementFromSegment(elements, 9));
         } else {
-            throwParserException(G82_ID, elements.get(0));
+            throwParserException(G82_ID, segmentIdentifier);
         }
     }
 
@@ -361,8 +355,10 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseLoopHeader(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (!LOOP_HEADER_ID.equals(elements.get(0))) {
-            throwParserException(LOOP_HEADER_ID, elements.get(0));
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (!LOOP_HEADER_ID.equals(segmentIdentifier)) {
+            throwParserException(LOOP_HEADER_ID, segmentIdentifier);
         }
     }
 
@@ -379,59 +375,26 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseG83(String segment, Dex894Item dexItem) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (G83_ID.equals(elements.get(0))) {
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (G83_ID.equals(segmentIdentifier)) {
             // this will do a simple parsing of the G83 elements
             // a separate utility will need to determine the retail selling unit
-            dexItem.setItemSequenceNumber(elements.get(1));
-            dexItem.setQuantity(this.convertStringToBigDecimal(elements.get(2), 3));
-            dexItem.setUom(UnitMeasure.convertUnitMeasure(elements.get(3)));
-            if (elements.size() >= 5) {
-                // G8304: UPC Consumer Package Code
-                // no longer used starting w/ version 5010
-                dexItem.setUpc(elements.get(4));
-            }
-            if (elements.size() >= 6) {
-                // G8305: Product Qualifier for G8306
-                String g8305 = elements.get(5);
-                if (g8305 != null && g8305.trim().length() > 0) {
-                    dexItem.setConsumerProductQualifier(ProductQualifier.convertyProductQualifier(elements.get(5)));
-                }
-            }
-            if (elements.size() >= 7) {
-                // G8306: Product Id
-                dexItem.setConsumerProductId(elements.get(6));
-            }
-            if (elements.size() >= 8) {
-                // G8307: 12 digit UPC Case Code
-                // no longer used starting w/ version 5010
-                dexItem.setCaseUpc(elements.get(7));
-            }
-            if (elements.size() >= 9) {
-                // G8308: Item List Cost
-                dexItem.setItemListCost(this.convertStringToBigDecimal(elements.get(8), 2));
-            }
-            if (elements.size() >= 10) {
-                // G8309: Pack
-                dexItem.setPackCount(this.convertStringToInteger(elements.get(9)));
-            }
-            if (elements.size() >= 11) {
-                // G8310: Cash Register Item Description
-                dexItem.setItemDescription(elements.get(10));
-            }
-            if (elements.size() >= 12) {
-                // G8311: Product Qualifier for G8312
-                dexItem.setCaseProductQualifier(ProductQualifier.convertyProductQualifier(elements.get(11)));
-            }
-            if (elements.size() >= 13) {
-                // G8312: Product Id
-                dexItem.setCaseProductId(elements.get(12));
-            }
-            if (elements.size() >= 14) {
-                // G8313: Inner Pack
-                dexItem.setInnerPackCount(this.convertStringToInteger(elements.get(13)));
-            }
+            dexItem.setItemSequenceNumber(this.retreiveElementFromSegment(elements, 1));
+            dexItem.setQuantity(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 2), 3));
+            dexItem.setUom(UnitMeasure.convertUnitMeasure(this.retreiveElementFromSegment(elements, 3)));
+            dexItem.setUpc(this.retreiveElementFromSegment(elements, 4));
+            dexItem.setConsumerProductQualifier(ProductQualifier.convertyProductQualifier(this.retreiveElementFromSegment(elements, 5)));
+            dexItem.setConsumerProductId(this.retreiveElementFromSegment(elements, 6));
+            dexItem.setCaseUpc(this.retreiveElementFromSegment(elements, 7));
+            dexItem.setItemListCost(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 8), 2));
+            dexItem.setPackCount(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 9)));
+            dexItem.setItemDescription(this.retreiveElementFromSegment(elements, 10));
+            dexItem.setCaseProductQualifier(ProductQualifier.convertyProductQualifier(this.retreiveElementFromSegment(elements, 11)));
+            dexItem.setCaseProductId(this.retreiveElementFromSegment(elements, 12));
+            dexItem.setInnerPackCount(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 13)));
         } else {
-            throwParserException(G83_ID, elements.get(0));
+            throwParserException(G83_ID, segmentIdentifier);
         }
     }
 
@@ -460,8 +423,10 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseLoopTrailer(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (!LOOP_TRAILER_ID.equals(elements.get(0))) {
-            throwParserException(LOOP_TRAILER_ID, elements.get(0));
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (!LOOP_TRAILER_ID.equals(segmentIdentifier)) {
+            throwParserException(LOOP_TRAILER_ID, segmentIdentifier);
         }
     }
 
@@ -489,10 +454,12 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseG85(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (G85_ID.equals(elements.get(0))) {
-            dexTx.setIntegrityCheckValue(elements.get(1));
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (G85_ID.equals(segmentIdentifier)) {
+            dexTx.setIntegrityCheckValue(this.retreiveElementFromSegment(elements, 1));
         } else {
-            throwParserException(G85_ID, elements.get(0));
+            throwParserException(G85_ID, segmentIdentifier);
         }
     }
 
@@ -507,14 +474,13 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseG86(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (G86_ID.equals(elements.get(0))) {
-            dexTx.setElectronicSignature(elements.get(1));
-            if (elements.size() >= 3) {
-                // optional
-                dexTx.setSignatureName(elements.get(2));
-            }
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (G86_ID.equals(segmentIdentifier)) {
+            dexTx.setElectronicSignature(this.retreiveElementFromSegment(elements, 1));
+            dexTx.setSignatureName(this.retreiveElementFromSegment(elements, 2));
         } else {
-            throwParserException(G86_ID, elements.get(0));
+            throwParserException(G86_ID, segmentIdentifier);
         }
     }
 
@@ -528,11 +494,13 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseTransactionSetTrailer(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
         List<String> elements = this.splitSegment(segment);
-        if (TRANSACTION_SET_TRAILER_ID.equals(elements.get(0))) {
-            dexTx.setExpectedNumberOfSegments(this.convertStringToInteger(elements.get(1)));
-            dexTx.setTrailerControlNumber(elements.get(2));
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (TRANSACTION_SET_TRAILER_ID.equals(segmentIdentifier)) {
+            dexTx.setExpectedNumberOfSegments(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 1)));
+            dexTx.setTrailerControlNumber(this.retreiveElementFromSegment(elements, 2));
         } else {
-            throwParserException(TRANSACTION_SET_TRAILER_ID, elements.get(0));
+            throwParserException(TRANSACTION_SET_TRAILER_ID, segmentIdentifier);
         }
     }
 
@@ -546,11 +514,13 @@ public class DefaultDex894Parser implements Dex894Parser {
     protected void parseApplicationTrailer(String trailerSegment, Dex894 dex) {
         LOGGER.debug(this.segmentIdentifier(trailerSegment));
         List<String> elements = this.splitSegment(trailerSegment);
-        if (APPLICATION_TRAILER_ID.equals(elements.get(0))) {
-            dex.setTrailerTransmissionControlNumber(elements.get(1));
-            dex.setNumberOfTransactions(this.convertStringToInteger(elements.get(2)));
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (APPLICATION_TRAILER_ID.equals(segmentIdentifier)) {
+            dex.setTrailerTransmissionControlNumber(this.retreiveElementFromSegment(elements, 1));
+            dex.setNumberOfTransactions(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 2)));
         } else {
-            throwParserException(APPLICATION_TRAILER_ID, elements.get(0));
+            throwParserException(APPLICATION_TRAILER_ID, segmentIdentifier);
         }
     }
 
@@ -562,6 +532,15 @@ public class DefaultDex894Parser implements Dex894Parser {
         throw new X12ParserException(new X12ErrorDetail(actualSegmentId, null, sb.toString()));
     }
 
+    protected String retreiveElementFromSegment(List<String> elements, int listIndex) {
+        if (elements.size() >= listIndex + 1) {
+            String value = elements.get(listIndex);
+            return StringUtils.isEmpty(value) ? null : value;
+        } else {
+            return null;
+        }
+    }
+
     protected List<String> splitDexIntoSegments(String sourceData) {
         return Arrays.asList(sourceData.split("\\r?\\n"));
     }
@@ -570,6 +549,12 @@ public class DefaultDex894Parser implements Dex894Parser {
         return Arrays.asList(segment.split("\\*"));
     }
 
+    /**
+     *
+     * @param segmentIdx index denoting which segment/line in the DEX file to work on
+     * @param dexSegments the list of segments/lines in the DEX file
+     * @return segment identifier
+     */
     protected String segmentIdentifier(int segmentIdx, List<String> dexSegments) {
         String segment = dexSegments.get(segmentIdx);
         return this.segmentIdentifier(segment);

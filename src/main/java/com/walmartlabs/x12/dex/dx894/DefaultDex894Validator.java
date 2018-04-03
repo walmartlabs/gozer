@@ -91,9 +91,11 @@ public class DefaultDex894Validator implements Dex894Validator {
         Set<X12ErrorDetail> errors = new HashSet<>();
 
         // SE validations
-        errors.addAll(this.validateItems(dexVersion, dexTx));
+        errors.add(this.checkSupplierNumber(dexVersion, dexTx));
+        errors.add(this.checkSupplierDate(dexVersion, dexTx));
         errors.add(this.compareTransactionSegmentCounts(dexVersion, dexTx));
         errors.add(this.compareTransactionControlNumbers(dexVersion, dexTx));
+        errors.addAll(this.validateItems(dexVersion, dexTx));
 
         return this.removeNullValues(errors);
     }
@@ -120,6 +122,40 @@ public class DefaultDex894Validator implements Dex894Validator {
         }
 
         return this.removeNullValues(errors);
+    }
+
+
+    /**
+     * make sure G8202 has value
+     */
+    protected X12ErrorDetail checkSupplierNumber(Integer dexVersion, Dex894TransactionSet dexTx) {
+        X12ErrorDetail detail = null;
+
+        if (dexTx != null) {
+            if (StringUtils.isEmpty(dexTx.getSupplierNumber())) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8202", "missing supplier number");
+            }
+        }
+
+        return detail;
+    }
+
+    /**
+     * make sure G8207 has value
+     */
+    protected X12ErrorDetail checkSupplierDate(Integer dexVersion, Dex894TransactionSet dexTx) {
+        X12ErrorDetail detail = null;
+
+        if (dexTx != null) {
+            if (StringUtils.isEmpty(dexTx.getTransactionDate())) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "missing supplier date");
+            } else if (dexTx.getTransactionDate().length() != 8) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "date must YYYYMMDD");
+                // TODO: verify it is a valid date
+            }
+        }
+
+        return detail;
     }
 
     /**

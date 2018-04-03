@@ -38,7 +38,7 @@ public class ProductQualifierTest {
 
     @Test
     public void test_invalid_null() {
-        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertyProductQualifier(null));
+        assertEquals(null, ProductQualifier.convertyProductQualifier(null));
     }
 
 }

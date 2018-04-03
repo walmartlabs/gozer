@@ -38,7 +38,7 @@ public class UnitMeasureTest {
 
     @Test
     public void test_invalid_null() {
-        assertEquals(UnitMeasure.UNKNOWN, UnitMeasure.convertUnitMeasure(null));
+        assertEquals(null, UnitMeasure.convertUnitMeasure(null));
     }
 
 }
