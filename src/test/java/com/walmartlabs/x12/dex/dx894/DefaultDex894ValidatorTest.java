@@ -89,7 +89,7 @@ public class DefaultDex894ValidatorTest {
         assertEquals(2, errorSet.size());
 
         List<X12ErrorDetail> list = errorSet.stream()
-            .sorted((o1,o2) -> o1.getElementId().compareTo(o2.getMessage()))
+            .sorted((o1,o2) -> o1.getMessage().compareTo(o2.getMessage()))
             .collect(Collectors.toList());
 
         X12ErrorDetail xed = list.get(0);
