@@ -69,6 +69,7 @@ public class DefaultDex894Validator implements Dex894Validator {
         if (dexTxList != null) {
             long duplicatedInvoiceCount = dexTxList.stream()
                 .map(dexTx -> dexTx.getSupplierNumber())
+                .filter(suppNum -> suppNum != null)
                 .collect(Collectors.groupingBy(suppNum -> suppNum, Collectors.counting()))
                 .values().stream()
                 .filter(count -> count > 1)
@@ -151,7 +152,6 @@ public class DefaultDex894Validator implements Dex894Validator {
                 detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "missing supplier date");
             } else if (dexTx.getTransactionDate().length() != 8) {
                 detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "date must YYYYMMDD");
-                // TODO: verify it is a valid date
             }
         }
 

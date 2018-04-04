@@ -76,6 +76,34 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validate_missingSupplierNumber_and_duplicates() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(3);
+        dex.setTransactions(this.generateTransactions(3));
+        dex.getTransactions().get(0).setSupplierNumber("INVOICE-A");
+        dex.getTransactions().get(1).setSupplierNumber(null);
+        dex.getTransactions().get(2).setSupplierNumber("INVOICE-A");
+
+        Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
+        assertNotNull(errorSet);
+        assertEquals(2, errorSet.size());
+
+        List<X12ErrorDetail> list = errorSet.stream()
+            .sorted((o1,o2) -> o1.getElementId().compareTo(o2.getMessage()))
+            .collect(Collectors.toList());
+
+        X12ErrorDetail xed = list.get(0);
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8202", xed.getElementId());
+        assertEquals("duplicate invoice numbers on DEX", xed.getMessage());
+
+        xed = list.get(1);
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8202", xed.getElementId());
+        assertEquals("missing supplier number", xed.getMessage());
+    }
+
+    @Test
     public void test_validate_transactionControlNumbersMismatched() {
         Dex894 dex = new Dex894();
         dex.setNumberOfTransactions(5);
