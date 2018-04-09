@@ -13,17 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 
 import java.util.Set;
 
-public interface Dex894Validator {
+public interface X12Validator<T> {
     /**
-     * validate the DEX 894 transmission
+     * validate the X12 transmission
      *
      * @return Set of error details ({@link X12ErrorDetail}
      */
-    Set<X12ErrorDetail> validate(Dex894 dex);
+    Set<X12ErrorDetail> validate(T pojo);
 }
