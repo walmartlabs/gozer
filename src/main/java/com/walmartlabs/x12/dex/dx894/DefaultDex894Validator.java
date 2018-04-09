@@ -55,8 +55,8 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         int actualTransactionCount = (dex.getTransactions() != null ? dex.getTransactions().size() : 0);
         if (dex.getNumberOfTransactions() != actualTransactionCount) {
             StringBuilder sb = new StringBuilder();
-            sb.append("expected ").append(dex.getNumberOfTransactions());
-            sb.append(" but got ").append(actualTransactionCount);
+            sb.append("expected ").append(dex.getNumberOfTransactions()).append(" transactions");
+            sb.append(" but got ").append(actualTransactionCount).append(" transactions");
             detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "", sb.toString());
         }
         return detail;
@@ -170,8 +170,8 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         if (dexTx.getExpectedNumberOfSegments() != null && dexTx.getActualNumberOfSegments() != null
                 && !dexTx.getExpectedNumberOfSegments().equals(dexTx.getActualNumberOfSegments())) {
             StringBuilder sb = new StringBuilder();
-            sb.append("expected ").append(dexTx.getExpectedNumberOfSegments());
-            sb.append(" but got ").append(dexTx.getActualNumberOfSegments());
+            sb.append("expected ").append(dexTx.getExpectedNumberOfSegments()).append(" segments");
+            sb.append(" but got ").append(dexTx.getActualNumberOfSegments()).append(" segments");
             detail = new X12ErrorDetail(DefaultDex894Parser.TRANSACTION_SET_TRAILER_ID, "", sb.toString());
         }
 
