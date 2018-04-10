@@ -32,6 +32,13 @@ public class RetailSellingUnitUtilTest {
         assertNull(itf14);
     }
 
+    @Test (expected = NumberFormatException.class)
+    public void test_retailNumber_nonNumber() {
+        String retailNumber = "A123";
+        String itf14 = util.convertRetailNumberToItf14(retailNumber);
+        assertNull(itf14);
+    }
+
     @Test
     public void test_retailNumber_largerThanFourteenDigits() {
         String retailNumber = "123456789012345";
