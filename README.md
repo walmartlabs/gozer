@@ -53,7 +53,18 @@ String itf14 = util.convertRetailNumberToItf14(dexItem.getUpc());
 
 [ITF-14 format](https://www.free-barcode-generator.net/itf-14/)
 
+## Build and Release
+
+```
+mvn clean install
+```
+
+See [walmartlabs-pom for more information](https://github.com/walmartlabs/walmartlabs-pom)
+
 ## Licensing
-Copyright 2018 WalmartLabs
+
+Copyright 2011-present Walmart Inc.
 
 This software is licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0)
+
+Also see LICENSE file.
