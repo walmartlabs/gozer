@@ -72,33 +72,6 @@
             <showDeprecation>true</showDeprecation>
           </configuration>
         </plugin>
-        <!-- <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>license-maven-plugin</artifactId>
-          <version>1.14</version>
-          <configuration>
-            <licenseName>apache_2_license</licenseName>
-            <licenseResolver>${project.baseUri}/LICENSE</licenseResolver>
-          </configuration>
-          <executions>
-            <execution>
-              <id>first</id>
-              <goals>
-                <goal>update-file-header</goal>
-              </goals>
-              <phase>process-sources</phase>
-              <configuration>
-                <licenseName>apache_2_license</licenseName>
-                <organizationName>Walmart Inc.</organizationName>
-                <inceptionYear>2018</inceptionYear>
-                <roots>
-                  <root>src/main/java</root>
-                  <root>src/test/java</root>
-                </roots>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin> -->
       </plugins>
     </pluginManagement>
   </build>
