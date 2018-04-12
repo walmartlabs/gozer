@@ -345,7 +345,7 @@ public class DefaultDex894Parser implements X12Parser {
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (G82_ID.equals(segmentIdentifier)) {
-            dexTx.setDebitCreditFlag(this.retreiveElementFromSegment(elements, 1));
+            dexTx.setDebitCreditFlag(InvoiceType.convertDebitCreditFlag(this.retreiveElementFromSegment(elements, 1)));
             dexTx.setSupplierNumber(this.retreiveElementFromSegment(elements, 2));
             dexTx.setReceiverDuns(this.retreiveElementFromSegment(elements, 3));
             dexTx.setReceiverLocation(this.retreiveElementFromSegment(elements, 4));
@@ -398,13 +398,13 @@ public class DefaultDex894Parser implements X12Parser {
             dexItem.setQuantity(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 2), 3));
             dexItem.setUom(UnitMeasure.convertUnitMeasure(this.retreiveElementFromSegment(elements, 3)));
             dexItem.setUpc(this.retreiveElementFromSegment(elements, 4));
-            dexItem.setConsumerProductQualifier(ProductQualifier.convertyProductQualifier(this.retreiveElementFromSegment(elements, 5)));
+            dexItem.setConsumerProductQualifier(ProductQualifier.convertProductQualifier(this.retreiveElementFromSegment(elements, 5)));
             dexItem.setConsumerProductId(this.retreiveElementFromSegment(elements, 6));
             dexItem.setCaseUpc(this.retreiveElementFromSegment(elements, 7));
             dexItem.setItemListCost(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 8), 2));
             dexItem.setPackCount(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 9)));
             dexItem.setItemDescription(this.retreiveElementFromSegment(elements, 10));
-            dexItem.setCaseProductQualifier(ProductQualifier.convertyProductQualifier(this.retreiveElementFromSegment(elements, 11)));
+            dexItem.setCaseProductQualifier(ProductQualifier.convertProductQualifier(this.retreiveElementFromSegment(elements, 11)));
             dexItem.setCaseProductId(this.retreiveElementFromSegment(elements, 12));
             dexItem.setInnerPackCount(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 13)));
         } else {
@@ -423,7 +423,25 @@ public class DefaultDex894Parser implements X12Parser {
      */
     protected void parseG72(String segment, Dex894Item dexItem) {
         LOGGER.debug(this.segmentIdentifier(segment));
-        // TODO: G72 parsing
+        List<String> elements = this.splitSegment(segment);
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (G72_ID.equals(segmentIdentifier)) {
+            Dex894Allowance dexAllowance = new Dex894Allowance();
+            dexItem.setAllowance(dexAllowance);
+            dexAllowance.setAllowanceCode(this.retreiveElementFromSegment(elements, 1));
+            dexAllowance.setMethodOfHandlingCode(this.retreiveElementFromSegment(elements, 2));
+            dexAllowance.setAllowanceNumber(this.retreiveElementFromSegment(elements, 3));
+            dexAllowance.setExceptionNumber(this.retreiveElementFromSegment(elements, 4));
+            dexAllowance.setAllowanceRate(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 5), 4));
+            dexAllowance.setAllowanceQuantity(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 6), 3));
+            dexAllowance.setAllowanceUom(UnitMeasure.convertUnitMeasure(this.retreiveElementFromSegment(elements, 7)));
+            dexAllowance.setAllowanceAmount(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 8), 2));
+            dexAllowance.setAllowancePercent(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 9), 3));
+            dexAllowance.setOptionNumber(this.retreiveElementFromSegment(elements, 10));
+        } else {
+            throwParserException(G72_ID, segmentIdentifier);
+        }
     }
 
     /**
@@ -454,7 +472,16 @@ public class DefaultDex894Parser implements X12Parser {
      */
     protected void parseG84(String segment, Dex894TransactionSet dexTx) {
         LOGGER.debug(this.segmentIdentifier(segment));
-        // TODO: G84 parsing
+        List<String> elements = this.splitSegment(segment);
+
+        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        if (G84_ID.equals(segmentIdentifier)) {
+            dexTx.setTransactionTotalQuantity(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 1), 3));
+            dexTx.setTransactionTotalAmount(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 2), 2));
+            dexTx.setTransactionTotalDepositAmount(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 3), 2));
+        } else {
+            throwParserException(G84_ID, segmentIdentifier);
+        }
     }
 
     /**

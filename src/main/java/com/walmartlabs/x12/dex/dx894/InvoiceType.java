@@ -22,5 +22,26 @@ package com.walmartlabs.x12.dex.dx894;
 public enum InvoiceType {
     C, // CREDIT
     D, // DEBIT
-    UNKNOWN
+    UNKNOWN;
+
+    /**
+     * Convert the debit credit value to an enum
+     * @param debitCreditFlag
+     * @return
+     */
+    public static InvoiceType convertDebitCreditFlag(String debitCreditFlag) {
+        if (debitCreditFlag == null) {
+            return null;
+        } else {
+            InvoiceType returnEnum = InvoiceType.UNKNOWN;
+
+            try {
+                returnEnum = InvoiceType.valueOf(debitCreditFlag);
+            } catch (Exception e) {
+                // illegal value so returning UNKNOWN
+            }
+
+            return returnEnum;
+        }
+    }
 }

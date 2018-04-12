@@ -23,22 +23,22 @@ public class ProductQualifierTest {
 
     @Test
     public void test_valid_value() {
-        assertEquals(ProductQualifier.EN, ProductQualifier.convertyProductQualifier("EN"));
+        assertEquals(ProductQualifier.EN, ProductQualifier.convertProductQualifier("EN"));
     }
 
     @Test
     public void test_invalid_value() {
-        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertyProductQualifier("BOGUS"));
+        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertProductQualifier("BOGUS"));
     }
 
     @Test
     public void test_invalid_empty() {
-        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertyProductQualifier(""));
+        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertProductQualifier(""));
     }
 
     @Test
     public void test_invalid_null() {
-        assertEquals(null, ProductQualifier.convertyProductQualifier(null));
+        assertEquals(null, ProductQualifier.convertProductQualifier(null));
     }
 
 }
