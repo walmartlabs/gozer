@@ -71,7 +71,7 @@ public class DefaultDex894ParserTransactionTest {
     public void testParseG82() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         dexParser.parseG82("G82*D*8327063806*051957769*004615*182737015*PL1124*20171116", dexTx);
-        assertEquals("D", dexTx.getDebitCreditFlag());
+        assertEquals(InvoiceType.D, dexTx.getDebitCreditFlag());
         assertEquals("8327063806", dexTx.getSupplierNumber());
         assertEquals("051957769", dexTx.getReceiverDuns());
         assertEquals("004615", dexTx.getReceiverLocation());
@@ -86,7 +86,7 @@ public class DefaultDex894ParserTransactionTest {
     public void testParseG82WithPurchaseOrder() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         dexParser.parseG82("G82*D*8327063806*051957769*004615*182737015*PL1124*20171116*PO123*20171004", dexTx);
-        assertEquals("D", dexTx.getDebitCreditFlag());
+        assertEquals(InvoiceType.D, dexTx.getDebitCreditFlag());
         assertEquals("8327063806", dexTx.getSupplierNumber());
         assertEquals("051957769", dexTx.getReceiverDuns());
         assertEquals("004615", dexTx.getReceiverLocation());
@@ -95,6 +95,32 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals("20171116", dexTx.getTransactionDate());
         assertEquals("PO123", dexTx.getPurchaseOrderNumber());
         assertEquals("20171004", dexTx.getPurchaseOrderDate());
+    }
+
+    @Test
+    public void testParseG82WithInvalidDebitCreditFlag() {
+        Dex894TransactionSet dexTx = new Dex894TransactionSet();
+        dexParser.parseG82("G82*X*8327063806*051957769*004615*182737015*PL1124*20171116", dexTx);
+        assertEquals(InvoiceType.UNKNOWN, dexTx.getDebitCreditFlag());
+        assertEquals("8327063806", dexTx.getSupplierNumber());
+        assertEquals("051957769", dexTx.getReceiverDuns());
+        assertEquals("004615", dexTx.getReceiverLocation());
+        assertEquals("182737015", dexTx.getSupplierDuns());
+        assertEquals("PL1124", dexTx.getSupplierLocation());
+        assertEquals("20171116", dexTx.getTransactionDate());
+    }
+
+    @Test
+    public void testParseG82WithMissingDebitCreditFlag() {
+        Dex894TransactionSet dexTx = new Dex894TransactionSet();
+        dexParser.parseG82("G82**8327063806*051957769*004615*182737015*PL1124*20171116", dexTx);
+        assertEquals(null, dexTx.getDebitCreditFlag());
+        assertEquals("8327063806", dexTx.getSupplierNumber());
+        assertEquals("051957769", dexTx.getReceiverDuns());
+        assertEquals("004615", dexTx.getReceiverLocation());
+        assertEquals("182737015", dexTx.getSupplierDuns());
+        assertEquals("PL1124", dexTx.getSupplierLocation());
+        assertEquals("20171116", dexTx.getTransactionDate());
     }
 
     @Test(expected = X12ParserException.class)

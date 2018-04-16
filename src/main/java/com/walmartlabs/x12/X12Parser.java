@@ -1,4 +1,5 @@
-Copyright (c) 2011-present, Walmart, Inc.
+/**
+Copyright (c) 2018-present, Walmart, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -11,3 +12,19 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+ */
+package com.walmartlabs.x12;
+
+import com.walmartlabs.x12.exceptions.X12ParserException;
+
+public interface X12Parser {
+
+    /**
+     * parse the X12 transmission into
+     * a representative Java object
+     *
+     * @return the representative Java object
+     * @throws X12ParserException
+     */
+    <T> T parse(String sourceData);
+}

@@ -13,13 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.util;
+package com.walmartlabs.x12;
 
-public interface Checksum {
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+
+import java.util.Set;
+
+public interface X12Validator<T> {
     /**
-     * generates a checksum digit from the number
-     * @param number
-     * @return
+     * validate the X12 transmission
+     *
+     * @return Set of error details ({@link X12ErrorDetail}
      */
-    String generateChecksumDigit(String number);
+    Set<X12ErrorDetail> validate(T pojo);
 }

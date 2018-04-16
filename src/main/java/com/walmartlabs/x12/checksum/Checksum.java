@@ -13,17 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12.checksum;
 
-import com.walmartlabs.x12.exceptions.X12ErrorDetail;
-
-import java.util.Set;
-
-public interface Dex894Validator {
+public interface Checksum {
     /**
-     * validate the DEX 894 transmission
-     *
-     * @return Set of error details ({@link X12ErrorDetail}
+     * generates a checksum digit from the number
+     * @param number
+     * @return
+     * @throws NumberFormatException
      */
-    Set<X12ErrorDetail> validate(Dex894 dex);
+    String generateChecksumDigit(String number);
 }

@@ -15,6 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12.dex.dx894;
 
+import com.walmartlabs.x12.X12Validator;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import org.springframework.util.StringUtils;
 
@@ -23,13 +24,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DefaultDex894Validator implements Dex894Validator {
+public class DefaultDex894Validator implements X12Validator<Dex894> {
 
     public static final int DEX_4010 = 4010;
     public static final int DEX_5010 = 5010;
 
+
     @Override
     public Set<X12ErrorDetail> validate(Dex894 dex) {
+
         Set<X12ErrorDetail> errors = new HashSet<>();
         if (dex != null) {
             // DXE validations
@@ -118,6 +121,7 @@ public class DefaultDex894Validator implements Dex894Validator {
                     errors.add(this.checkItemIdentifier(dexVersion, dexItem));
                     errors.add(this.checkCaseUpc(dexVersion, dexItem));
                     errors.add(this.checkCaseCount(dexVersion, dexItem));
+                    errors.addAll(this.validateAllowance(dexVersion, dexItem.getAllowance()));
                 }
             }
         }
@@ -125,6 +129,20 @@ public class DefaultDex894Validator implements Dex894Validator {
         return this.removeNullValues(errors);
     }
 
+    /**
+     * validate allowance/charge for the DEX Item
+     * @param dexTx
+     * @return
+     */
+    protected Set<X12ErrorDetail> validateAllowance(Integer dexVersion, Dex894Allowance dexAllowance) {
+        Set<X12ErrorDetail> errors = new HashSet<>();
+
+        if (dexAllowance != null) {
+            // TODO: allowance validations
+        }
+
+        return this.removeNullValues(errors);
+    }
 
     /**
      * make sure G8202 has value
@@ -297,4 +315,5 @@ public class DefaultDex894Validator implements Dex894Validator {
                 .filter(detail -> detail != null)
                 .collect(Collectors.toSet());
     }
+
 }

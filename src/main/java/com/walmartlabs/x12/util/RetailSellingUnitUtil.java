@@ -15,6 +15,9 @@ limitations under the License.
  */
 package com.walmartlabs.x12.util;
 
+import com.walmartlabs.x12.checksum.BarCodeMod10Checksum;
+import com.walmartlabs.x12.checksum.Checksum;
+
 public class RetailSellingUnitUtil {
 
     private static final int GTIN_SIZE = 14;
@@ -39,6 +42,7 @@ public class RetailSellingUnitUtil {
      * if retail number is > 14 digits return null
      * @param retailNumber
      * @return ITF-14
+     * @throws NumberFormatException
      */
     public String convertRetailNumberToItf14(String retailNumber) {
         String itf14 = null;
@@ -80,6 +84,7 @@ public class RetailSellingUnitUtil {
      * a checksum digit
      * @param number
      * @return true if calculated checksum equals checksum digit
+     * @throws NumberFormatException
      */
     protected boolean verifyChecksumDigit(String number) {
         if (number != null && number.length() > 1) {
