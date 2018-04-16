@@ -57,5 +57,4 @@ public class LuhnMod10Checksum implements Checksum {
             return null;
         }
     }
-
 }

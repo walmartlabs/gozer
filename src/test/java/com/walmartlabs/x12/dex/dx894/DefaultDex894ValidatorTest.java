@@ -31,7 +31,7 @@ import static org.junit.Assert.assertNull;
 
 public class DefaultDex894ValidatorTest {
 
-    DefaultDex894Validator dexValidator;
+    private DefaultDex894Validator dexValidator;
 
     @Before
     public void init() {
@@ -405,6 +405,37 @@ public class DefaultDex894ValidatorTest {
         assertEquals("G8207", xed.getElementId());
         assertEquals("missing supplier date", xed.getMessage());
     }
+
+    @Test
+    public void test_validateTransactions_invalid_supplier_date_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setTransactionDate("201804");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8207", xed.getElementId());
+        assertEquals("date must YYYYMMDD", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateTransactions_invalid_supplier_date_5010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setTransactionDate("201804");
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G82", xed.getSegmentId());
+        assertEquals("G8207", xed.getElementId());
+        assertEquals("date must YYYYMMDD", xed.getMessage());
+    }
+
 
     @Test
     public void test_validateItems_4010() {
