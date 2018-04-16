@@ -13,9 +13,10 @@ This open source library, available through @WalmartLabs, provides Java based cl
 
 ## Getting Started
 
-Each X12 format that is supported will have a Java interface for both a parser and a validator. The parser will be responsible for parsing the message in the given format to the representative Java object model (POJO). The validator will be responsible for providing any validations applying them to the values stored in the POJO that the parser creates.
+Each X12 format that is supported will have a Java implementation for both the `X12Parser` and `X12Validator`. The parser will be responsible for parsing the message in the given format to the representative Java object model (POJO). The validator will be responsible for providing validations applying them to the values stored in the POJO that the parser creates.
 
 If the X12 message is invalid and can't be parsed the parser is expected to throw an `X12ParserException`.
+The validator will not throw an exception under normal circumstances. Instead any validation errors will be returned in a `Set` of `X12ErrorDetail` objects.
 
 ```java
 

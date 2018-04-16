@@ -44,7 +44,7 @@ public enum ProductQualifier {
      * @param productQualifierCode
      * @return
      */
-    public static ProductQualifier convertyProductQualifier(String productQualifierCode) {
+    public static ProductQualifier convertProductQualifier(String productQualifierCode) {
         if (productQualifierCode == null) {
             return null;
         } else {

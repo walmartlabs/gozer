@@ -121,6 +121,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
                     errors.add(this.checkItemIdentifier(dexVersion, dexItem));
                     errors.add(this.checkCaseUpc(dexVersion, dexItem));
                     errors.add(this.checkCaseCount(dexVersion, dexItem));
+                    errors.addAll(this.validateAllowance(dexVersion, dexItem.getAllowance()));
                 }
             }
         }
@@ -128,6 +129,20 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         return this.removeNullValues(errors);
     }
 
+    /**
+     * validate allowance/charge for the DEX Item
+     * @param dexTx
+     * @return
+     */
+    protected Set<X12ErrorDetail> validateAllowance(Integer dexVersion, Dex894Allowance dexAllowance) {
+        Set<X12ErrorDetail> errors = new HashSet<>();
+
+        if (dexAllowance != null) {
+            // TODO: allowance validations
+        }
+
+        return this.removeNullValues(errors);
+    }
 
     /**
      * make sure G8202 has value

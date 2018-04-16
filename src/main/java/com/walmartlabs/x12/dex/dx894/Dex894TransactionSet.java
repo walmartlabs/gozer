@@ -47,7 +47,7 @@ public class Dex894TransactionSet {
      * G82
      */
     // G8201
-    private String debitCreditFlag;
+    private InvoiceType debitCreditFlag;
     // G8202
     private String supplierNumber;
     // G8203
@@ -138,11 +138,11 @@ public class Dex894TransactionSet {
         this.supplierNumber = supplierNumber;
     }
 
-    public String getDebitCreditFlag() {
+    public InvoiceType getDebitCreditFlag() {
         return debitCreditFlag;
     }
 
-    public void setDebitCreditFlag(String debitCreditFlag) {
+    public void setDebitCreditFlag(InvoiceType debitCreditFlag) {
         this.debitCreditFlag = debitCreditFlag;
     }
 
