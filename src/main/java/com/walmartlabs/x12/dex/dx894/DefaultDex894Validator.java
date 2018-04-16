@@ -169,7 +169,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
             if (StringUtils.isEmpty(dexTx.getTransactionDate())) {
                 detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "missing supplier date");
             } else if (dexTx.getTransactionDate().length() != 8) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "date must YYYYMMDD");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "date must be in YYYYMMDD format");
             }
         }
 
