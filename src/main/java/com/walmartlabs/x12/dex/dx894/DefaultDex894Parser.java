@@ -41,9 +41,11 @@ import java.util.List;
  * ---- G82 (Transaction header)
  * -------- LS
  * ------------ G83 (Item Detail)
+ * ------------ G22
  * ------------ G72
  *
- * ------------ G83
+ * ------------ G83 (Item Detail)
+ * ------------ G22
  * ------------ G72
  * -------- LE
  * ---- G84 (Transaction summary)
@@ -61,6 +63,7 @@ public class DefaultDex894Parser implements X12Parser {
     public static final String TRANSACTION_SET_TRAILER_ID = "SE";
     public static final String G82_ID = "G82";
     public static final String G83_ID = "G83";
+    public static final String G22_ID = "G22";
     public static final String G72_ID = "G72";
     public static final String G84_ID = "G84";
     public static final String G85_ID = "G85";
@@ -265,14 +268,24 @@ public class DefaultDex894Parser implements X12Parser {
         Dex894Item dexItem = new Dex894Item();
         this.parseG83(segment, dexItem);
 
-        // check next segment
-        // for G72 segment
+        // check next segments
         segment = dexSegments.get(++segmentIdx);
         String segmentId = this.segmentIdentifier(segment);
+
+        // G22 pricing (optional)
+        if (G22_ID.equals(segmentId)) {
+            this.parseG22(segment, dexItem);
+            // update next segment & segment id
+            segment = dexSegments.get(++segmentIdx);
+            segmentId = this.segmentIdentifier(segment);
+        }
+
+        // G72 allowance (optional)
         if (G72_ID.equals(segmentId)) {
             this.parseG72(segment, dexItem);
-            // increase the index
-            segmentIdx++;
+            // update next segment & segment id
+            segment = dexSegments.get(++segmentIdx);
+            segmentId = this.segmentIdentifier(segment);
         }
 
         dexTx.addItem(dexItem);
@@ -410,6 +423,20 @@ public class DefaultDex894Parser implements X12Parser {
         } else {
             throwParserException(G83_ID, segmentIdentifier);
         }
+    }
+
+
+    /**
+     * parse G22
+     * This data segment specifies pricing information
+     *
+     * @param segment
+     * @param dexItem
+     * @throws X12ParserException if the DEX segment is invalid
+     * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
+     */
+    protected void parseG22(String segment, Dex894Item dexItem) {
+        LOGGER.debug(this.segmentIdentifier(segment));
     }
 
     /**

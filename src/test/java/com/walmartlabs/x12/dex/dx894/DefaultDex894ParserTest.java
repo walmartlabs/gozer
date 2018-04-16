@@ -470,4 +470,97 @@ public class DefaultDex894ParserTest {
         assertEquals(new Integer(2), dex.getNumberOfTransactions());
     }
 
+    @Test
+    public void testParsingShipment_Dex_with_G22() throws IOException {
+        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.g22.txt"));
+        Dex894 dex = dexParser.parse(new String(dexBytes));
+        assertNotNull(dex);
+
+        // DEX transactions
+        List<Dex894TransactionSet> dexTxList = dex.getTransactions();
+        assertNotNull(dexTxList);
+        assertEquals(1, dexTxList.size());
+
+        //
+        // DEX transaction (1)
+        //
+        Dex894TransactionSet dexTx = dexTxList.get(0);
+        assertNotNull(dexTx);
+        // ST segment
+        assertEquals("894", dexTx.getTransactionSetIdentifierCode());
+        assertEquals("0101", dexTx.getHeaderControlNumber());
+        // SE segment
+        assertEquals("0101", dexTx.getTrailerControlNumber());
+        assertEquals(new Integer(13), dexTx.getExpectedNumberOfSegments());
+        assertEquals(new Integer(13), dexTx.getActualNumberOfSegments());
+        // G82 segment
+        assertEquals(InvoiceType.D, dexTx.getDebitCreditFlag());
+        assertEquals("001701001701", dexTx.getSupplierNumber());
+        assertEquals("051957769", dexTx.getReceiverDuns());
+        assertEquals("5", dexTx.getReceiverLocation());
+        assertEquals("123456789", dexTx.getSupplierDuns());
+        assertEquals("073002", dexTx.getSupplierLocation());
+        assertEquals("20180416", dexTx.getTransactionDate());
+        // G85 segment
+        assertEquals("8263", dexTx.getIntegrityCheckValue());
+        // G86 segment
+        assertEquals("0840", dexTx.getElectronicSignature());
+        assertEquals(null, dexTx.getSignatureName());
+
+        // items
+        List<Dex894Item> dexItemList = dexTx.getItems();
+        assertNotNull(dexItemList);
+        assertEquals(2, dexItemList.size());
+
+
+        // DEX transaction (1) item (1)
+        Dex894Item dexItem = dexItemList.get(0);
+        assertNotNull(dexItem);
+        // G83 segment
+        assertEquals("1", dexItem.getItemSequenceNumber());
+        assertEquals("4.000", dexItem.getQuantity().toString());
+        assertEquals(UnitMeasure.EA, dexItem.getUom());
+        assertEquals("007189983548", dexItem.getUpc());
+        assertEquals(null, dexItem.getConsumerProductQualifier());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
+        assertEquals("2.13", dexItem.getItemListCost().toString());
+        assertEquals(new Integer(1), dexItem.getPackCount());
+        assertEquals("1/2 GAL TEST 1", dexItem.getItemDescription());
+        assertEquals(null, dexItem.getCaseProductQualifier());
+        assertEquals(null, dexItem.getCaseProductId());
+        assertEquals(null, dexItem.getInnerPackCount());
+        // G72 segment
+        Dex894Allowance dexAllowance = dexItem.getAllowance();
+        assertNotNull(dexAllowance);
+        assertEquals("97", dexAllowance.getAllowanceCode());
+        assertEquals("02", dexAllowance.getMethodOfHandlingCode());
+        assertEquals(null, dexAllowance.getAllowanceNumber());
+        assertEquals(null, dexAllowance.getExceptionNumber());
+        assertEquals("-0.3500", dexAllowance.getAllowanceRate().toString());
+        assertEquals(null, dexAllowance.getAllowanceQuantity());
+        assertEquals(null, dexAllowance.getAllowanceUom());
+        assertEquals(null, dexAllowance.getAllowanceAmount());
+        assertEquals(null, dexAllowance.getAllowancePercent());
+        assertEquals(null, dexAllowance.getDollarBasis());
+        assertEquals(null, dexAllowance.getOptionNumber());
+
+        // DEX transaction (1) item (2)
+        dexItem = dexItemList.get(1);
+        assertNotNull(dexItem);
+        // G83 segment
+        assertEquals("2", dexItem.getItemSequenceNumber());
+        assertEquals("4.000", dexItem.getQuantity().toString());
+        assertEquals(UnitMeasure.EA, dexItem.getUom());
+        assertEquals("007189903720", dexItem.getUpc());
+        assertEquals(null, dexItem.getConsumerProductQualifier());
+        assertEquals(null, dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
+        assertEquals("2.25", dexItem.getItemListCost().toString());
+        assertEquals(new Integer(1), dexItem.getPackCount());
+        assertEquals("1/2 GAL TEST 2", dexItem.getItemDescription());
+        assertEquals(null, dexItem.getCaseProductQualifier());
+        assertEquals(null, dexItem.getCaseProductId());
+        assertEquals(null, dexItem.getInnerPackCount());
+    }
 }
