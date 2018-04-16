@@ -40,13 +40,15 @@ import java.util.List;
  * -- ST
  * ---- G82 (Transaction header)
  * -------- LS
+ * ------------ Transaction #1
  * ------------ G83 (Item Detail)
- * ------------ G22
- * ------------ G72
+ * ------------ G22 (Optional)
+ * ------------ G72 (Optional)
  *
+ * ------------ Transaction #2
  * ------------ G83 (Item Detail)
- * ------------ G22
- * ------------ G72
+ * ------------ G22 (Optional)
+ * ------------ G72 (Optional)
  * -------- LE
  * ---- G84 (Transaction summary)
  * ---- G86 (electronic signature)
