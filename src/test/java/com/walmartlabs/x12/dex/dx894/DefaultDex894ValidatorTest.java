@@ -830,6 +830,103 @@ public class DefaultDex894ValidatorTest {
     }
 
 
+    @Test
+    public void test_validateAllowance_null() {
+        Dex894Allowance dexAllowance = null;
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateAllowance_empty() {
+        Dex894Allowance dexAllowance = new Dex894Allowance();
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        assertNotNull(errors);
+        assertEquals(3, errors.size());
+
+        List<X12ErrorDetail> list = errors.stream()
+            .sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId()))
+            .collect(Collectors.toList());
+
+        X12ErrorDetail xed = list.get(0);
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7201", xed.getElementId());
+        assertEquals("missing allowance code", xed.getMessage());
+
+        xed = list.get(1);
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7202", xed.getElementId());
+        assertEquals("missing method of handling code", xed.getMessage());
+
+        xed = list.get(2);
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7205", xed.getElementId());
+        assertEquals("must have allowance rate, percent, or amount", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateAllowance_MissingAllowanceCode() {
+        Dex894Allowance dexAllowance = new Dex894Allowance();
+        dexAllowance.setMethodOfHandlingCode("0");
+        dexAllowance.setAllowanceAmount(new BigDecimal(100));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7201", xed.getElementId());
+        assertEquals("missing allowance code", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateAllowance_MissingMethodHandling() {
+        Dex894Allowance dexAllowance = new Dex894Allowance();
+        dexAllowance.setAllowanceCode("0");
+        dexAllowance.setAllowanceAmount(new BigDecimal(100));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7202", xed.getElementId());
+        assertEquals("missing method of handling code", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateAllowance_MissingAmount() {
+        Dex894Allowance dexAllowance = new Dex894Allowance();
+        dexAllowance.setAllowanceCode("0");
+        dexAllowance.setMethodOfHandlingCode("0");
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7205", xed.getElementId());
+        assertEquals("must have allowance rate, percent, or amount", xed.getMessage());
+    }
+
+    @Test
+    public void test_validateAllowance() {
+        Dex894Allowance dexAllowance = new Dex894Allowance();
+        dexAllowance.setAllowanceCode("0");
+        dexAllowance.setMethodOfHandlingCode("0");
+        dexAllowance.setAllowanceAmount(new BigDecimal(100));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
     protected List<Dex894TransactionSet> generateTransactions(int numTx) {
         List<Dex894TransactionSet> dexTxList = new ArrayList<>();
 

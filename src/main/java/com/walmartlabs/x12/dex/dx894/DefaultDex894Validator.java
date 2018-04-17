@@ -138,10 +138,68 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         Set<X12ErrorDetail> errors = new HashSet<>();
 
         if (dexAllowance != null) {
-            // TODO: allowance validations
+            errors.add(this.checkAllowanceCode(dexVersion, dexAllowance));
+            errors.add(this.checkMethodHandlingCode(dexVersion, dexAllowance));
+            errors.add(this.checkAllowanceAmount(dexVersion, dexAllowance));
         }
 
         return this.removeNullValues(errors);
+    }
+
+    /**
+     * mandatory attribute that identifies the type of allowance or charge that is to apply.
+     * @param dexVersion
+     * @param dexAllowance
+     * @return
+     */
+    protected X12ErrorDetail checkAllowanceCode(Integer dexVersion, Dex894Allowance dexAllowance) {
+        X12ErrorDetail detail = null;
+
+        if (StringUtils.isEmpty(dexAllowance.getAllowanceCode())) {
+            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7201", "missing allowance code");
+        }
+
+        return detail;
+    }
+
+    /**
+     * mandatory attribute that indicates the method of handling for the allowance or charge.
+     * @param dexVersion
+     * @param dexAllowance
+     * @return
+     */
+    protected X12ErrorDetail checkMethodHandlingCode(Integer dexVersion, Dex894Allowance dexAllowance) {
+        X12ErrorDetail detail = null;
+
+        if (StringUtils.isEmpty(dexAllowance.getMethodOfHandlingCode())) {
+            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7202", "missing method of handling code");
+        }
+
+        return detail;
+    }
+
+    /**
+     * Allowances or charges can be sent as a rate, amount, or percent, and
+     * are specified using data elements G7205, G7208 or G7209,
+     * respectively. Only use one of these elements in each occurrence of a
+     * G72 data segment. The choice of which data element to use depends
+     * on how to express the allowance or charge.
+     *
+     * @param dexVersion
+     * @param dexAllowance
+     * @return
+     */
+    protected X12ErrorDetail checkAllowanceAmount(Integer dexVersion, Dex894Allowance dexAllowance) {
+        X12ErrorDetail detail = null;
+
+        if (dexAllowance.getAllowanceAmount() == null &&
+                dexAllowance.getAllowancePercent() == null &&
+                dexAllowance.getAllowanceRate() == null) {
+
+            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7205", "must have allowance rate, percent, or amount");
+
+        }
+        return detail;
     }
 
     /**
