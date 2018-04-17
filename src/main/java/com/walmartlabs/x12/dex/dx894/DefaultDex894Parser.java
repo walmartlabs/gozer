@@ -89,7 +89,7 @@ public class DefaultDex894Parser implements X12Parser {
             List<String> dexLines = this.splitDexIntoSegments(sourceData);
 
             if (!this.isValidEnvelope(dexLines)) {
-                throw new X12ParserException("invalid DEX envelope");
+                throw new X12ParserException("Invalid DEX envelope");
             } else {
                 try {
                     int lastSegment = this.findLastSegmentIndex(dexLines);
@@ -107,7 +107,7 @@ public class DefaultDex894Parser implements X12Parser {
                     // application trailer
                     this.parseApplicationTrailer(dexLines.get(lastSegment), dex);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new X12ParserException("invalid DEX message: missing mandatory fields");
+                    throw new X12ParserException("Invalid DEX message: missing mandatory fields");
                 }
             }
         }
@@ -151,7 +151,7 @@ public class DefaultDex894Parser implements X12Parser {
 
         int segmentIdx = startingIdx;
         if (!TRANSACTION_SET_HEADER_ID.equals(segmentId)) {
-            throw new X12ParserException("expected start of DEX transaction");
+            throw new X12ParserException("Expected start of DEX transaction");
         } else {
             // ST line
             this.parseTransactionSetHeader(segment, dexTx);
@@ -221,7 +221,7 @@ public class DefaultDex894Parser implements X12Parser {
 
         int segmentIdx = startingIdx;
         if (!LOOP_HEADER_ID.equals(segmentId)) {
-            throw new X12ParserException("expected start of DEX transaction loop");
+            throw new X12ParserException("Expected start of DEX transaction loop");
         } else {
             // LS line
             this.parseLoopHeader(segment, dexTx);
@@ -645,7 +645,7 @@ public class DefaultDex894Parser implements X12Parser {
                 returnValue = new BigDecimal(theString).setScale(decimalPlaces, RoundingMode.HALF_UP);
             }
         } catch (NumberFormatException e) {
-            throw new X12ParserException("invalid numeric value");
+            throw new X12ParserException("Invalid numeric value");
         }
         return returnValue;
     }
@@ -658,7 +658,7 @@ public class DefaultDex894Parser implements X12Parser {
                 returnInteger = Integer.valueOf(theString);
             }
         } catch (NumberFormatException e) {
-            throw new X12ParserException("invalid numeric value");
+            throw new X12ParserException("Invalid numeric value");
         }
 
         return returnInteger;
