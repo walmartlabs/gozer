@@ -55,7 +55,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         int actualTransactionCount = (dex.getTransactions() != null ? dex.getTransactions().size() : 0);
         if (dex.getNumberOfTransactions() != actualTransactionCount) {
             StringBuilder sb = new StringBuilder();
-            sb.append("expected ").append(dex.getNumberOfTransactions()).append(" transactions");
+            sb.append("Expected ").append(dex.getNumberOfTransactions()).append(" transactions");
             sb.append(" but got ").append(actualTransactionCount).append(" transactions");
             detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "", sb.toString());
         }
@@ -79,7 +79,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
                 .count();
 
             if (duplicatedInvoiceCount > 0) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8202", "duplicate invoice numbers on DEX");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8202", "Duplicate invoice numbers on DEX");
             }
         }
         return detail;
@@ -106,6 +106,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
     /**
      * validate each Item in the DEX Transaction
+     * @param dexVersion
      * @param dexTx
      * @return
      */
@@ -131,7 +132,8 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
     /**
      * validate allowance/charge for the DEX Item
-     * @param dexTx
+     * @param dexVersion
+     * @param dexAllowance
      * @return
      */
     protected Set<X12ErrorDetail> validateAllowance(Integer dexVersion, Dex894Allowance dexAllowance) {
@@ -156,7 +158,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         X12ErrorDetail detail = null;
 
         if (StringUtils.isEmpty(dexAllowance.getAllowanceCode())) {
-            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7201", "missing allowance code");
+            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7201", "Missing allowance code");
         }
 
         return detail;
@@ -172,7 +174,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         X12ErrorDetail detail = null;
 
         if (StringUtils.isEmpty(dexAllowance.getMethodOfHandlingCode())) {
-            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7202", "missing method of handling code");
+            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7202", "Missing method of handling code");
         }
 
         return detail;
@@ -196,7 +198,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
                 dexAllowance.getAllowancePercent() == null &&
                 dexAllowance.getAllowanceRate() == null) {
 
-            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7205", "must have allowance rate, percent, or amount");
+            detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7205", "Must have allowance rate, percent, or amount");
 
         }
         return detail;
@@ -210,7 +212,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
         if (dexTx != null) {
             if (StringUtils.isEmpty(dexTx.getSupplierNumber())) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8202", "missing supplier number");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8202", "Missing supplier number");
             }
         }
 
@@ -225,9 +227,9 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
         if (dexTx != null) {
             if (StringUtils.isEmpty(dexTx.getTransactionDate())) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "missing supplier date");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "Missing supplier date");
             } else if (dexTx.getTransactionDate().length() != 8) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "date must be in YYYYMMDD format");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8207", "Date must be in YYYYMMDD format");
             }
         }
 
@@ -243,8 +245,8 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         if (dexTx.getExpectedNumberOfSegments() != null && dexTx.getActualNumberOfSegments() != null
                 && !dexTx.getExpectedNumberOfSegments().equals(dexTx.getActualNumberOfSegments())) {
             StringBuilder sb = new StringBuilder();
-            sb.append("expected ").append(dexTx.getExpectedNumberOfSegments()).append(" segments");
-            sb.append(" but got ").append(dexTx.getActualNumberOfSegments()).append(" segments");
+            sb.append("Expected ").append(dexTx.getExpectedNumberOfSegments()).append(" segments in a transaction");
+            sb.append(" but got ").append(dexTx.getActualNumberOfSegments()).append(" segments in a transaction");
             detail = new X12ErrorDetail(DefaultDex894Parser.TRANSACTION_SET_TRAILER_ID, "", sb.toString());
         }
 
@@ -260,7 +262,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         if (dexTx.getHeaderControlNumber() != null && dexTx.getTrailerControlNumber() != null
                 && !dexTx.getHeaderControlNumber().equals(dexTx.getTrailerControlNumber())) {
             StringBuilder sb = new StringBuilder();
-            sb.append("mismatched transaction control numbers: header(").append(dexTx.getHeaderControlNumber());
+            sb.append("Mismatched transaction control numbers: header(").append(dexTx.getHeaderControlNumber());
             sb.append(") and trailer(").append(dexTx.getTrailerControlNumber()).append(")");
             detail = new X12ErrorDetail(DefaultDex894Parser.TRANSACTION_SET_TRAILER_ID, "", sb.toString());
         }
@@ -278,9 +280,9 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
         if (dexItem != null) {
             if (dexItem.getQuantity() == null) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8302", "missing quantity");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8302", "Missing quantity");
             } else if (dexItem.getQuantity().signum() < 0) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8302", "quantity must be positive");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8302", "Quantity must be positive");
             }
         }
 
@@ -296,7 +298,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
         if (dexItem != null) {
             if (dexItem.getUom() == null || UnitMeasure.UNKNOWN.equals(dexItem.getUom())) {
-                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8303", "missing/unknown unit of measure");
+                detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8303", "Missing/unknown unit of measure");
             }
         }
 
@@ -314,13 +316,13 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
             if (!UnitMeasure.CA.equals(dexItem.getUom())) {
                 if (dexVersion <= DEX_4010) {
                     if (StringUtils.isEmpty(dexItem.getUpc())) {
-                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8304", "missing consumer UPC");
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8304", "Missing consumer UPC");
                     }
                 } else {
                     if (dexItem.getConsumerProductQualifier() == null) {
-                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8305", "missing consumer qualifier");
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8305", "Missing consumer qualifier");
                     } else if (StringUtils.isEmpty(dexItem.getConsumerProductId())) {
-                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8306", "missing consumer UPC");
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8306", "Missing consumer UPC");
                     }
                 }
             }
@@ -339,13 +341,13 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
             if (UnitMeasure.CA.equals(dexItem.getUom())) {
                 if (dexVersion <= DEX_4010) {
                     if (StringUtils.isEmpty(dexItem.getCaseUpc())) {
-                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8307", "missing case UPC");
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8307", "Missing case UPC");
                     }
                 } else {
                     if (dexItem.getCaseProductQualifier() == null) {
-                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8311", "missing case qualifier");
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8311", "Missing case qualifier");
                     } else if (StringUtils.isEmpty(dexItem.getCaseProductId())) {
-                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8312", "missing case UPC");
+                        detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8312", "Missing case UPC");
                     }
                 }
             }
@@ -361,7 +363,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         if (dexItem != null) {
             if (UnitMeasure.CA.equals(dexItem.getUom())) {
                 if (dexItem.getPackCount() == null) {
-                    detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8309", "missing case count");
+                    detail = new X12ErrorDetail(DefaultDex894Parser.G83_ID, "G8309", "Missing case count");
                 }
             }
         }
