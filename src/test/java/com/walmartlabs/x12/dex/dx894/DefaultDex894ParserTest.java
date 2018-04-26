@@ -125,4 +125,10 @@ public class DefaultDex894ParserTest {
         dexParser.parse(new String(dexBytes));
     }
 
+    @Test(expected = X12ParserException.class)
+    public void testParsingInvalidSegments() throws IOException {
+        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.invalid.segments.txt"));
+        dexParser.parse(new String(dexBytes));
+    }
+
 }
