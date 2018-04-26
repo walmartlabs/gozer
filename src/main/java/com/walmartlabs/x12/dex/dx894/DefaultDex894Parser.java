@@ -108,6 +108,8 @@ public class DefaultDex894Parser implements X12Parser {
                     this.parseApplicationTrailer(dexLines.get(lastSegment), dex);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     throw new X12ParserException("Invalid DEX message: missing mandatory fields");
+                } catch (StringIndexOutOfBoundsException e) {
+                    throw new X12ParserException("Invalid DEX message: unexpected segments");
                 }
             }
         }
