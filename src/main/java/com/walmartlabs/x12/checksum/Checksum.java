@@ -19,7 +19,7 @@ public interface Checksum {
     /**
      * generates a checksum digit from the number
      * @param number
-     * @return
+     * @return the checksum digit
      * @throws NumberFormatException
      */
     String generateChecksumDigit(String number);
