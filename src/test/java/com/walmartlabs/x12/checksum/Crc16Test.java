@@ -55,6 +55,20 @@ public class Crc16Test {
     }
 
     @Test
+    public void test_verifyBlockOfText_mix_null() {
+        String crcValue = null;
+        String blockText = "";
+        assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
+    }
+
+    @Test
+    public void test_verifyBlockOfText_more_mix_null() {
+        String crcValue = "";
+        String blockText = null;
+        assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
+    }
+
+    @Test
     public void test_verifyBlockOfText_empty() {
         String crcValue = "";
         String blockText = "";
