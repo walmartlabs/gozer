@@ -37,17 +37,17 @@ public class DefaultDex894ParserTest {
 
     @Test
     public void test_token_parser_ThreeCharacter() {
-        assertEquals("DXS", dexParser.segmentIdentifier("DXS*9251230013*DX*004010UCS*1*9254850000"));
+        assertEquals("DXS", dexParser.extractSegmentIdentifier("DXS*9251230013*DX*004010UCS*1*9254850000"));
     }
 
     @Test
     public void test_token_parser_TwoCharacter() {
-        assertEquals("ST", dexParser.segmentIdentifier("ST*9251230013*DX*004010UCS*1*9254850000"));
+        assertEquals("ST", dexParser.extractSegmentIdentifier("ST*9251230013*DX*004010UCS*1*9254850000"));
     }
 
     @Test
     public void test_token_parser_None() {
-        assertEquals("", dexParser.segmentIdentifier("*ST*9251230013*DX*004010UCS*1*9254850000"));
+        assertEquals("", dexParser.extractSegmentIdentifier("*ST*9251230013*DX*004010UCS*1*9254850000"));
     }
 
     @Test

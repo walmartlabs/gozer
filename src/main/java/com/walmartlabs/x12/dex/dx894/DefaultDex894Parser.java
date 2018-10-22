@@ -25,7 +25,6 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -86,7 +85,7 @@ public class DefaultDex894Parser implements X12Parser {
 
         if (!StringUtils.isEmpty(sourceData)) {
             dex = new Dex894();
-            List<String> dexLines = this.splitDexIntoSegments(sourceData);
+            List<String> dexLines = this.splitSourceDataIntoSegments(sourceData);
 
             if (!this.isValidEnvelope(dexLines)) {
                 throw new X12ParserException("Invalid DEX envelope");
@@ -147,7 +146,7 @@ public class DefaultDex894Parser implements X12Parser {
     protected int parseDexTransaction(final int startingIdx, final List<String> dexSegments, final Dex894TransactionSet dexTx) {
         LOGGER.debug("parseDexTransaction:" + startingIdx);
         String segment = dexSegments.get(startingIdx);
-        String segmentId = this.segmentIdentifier(segment);
+        String segmentId = this.extractSegmentIdentifier(segment);
 
         int segmentIdx = startingIdx;
         if (!TRANSACTION_SET_HEADER_ID.equals(segmentId)) {
@@ -170,14 +169,14 @@ public class DefaultDex894Parser implements X12Parser {
 
             // next set of lines after the transaction loop can vary
             segment = dexSegments.get(segmentIdx);
-            segmentId = this.segmentIdentifier(segment);
+            segmentId = this.extractSegmentIdentifier(segment);
 
             // G84 line (conditional)
             if (G84_ID.equals(segmentId)) {
                 this.parseG84(segment, dexTx);
                 // update next segment & segment id
                 segment = dexSegments.get(++segmentIdx);
-                segmentId = this.segmentIdentifier(segment);
+                segmentId = this.extractSegmentIdentifier(segment);
             }
 
             // G86 line (optional)
@@ -217,7 +216,7 @@ public class DefaultDex894Parser implements X12Parser {
     protected int parseDexTransactionLoop(final int startingIdx, final List<String> dexSegments, final Dex894TransactionSet dexTx) {
         LOGGER.debug("parseDexTransactionLoop:" + startingIdx);
         String segment = dexSegments.get(startingIdx);
-        String segmentId = this.segmentIdentifier(segment);
+        String segmentId = this.extractSegmentIdentifier(segment);
 
         int segmentIdx = startingIdx;
         if (!LOOP_HEADER_ID.equals(segmentId)) {
@@ -232,7 +231,7 @@ public class DefaultDex894Parser implements X12Parser {
             do {
                 // get the segment
                 segment = dexSegments.get(segmentIdx);
-                segmentId = this.segmentIdentifier(segment);
+                segmentId = this.extractSegmentIdentifier(segment);
 
                 if (G83_ID.equals(segmentId)) {
                     segmentIdx = this.parseDexItem(segmentIdx, dexSegments, dexTx);
@@ -272,14 +271,14 @@ public class DefaultDex894Parser implements X12Parser {
 
         // check next segments
         segment = dexSegments.get(++segmentIdx);
-        String segmentId = this.segmentIdentifier(segment);
+        String segmentId = this.extractSegmentIdentifier(segment);
 
         // G22 pricing (optional)
         if (G22_ID.equals(segmentId)) {
             this.parseG22(segment, dexItem);
             // update next segment & segment id
             segment = dexSegments.get(++segmentIdx);
-            segmentId = this.segmentIdentifier(segment);
+            segmentId = this.extractSegmentIdentifier(segment);
         }
 
         // G72 allowance (optional)
@@ -287,7 +286,7 @@ public class DefaultDex894Parser implements X12Parser {
             this.parseG72(segment, dexItem);
             // update next segment & segment id
             segment = dexSegments.get(++segmentIdx);
-            segmentId = this.segmentIdentifier(segment);
+            segmentId = this.extractSegmentIdentifier(segment);
         }
 
         dexTx.addItem(dexItem);
@@ -303,8 +302,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseApplicationHeader(String headerSegment, Dex894 dex) {
-        LOGGER.debug(this.segmentIdentifier(headerSegment));
-        List<String> elements = this.splitSegment(headerSegment);
+        LOGGER.debug(this.extractSegmentIdentifier(headerSegment));
+        List<String> elements = this.splitSegmentIntoDataElements(headerSegment);
 
         String segmentIdentifer = this.retreiveElementFromSegment(elements, 0);
         if (APPLICATION_HEADER_ID.equals(segmentIdentifer)) {
@@ -334,8 +333,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseTransactionSetHeader(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (TRANSACTION_SET_HEADER_ID.equals(segmentIdentifier)) {
@@ -355,8 +354,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseG82(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (G82_ID.equals(segmentIdentifier)) {
@@ -382,8 +381,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseLoopHeader(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (!LOOP_HEADER_ID.equals(segmentIdentifier)) {
@@ -402,8 +401,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseG83(String segment, Dex894Item dexItem) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (G83_ID.equals(segmentIdentifier)) {
@@ -438,7 +437,7 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseG22(String segment, Dex894Item dexItem) {
-        LOGGER.debug(this.segmentIdentifier(segment));
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
     }
 
     /**
@@ -451,8 +450,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseG72(String segment, Dex894Item dexItem) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (G72_ID.equals(segmentIdentifier)) {
@@ -482,8 +481,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseLoopTrailer(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (!LOOP_TRAILER_ID.equals(segmentIdentifier)) {
@@ -500,8 +499,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseG84(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (G84_ID.equals(segmentIdentifier)) {
@@ -522,8 +521,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseG85(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (G85_ID.equals(segmentIdentifier)) {
@@ -542,8 +541,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseG86(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (G86_ID.equals(segmentIdentifier)) {
@@ -562,8 +561,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseTransactionSetTrailer(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.segmentIdentifier(segment));
-        List<String> elements = this.splitSegment(segment);
+        LOGGER.debug(this.extractSegmentIdentifier(segment));
+        List<String> elements = this.splitSegmentIntoDataElements(segment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (TRANSACTION_SET_TRAILER_ID.equals(segmentIdentifier)) {
@@ -582,8 +581,8 @@ public class DefaultDex894Parser implements X12Parser {
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
     protected void parseApplicationTrailer(String trailerSegment, Dex894 dex) {
-        LOGGER.debug(this.segmentIdentifier(trailerSegment));
-        List<String> elements = this.splitSegment(trailerSegment);
+        LOGGER.debug(this.extractSegmentIdentifier(trailerSegment));
+        List<String> elements = this.splitSegmentIntoDataElements(trailerSegment);
 
         String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
         if (APPLICATION_TRAILER_ID.equals(segmentIdentifier)) {
@@ -611,13 +610,19 @@ public class DefaultDex894Parser implements X12Parser {
         }
     }
 
-    protected List<String> splitDexIntoSegments(String sourceData) {
-        return Arrays.asList(sourceData.split("\\r?\\n"));
-    }
-
-    protected List<String> splitSegment(String segment) {
-        return Arrays.asList(segment.split("\\*"));
-    }
+//    /**
+//     * moved to default method on X12Parser
+//     */
+//    protected List<String> splitSourceDataIntoSegments(String sourceData) {
+//        return Arrays.asList(sourceData.split("\\r?\\n"));
+//    }
+//
+//    /**
+//     * moved to default method on X12Parser
+//     */
+//    protected List<String> splitSegmentIntoDataElements(String segment) {
+//        return Arrays.asList(segment.split("\\*"));
+//    }
 
     /**
      *
@@ -627,12 +632,12 @@ public class DefaultDex894Parser implements X12Parser {
      */
     protected String segmentIdentifier(int segmentIdx, List<String> dexSegments) {
         String segment = dexSegments.get(segmentIdx);
-        return this.segmentIdentifier(segment);
+        return this.extractSegmentIdentifier(segment);
     }
 
-    protected String segmentIdentifier(String segment) {
-        return segment.substring(0, segment.indexOf("*"));
-    }
+//    protected String extractSegmentIdentifier(String segment) {
+//        return segment.substring(0, segment.indexOf("*"));
+//    }
 
     protected int findLastSegmentIndex(List<String> dexSegments) {
         return dexSegments.size() - 1;
