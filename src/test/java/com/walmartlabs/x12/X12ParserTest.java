@@ -61,14 +61,14 @@ public class X12ParserTest {
     }
 
     @Test
-    public void test_splitSourceDataIntoSegments_Empty() throws IOException {
+    public void test_splitSourceDataIntoSegments_Empty() {
         List<String> segmentsList = defaultParser.splitSourceDataIntoSegments("");
         assertNotNull(segmentsList);
         assertEquals(0, segmentsList.size());
     }
 
     @Test
-    public void test_splitSourceDataIntoSegments_Null() throws IOException {
+    public void test_splitSourceDataIntoSegments_Null() {
         List<String> segmentsList = defaultParser.splitSourceDataIntoSegments(null);
         assertNotNull(segmentsList);
         assertEquals(0, segmentsList.size());
