@@ -1,6 +1,7 @@
 package com.walmartlabs.x12.checksum;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -101,6 +102,24 @@ public class Crc16Test {
         String crcValue = "FFFF";
         String blockText = "hello";
         assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
+    }
+
+    @Ignore
+    @Test
+    public void test_transaction() {
+        String eol = "\r\n";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("ST*894*0101").append(eol);
+        sb.append("G82*D*001701001701*051957769*5*123456789*073002*20180416").append(eol);
+        sb.append("LS*0100").append(eol);
+        sb.append("G83*1*2*CA*007800001180***007800001180*14*2*12z12P 7Up***").append(eol);
+        sb.append("LE*0100").append(eol);
+        sb.append("G84*8*4164").append(eol);
+        sb.append("G86*0840").append(eol);
+
+        System.out.println(crcUtil.generateCyclicRedundancyCheck(sb.toString()));
+        assertTrue(crcUtil.verifyBlockOfText("8263", sb.toString()));
     }
 
 }
