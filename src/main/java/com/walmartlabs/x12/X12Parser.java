@@ -16,6 +16,7 @@ limitations under the License.
 package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,20 +35,38 @@ public interface X12Parser {
      * parses the source data into a list of segments each line in the source data is a segment
      */
     default List<String> splitSourceDataIntoSegments(String sourceData) {
-        return Arrays.asList(sourceData.split("\\r?\\n"));
+        if (StringUtils.isEmpty(sourceData)) {
+            return Arrays.asList();
+        } else {
+            return Arrays.asList(sourceData.split("\\r?\\n"));
+        }
     }
 
     /**
      * parses the segment into a list of data elements each date element is separated by an asterisk (*)
      */
     default List<String> splitSegmentIntoDataElements(String segment) {
-        return Arrays.asList(segment.split("\\*"));
+        if (StringUtils.isEmpty(segment)) {
+            return Arrays.asList();
+        } else {
+            return Arrays.asList(segment.split("\\*"));
+        }
     }
 
     /**
      * extracts the first data element in a segment which is the segment identifier
+     * otherwise return an empty String
      */
     default String extractSegmentIdentifier(String segment) {
-        return segment.substring(0, segment.indexOf("*"));
+        if (StringUtils.isEmpty(segment)) {
+            return "";
+        } else {
+            int idx = segment.indexOf("*");
+            if (idx > 0) {
+                return segment.substring(0, idx);
+            } else {
+                return "";
+            }
+        }
     }
 }

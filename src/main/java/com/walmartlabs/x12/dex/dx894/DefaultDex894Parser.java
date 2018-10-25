@@ -610,20 +610,6 @@ public class DefaultDex894Parser implements X12Parser {
         }
     }
 
-//    /**
-//     * moved to default method on X12Parser
-//     */
-//    protected List<String> splitSourceDataIntoSegments(String sourceData) {
-//        return Arrays.asList(sourceData.split("\\r?\\n"));
-//    }
-//
-//    /**
-//     * moved to default method on X12Parser
-//     */
-//    protected List<String> splitSegmentIntoDataElements(String segment) {
-//        return Arrays.asList(segment.split("\\*"));
-//    }
-
     /**
      *
      * @param segmentIdx index denoting which segment/line in the DEX file to work on
@@ -634,10 +620,6 @@ public class DefaultDex894Parser implements X12Parser {
         String segment = dexSegments.get(segmentIdx);
         return this.extractSegmentIdentifier(segment);
     }
-
-//    protected String extractSegmentIdentifier(String segment) {
-//        return segment.substring(0, segment.indexOf("*"));
-//    }
 
     protected int findLastSegmentIndex(List<String> dexSegments) {
         return dexSegments.size() - 1;
