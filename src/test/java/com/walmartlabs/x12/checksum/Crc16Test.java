@@ -103,4 +103,23 @@ public class Crc16Test {
         assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
     }
 
+    @Test
+    public void test_transaction() {
+        String eol = "\r\n";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("ST*894*0001").append(eol);
+        sb.append("G82*D*8325649401*051957769*000001*182737015*PL1124*20170911").append(eol);
+        sb.append("LS*0100").append(eol);
+        sb.append("G83*1*1*CA*007800001182***007800001182*14*2*12z12P Cherry 7UP***").append(eol);
+        sb.append("G83*2*1*CA*007800007016***007800007016*14*2*12z12P DtRiteCherry***").append(eol);
+        sb.append("G83*3*1*CA*007800011616***007800011616*14*2*12z12p SK Grape***").append(eol);
+        sb.append("G83*4*1*CA*007800001084***007800001084*14*2*12z12p AW Ten RtBr***").append(eol);
+        sb.append("LE*0100").append(eol);
+        sb.append("G84*4*5600").append(eol);
+        sb.append("G86*1310B1BF").append(eol);
+
+        assertTrue(crcUtil.verifyBlockOfText("5800", sb.toString()));
+    }
+
 }
