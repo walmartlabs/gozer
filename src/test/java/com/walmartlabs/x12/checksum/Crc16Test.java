@@ -119,7 +119,6 @@ public class Crc16Test {
         sb.append("G84*4*5600").append(eol);
         sb.append("G86*1310B1BF").append(eol);
 
-        System.out.println(crcUtil.generateCyclicRedundancyCheck(sb.toString()));
         assertTrue(crcUtil.verifyBlockOfText("5800", sb.toString()));
     }
 
