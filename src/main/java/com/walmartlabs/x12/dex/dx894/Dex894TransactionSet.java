@@ -80,12 +80,12 @@ public class Dex894TransactionSet {
     // G8403
     private BigDecimal transactionTotalDepositAmount;
 
-
     /*
      * G85
      */
     // G8501
     private String integrityCheckValue;
+    private String transactionData;
 
     /*
      * G86
@@ -97,6 +97,7 @@ public class Dex894TransactionSet {
 
     /**
      * add a DEX item
+     *
      * @param dexItem
      */
     public void addItem(Dex894Item dexItem) {
@@ -274,4 +275,11 @@ public class Dex894TransactionSet {
         this.transactionTotalDepositAmount = transactionTotalDepositAmount;
     }
 
+    public String getTransactionData() {
+        return transactionData;
+    }
+
+    public void setTransactionData(String transactionData) {
+        this.transactionData = transactionData;
+    }
 }

@@ -28,6 +28,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class DefaultDex894ParseValidateTest {
 
@@ -92,6 +93,11 @@ public class DefaultDex894ParseValidateTest {
         // G86 segment
         assertEquals("D83037938029", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
+        // transaction data
+        assertNotNull(dexTx.getTransactionData());
+        assertTrue(dexTx.getTransactionData().startsWith("ST*894*148303793"));
+        assertTrue(dexTx.getTransactionData().contains("G83*15*8*EA*001410008561****1.83\r\n"));
+        assertTrue(dexTx.getTransactionData().endsWith("G86*D83037938029\r\n"));
 
         // items
         List<Dex894Item> dexItemList = dexTx.getItems();
@@ -272,6 +278,10 @@ public class DefaultDex894ParseValidateTest {
         // G86 segment
         assertEquals("D91456290976", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
+        // transaction data
+        assertNotNull(dexTx.getTransactionData());
+        assertTrue(dexTx.getTransactionData().startsWith("ST*894*569145629"));
+        assertTrue(dexTx.getTransactionData().endsWith("G86*D91456290976\r\n"));
 
         // items
         List<Dex894Item> dexItemList = dexTx.getItems();
@@ -339,6 +349,10 @@ public class DefaultDex894ParseValidateTest {
         // G86 segment
         assertEquals("C91456300976", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
+        // transaction data
+        assertNotNull(dexTx.getTransactionData());
+        assertTrue(dexTx.getTransactionData().startsWith("ST*894*569145630"));
+        assertTrue(dexTx.getTransactionData().endsWith("G86*C91456300976\r\n"));
 
         // items
         dexItemList = dexTx.getItems();
@@ -381,7 +395,6 @@ public class DefaultDex894ParseValidateTest {
         assertEquals("1", dex.getTrailerTransmissionControlNumber());
         assertEquals(new Integer(2), dex.getNumberOfTransactions());
     }
-
 
     @Test
     public void testParsingShipment_Dex_with_G22() throws IOException {
@@ -430,6 +443,11 @@ public class DefaultDex894ParseValidateTest {
         // G86 segment
         assertEquals("0840", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
+        // transaction data
+        assertNotNull(dexTx.getTransactionData());
+        assertTrue(dexTx.getTransactionData().startsWith("ST*894*0101"));
+        assertTrue(dexTx.getTransactionData().contains("G83*1*4*EA*007189983548****2.13*1*1/2 GAL TEST 1\r\n"));
+        assertTrue(dexTx.getTransactionData().endsWith("G86*0840\r\n"));
 
         // items
         List<Dex894Item> dexItemList = dexTx.getItems();
@@ -538,6 +556,11 @@ public class DefaultDex894ParseValidateTest {
         // G86 segment
         assertEquals("0840", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
+        // transaction data
+        assertNotNull(dexTx.getTransactionData());
+        assertTrue(dexTx.getTransactionData().startsWith("ST*894*0101"));
+        assertTrue(dexTx.getTransactionData().contains("G83*1*2*CA*007800001180***007800001180*14*2*12z12P 7Up***\r\n"));
+        assertTrue(dexTx.getTransactionData().endsWith("G86*0840\r\n"));
 
         // items
         List<Dex894Item> dexItemList = dexTx.getItems();
@@ -614,6 +637,11 @@ public class DefaultDex894ParseValidateTest {
         // G86 segment
         assertEquals("0840", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
+        // transaction data
+        assertNotNull(dexTx.getTransactionData());
+        assertTrue(dexTx.getTransactionData().startsWith("ST*894*0101"));
+        assertTrue(dexTx.getTransactionData().contains("G83*1*1*CA**UK*00078000011807**14*2*12z12P 7Up***1\r\n"));
+        assertTrue(dexTx.getTransactionData().endsWith("G86*0840\r\n"));
 
         // items
         List<Dex894Item> dexItemList = dexTx.getItems();

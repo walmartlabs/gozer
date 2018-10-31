@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * DEX 894 Base Record Transaction Set is essentially a set of invoices
@@ -187,6 +188,15 @@ public class DefaultDex894Parser implements X12Parser {
                 // update next segment & segment id
                 segment = dexSegments.get(++segmentIdx);
             }
+
+            // store the entire transaction (ST thru G86)
+            // for possible integrity verification
+            StringBuilder transactionData = new StringBuilder();
+            IntStream.range(startingIdx, segmentIdx)
+                .forEach(i -> {
+                    transactionData.append(dexSegments.get(i)).append("\r\n");
+                });
+            dexTx.setTransactionData(transactionData.toString());
 
             // G85 line (mandatory)
             this.parseG85(segment, dexTx);
