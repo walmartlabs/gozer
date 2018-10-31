@@ -9,12 +9,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class Crc16Test {
+public class DefaultCrc16Test {
     CyclicRedundancyCheck crcUtil;
 
     @Before
     public void init() {
-        crcUtil = new Crc16();
+        crcUtil = new DefaultCrc16();
     }
 
     @Test

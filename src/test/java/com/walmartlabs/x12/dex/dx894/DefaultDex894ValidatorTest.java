@@ -945,6 +945,8 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate("19770525");
         dexTx.setExpectedNumberOfSegments(10);
         dexTx.setActualNumberOfSegments(10);
+        dexTx.setTransactionData("hello\r\nworld");
+        dexTx.setIntegrityCheckValue("FC4F");
 
         return dexTx;
     }
