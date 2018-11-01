@@ -42,7 +42,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
     }
 
     @Override
-    public Set<X12ErrorDetail> validate(Dex894 dex) {
+    public Set<X12ErrorDetail> validate(Dex894 dex, boolean performCrcCheck) {
 
         Set<X12ErrorDetail> errors = new HashSet<>();
         if (dex != null) {
@@ -52,7 +52,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
             List<Dex894TransactionSet> dexTxList = dex.getTransactions();
             for (Dex894TransactionSet dexTx : dexTxList) {
-                errors.addAll(this.validateDexTransaction(dex.getVersionNumber(), dexTx));
+                errors.addAll(this.validateDexTransaction(dex.getVersionNumber(), dexTx, performCrcCheck));
             }
         }
         return this.removeNullValues(errors);
@@ -100,13 +100,16 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
      * validate each Transaction in the DEX transmission
      * @param dexVersion
      * @param dexTx
+     * @param performCrcCheck
      * @return
      */
-    protected Set<X12ErrorDetail> validateDexTransaction(Integer dexVersion, Dex894TransactionSet dexTx) {
+    protected Set<X12ErrorDetail> validateDexTransaction(Integer dexVersion, Dex894TransactionSet dexTx, boolean performCrcCheck) {
         Set<X12ErrorDetail> errors = new HashSet<>();
 
         // integrity check
-        errors.add(this.checkTransactionIntegrity(dexVersion, dexTx));
+        if (performCrcCheck) {
+            errors.add(this.checkTransactionIntegrity(dexVersion, dexTx));
+        }
 
         // SE validations
         errors.add(this.checkSupplierNumber(dexVersion, dexTx));

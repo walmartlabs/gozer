@@ -226,6 +226,37 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(new Integer(1), dex.getNumberOfTransactions());
     }
 
+    @Test
+    public void testParsingValidShipmentWithInvalidCrcAndCheckOn() throws IOException {
+        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
+        Dex894 dex = dexParser.parse(new String(dexBytes));
+        assertNotNull(dex);
+
+        // change the G85 value
+        dex.getTransactions().get(0).setIntegrityCheckValue("BOGUS");
+
+        Set<X12ErrorDetail> errors = dexValidator.validate(dex);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G85", xed.getSegmentId());
+        assertEquals("G8501", xed.getElementId());
+        assertEquals("CRC Integrity Check does not match", xed.getMessage());
+    }
+
+    @Test
+    public void testParsingValidShipmentWithInvalidCrcAndCheckOff() throws IOException {
+        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
+        Dex894 dex = dexParser.parse(new String(dexBytes));
+        assertNotNull(dex);
+
+        // change the G85 value
+        dex.getTransactions().get(0).setIntegrityCheckValue("BOGUS");
+
+        Set<X12ErrorDetail> errors = dexValidator.validate(dex, false);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
 
     @Test
     public void testParsingValidShipment() throws IOException {

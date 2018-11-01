@@ -271,7 +271,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, false);
         assertNotNull(errors);
         assertEquals(0, errors.size());
     }
@@ -281,7 +281,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx, false);
         assertNotNull(errors);
         assertEquals(0, errors.size());
     }
@@ -291,7 +291,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         dexTx.setIntegrityCheckValue("NONE");
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, true);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -306,7 +306,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setSupplierNumber(null);
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -321,7 +321,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setSupplierNumber(null);
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -336,7 +336,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setSupplierNumber("");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -351,7 +351,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setSupplierNumber("");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -366,7 +366,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate(null);
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -381,7 +381,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate(null);
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -396,7 +396,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate("");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -411,7 +411,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate("");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -426,7 +426,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate("201804");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
@@ -441,7 +441,7 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate("201804");
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx, false);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();

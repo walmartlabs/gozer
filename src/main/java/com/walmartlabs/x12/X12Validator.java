@@ -21,9 +21,21 @@ import java.util.Set;
 
 public interface X12Validator<T> {
     /**
-     * validate the X12 transmission
+     * validate the X12 transmission including the CRC integrity check
      *
+     * @param pojo the domain object returned by an {@link X12Parser}
      * @return Set of error details ({@link X12ErrorDetail}
      */
-    Set<X12ErrorDetail> validate(T pojo);
+    default Set<X12ErrorDetail> validate(T pojo) {
+        return this.validate(pojo, true);
+    }
+
+    /**
+     * validate the X12 transmission with option to turn on/off the CRC integrity check
+     *
+     * @param pojo the domain object returned by an {@link X12Parser}
+     * @param performCrcCheck set to true to perform the check
+     * @return Set of error details ({@link X12ErrorDetail}
+     */
+    Set<X12ErrorDetail> validate(T pojo, boolean performCrcCheck);
 }
