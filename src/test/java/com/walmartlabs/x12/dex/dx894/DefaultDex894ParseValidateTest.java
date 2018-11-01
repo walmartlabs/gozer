@@ -89,7 +89,7 @@ public class DefaultDex894ParseValidateTest {
         assertEquals("41040.00", dexTx.getTransactionTotalAmount().toString());
         assertEquals(null, dexTx.getTransactionTotalDepositAmount());
         // G85 segment
-        assertEquals("A238", dexTx.getIntegrityCheckValue());
+        assertEquals("45CD", dexTx.getIntegrityCheckValue());
         // G86 segment
         assertEquals("D83037938029", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
@@ -274,7 +274,7 @@ public class DefaultDex894ParseValidateTest {
         assertEquals("7488.00", dexTx.getTransactionTotalAmount().toString());
         assertEquals(null, dexTx.getTransactionTotalDepositAmount());
         // G85 segment
-        assertEquals("8EC2", dexTx.getIntegrityCheckValue());
+        assertEquals("733F", dexTx.getIntegrityCheckValue());
         // G86 segment
         assertEquals("D91456290976", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
@@ -345,7 +345,7 @@ public class DefaultDex894ParseValidateTest {
         assertEquals("856.00", dexTx.getTransactionTotalAmount().toString());
         assertEquals(null, dexTx.getTransactionTotalDepositAmount());
         // G85 segment
-        assertEquals("284B", dexTx.getIntegrityCheckValue());
+        assertEquals("10E4", dexTx.getIntegrityCheckValue());
         // G86 segment
         assertEquals("C91456300976", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
@@ -439,7 +439,7 @@ public class DefaultDex894ParseValidateTest {
         assertEquals("073002", dexTx.getSupplierLocation());
         assertEquals("20180416", dexTx.getTransactionDate());
         // G85 segment
-        assertEquals("8263", dexTx.getIntegrityCheckValue());
+        assertEquals("8A65", dexTx.getIntegrityCheckValue());
         // G86 segment
         assertEquals("0840", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());
@@ -552,7 +552,7 @@ public class DefaultDex894ParseValidateTest {
         assertEquals("073002", dexTx.getSupplierLocation());
         assertEquals("20180416", dexTx.getTransactionDate());
         // G85 segment
-        assertEquals("8263", dexTx.getIntegrityCheckValue());
+        assertEquals("7C7E", dexTx.getIntegrityCheckValue());
         // G86 segment
         assertEquals("0840", dexTx.getElectronicSignature());
         assertEquals(null, dexTx.getSignatureName());

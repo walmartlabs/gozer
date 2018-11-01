@@ -287,6 +287,20 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validateTransactions_failed_crc_check() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setIntegrityCheckValue("NONE");
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+        X12ErrorDetail xed = errors.stream().findFirst().get();
+        assertEquals("G85", xed.getSegmentId());
+        assertEquals("G8501", xed.getElementId());
+        assertEquals("CRC Integrity Check does not match", xed.getMessage());
+    }
+
+    @Test
     public void test_validateTransactions_null_supplier_number_4010() {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         dexTx.setSupplierNumber(null);
@@ -945,6 +959,8 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate("19770525");
         dexTx.setExpectedNumberOfSegments(10);
         dexTx.setActualNumberOfSegments(10);
+        dexTx.setTransactionData("hello\r\nworld");
+        dexTx.setIntegrityCheckValue("FC4F");
 
         return dexTx;
     }

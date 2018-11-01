@@ -16,6 +16,8 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Validator;
+import com.walmartlabs.x12.checksum.CyclicRedundancyCheck;
+import com.walmartlabs.x12.checksum.DefaultCrc16;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import org.springframework.util.StringUtils;
 
@@ -29,6 +31,15 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
     public static final int DEX_4010 = 4010;
     public static final int DEX_5010 = 5010;
 
+    public CyclicRedundancyCheck crc16;
+
+    public DefaultDex894Validator() {
+        this.crc16 = new DefaultCrc16();
+    }
+
+    public DefaultDex894Validator(CyclicRedundancyCheck crc16) {
+        this.crc16 = crc16;
+    }
 
     @Override
     public Set<X12ErrorDetail> validate(Dex894 dex) {
@@ -93,6 +104,9 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
      */
     protected Set<X12ErrorDetail> validateDexTransaction(Integer dexVersion, Dex894TransactionSet dexTx) {
         Set<X12ErrorDetail> errors = new HashSet<>();
+
+        // integrity check
+        errors.add(this.checkTransactionIntegrity(dexVersion, dexTx));
 
         // SE validations
         errors.add(this.checkSupplierNumber(dexVersion, dexTx));
@@ -201,6 +215,21 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
             detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7205", "Must have allowance rate, percent, or amount");
 
         }
+        return detail;
+    }
+
+    /**
+     * make sure the transaction (ST - G86) matches integrity check value on G85
+     */
+    protected X12ErrorDetail checkTransactionIntegrity(Integer dexVersion, Dex894TransactionSet dexTx) {
+        X12ErrorDetail detail = null;
+
+        if (dexTx != null && crc16 != null) {
+            if (! crc16.verifyBlockOfText(dexTx.getIntegrityCheckValue(), dexTx.getTransactionData())) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G85_ID, "G8501", "CRC Integrity Check does not match");
+            }
+        }
+
         return detail;
     }
 
