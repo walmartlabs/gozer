@@ -291,7 +291,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         dexTx.setIntegrityCheckValue("NONE");
 
-        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx);
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, true);
         assertNotNull(errors);
         assertEquals(1, errors.size());
         X12ErrorDetail xed = errors.stream().findFirst().get();
