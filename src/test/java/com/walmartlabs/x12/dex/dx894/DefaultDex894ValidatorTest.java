@@ -88,9 +88,7 @@ public class DefaultDex894ValidatorTest {
         assertNotNull(errorSet);
         assertEquals(2, errorSet.size());
 
-        List<X12ErrorDetail> list = errorSet.stream()
-            .sorted((o1,o2) -> o1.getMessage().compareTo(o2.getMessage()))
-            .collect(Collectors.toList());
+        List<X12ErrorDetail> list = errorSet.stream().sorted((o1, o2) -> o1.getMessage().compareTo(o2.getMessage())).collect(Collectors.toList());
 
         X12ErrorDetail xed = list.get(0);
         assertEquals("G82", xed.getSegmentId());
@@ -282,6 +280,42 @@ public class DefaultDex894ValidatorTest {
         dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA, 5010));
 
         Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(5010, dexTx, false);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateTransactions_valid_crc_check() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ST*894*10000").append("\r\n");
+        sb.append("G82*C*2378008*051957769*1085*008506768*000000*20181128").append("\r\n");
+        sb.append("LS*0100").append("\r\n");
+        sb.append("G83*1*1*EA*004750001744****2.69*1*THIS IS A TEST").append("\r\n");
+        sb.append("LE*0100").append("\r\n");
+        sb.append("G84*1*269*00").append("\r\n");
+        sb.append("G86*8B92").append("\r\n");
+
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A", sb.toString(), "91D7");
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, true);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateTransactions_valid_crc_check_padded() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ST*894*10000").append("\r\n");
+        sb.append("G82*C*2378008*051957769*1085*008506768*000000*20181128").append("\r\n");
+        sb.append("LS*0100").append("\r\n");
+        sb.append("G83*1*1*EA*004750001744****2.69*1*SMOKED SAU STICKS OR").append("\r\n");
+        sb.append("LE*0100").append("\r\n");
+        sb.append("G84*1*269*00").append("\r\n");
+        sb.append("G86*8B92").append("\r\n");
+
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A", sb.toString(), "05FA");
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, true);
         assertNotNull(errors);
         assertEquals(0, errors.size());
     }
@@ -534,7 +568,6 @@ public class DefaultDex894ValidatorTest {
         assertEquals("Quantity must be positive", xed.getMessage());
     }
 
-
     @Test
     public void test_validateItems_missing_uom_4010() {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
@@ -598,7 +631,6 @@ public class DefaultDex894ValidatorTest {
         assertEquals("G8303", xed.getElementId());
         assertEquals("Missing/unknown unit of measure", xed.getMessage());
     }
-
 
     @Test
     public void test_validateItems_null_upc_4010() {
@@ -829,9 +861,7 @@ public class DefaultDex894ValidatorTest {
         Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
         assertNotNull(errors);
         assertEquals(2, errors.size());
-        List<X12ErrorDetail> list = errors.stream()
-            .sorted((o1,o2) -> o1.getElementId().compareTo(o2.getElementId()))
-            .collect(Collectors.toList());
+        List<X12ErrorDetail> list = errors.stream().sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId())).collect(Collectors.toList());
         X12ErrorDetail xed = list.get(0);
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8305", xed.getElementId());
@@ -842,7 +872,6 @@ public class DefaultDex894ValidatorTest {
         assertEquals("G8311", xed.getElementId());
         assertEquals("Missing case qualifier", xed.getMessage());
     }
-
 
     @Test
     public void test_validateAllowance_null() {
@@ -861,9 +890,7 @@ public class DefaultDex894ValidatorTest {
         assertNotNull(errors);
         assertEquals(3, errors.size());
 
-        List<X12ErrorDetail> list = errors.stream()
-            .sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId()))
-            .collect(Collectors.toList());
+        List<X12ErrorDetail> list = errors.stream().sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId())).collect(Collectors.toList());
 
         X12ErrorDetail xed = list.get(0);
         assertEquals("G72", xed.getSegmentId());
@@ -951,7 +978,7 @@ public class DefaultDex894ValidatorTest {
         return dexTxList;
     }
 
-    protected Dex894TransactionSet generateOneTransaction(String invoiceNumber) {
+    protected Dex894TransactionSet generateOneTransaction(String invoiceNumber, String transData, String crcValue) {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         dexTx.setHeaderControlNumber("569145631");
         dexTx.setTrailerControlNumber("569145631");
@@ -959,10 +986,14 @@ public class DefaultDex894ValidatorTest {
         dexTx.setTransactionDate("19770525");
         dexTx.setExpectedNumberOfSegments(10);
         dexTx.setActualNumberOfSegments(10);
-        dexTx.setTransactionData("hello\r\nworld");
-        dexTx.setIntegrityCheckValue("FC4F");
+        dexTx.setTransactionData(transData);
+        dexTx.setIntegrityCheckValue(crcValue);
 
         return dexTx;
+    }
+
+    protected Dex894TransactionSet generateOneTransaction(String invoiceNumber) {
+        return this.generateOneTransaction(invoiceNumber, "hello\r\nworld", "FC4F");
     }
 
     protected Dex894Item generateOneItem(String seqNumber, UnitMeasure uom) {
