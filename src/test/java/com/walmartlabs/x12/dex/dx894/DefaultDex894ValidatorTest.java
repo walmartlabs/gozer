@@ -863,7 +863,10 @@ public class DefaultDex894ValidatorTest {
         Set<X12ErrorDetail> errors = dexValidator.validateItems(5010, dexTx);
         assertNotNull(errors);
         assertEquals(2, errors.size());
-        List<X12ErrorDetail> list = errors.stream().sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId())).collect(Collectors.toList());
+        List<X12ErrorDetail> list = errors.stream()
+            .sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId()))
+            .collect(Collectors.toList());
+
         X12ErrorDetail xed = list.get(0);
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8305", xed.getElementId());
@@ -892,7 +895,9 @@ public class DefaultDex894ValidatorTest {
         assertNotNull(errors);
         assertEquals(3, errors.size());
 
-        List<X12ErrorDetail> list = errors.stream().sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId())).collect(Collectors.toList());
+        List<X12ErrorDetail> list = errors.stream()
+            .sorted((o1, o2) -> o1.getElementId().compareTo(o2.getElementId()))
+            .collect(Collectors.toList());
 
         X12ErrorDetail xed = list.get(0);
         assertEquals("G72", xed.getSegmentId());
