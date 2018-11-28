@@ -10,7 +10,7 @@
   <groupId>com.walmartlabs.x12</groupId>
   <artifactId>gozer</artifactId>
   <name>gozer</name>
-  <version>0.1.3</version>
+  <version>0.1.4-SNAPSHOT</version>
   <packaging>takari-jar</packaging>
 
   <properties>
@@ -56,8 +56,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <scm>
-    <tag>gozer-0.1.3</tag>
-  </scm>
 </project>
