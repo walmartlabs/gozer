@@ -1,5 +1,6 @@
 package com.walmartlabs.x12.checksum;
 
+import com.walmartlabs.x12.dex.dx894.DefaultDex894Validator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,6 +49,46 @@ public class DefaultCrc16Test {
     }
 
     @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_negative() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, -1);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_zero() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 0);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_smaller() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 2);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_equal() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 4);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_larger() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 8);
+        assertNotNull(crcValue);
+        assertEquals("0000BB3D", crcValue);
+    }
+
+    @Test
     public void test_verifyBlockOfText_null() {
         String crcValue = null;
         String blockText = null;
@@ -90,21 +131,21 @@ public class DefaultCrc16Test {
     }
 
     @Test
-    public void test_verifyBlockOfText_123456789_false() {
+    public void test_verifyBlockOfText_123456789_noMatch() {
         String crcValue = "FFFF";
         String blockText = "123456789";
         assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
     }
 
     @Test
-    public void test_verifyBlockOfText_hello_world_true() {
+    public void test_verifyBlockOfText_hello_world_matches() {
         String crcValue = "FC4F";
         String blockText = "hello\r\nworld";
         assertTrue(crcUtil.verifyBlockOfText(crcValue, blockText));
     }
 
     @Test
-    public void test_verifyBlockOfText_hello_world_false() {
+    public void test_verifyBlockOfText_hello_world_noMatch() {
         String crcValue = "FFFF";
         String blockText = "hello";
         assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
@@ -129,4 +170,23 @@ public class DefaultCrc16Test {
         assertTrue(crcUtil.verifyBlockOfText("5800", sb.toString()));
     }
 
+    @Test
+    public void test_transaction_padding() {
+        String eol = "\r\n";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("ST*894*10000").append(eol);
+        sb.append("G82*C*2378008*051957769*1085*008506768*000000*20181128").append(eol);
+        sb.append("LS*0100").append(eol);
+        sb.append("G83*1*1*EA*004750001744****2.69*1*SMOKED SAU STICKS OR").append(eol);
+        sb.append("LE*0100").append(eol);
+        sb.append("G84*1*269*00").append(eol);
+        sb.append("G86*8B92").append(eol);
+
+        assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString()));
+        assertFalse(crcUtil.verifyBlockOfText("05FA", sb.toString()));
+        assertTrue(crcUtil.verifyBlockOfText("05FA", sb.toString(), DefaultDex894Validator.DEX_CRC_VALUE_MIN_SIZE));
+        assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), -1));
+        assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), 0));
+    }
 }

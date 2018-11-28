@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 public class DefaultDex894Validator implements X12Validator<Dex894> {
 
+    public static final int DEX_CRC_VALUE_MIN_SIZE = 4;
     public static final int DEX_4010 = 4010;
     public static final int DEX_5010 = 5010;
 
@@ -228,7 +229,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         X12ErrorDetail detail = null;
 
         if (dexTx != null && crc16 != null) {
-            if (! crc16.verifyBlockOfText(dexTx.getIntegrityCheckValue(), dexTx.getTransactionData())) {
+            if (! crc16.verifyBlockOfText(dexTx.getIntegrityCheckValue(), dexTx.getTransactionData(), DEX_CRC_VALUE_MIN_SIZE)) {
                 detail = new X12ErrorDetail(DefaultDex894Parser.G85_ID, "G8501", "CRC Integrity Check does not match");
             }
         }
