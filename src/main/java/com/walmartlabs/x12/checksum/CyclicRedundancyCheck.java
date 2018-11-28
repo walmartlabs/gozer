@@ -17,7 +17,7 @@ public interface CyclicRedundancyCheck {
                 crcValue != null && crcValue.length() > 0) {
 
             String generatedCrcValue = this.generateCyclicRedundancyCheck(blockOfText);
-            if (crcValue.equals(generatedCrcValue)) {
+            if (crcValue.equalsIgnoreCase(generatedCrcValue)) {
                 crcMatches = true;
             }
         }
