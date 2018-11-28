@@ -65,6 +65,14 @@ public class DefaultCrc16Test {
     }
 
     @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_equal() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 4);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
     public void test_generateCyclicRedundancyCheck_123456789_padding_larger() {
         String blockText = "123456789";
         String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 8);
