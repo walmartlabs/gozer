@@ -88,7 +88,9 @@ public class DefaultDex894ValidatorTest {
         assertNotNull(errorSet);
         assertEquals(2, errorSet.size());
 
-        List<X12ErrorDetail> list = errorSet.stream().sorted((o1, o2) -> o1.getMessage().compareTo(o2.getMessage())).collect(Collectors.toList());
+        List<X12ErrorDetail> list = errorSet.stream()
+            .sorted((o1, o2) -> o1.getMessage().compareTo(o2.getMessage()))
+            .collect(Collectors.toList());
 
         X12ErrorDetail xed = list.get(0);
         assertEquals("G82", xed.getSegmentId());
