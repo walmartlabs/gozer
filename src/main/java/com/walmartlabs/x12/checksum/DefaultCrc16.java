@@ -3,10 +3,15 @@ package com.walmartlabs.x12.checksum;
 /**
  * CRC-16 Uses irreducible polynomial: 1 + x^2 + x^15 + x^16
  *
+ * This implementation has an expected value of 0xBB3D for the input "123456789"
+ * That corresponds to the CRC-16 algorithm known as CRC-16/ARC and CRC-16/IBM
+ *
  * Source: DEX UCS Appendix B
  * Source: https://introcs.cs.princeton.edu/java/61data/CRC16.java
  * Source: https://www.lammertbies.nl/comm/info/crc-calculation.html
  * Source: https://www.scadacore.com/tools/programming-calculators/online-checksum-calculator/
+ * Source: https://www.lammertbies.nl/comm/info/crc-calculation.html
+ * Source: http://reveng.sourceforge.net/crc-catalogue/16.htm
  *
  */
 public class DefaultCrc16 implements CyclicRedundancyCheck {
