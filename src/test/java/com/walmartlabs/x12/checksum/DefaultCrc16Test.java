@@ -49,6 +49,14 @@ public class DefaultCrc16Test {
     }
 
     @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_negative() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, -1);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
     public void test_generateCyclicRedundancyCheck_123456789_padding_zero() {
         String blockText = "123456789";
         String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 0);
@@ -123,21 +131,21 @@ public class DefaultCrc16Test {
     }
 
     @Test
-    public void test_verifyBlockOfText_123456789_false() {
+    public void test_verifyBlockOfText_123456789_noMatch() {
         String crcValue = "FFFF";
         String blockText = "123456789";
         assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
     }
 
     @Test
-    public void test_verifyBlockOfText_hello_world_true() {
+    public void test_verifyBlockOfText_hello_world_matches() {
         String crcValue = "FC4F";
         String blockText = "hello\r\nworld";
         assertTrue(crcUtil.verifyBlockOfText(crcValue, blockText));
     }
 
     @Test
-    public void test_verifyBlockOfText_hello_world_false() {
+    public void test_verifyBlockOfText_hello_world_noMatch() {
         String crcValue = "FFFF";
         String blockText = "hello";
         assertFalse(crcUtil.verifyBlockOfText(crcValue, blockText));
@@ -178,6 +186,7 @@ public class DefaultCrc16Test {
         assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString()));
         assertFalse(crcUtil.verifyBlockOfText("05FA", sb.toString()));
         assertTrue(crcUtil.verifyBlockOfText("05FA", sb.toString(), DefaultDex894Validator.DEX_CRC_VALUE_MIN_SIZE));
-
+        assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), -1));
+        assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), 0));
     }
 }
