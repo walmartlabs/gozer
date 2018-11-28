@@ -50,14 +50,7 @@ public interface CyclicRedundancyCheck {
         boolean crcMatches = false;
 
         if (blockOfText != null && blockOfText.length() > 0 && crcValue != null && crcValue.length() > 0) {
-
-            StringBuilder generatedCrcValue = new StringBuilder();
-            if (minSize > 0) {
-                generatedCrcValue.append(this.generateCyclicRedundancyCheck(blockOfText, minSize));
-            } else {
-                generatedCrcValue.append(this.generateCyclicRedundancyCheck(blockOfText));
-            }
-
+            String generatedCrcValue = this.generateCyclicRedundancyCheck(blockOfText, minSize);
             if (crcValue.equalsIgnoreCase(generatedCrcValue.toString())) {
                 crcMatches = true;
             }
