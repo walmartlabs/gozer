@@ -83,6 +83,13 @@ public class DefaultCrc16Test {
     }
 
     @Test
+    public void test_verifyBlockOfText_123456789_true_lower_case() {
+        String crcValue = "bb3d";
+        String blockText = "123456789";
+        assertTrue(crcUtil.verifyBlockOfText(crcValue, blockText));
+    }
+
+    @Test
     public void test_verifyBlockOfText_123456789_false() {
         String crcValue = "FFFF";
         String blockText = "123456789";
