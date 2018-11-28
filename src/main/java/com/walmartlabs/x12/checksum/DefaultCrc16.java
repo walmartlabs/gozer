@@ -51,4 +51,8 @@ public class DefaultCrc16 implements CyclicRedundancyCheck {
         return hexString;
     }
 
+    @Override
+    public String toString() {
+        return "CRC-16/IBM";
+    }
 }

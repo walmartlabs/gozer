@@ -1,5 +1,6 @@
 package com.walmartlabs.x12.checksum;
 
+import com.walmartlabs.x12.dex.dx894.DefaultDex894Validator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,6 +46,30 @@ public class DefaultCrc16Test {
         String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText);
         assertNotNull(crcValue);
         assertEquals("BB3D", crcValue);
+    }
+
+    @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_zero() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 0);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_smaller() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 2);
+        assertNotNull(crcValue);
+        assertEquals("BB3D", crcValue);
+    }
+
+    @Test
+    public void test_generateCyclicRedundancyCheck_123456789_padding_larger() {
+        String blockText = "123456789";
+        String crcValue = crcUtil.generateCyclicRedundancyCheck(blockText, 8);
+        assertNotNull(crcValue);
+        assertEquals("0000BB3D", crcValue);
     }
 
     @Test
@@ -129,4 +154,22 @@ public class DefaultCrc16Test {
         assertTrue(crcUtil.verifyBlockOfText("5800", sb.toString()));
     }
 
+    @Test
+    public void test_transaction_padding() {
+        String eol = "\r\n";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("ST*894*10000").append(eol);
+        sb.append("G82*C*2378008*051957769*1085*008506768*000000*20181128").append(eol);
+        sb.append("LS*0100").append(eol);
+        sb.append("G83*1*1*EA*004750001744****2.69*1*SMOKED SAU STICKS OR").append(eol);
+        sb.append("LE*0100").append(eol);
+        sb.append("G84*1*269*00").append(eol);
+        sb.append("G86*8B92").append(eol);
+
+        assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString()));
+        assertFalse(crcUtil.verifyBlockOfText("05FA", sb.toString()));
+        assertTrue(crcUtil.verifyBlockOfText("05FA", sb.toString(), DefaultDex894Validator.DEX_CRC_VALUE_MIN_SIZE));
+
+    }
 }
