@@ -293,13 +293,22 @@ public class DefaultDex894Parser implements X12Parser {
             segmentId = this.extractSegmentIdentifier(segment);
         }
 
+        // TODO: does the spec allow more than one?
+        // currently turning off
         // G72 allowance (optional)
+        while (G72_ID.equals(segmentId)) {
+            // skip for now
+            segment = dexSegments.get(++segmentIdx);
+            segmentId = this.extractSegmentIdentifier(segment);
+        }
+        /*
         if (G72_ID.equals(segmentId)) {
             this.parseG72(segment, dexItem);
             // update next segment & segment id
             segment = dexSegments.get(++segmentIdx);
             segmentId = this.extractSegmentIdentifier(segment);
         }
+        */
 
         dexTx.addItem(dexItem);
 
