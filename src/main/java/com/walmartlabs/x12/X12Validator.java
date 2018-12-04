@@ -19,7 +19,7 @@ import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 
 import java.util.Set;
 
-public interface X12Validator<T> {
+public interface X12Validator<T extends X12Document> {
     /**
      * validate the X12 transmission including the CRC integrity check
      *

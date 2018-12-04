@@ -15,10 +15,12 @@ limitations under the License.
  */
 package com.walmartlabs.x12.dex.dx894;
 
+import com.walmartlabs.x12.X12Document;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Dex894 {
+public class Dex894 implements X12Document {
     // DXS01
     private String senderCommId;
     // DXS02
@@ -38,6 +40,14 @@ public class Dex894 {
     private Integer numberOfTransactions;
 
     private List<Dex894TransactionSet> transactions;
+
+    /**
+     * DEX type
+     */
+    @Override
+    public String getX12DocumentType() {
+        return "DX";
+    }
 
     /**
      * add a DEX transaction

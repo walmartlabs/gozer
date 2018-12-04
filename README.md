@@ -20,11 +20,11 @@ The validator will not throw an exception under normal circumstances. Instead an
 
 ```java
 
-String dexMessage = ...
-DefaultDex894Parser dexParser = new DefaultDex894Parser();
-DefaultDex894Validator dexValidator = new DefaultDex894Validator();
+String x12Message = ...
+X12Parser dexParser = new DefaultDex894Parser();
+X12Validator dexValidator = new DefaultDex894Validator();
 
-Dex894 dex = dexParser.parse(dexMessage);
+X12Document dex = dexParser.parse(dexMessage);
 Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
 
 ```

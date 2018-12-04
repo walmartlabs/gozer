@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 
-public interface X12Parser {
+public interface X12Parser<T extends X12Document> {
 
     /**
      * parse the X12 transmission into a representative Java object
@@ -29,7 +29,7 @@ public interface X12Parser {
      * @return the representative Java object
      * @throws X12ParserException
      */
-    <T> T parse(String sourceData);
+    T parse(String sourceData);
 
     /**
      * parses the source data into a list of segments each line in the source data is a segment

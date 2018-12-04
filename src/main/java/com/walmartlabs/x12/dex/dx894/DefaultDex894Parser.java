@@ -56,7 +56,7 @@ import java.util.stream.IntStream;
  * -- SE
  *
  */
-public class DefaultDex894Parser implements X12Parser {
+public class DefaultDex894Parser implements X12Parser<Dex894> {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDex894Parser.class);
 
     public static final String APPLICATION_HEADER_ID = "DXS";
