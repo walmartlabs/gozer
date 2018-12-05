@@ -15,6 +15,10 @@ This open source library, available through @WalmartLabs, provides Java based cl
 
 Gozer seeks to provide more than a generic X12 parsing capability that turns an EDI X12 message into a list of segments and elements. Gozer hopes to provide a library of easy to use classes, that can transform the parsed message into a POJO that corresponds with a specific X12 format. Attributes are labeled with their buisness names rather than the more cryptic segement identifiers. It further provides basic validation capabilities as defined in the EDI X12 manuals for each format.   
 
+## Why the name Gozer
+
+The Agile development team at @WalmartLabs that is responsible for the design and development of "inbound processing" is called the GhostBusters. Inbound Processing covers the broad array of micro-services involved with moving and receiving merchandise between locations, including  the supplier to the distribution center, the supplier to the store (DSD), and the distribution center to the store.  
+
 ## Getting Started: Using the Parsers and Validators
 
 Each X12 format that is supported will have a Java implementation for both the `X12Parser` and `X12Validator`. The parser will be responsible for parsing the message in the given format to the representative Java object model (POJO). The validator will be responsible for providing validations applying them to the values stored in the POJO that the parser creates.
