@@ -1,7 +1,6 @@
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Parser;
-import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +13,6 @@ import java.util.List;
  * Used to communicate the contents of a shipment prior to arriving at the facility
  * where the contents will be delivered.
  *
- * Envelope
- * -- DXS
- * ----- Transactions
- * -- DXE
  */
 public class DefaultAsn856Parser implements X12Parser<Asn856> {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856Parser.class);
@@ -35,7 +30,7 @@ public class DefaultAsn856Parser implements X12Parser<Asn856> {
 
         if (!StringUtils.isEmpty(sourceData)) {
             asn856 = new Asn856();
-            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
+            List<String> segmentLines = this.splitSourceDataIntoSegments(sourceData);
 
             // TODO: implement the parser
         }
