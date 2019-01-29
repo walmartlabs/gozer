@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface X12Parser<T extends X12Document> {
 
@@ -34,39 +35,14 @@ public interface X12Parser<T extends X12Document> {
     /**
      * parses the source data into a list of segments each line in the source data is a segment
      */
-    default List<String> splitSourceDataIntoSegments(String sourceData) {
+    default List<X12Segment> splitSourceDataIntoSegments(String sourceData) {
         if (StringUtils.isEmpty(sourceData)) {
             return Arrays.asList();
         } else {
-            return Arrays.asList(sourceData.split("\\r?\\n"));
+            return Arrays.asList(sourceData.split("\\r?\\n")).stream()
+                .map(segment -> new X12Segment(segment))
+                .collect(Collectors.toList());
         }
     }
 
-    /**
-     * parses the segment into a list of data elements each date element is separated by an asterisk (*)
-     */
-    default List<String> splitSegmentIntoDataElements(String segment) {
-        if (StringUtils.isEmpty(segment)) {
-            return Arrays.asList();
-        } else {
-            return Arrays.asList(segment.split("\\*"));
-        }
-    }
-
-    /**
-     * extracts the first data element in a segment which is the segment identifier
-     * otherwise return an empty String
-     */
-    default String extractSegmentIdentifier(String segment) {
-        if (StringUtils.isEmpty(segment)) {
-            return "";
-        } else {
-            int idx = segment.indexOf("*");
-            if (idx > 0) {
-                return segment.substring(0, idx);
-            } else {
-                return "";
-            }
-        }
-    }
 }

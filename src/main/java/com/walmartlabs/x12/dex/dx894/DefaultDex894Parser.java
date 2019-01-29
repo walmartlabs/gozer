@@ -16,6 +16,7 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Parser;
+import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.VersionUtil;
@@ -86,26 +87,26 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         if (!StringUtils.isEmpty(sourceData)) {
             dex = new Dex894();
-            List<String> dexLines = this.splitSourceDataIntoSegments(sourceData);
+            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
 
-            if (!this.isValidEnvelope(dexLines)) {
-                throw new X12ParserException("Invalid DEX envelope");
+            if (!this.isValidEnvelope(segmentLines)) {
+                throw new X12ParserException("invalid envelope");
             } else {
                 try {
-                    int lastSegment = this.findLastSegmentIndex(dexLines);
+                    int lastSegmentIndex = this.findLastSegmentIndex(segmentLines);
                     // application header
-                    this.parseApplicationHeader(dexLines.get(0), dex);
+                    this.parseApplicationHeader(segmentLines.get(0), dex);
 
                     // parse transactions...
                     int idx = 1;
                     do {
                         Dex894TransactionSet dexTx = new Dex894TransactionSet();
-                        idx = this.parseDexTransaction(idx, dexLines, dexTx);
+                        idx = this.parseDexTransaction(idx, segmentLines, dexTx);
                         dex.addTransaction(dexTx);
-                    } while (idx < lastSegment);
+                    } while (idx < lastSegmentIndex);
 
                     // application trailer
-                    this.parseApplicationTrailer(dexLines.get(lastSegment), dex);
+                    this.parseApplicationTrailer(segmentLines.get(lastSegmentIndex), dex);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     throw new X12ParserException("Invalid DEX message: missing mandatory fields");
                 } catch (StringIndexOutOfBoundsException e) {
@@ -125,12 +126,14 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @param dexSegments
      * @return true when valid and false otherwise
      */
-    protected boolean isValidEnvelope(List<String> dexSegments) {
+    protected boolean isValidEnvelope(List<X12Segment> dexSegments) {
         boolean isValidEnvelope = false;
-        int lastSegment = this.findLastSegmentIndex(dexSegments);
+        int lastSegmentIndex = this.findLastSegmentIndex(dexSegments);
         if (dexSegments.size() > 2) {
-            if (APPLICATION_HEADER_ID.equals(this.segmentIdentifier(0, dexSegments))
-                    && APPLICATION_TRAILER_ID.equals(this.segmentIdentifier(lastSegment, dexSegments))) {
+            X12Segment headerSegment = dexSegments.get(0);
+            X12Segment trailerSegment = dexSegments.get(lastSegmentIndex);
+            if (APPLICATION_HEADER_ID.equals(headerSegment.getSegmentIdentifier())
+                    && APPLICATION_TRAILER_ID.equals(trailerSegment.getSegmentIdentifier())) {
                 isValidEnvelope = true;
             }
         }
@@ -146,10 +149,10 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX transaction is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected int parseDexTransaction(final int startingIdx, final List<String> dexSegments, final Dex894TransactionSet dexTx) {
+    protected int parseDexTransaction(final int startingIdx, final List<X12Segment> dexSegments, final Dex894TransactionSet dexTx) {
         LOGGER.debug("parseDexTransaction:" + startingIdx);
-        String segment = dexSegments.get(startingIdx);
-        String segmentId = this.extractSegmentIdentifier(segment);
+        X12Segment segment = dexSegments.get(startingIdx);
+        String segmentId = segment.getSegmentIdentifier();
 
         int segmentIdx = startingIdx;
         if (!TRANSACTION_SET_HEADER_ID.equals(segmentId)) {
@@ -168,18 +171,20 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             segmentIdx++;
             do {
                 segmentIdx = this.parseDexTransactionLoop(segmentIdx, dexSegments, dexTx);
-            } while (TRANSACTION_SET_HEADER_ID.equals(this.segmentIdentifier(segmentIdx, dexSegments)));
+                segment = dexSegments.get(segmentIdx);
+                segmentId = segment.getSegmentIdentifier();
+            } while (TRANSACTION_SET_HEADER_ID.equals(segmentId));
 
             // next set of lines after the transaction loop can vary
             segment = dexSegments.get(segmentIdx);
-            segmentId = this.extractSegmentIdentifier(segment);
+            segmentId = segment.getSegmentIdentifier();
 
             // G84 line (conditional)
             if (G84_ID.equals(segmentId)) {
                 this.parseG84(segment, dexTx);
                 // update next segment & segment id
                 segment = dexSegments.get(++segmentIdx);
-                segmentId = this.extractSegmentIdentifier(segment);
+                segmentId = segment.getSegmentIdentifier();
             }
 
             // G86 line (optional)
@@ -225,10 +230,10 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX transaction loop is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected int parseDexTransactionLoop(final int startingIdx, final List<String> dexSegments, final Dex894TransactionSet dexTx) {
+    protected int parseDexTransactionLoop(final int startingIdx, final List<X12Segment> dexSegments, final Dex894TransactionSet dexTx) {
         LOGGER.debug("parseDexTransactionLoop:" + startingIdx);
-        String segment = dexSegments.get(startingIdx);
-        String segmentId = this.extractSegmentIdentifier(segment);
+        X12Segment segment = dexSegments.get(startingIdx);
+        String segmentId = segment.getSegmentIdentifier();
 
         int segmentIdx = startingIdx;
         if (!LOOP_HEADER_ID.equals(segmentId)) {
@@ -243,7 +248,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             do {
                 // get the segment
                 segment = dexSegments.get(segmentIdx);
-                segmentId = this.extractSegmentIdentifier(segment);
+                segmentId = segment.getSegmentIdentifier();
 
                 if (G83_ID.equals(segmentId)) {
                     segmentIdx = this.parseDexItem(segmentIdx, dexSegments, dexTx);
@@ -271,11 +276,11 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected int parseDexItem(final int startingIdx, final List<String> dexSegments, final Dex894TransactionSet dexTx) {
+    protected int parseDexItem(final int startingIdx, final List<X12Segment> dexSegments, final Dex894TransactionSet dexTx) {
         LOGGER.debug("parseDexItem:" + startingIdx);
 
         int segmentIdx = startingIdx;
-        String segment = dexSegments.get(segmentIdx);
+        X12Segment segment = dexSegments.get(segmentIdx);
 
         // G83 marks a new DEX item
         Dex894Item dexItem = new Dex894Item();
@@ -283,14 +288,14 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         // check next segments
         segment = dexSegments.get(++segmentIdx);
-        String segmentId = this.extractSegmentIdentifier(segment);
+        String segmentId = segment.getSegmentIdentifier();
 
         // G22 pricing (optional)
         if (G22_ID.equals(segmentId)) {
             this.parseG22(segment, dexItem);
             // update next segment & segment id
             segment = dexSegments.get(++segmentIdx);
-            segmentId = this.extractSegmentIdentifier(segment);
+            segmentId = segment.getSegmentIdentifier();
         }
 
         // TODO: does the spec allow more than one?
@@ -299,7 +304,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         while (G72_ID.equals(segmentId)) {
             // skip for now
             segment = dexSegments.get(++segmentIdx);
-            segmentId = this.extractSegmentIdentifier(segment);
+            segmentId = segment.getSegmentIdentifier();
         }
         /*
         if (G72_ID.equals(segmentId)) {
@@ -322,19 +327,18 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseApplicationHeader(String headerSegment, Dex894 dex) {
-        LOGGER.debug(this.extractSegmentIdentifier(headerSegment));
-        List<String> elements = this.splitSegmentIntoDataElements(headerSegment);
+    protected void parseApplicationHeader(X12Segment headerSegment, Dex894 dex) {
+        LOGGER.debug(headerSegment.getSegmentIdentifier());
 
-        String segmentIdentifer = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifer = headerSegment.getSegmentIdentifier();
         if (APPLICATION_HEADER_ID.equals(segmentIdentifer)) {
-            dex.setSenderCommId(this.retreiveElementFromSegment(elements, 1));
-            dex.setFunctionalId(this.retreiveElementFromSegment(elements, 2));
-            dex.setVersion(this.retreiveElementFromSegment(elements, 3));
+            dex.setSenderCommId(headerSegment.getSegmentElement(1));
+            dex.setFunctionalId(headerSegment.getSegmentElement(2));
+            dex.setVersion(headerSegment.getSegmentElement(3));
             this.parseVersion(dex);
-            dex.setHeaderTransmissionControlNumber(this.retreiveElementFromSegment(elements, 4));
-            dex.setReceiverCommId(this.retreiveElementFromSegment(elements, 5));
-            dex.setTestIndicator(this.retreiveElementFromSegment(elements, 6));
+            dex.setHeaderTransmissionControlNumber(headerSegment.getSegmentElement(4));
+            dex.setReceiverCommId(headerSegment.getSegmentElement(5));
+            dex.setTestIndicator(headerSegment.getSegmentElement(6));
         } else {
             throwParserException(APPLICATION_HEADER_ID, segmentIdentifer);
         }
@@ -353,14 +357,13 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseTransactionSetHeader(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseTransactionSetHeader(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (TRANSACTION_SET_HEADER_ID.equals(segmentIdentifier)) {
-            dexTx.setTransactionSetIdentifierCode(this.retreiveElementFromSegment(elements, 1));
-            dexTx.setHeaderControlNumber(this.retreiveElementFromSegment(elements, 2));
+            dexTx.setTransactionSetIdentifierCode(segment.getSegmentElement(1));
+            dexTx.setHeaderControlNumber(segment.getSegmentElement(2));
         } else {
             throwParserException(TRANSACTION_SET_HEADER_ID, segmentIdentifier);
         }
@@ -374,21 +377,20 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseG82(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseG82(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (G82_ID.equals(segmentIdentifier)) {
-            dexTx.setDebitCreditFlag(InvoiceType.convertDebitCreditFlag(this.retreiveElementFromSegment(elements, 1)));
-            dexTx.setSupplierNumber(this.retreiveElementFromSegment(elements, 2));
-            dexTx.setReceiverDuns(this.retreiveElementFromSegment(elements, 3));
-            dexTx.setReceiverLocation(this.retreiveElementFromSegment(elements, 4));
-            dexTx.setSupplierDuns(this.retreiveElementFromSegment(elements, 5));
-            dexTx.setSupplierLocation(this.retreiveElementFromSegment(elements, 6));
-            dexTx.setTransactionDate(this.retreiveElementFromSegment(elements, 7));
-            dexTx.setPurchaseOrderNumber(this.retreiveElementFromSegment(elements, 8));
-            dexTx.setPurchaseOrderDate(this.retreiveElementFromSegment(elements, 9));
+            dexTx.setDebitCreditFlag(InvoiceType.convertDebitCreditFlag(segment.getSegmentElement(1)));
+            dexTx.setSupplierNumber(segment.getSegmentElement(2));
+            dexTx.setReceiverDuns(segment.getSegmentElement(3));
+            dexTx.setReceiverLocation(segment.getSegmentElement(4));
+            dexTx.setSupplierDuns(segment.getSegmentElement(5));
+            dexTx.setSupplierLocation(segment.getSegmentElement(6));
+            dexTx.setTransactionDate(segment.getSegmentElement(7));
+            dexTx.setPurchaseOrderNumber(segment.getSegmentElement(8));
+            dexTx.setPurchaseOrderDate(segment.getSegmentElement(9));
         } else {
             throwParserException(G82_ID, segmentIdentifier);
         }
@@ -401,11 +403,10 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseLoopHeader(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseLoopHeader(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (!LOOP_HEADER_ID.equals(segmentIdentifier)) {
             throwParserException(LOOP_HEADER_ID, segmentIdentifier);
         }
@@ -421,27 +422,26 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseG83(String segment, Dex894Item dexItem) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseG83(X12Segment segment, Dex894Item dexItem) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (G83_ID.equals(segmentIdentifier)) {
             // this will do a simple parsing of the G83 elements
             // a separate utility will need to determine the retail selling unit
-            dexItem.setItemSequenceNumber(this.retreiveElementFromSegment(elements, 1));
-            dexItem.setQuantity(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 2), 3));
-            dexItem.setUom(UnitMeasure.convertUnitMeasure(this.retreiveElementFromSegment(elements, 3)));
-            dexItem.setUpc(this.retreiveElementFromSegment(elements, 4));
-            dexItem.setConsumerProductQualifier(ProductQualifier.convertProductQualifier(this.retreiveElementFromSegment(elements, 5)));
-            dexItem.setConsumerProductId(this.retreiveElementFromSegment(elements, 6));
-            dexItem.setCaseUpc(this.retreiveElementFromSegment(elements, 7));
-            dexItem.setItemListCost(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 8), 2));
-            dexItem.setPackCount(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 9)));
-            dexItem.setItemDescription(this.retreiveElementFromSegment(elements, 10));
-            dexItem.setCaseProductQualifier(ProductQualifier.convertProductQualifier(this.retreiveElementFromSegment(elements, 11)));
-            dexItem.setCaseProductId(this.retreiveElementFromSegment(elements, 12));
-            dexItem.setInnerPackCount(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 13)));
+            dexItem.setItemSequenceNumber(segment.getSegmentElement(1));
+            dexItem.setQuantity(this.convertStringToBigDecimal(segment.getSegmentElement(2), 3));
+            dexItem.setUom(UnitMeasure.convertUnitMeasure(segment.getSegmentElement(3)));
+            dexItem.setUpc(segment.getSegmentElement(4));
+            dexItem.setConsumerProductQualifier(ProductQualifier.convertProductQualifier(segment.getSegmentElement(5)));
+            dexItem.setConsumerProductId(segment.getSegmentElement(6));
+            dexItem.setCaseUpc(segment.getSegmentElement(7));
+            dexItem.setItemListCost(this.convertStringToBigDecimal(segment.getSegmentElement(8), 2));
+            dexItem.setPackCount(this.convertStringToInteger(segment.getSegmentElement(9)));
+            dexItem.setItemDescription(segment.getSegmentElement(10));
+            dexItem.setCaseProductQualifier(ProductQualifier.convertProductQualifier(segment.getSegmentElement(11)));
+            dexItem.setCaseProductId(segment.getSegmentElement(12));
+            dexItem.setInnerPackCount(this.convertStringToInteger(segment.getSegmentElement(13)));
         } else {
             throwParserException(G83_ID, segmentIdentifier);
         }
@@ -457,8 +457,8 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseG22(String segment, Dex894Item dexItem) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
+    protected void parseG22(X12Segment segment, Dex894Item dexItem) {
+        LOGGER.debug(segment.getSegmentIdentifier());
     }
 
     /**
@@ -470,24 +470,23 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseG72(String segment, Dex894Item dexItem) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseG72(X12Segment segment, Dex894Item dexItem) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (G72_ID.equals(segmentIdentifier)) {
             Dex894Allowance dexAllowance = new Dex894Allowance();
             dexItem.setAllowance(dexAllowance);
-            dexAllowance.setAllowanceCode(this.retreiveElementFromSegment(elements, 1));
-            dexAllowance.setMethodOfHandlingCode(this.retreiveElementFromSegment(elements, 2));
-            dexAllowance.setAllowanceNumber(this.retreiveElementFromSegment(elements, 3));
-            dexAllowance.setExceptionNumber(this.retreiveElementFromSegment(elements, 4));
-            dexAllowance.setAllowanceRate(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 5), 4));
-            dexAllowance.setAllowanceQuantity(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 6), 3));
-            dexAllowance.setAllowanceUom(UnitMeasure.convertUnitMeasure(this.retreiveElementFromSegment(elements, 7)));
-            dexAllowance.setAllowanceAmount(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 8), 2));
-            dexAllowance.setAllowancePercent(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 9), 3));
-            dexAllowance.setOptionNumber(this.retreiveElementFromSegment(elements, 10));
+            dexAllowance.setAllowanceCode(segment.getSegmentElement(1));
+            dexAllowance.setMethodOfHandlingCode(segment.getSegmentElement(2));
+            dexAllowance.setAllowanceNumber(segment.getSegmentElement(3));
+            dexAllowance.setExceptionNumber(segment.getSegmentElement(4));
+            dexAllowance.setAllowanceRate(this.convertStringToBigDecimal(segment.getSegmentElement(5), 4));
+            dexAllowance.setAllowanceQuantity(this.convertStringToBigDecimal(segment.getSegmentElement(6), 3));
+            dexAllowance.setAllowanceUom(UnitMeasure.convertUnitMeasure(segment.getSegmentElement(7)));
+            dexAllowance.setAllowanceAmount(this.convertStringToBigDecimal(segment.getSegmentElement(8), 2));
+            dexAllowance.setAllowancePercent(this.convertStringToBigDecimal(segment.getSegmentElement(9), 3));
+            dexAllowance.setOptionNumber(segment.getSegmentElement(10));
         } else {
             throwParserException(G72_ID, segmentIdentifier);
         }
@@ -501,11 +500,10 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseLoopTrailer(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseLoopTrailer(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (!LOOP_TRAILER_ID.equals(segmentIdentifier)) {
             throwParserException(LOOP_TRAILER_ID, segmentIdentifier);
         }
@@ -519,15 +517,14 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseG84(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseG84(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (G84_ID.equals(segmentIdentifier)) {
-            dexTx.setTransactionTotalQuantity(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 1), 3));
-            dexTx.setTransactionTotalAmount(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 2), 2));
-            dexTx.setTransactionTotalDepositAmount(this.convertStringToBigDecimal(this.retreiveElementFromSegment(elements, 3), 2));
+            dexTx.setTransactionTotalQuantity(this.convertStringToBigDecimal(segment.getSegmentElement(1), 3));
+            dexTx.setTransactionTotalAmount(this.convertStringToBigDecimal(segment.getSegmentElement(2), 2));
+            dexTx.setTransactionTotalDepositAmount(this.convertStringToBigDecimal(segment.getSegmentElement(3), 2));
         } else {
             throwParserException(G84_ID, segmentIdentifier);
         }
@@ -541,13 +538,12 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseG85(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseG85(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (G85_ID.equals(segmentIdentifier)) {
-            dexTx.setIntegrityCheckValue(this.retreiveElementFromSegment(elements, 1));
+            dexTx.setIntegrityCheckValue(segment.getSegmentElement(1));
         } else {
             throwParserException(G85_ID, segmentIdentifier);
         }
@@ -561,14 +557,13 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseG86(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseG86(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (G86_ID.equals(segmentIdentifier)) {
-            dexTx.setElectronicSignature(this.retreiveElementFromSegment(elements, 1));
-            dexTx.setSignatureName(this.retreiveElementFromSegment(elements, 2));
+            dexTx.setElectronicSignature(segment.getSegmentElement(1));
+            dexTx.setSignatureName(segment.getSegmentElement(2));
         } else {
             throwParserException(G86_ID, segmentIdentifier);
         }
@@ -581,14 +576,13 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseTransactionSetTrailer(String segment, Dex894TransactionSet dexTx) {
-        LOGGER.debug(this.extractSegmentIdentifier(segment));
-        List<String> elements = this.splitSegmentIntoDataElements(segment);
+    protected void parseTransactionSetTrailer(X12Segment segment, Dex894TransactionSet dexTx) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = segment.getSegmentIdentifier();
         if (TRANSACTION_SET_TRAILER_ID.equals(segmentIdentifier)) {
-            dexTx.setExpectedNumberOfSegments(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 1)));
-            dexTx.setTrailerControlNumber(this.retreiveElementFromSegment(elements, 2));
+            dexTx.setExpectedNumberOfSegments(this.convertStringToInteger(segment.getSegmentElement(1)));
+            dexTx.setTrailerControlNumber(segment.getSegmentElement(2));
         } else {
             throwParserException(TRANSACTION_SET_TRAILER_ID, segmentIdentifier);
         }
@@ -601,14 +595,13 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @throws X12ParserException if the DEX segment is invalid
      * @throws ArrayIndexOutOfBoundsException if a mandatory element is missing
      */
-    protected void parseApplicationTrailer(String trailerSegment, Dex894 dex) {
-        LOGGER.debug(this.extractSegmentIdentifier(trailerSegment));
-        List<String> elements = this.splitSegmentIntoDataElements(trailerSegment);
+    protected void parseApplicationTrailer(X12Segment trailerSegment, Dex894 dex) {
+        LOGGER.debug(trailerSegment.getSegmentIdentifier());
 
-        String segmentIdentifier = this.retreiveElementFromSegment(elements, 0);
+        String segmentIdentifier = trailerSegment.getSegmentIdentifier();
         if (APPLICATION_TRAILER_ID.equals(segmentIdentifier)) {
-            dex.setTrailerTransmissionControlNumber(this.retreiveElementFromSegment(elements, 1));
-            dex.setNumberOfTransactions(this.convertStringToInteger(this.retreiveElementFromSegment(elements, 2)));
+            dex.setTrailerTransmissionControlNumber(trailerSegment.getSegmentElement(1));
+            dex.setNumberOfTransactions(this.convertStringToInteger(trailerSegment.getSegmentElement(2)));
         } else {
             throwParserException(APPLICATION_TRAILER_ID, segmentIdentifier);
         }
@@ -622,27 +615,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         throw new X12ParserException(new X12ErrorDetail(actualSegmentId, null, sb.toString()));
     }
 
-    protected String retreiveElementFromSegment(List<String> elements, int listIndex) {
-        if (elements.size() >= listIndex + 1) {
-            String value = elements.get(listIndex);
-            return StringUtils.isEmpty(value) ? null : value;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     *
-     * @param segmentIdx index denoting which segment/line in the DEX file to work on
-     * @param dexSegments the list of segments/lines in the DEX file
-     * @return segment identifier
-     */
-    protected String segmentIdentifier(int segmentIdx, List<String> dexSegments) {
-        String segment = dexSegments.get(segmentIdx);
-        return this.extractSegmentIdentifier(segment);
-    }
-
-    protected int findLastSegmentIndex(List<String> dexSegments) {
+    protected int findLastSegmentIndex(List<X12Segment> dexSegments) {
         return dexSegments.size() - 1;
     }
 

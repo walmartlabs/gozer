@@ -98,10 +98,9 @@ public class X12ExampleTest {
             try {
                 if (!StringUtils.isEmpty(sourceData)) {
                     mockX12 = new MockX12Document();
-                    List<String> segments = this.splitSourceDataIntoSegments(sourceData);
-                    List<String> elements = this.splitSegmentIntoDataElements(segments.get(0));
-                    if (!elements.isEmpty() && elements.size() > 1) {
-                        mockX12.setFunctionalId(elements.get(1));
+                    List<X12Segment> segments = this.splitSourceDataIntoSegments(sourceData);
+                    if (!segments.isEmpty()) {
+                        mockX12.setFunctionalId(segments.get(0).getSegmentElement(1));
                     }
                 }
             } catch (Exception e) {
