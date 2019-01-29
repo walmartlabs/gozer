@@ -13,7 +13,7 @@ This open source library, available through @WalmartLabs, provides Java based cl
 
 ## Basic Design Approach
 
-Gozer seeks to provide more than a generic X12 parsing capability that turns an EDI X12 message into a list of segments and elements. Gozer hopes to provide a library of easy to use classes, that can transform the parsed message into a POJO that corresponds with a specific X12 format. Attributes are labeled with their buisness names rather than the more cryptic segement identifiers. It further provides basic validation capabilities as defined in the EDI X12 manuals for each format.   
+Gozer seeks to provide more than a generic X12 parsing capability that turns an EDI X12 message into a list of segments and elements. Gozer hopes to provide a library of easy to use classes, that can transform the parsed message into a POJO that corresponds with a specific X12 format. Attributes are labeled with their business names rather than the more cryptic segement identifiers. It further provides basic validation capabilities as defined in the EDI X12 manuals for each format.   
 
 ## Why the name Gozer
 
