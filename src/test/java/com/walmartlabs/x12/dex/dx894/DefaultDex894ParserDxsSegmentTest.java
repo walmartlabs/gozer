@@ -15,6 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12.dex.dx894;
 
+import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test
     public void testParseApplicationHeader() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationHeader("DXS*9251230013*DX*004010UCS*1*9254850000", dex);
+        X12Segment segment = new X12Segment("DXS*9251230013*DX*004010UCS*1*9254850000");
+        dexParser.parseApplicationHeader(segment, dex);
         assertEquals("9251230013", dex.getSenderCommId());
         assertEquals("DX", dex.getFunctionalId());
         assertEquals("004010UCS", dex.getVersion());
@@ -48,7 +50,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test
     public void testParseApplicationHeaderWithTestIndicator() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationHeader("DXS*9251230013*DX*004010UCS*1*9254850000*P", dex);
+        X12Segment segment = new X12Segment("DXS*9251230013*DX*004010UCS*1*9254850000*P");
+        dexParser.parseApplicationHeader(segment, dex);
         assertEquals("9251230013", dex.getSenderCommId());
         assertEquals("DX", dex.getFunctionalId());
         assertEquals("004010UCS", dex.getVersion());
@@ -60,7 +63,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test
     public void testParseApplicationHeaderWithMissingSenderCommId() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationHeader("DXS**DX*004010UCS*1*9254850000", dex);
+        X12Segment segment = new X12Segment("DXS**DX*004010UCS*1*9254850000");
+        dexParser.parseApplicationHeader(segment, dex);
         assertEquals(null, dex.getSenderCommId());
         assertEquals("DX", dex.getFunctionalId());
         assertEquals("004010UCS", dex.getVersion());
@@ -72,7 +76,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test
     public void testParseApplicationHeaderWithMissingReceiverCommId() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationHeader("DXS*9251230013*DX*004010UCS*1", dex);
+        X12Segment segment = new X12Segment("DXS*9251230013*DX*004010UCS*1");
+        dexParser.parseApplicationHeader(segment, dex);
         assertEquals("9251230013", dex.getSenderCommId());
         assertEquals("DX", dex.getFunctionalId());
         assertEquals("004010UCS", dex.getVersion());
@@ -84,7 +89,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test
     public void testParseApplicationHeaderInvalid() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationHeader("DXS*DX*004010UCS*1", dex);
+        X12Segment segment = new X12Segment("DXS*DX*004010UCS*1");
+        dexParser.parseApplicationHeader(segment, dex);
         assertEquals("DX", dex.getSenderCommId());
         assertEquals("004010UCS", dex.getFunctionalId());
         assertEquals("1", dex.getVersion());
@@ -99,7 +105,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test
     public void testParseApplicationTrailer() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationTrailer("DXE*1*2", dex);
+        X12Segment segment = new X12Segment("DXE*1*2");
+        dexParser.parseApplicationTrailer(segment, dex);
         assertEquals("1", dex.getTrailerTransmissionControlNumber());
         assertEquals(new Integer(2), dex.getNumberOfTransactions());
     }
@@ -107,7 +114,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test
     public void testParseApplicationTrailerWithMissingControlNumber() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationTrailer("DXE**2", dex);
+        X12Segment segment = new X12Segment("DXE**2");
+        dexParser.parseApplicationTrailer(segment, dex);
         assertEquals(null, dex.getTrailerTransmissionControlNumber());
         assertEquals(new Integer(2), dex.getNumberOfTransactions());
     }
@@ -115,7 +123,8 @@ public class DefaultDex894ParserDxsSegmentTest {
     @Test(expected = X12ParserException.class)
     public void testParseApplicationTrailerWithInvalidCount() {
         Dex894 dex = new Dex894();
-        dexParser.parseApplicationTrailer("DXE*1*DX", dex);
+        X12Segment segment = new X12Segment("DXE*1*DX");
+        dexParser.parseApplicationTrailer(segment, dex);
     }
 
 }
