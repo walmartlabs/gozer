@@ -1,4 +1,4 @@
-package com.walmartlabs.x12.checksum;
+package com.walmartlabs.x12.crc;
 
 /**
  * CRC-16 Uses irreducible polynomial: 1 + x^2 + x^15 + x^16

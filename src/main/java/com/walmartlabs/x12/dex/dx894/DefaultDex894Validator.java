@@ -16,8 +16,8 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Validator;
-import com.walmartlabs.x12.checksum.CyclicRedundancyCheck;
-import com.walmartlabs.x12.checksum.DefaultCrc16;
+import com.walmartlabs.x12.crc.CyclicRedundancyCheck;
+import com.walmartlabs.x12.crc.DefaultCrc16;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import org.springframework.util.StringUtils;
 

@@ -1,4 +1,4 @@
-package com.walmartlabs.x12.checksum;
+package com.walmartlabs.x12.crc;
 
 public interface CyclicRedundancyCheck {
     /**

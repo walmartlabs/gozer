@@ -1,5 +1,7 @@
-package com.walmartlabs.x12.checksum;
+package com.walmartlabs.x12.crc;
 
+import com.walmartlabs.x12.crc.CyclicRedundancyCheck;
+import com.walmartlabs.x12.crc.DefaultCrc16;
 import com.walmartlabs.x12.dex.dx894.DefaultDex894Validator;
 import org.junit.Before;
 import org.junit.Test;
