@@ -140,7 +140,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
                     errors.add(this.checkItemIdentifier(dexVersion, dexItem));
                     errors.add(this.checkCaseUpc(dexVersion, dexItem));
                     errors.add(this.checkCaseCount(dexVersion, dexItem));
-                    errors.addAll(this.validateAllowance(dexVersion, dexItem.getAllowance()));
+                    errors.addAll(this.validateAllowances(dexVersion, dexItem.getAllowances()));
                 }
             }
         }
@@ -151,16 +151,20 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
     /**
      * validate allowance/charge for the DEX Item
      * @param dexVersion
-     * @param dexAllowance
+     * @param dexAllowances
      * @return
      */
-    protected Set<X12ErrorDetail> validateAllowance(Integer dexVersion, Dex894Allowance dexAllowance) {
+    protected Set<X12ErrorDetail> validateAllowances(Integer dexVersion, List<Dex894Allowance> dexAllowances) {
         Set<X12ErrorDetail> errors = new HashSet<>();
 
-        if (dexAllowance != null) {
-            errors.add(this.checkAllowanceCode(dexVersion, dexAllowance));
-            errors.add(this.checkMethodHandlingCode(dexVersion, dexAllowance));
-            errors.add(this.checkAllowanceAmount(dexVersion, dexAllowance));
+        if (dexAllowances != null && !dexAllowances.isEmpty()) {
+            dexAllowances.forEach(dexAllowance -> {
+                if (dexAllowance != null) {
+                    errors.add(this.checkAllowanceCode(dexVersion, dexAllowance));
+                    errors.add(this.checkMethodHandlingCode(dexVersion, dexAllowance));
+                    errors.add(this.checkAllowanceAmount(dexVersion, dexAllowance));
+                }
+            });
         }
 
         return this.removeNullValues(errors);

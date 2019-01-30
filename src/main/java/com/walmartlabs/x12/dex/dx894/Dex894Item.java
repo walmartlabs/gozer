@@ -16,6 +16,8 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The 894 Base Record Transaction Set is comprised of items
@@ -52,7 +54,20 @@ public class Dex894Item {
     private Integer innerPackCount;
 
     // G72: Allowance
-    private Dex894Allowance allowance;
+    private List<Dex894Allowance> allowances;
+
+
+    /**
+     * add a DEX Allowance
+     *
+     * @param dexItem
+     */
+    public void addAllowance(Dex894Allowance dexAllowance) {
+        if (allowances == null) {
+            allowances = new ArrayList<>();
+        }
+        allowances.add(dexAllowance);
+    }
 
     public String getItemSequenceNumber() {
         return itemSequenceNumber;
@@ -158,12 +173,12 @@ public class Dex894Item {
         this.innerPackCount = innerPackCount;
     }
 
-    public Dex894Allowance getAllowance() {
-        return allowance;
+    public List<Dex894Allowance> getAllowances() {
+        return allowances;
     }
 
-    public void setAllowance(Dex894Allowance allowance) {
-        this.allowance = allowance;
+    public void setAllowances(List<Dex894Allowance> allowances) {
+        this.allowances = allowances;
     }
 
 }

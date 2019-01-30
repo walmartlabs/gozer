@@ -298,22 +298,13 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             segmentId = segment.getSegmentIdentifier();
         }
 
-        // TODO: does the spec allow more than one?
-        // currently turning off
         // G72 allowance (optional)
         while (G72_ID.equals(segmentId)) {
-            // skip for now
-            segment = dexSegments.get(++segmentIdx);
-            segmentId = segment.getSegmentIdentifier();
-        }
-        /*
-        if (G72_ID.equals(segmentId)) {
             this.parseG72(segment, dexItem);
             // update next segment & segment id
             segment = dexSegments.get(++segmentIdx);
-            segmentId = this.extractSegmentIdentifier(segment);
+            segmentId = segment.getSegmentIdentifier();
         }
-        */
 
         dexTx.addItem(dexItem);
 
@@ -476,7 +467,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         String segmentIdentifier = segment.getSegmentIdentifier();
         if (G72_ID.equals(segmentIdentifier)) {
             Dex894Allowance dexAllowance = new Dex894Allowance();
-            dexItem.setAllowance(dexAllowance);
+            dexItem.addAllowance(dexAllowance);
             dexAllowance.setAllowanceCode(segment.getSegmentElement(1));
             dexAllowance.setMethodOfHandlingCode(segment.getSegmentElement(2));
             dexAllowance.setAllowanceNumber(segment.getSegmentElement(3));
