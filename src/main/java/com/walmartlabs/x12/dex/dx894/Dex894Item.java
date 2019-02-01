@@ -60,7 +60,7 @@ public class Dex894Item {
     /**
      * add a DEX Allowance
      *
-     * @param dexItem
+     * @param dexAllowance
      */
     public void addAllowance(Dex894Allowance dexAllowance) {
         if (allowances == null) {
