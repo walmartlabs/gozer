@@ -122,9 +122,11 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        /*
-        Dex894Allowance dexAllowance = dexItem.getAllowance();
+        List<Dex894Allowance> dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(1, dexAllowances.size());
+
+        Dex894Allowance dexAllowance = dexAllowances.get(0);
         assertNotNull(dexAllowance);
         assertEquals("090", dexAllowance.getAllowanceCode());
         assertEquals("02", dexAllowance.getMethodOfHandlingCode());
@@ -137,7 +139,6 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexAllowance.getAllowancePercent());
         assertEquals(null, dexAllowance.getDollarBasis());
         assertEquals(null, dexAllowance.getOptionNumber());
-        */
 
         // DEX transaction (1) item (2)
         dexItem = dexItemList.get(1);
@@ -157,9 +158,11 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        /*
-        dexAllowance = dexItem.getAllowance();
+        dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(1, dexAllowances.size());
+
+        dexAllowance = dexAllowances.get(0);
         assertNotNull(dexAllowance);
         assertEquals("090", dexAllowance.getAllowanceCode());
         assertEquals("02", dexAllowance.getMethodOfHandlingCode());
@@ -172,7 +175,7 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexAllowance.getAllowancePercent());
         assertEquals(null, dexAllowance.getDollarBasis());
         assertEquals(null, dexAllowance.getOptionNumber());
-        */
+
         // DEX transaction (1) item (9) -- sampling
         dexItem = dexItemList.get(8);
         assertNotNull(dexItem);
@@ -191,9 +194,8 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        Dex894Allowance dexAllowance = dexItem.getAllowance();
-        assertNull(dexAllowance);
+        dexAllowances = dexItem.getAllowances();
+        assertNull(dexAllowances);
 
         // DEX transaction (1) item (12) -- sampling
         dexItem = dexItemList.get(11);
@@ -213,9 +215,11 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        /*
-        dexAllowance = dexItem.getAllowance();
+        dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(1, dexAllowances.size());
+
+        dexAllowance = dexAllowances.get(0);
         assertNotNull(dexAllowance);
         assertEquals("090", dexAllowance.getAllowanceCode());
         assertEquals("02", dexAllowance.getMethodOfHandlingCode());
@@ -228,7 +232,6 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexAllowance.getAllowancePercent());
         assertEquals(null, dexAllowance.getDollarBasis());
         assertEquals(null, dexAllowance.getOptionNumber());
-        */
 
         // DXE segment
         assertEquals("1", dex.getTrailerTransmissionControlNumber());
@@ -346,9 +349,11 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        /*
-        Dex894Allowance dexAllowance = dexItem.getAllowance();
+        List<Dex894Allowance> dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(1, dexAllowances.size());
+
+        Dex894Allowance dexAllowance = dexAllowances.get(0);
         assertNotNull(dexAllowance);
         assertEquals("090", dexAllowance.getAllowanceCode());
         assertEquals("02", dexAllowance.getMethodOfHandlingCode());
@@ -361,7 +366,6 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexAllowance.getAllowancePercent());
         assertEquals(null, dexAllowance.getDollarBasis());
         assertEquals(null, dexAllowance.getOptionNumber());
-        */
 
         //
         // DEX transaction (2)
@@ -420,9 +424,11 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        /*
-        dexAllowance = dexItem.getAllowance();
+        dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(1, dexAllowances.size());
+
+        dexAllowance = dexAllowances.get(0);
         assertNotNull(dexAllowance);
         assertEquals("090", dexAllowance.getAllowanceCode());
         assertEquals("02", dexAllowance.getMethodOfHandlingCode());
@@ -435,7 +441,6 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexAllowance.getAllowancePercent());
         assertEquals(null, dexAllowance.getDollarBasis());
         assertEquals(null, dexAllowance.getOptionNumber());
-        */
 
         // DXE segment
         assertEquals("1", dex.getTrailerTransmissionControlNumber());
@@ -500,7 +505,6 @@ public class DefaultDex894ParseValidateTest {
         assertNotNull(dexItemList);
         assertEquals(2, dexItemList.size());
 
-
         // DEX transaction (1) item (1)
         Dex894Item dexItem = dexItemList.get(0);
         assertNotNull(dexItem);
@@ -519,9 +523,10 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        /*
-        Dex894Allowance dexAllowance = dexItem.getAllowance();
+        List<Dex894Allowance> dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(1, dexAllowances.size());
+        Dex894Allowance dexAllowance = dexAllowances.get(0);
         assertNotNull(dexAllowance);
         assertEquals("97", dexAllowance.getAllowanceCode());
         assertEquals("02", dexAllowance.getMethodOfHandlingCode());
@@ -534,7 +539,6 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexAllowance.getAllowancePercent());
         assertEquals(null, dexAllowance.getDollarBasis());
         assertEquals(null, dexAllowance.getOptionNumber());
-        */
 
         // DEX transaction (1) item (2)
         dexItem = dexItemList.get(1);
@@ -554,9 +558,8 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        // TODO: handle when figure out G72
-        Dex894Allowance dexAllowance = dexItem.getAllowance();
-        assertNull(dexAllowance);
+        dexAllowances = dexItem.getAllowances();
+        assertNull(dexAllowances);
     }
 
     @Test
@@ -635,8 +638,8 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(null, dexItem.getInnerPackCount());
         // G72 segment
-        Dex894Allowance dexAllowance = dexItem.getAllowance();
-        assertNull(dexAllowance);
+        List<Dex894Allowance> dexAllowances = dexItem.getAllowances();
+        assertNull(dexAllowances);
     }
 
     @Test
@@ -716,7 +719,158 @@ public class DefaultDex894ParseValidateTest {
         assertEquals(null, dexItem.getCaseProductId());
         assertEquals(new Integer(1), dexItem.getInnerPackCount());
         // G72 segment
-        Dex894Allowance dexAllowance = dexItem.getAllowance();
-        assertNull(dexAllowance);
+        List<Dex894Allowance> dexAllowances = dexItem.getAllowances();
+        assertNull(dexAllowances);
+    }
+
+    @Test
+    public void testParsingMultipleG72() throws IOException {
+        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.multiple.g72.txt"));
+        Dex894 dex = dexParser.parse(new String(dexBytes));
+        assertNotNull(dex);
+
+        DefaultDex894Validator dexValidator = new DefaultDex894Validator();
+        Set<X12ErrorDetail> errors = dexValidator.validate(dex, false);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+
+        // DXS segment
+        assertEquals("9269850000", dex.getSenderCommId());
+        assertEquals("DX", dex.getFunctionalId());
+        assertEquals("004010UCS", dex.getVersion());
+        assertEquals("3", dex.getHeaderTransmissionControlNumber());
+        assertEquals("9254850000", dex.getReceiverCommId());
+        assertEquals("P", dex.getTestIndicator());
+
+        // DEX transactions
+        List<Dex894TransactionSet> dexTxList = dex.getTransactions();
+        assertNotNull(dexTxList);
+        assertEquals(1, dexTxList.size());
+
+        //
+        // DEX transaction (1)
+        //
+        Dex894TransactionSet dexTx = dexTxList.get(0);
+        assertNotNull(dexTx);
+        // ST segment
+        assertEquals("894", dexTx.getTransactionSetIdentifierCode());
+        assertEquals("0002", dexTx.getHeaderControlNumber());
+        // SE segment
+        assertEquals("0002", dexTx.getTrailerControlNumber());
+        assertEquals(new Integer(13), dexTx.getExpectedNumberOfSegments());
+        assertEquals(new Integer(13), dexTx.getActualNumberOfSegments());
+        // G82 segment
+        assertEquals(InvoiceType.D, dexTx.getDebitCreditFlag());
+        assertEquals("109152000116", dexTx.getSupplierNumber());
+        assertEquals("051957769", dexTx.getReceiverDuns());
+        assertEquals("0001", dexTx.getReceiverLocation());
+        assertEquals("066563859", dexTx.getSupplierDuns());
+        assertEquals("000000", dexTx.getSupplierLocation());
+        assertEquals("20181129", dexTx.getTransactionDate());
+        // G84 segment
+        assertEquals("340.000", dexTx.getTransactionTotalQuantity().toString());
+        assertEquals("120931.00", dexTx.getTransactionTotalAmount().toString());
+        assertEquals(null, dexTx.getTransactionTotalDepositAmount());
+        // G85 segment
+        assertEquals("XXXX", dexTx.getIntegrityCheckValue());
+        // G86 segment
+        assertEquals("7898", dexTx.getElectronicSignature());
+        assertEquals(null, dexTx.getSignatureName());
+        // transaction data
+        assertNotNull(dexTx.getTransactionData());
+        assertTrue(dexTx.getTransactionData().startsWith("ST*894*0002"));
+        assertTrue(dexTx.getTransactionData().contains("G83*25*12*EA*007192167217*AC*TMB ORG 12IN 12CT**3.8**OR PEP 12\r\n"));
+        assertTrue(dexTx.getTransactionData().endsWith("G86*7898\r\n"));
+
+        // items
+        List<Dex894Item> dexItemList = dexTx.getItems();
+        assertNotNull(dexItemList);
+        assertEquals(2, dexItemList.size());
+
+        // DEX transaction (1) item (1)
+        Dex894Item dexItem = dexItemList.get(0);
+        assertNotNull(dexItem);
+        // G83 segment
+        assertEquals("25", dexItem.getItemSequenceNumber());
+        assertEquals("12.000", dexItem.getQuantity().toString());
+        assertEquals(UnitMeasure.EA, dexItem.getUom());
+        assertEquals("007192167217", dexItem.getUpc());
+        assertEquals(ProductQualifier.UNKNOWN, dexItem.getConsumerProductQualifier());
+        assertEquals("TMB ORG 12IN 12CT", dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
+        assertEquals("3.80", dexItem.getItemListCost().toString());
+        assertEquals(null, dexItem.getPackCount());
+        assertEquals("OR PEP 12", dexItem.getItemDescription());
+        assertEquals(null, dexItem.getCaseProductQualifier());
+        assertEquals(null, dexItem.getCaseProductId());
+        assertEquals(null, dexItem.getInnerPackCount());
+        // G72 segment
+        List<Dex894Allowance> dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(1, dexAllowances.size());
+
+        Dex894Allowance dexAllowance = dexAllowances.get(0);
+        assertNotNull(dexAllowance);
+        assertEquals("97", dexAllowance.getAllowanceCode());
+        assertEquals("02", dexAllowance.getMethodOfHandlingCode());
+        assertEquals("1", dexAllowance.getAllowanceNumber());
+        assertEquals(null, dexAllowance.getExceptionNumber());
+        assertEquals("-0.7400", dexAllowance.getAllowanceRate().toString());
+        assertEquals(null, dexAllowance.getAllowanceQuantity());
+        assertEquals(null, dexAllowance.getAllowanceUom());
+        assertEquals(null, dexAllowance.getAllowanceAmount());
+        assertEquals(null, dexAllowance.getAllowancePercent());
+        assertEquals(null, dexAllowance.getDollarBasis());
+        assertEquals(null, dexAllowance.getOptionNumber());
+
+        // DEX transaction (1) item (2)
+        dexItem = dexItemList.get(1);
+        assertNotNull(dexItem);
+        // G83 segment
+        assertEquals("27", dexItem.getItemSequenceNumber());
+        assertEquals("24.000", dexItem.getQuantity().toString());
+        assertEquals(UnitMeasure.EA, dexItem.getUom());
+        assertEquals("007465339393", dexItem.getUpc());
+        assertEquals(ProductQualifier.UNKNOWN, dexItem.getConsumerProductQualifier());
+        assertEquals("JCK PZA 12IN 12CT", dexItem.getConsumerProductId());
+        assertEquals(null, dexItem.getCaseUpc());
+        assertEquals("2.80", dexItem.getItemListCost().toString());
+        assertEquals(null, dexItem.getPackCount());
+        assertEquals("TC PEPSAUS 12", dexItem.getItemDescription());
+        assertEquals(null, dexItem.getCaseProductQualifier());
+        assertEquals(null, dexItem.getCaseProductId());
+        assertEquals(null, dexItem.getInnerPackCount());
+        // G72 segment
+        dexAllowances = dexItem.getAllowances();
+        assertNotNull(dexAllowances);
+        assertEquals(2, dexAllowances.size());
+
+        dexAllowance = dexAllowances.get(0);
+        assertNotNull(dexAllowance);
+        assertEquals("97", dexAllowance.getAllowanceCode());
+        assertEquals("02", dexAllowance.getMethodOfHandlingCode());
+        assertEquals("1", dexAllowance.getAllowanceNumber());
+        assertEquals(null, dexAllowance.getExceptionNumber());
+        assertEquals("-0.5100", dexAllowance.getAllowanceRate().toString());
+        assertEquals(null, dexAllowance.getAllowanceQuantity());
+        assertEquals(null, dexAllowance.getAllowanceUom());
+        assertEquals(null, dexAllowance.getAllowanceAmount());
+        assertEquals(null, dexAllowance.getAllowancePercent());
+        assertEquals(null, dexAllowance.getDollarBasis());
+        assertEquals(null, dexAllowance.getOptionNumber());
+
+        dexAllowance = dexAllowances.get(1);
+        assertNotNull(dexAllowance);
+        assertEquals("97", dexAllowance.getAllowanceCode());
+        assertEquals("02", dexAllowance.getMethodOfHandlingCode());
+        assertEquals("2", dexAllowance.getAllowanceNumber());
+        assertEquals(null, dexAllowance.getExceptionNumber());
+        assertEquals("-0.3700", dexAllowance.getAllowanceRate().toString());
+        assertEquals(null, dexAllowance.getAllowanceQuantity());
+        assertEquals(null, dexAllowance.getAllowanceUom());
+        assertEquals(null, dexAllowance.getAllowanceAmount());
+        assertEquals(null, dexAllowance.getAllowancePercent());
+        assertEquals(null, dexAllowance.getDollarBasis());
+        assertEquals(null, dexAllowance.getOptionNumber());
     }
 }

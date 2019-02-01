@@ -880,18 +880,20 @@ public class DefaultDex894ValidatorTest {
 
     @Test
     public void test_validateAllowance_null() {
-        Dex894Allowance dexAllowance = null;
+        List<Dex894Allowance> dexAllowances = null;
 
-        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
         assertNotNull(errors);
         assertEquals(0, errors.size());
     }
 
     @Test
     public void test_validateAllowance_empty() {
+        List<Dex894Allowance> dexAllowances = new ArrayList<>();
         Dex894Allowance dexAllowance = new Dex894Allowance();
+        dexAllowances.add(dexAllowance);
 
-        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
         assertNotNull(errors);
         assertEquals(3, errors.size());
 
@@ -917,11 +919,15 @@ public class DefaultDex894ValidatorTest {
 
     @Test
     public void test_validateAllowance_MissingAllowanceCode() {
+        List<Dex894Allowance> dexAllowances = new ArrayList<>();
+
         Dex894Allowance dexAllowance = new Dex894Allowance();
         dexAllowance.setMethodOfHandlingCode("0");
         dexAllowance.setAllowanceAmount(new BigDecimal(100));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        dexAllowances.add(dexAllowance);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
         assertNotNull(errors);
         assertEquals(1, errors.size());
 
@@ -933,11 +939,15 @@ public class DefaultDex894ValidatorTest {
 
     @Test
     public void test_validateAllowance_MissingMethodHandling() {
+        List<Dex894Allowance> dexAllowances = new ArrayList<>();
+
         Dex894Allowance dexAllowance = new Dex894Allowance();
         dexAllowance.setAllowanceCode("0");
         dexAllowance.setAllowanceAmount(new BigDecimal(100));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        dexAllowances.add(dexAllowance);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
         assertNotNull(errors);
         assertEquals(1, errors.size());
 
@@ -948,12 +958,54 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validateAllowance_multipleErrors() {
+        List<Dex894Allowance> dexAllowances = new ArrayList<>();
+
+        Dex894Allowance dexAllowanceOne = new Dex894Allowance();
+        dexAllowanceOne.setAllowanceCode("0");
+        dexAllowanceOne.setAllowanceAmount(new BigDecimal(100));
+
+        Dex894Allowance dexAllowanceTwo = new Dex894Allowance();
+        dexAllowanceTwo.setMethodOfHandlingCode("0");
+        dexAllowanceTwo.setAllowanceAmount(new BigDecimal(100));
+
+        dexAllowances.add(dexAllowanceOne);
+        dexAllowances.add(dexAllowanceTwo);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
+        assertNotNull(errors);
+        assertEquals(2, errors.size());
+
+        X12ErrorDetail xed = errors.stream()
+            .filter(errDetail -> "G7202".equals(errDetail.getElementId()))
+            .findFirst()
+            .get();
+
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7202", xed.getElementId());
+        assertEquals("Missing method of handling code", xed.getMessage());
+
+        xed = errors.stream()
+            .filter(errDetail -> "G7201".equals(errDetail.getElementId()))
+            .findFirst()
+            .get();
+
+        assertEquals("G72", xed.getSegmentId());
+        assertEquals("G7201", xed.getElementId());
+        assertEquals("Missing allowance code", xed.getMessage());
+    }
+
+    @Test
     public void test_validateAllowance_MissingAmount() {
+        List<Dex894Allowance> dexAllowances = new ArrayList<>();
+
         Dex894Allowance dexAllowance = new Dex894Allowance();
         dexAllowance.setAllowanceCode("0");
         dexAllowance.setMethodOfHandlingCode("0");
 
-        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        dexAllowances.add(dexAllowance);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
         assertNotNull(errors);
         assertEquals(1, errors.size());
 
@@ -965,12 +1017,38 @@ public class DefaultDex894ValidatorTest {
 
     @Test
     public void test_validateAllowance() {
+        List<Dex894Allowance> dexAllowances = new ArrayList<>();
+
         Dex894Allowance dexAllowance = new Dex894Allowance();
         dexAllowance.setAllowanceCode("0");
         dexAllowance.setMethodOfHandlingCode("0");
         dexAllowance.setAllowanceAmount(new BigDecimal(100));
 
-        Set<X12ErrorDetail> errors = dexValidator.validateAllowance(4010, dexAllowance);
+        dexAllowances.add(dexAllowance);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_validateAllowance_multiple() {
+        List<Dex894Allowance> dexAllowances = new ArrayList<>();
+
+        Dex894Allowance dexAllowanceOne = new Dex894Allowance();
+        dexAllowanceOne.setAllowanceCode("0");
+        dexAllowanceOne.setMethodOfHandlingCode("0");
+        dexAllowanceOne.setAllowanceAmount(new BigDecimal(100));
+
+        Dex894Allowance dexAllowanceTwo = new Dex894Allowance();
+        dexAllowanceTwo.setAllowanceCode("0");
+        dexAllowanceTwo.setMethodOfHandlingCode("0");
+        dexAllowanceTwo.setAllowanceAmount(new BigDecimal(200));
+
+        dexAllowances.add(dexAllowanceOne);
+        dexAllowances.add(dexAllowanceTwo);
+
+        Set<X12ErrorDetail> errors = dexValidator.validateAllowances(4010, dexAllowances);
         assertNotNull(errors);
         assertEquals(0, errors.size());
     }
