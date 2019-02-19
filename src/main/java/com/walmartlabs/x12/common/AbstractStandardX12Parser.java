@@ -1,0 +1,88 @@
+/**
+Copyright (c) 2018-present, Walmart, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
+package com.walmartlabs.x12.common;
+
+import com.walmartlabs.x12.X12Parser;
+import com.walmartlabs.x12.X12Segment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Document> implements X12Parser<T> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStandardX12Parser.class);
+
+    public static final String ISA_ID = "ISA";
+    public static final String GROUP_SEGMENT_ID = "GS";
+
+    /**
+     * parse the ISA segment
+     * @param segment
+     * @param x12
+     */
+    protected void parseInterchangeControlHeader(X12Segment segment, AbstractStandardX12Document x12Doc) {
+        LOGGER.debug(segment.getSegmentIdentifier());
+
+        String segmentIdentifier = segment.getSegmentIdentifier();
+        if (ISA_ID.equals(segmentIdentifier)) {
+            InterchangeControlHeader isa = new InterchangeControlHeader();
+            isa.setAuthorizationInformationQualifier(segment.getSegmentElement(1));
+            isa.setAuthorizationInformation(segment.getSegmentElement(2));
+            isa.setSecurityInformationQualifier(segment.getSegmentElement(3));
+            isa.setSecurityInformation(segment.getSegmentElement(4));
+            isa.setInterchangeIdQualifier(segment.getSegmentElement(5));
+            isa.setInterchangeSenderId(segment.getSegmentElement(6));
+            isa.setInterchangeIdQualifier_2(segment.getSegmentElement(7));
+            isa.setInterchangeReceiverId(segment.getSegmentElement(8));
+            isa.setInterchangeDate(segment.getSegmentElement(9));
+            isa.setInterchangeTime(segment.getSegmentElement(10));
+            isa.setInterchangeControlStandardId(segment.getSegmentElement(11));
+            isa.setInterchangeControlVersion(segment.getSegmentElement(12));
+            isa.setInterchangeControlNumber(segment.getSegmentElement(13));
+            isa.setAcknowledgementRequested(segment.getSegmentElement(14));
+            isa.setUsageIndicator(segment.getSegmentElement(15));
+            isa.setElementSeparator(segment.getSegmentElement(16));
+
+            x12Doc.setInterchangeControlHeader(isa);
+        } else {
+            handleUnexpectedSegment(ISA_ID, segmentIdentifier);
+        }
+    }
+
+    /**
+     * parse the GS segment
+     * @param segment
+     * @param x12
+     */
+    protected void parseGroupHeader(X12Segment segment, AbstractStandardX12Document x12Doc) {
+        LOGGER.debug(segment.getSegmentIdentifier());
+
+        String segmentIdentifier = segment.getSegmentIdentifier();
+        if (GROUP_SEGMENT_ID.equals(segmentIdentifier)) {
+            GroupHeader groupHeader = new GroupHeader();
+            groupHeader.setFunctionalCodeId(segment.getSegmentElement(1));
+            groupHeader.setApplicationSenderCode(segment.getSegmentElement(2));
+            groupHeader.setApplicationReceiverCode(segment.getSegmentElement(3));
+            groupHeader.setDate(segment.getSegmentElement(4));
+            groupHeader.setTime(segment.getSegmentElement(5));
+            groupHeader.setGroupControlNumber(segment.getSegmentElement(6));
+            groupHeader.setResponsibeAgencyCode(segment.getSegmentElement(7));
+            groupHeader.setVersion(segment.getSegmentElement(8));
+
+            x12Doc.setGroupHeader(groupHeader);
+        } else {
+            handleUnexpectedSegment(ISA_ID, segmentIdentifier);
+        }
+    }
+}

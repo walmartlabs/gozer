@@ -13,44 +13,34 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.asn856;
+package com.walmartlabs.x12.po850;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.AbstractStandardX12Parser;
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-/**
- * ASN 856 is the Advance Shipping Notice Used to communicate the contents of a shipment prior to arriving at the facility where the contents will be
- * delivered.
- *
- */
-public class DefaultAsn856Parser extends AbstractStandardX12Parser<Asn856> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856Parser.class);
-
+public class DefaultPurchaseOrder850Parser extends AbstractStandardX12Parser<PurchaseOrder850> {
     /**
-     * parse the ASN 856 transmission into a representative Java object
+     * parse the PO 850 transmission into a representative Java object
      *
-     * @return {@link Asn856}
+     * @return {@link PurchaseOrder850}
      * @throws X12ParserException
      */
     @Override
-    public Asn856 parse(String sourceData) {
-        Asn856 asn856 = null;
+    public PurchaseOrder850 parse(String sourceData) {
+        PurchaseOrder850 po850 = null;
 
         if (!StringUtils.isEmpty(sourceData)) {
-            asn856 = new Asn856();
+            po850 = new PurchaseOrder850();
             List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
             // TODO: implement the parser
             int segmentIdx = 0;
-            this.parseInterchangeControlHeader(segmentLines.get(segmentIdx), asn856);
+            this.parseInterchangeControlHeader(segmentLines.get(segmentIdx), po850);
         }
 
-        return asn856;
+        return po850;
     }
-
 }
