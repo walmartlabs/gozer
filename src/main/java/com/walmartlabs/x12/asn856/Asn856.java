@@ -19,4 +19,14 @@ import com.walmartlabs.x12.common.AbstractStandardX12Document;
 
 public class Asn856 extends AbstractStandardX12Document {
 
+    private String sampleAsnOnly;
+
+    public String getSampleAsnOnly() {
+        return sampleAsnOnly;
+    }
+
+    public void setSampleAsnOnly(String sampleAsnOnly) {
+        this.sampleAsnOnly = sampleAsnOnly;
+    }
+
 }

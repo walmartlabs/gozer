@@ -58,6 +58,9 @@ public class DefaultAsn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
+
+        // TODO: quick test
+        assertEquals("TEST", asn.getSampleAsnOnly());
     }
 
 }

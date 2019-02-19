@@ -16,11 +16,10 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.common.AbstractStandardX12Document;
 import com.walmartlabs.x12.common.AbstractStandardX12Parser;
-import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -32,25 +31,16 @@ import java.util.List;
 public class DefaultAsn856Parser extends AbstractStandardX12Parser<Asn856> {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856Parser.class);
 
-    /**
-     * parse the ASN 856 transmission into a representative Java object
-     *
-     * @return {@link Asn856}
-     * @throws X12ParserException
-     */
     @Override
-    public Asn856 parse(String sourceData) {
-        Asn856 asn856 = null;
-
-        if (!StringUtils.isEmpty(sourceData)) {
-            asn856 = new Asn856();
-            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
-            // TODO: implement the parser
-            int segmentIdx = 0;
-            this.parseInterchangeControlHeader(segmentLines.get(segmentIdx), asn856);
-        }
-
-        return asn856;
+    protected AbstractStandardX12Document createX12Document() {
+        return new Asn856();
     }
+
+    @Override
+    protected void parseCustom(List<X12Segment> segmentLines, AbstractStandardX12Document x12Doc) {
+        Asn856 asn = (Asn856) x12Doc;
+        asn.setSampleAsnOnly("TEST");
+    }
+
 
 }

@@ -15,10 +15,11 @@ limitations under the License.
  */
 package com.walmartlabs.x12.common;
 
-import com.walmartlabs.x12.X12Document;
 import com.walmartlabs.x12.X12Segment;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -79,8 +80,12 @@ public class AbstractStandardX12ParserTest {
     public class MockStandardParser extends AbstractStandardX12Parser {
 
         @Override
-        public X12Document parse(String sourceData) {
-            return null;
+        protected AbstractStandardX12Document createX12Document() {
+            return new MockStandardDocument();
+        }
+
+        @Override
+        protected void parseCustom(List segmentLines, AbstractStandardX12Document x12Doc) {
         }
 
     }

@@ -17,14 +17,44 @@ package com.walmartlabs.x12.common;
 
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Document> implements X12Parser<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStandardX12Parser.class);
 
     public static final String ISA_ID = "ISA";
     public static final String GROUP_SEGMENT_ID = "GS";
+
+    /**
+     * template for parsing a standard EDI X12 document
+     *
+     * @return T (the Class associated with the parser)
+     * @throws X12ParserException
+     */
+    @Override
+    public T parse(String sourceData) {
+        AbstractStandardX12Document x12Doc = null;
+
+        if (!StringUtils.isEmpty(sourceData)) {
+            x12Doc = this.createX12Document();
+            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
+            int segmentIdx = 0;
+            this.parseInterchangeControlHeader(segmentLines.get(segmentIdx++), x12Doc);
+            this.parseGroupHeader(segmentLines.get(segmentIdx++), x12Doc);
+            this.parseCustom(segmentLines, x12Doc);
+        }
+
+        return (T) x12Doc;
+    }
+
+    protected abstract AbstractStandardX12Document createX12Document();
+
+    protected abstract void parseCustom(List<X12Segment> segmentLines, AbstractStandardX12Document x12Doc);
 
     /**
      * parse the ISA segment

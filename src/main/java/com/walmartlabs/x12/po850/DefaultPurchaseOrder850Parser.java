@@ -16,31 +16,19 @@ limitations under the License.
 package com.walmartlabs.x12.po850;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.common.AbstractStandardX12Document;
 import com.walmartlabs.x12.common.AbstractStandardX12Parser;
-import com.walmartlabs.x12.exceptions.X12ParserException;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 public class DefaultPurchaseOrder850Parser extends AbstractStandardX12Parser<PurchaseOrder850> {
-    /**
-     * parse the PO 850 transmission into a representative Java object
-     *
-     * @return {@link PurchaseOrder850}
-     * @throws X12ParserException
-     */
+
     @Override
-    public PurchaseOrder850 parse(String sourceData) {
-        PurchaseOrder850 po850 = null;
+    protected AbstractStandardX12Document createX12Document() {
+        return new PurchaseOrder850();
+    }
 
-        if (!StringUtils.isEmpty(sourceData)) {
-            po850 = new PurchaseOrder850();
-            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
-            // TODO: implement the parser
-            int segmentIdx = 0;
-            this.parseInterchangeControlHeader(segmentLines.get(segmentIdx), po850);
-        }
-
-        return po850;
+    @Override
+    protected void parseCustom(List<X12Segment> segmentLines, AbstractStandardX12Document x12Doc) {
     }
 }
