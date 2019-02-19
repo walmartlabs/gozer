@@ -9,7 +9,8 @@ This open source library, available through @WalmartLabs, provides Java based cl
 | X12     	| Name                             	  | Description 	  | X12 Version(s) |
 |---------	|-----------------------------------   |-------------	  |--------------  |
 | DEX 894 	| Delivery/Return Base Record 	      | DSD deliveries | 4010,5010      |
-| ASN 856   	| Ship Notice/Manifest Transaction Set |             	  | Under Consideration |
+| ASN 856   	| Ship Notice/Manifest Transaction Set | Advance Ship Notice | WIP |
+| PO 850   	| Purchase Order Transaction Set | Purchase Order | WIP |
 
 ## Basic Design Approach
 
@@ -52,6 +53,8 @@ Dex894Item dexItem = dex.getItems().get(0);
 String itf14 = util.convertRetailNumberToItf14(dexItem.getUpc());
 
 ```
+## Getting Started: Writing a Parser and Validator
+[Guide for writing EDI parsers](AddingParsers.md)
 
 ## More Information
 
