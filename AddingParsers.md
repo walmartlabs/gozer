@@ -22,7 +22,7 @@ The next step is to determine whether the format shares segments with other EDI 
 
 If the format shares common segments then the domain object should probably `extend` the `AbstractStandardX12Document`. This will provide an object with all of the common segments, allowing the developer to add the elements unique to the format in the concrete class. If the format does not share any (or many) common segments then it should `implement` the `X12Document` interface. 
 
-![X12document hierarchy](X12DocHierarchy.png)
+![X12Document hierarchy](X12DocHierarchy.png)
 
 TODO
 
@@ -38,4 +38,9 @@ The `X12Parser` interface defines a simple method that is expected to accept a `
 
 ## The AbstractStandardX12Parser
 The `AbstractStandardX12Parser` uses the template pattern to implement the `parse` method. 
+
+TODO
+
+
+![X12Parser hierarchy](X12ParserHierarchy.png)
 
