@@ -40,6 +40,7 @@ public class DefaultAsn856ParserTest {
         Asn856 asn = asnParser.parse(new String(asnBytes));
 
         assertNotNull(asn);
+        // ISA segment
         InterchangeControlHeader isa = asn.getInterchangeControlHeader();
         assertNotNull(isa);
         assertEquals("01", isa.getAuthorizationInformationQualifier());
@@ -58,6 +59,8 @@ public class DefaultAsn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
+
+        // GS segment
 
         // TODO: quick test
         assertEquals("TEST", asn.getSampleAsnOnly());
