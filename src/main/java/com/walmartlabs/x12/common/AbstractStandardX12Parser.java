@@ -40,13 +40,17 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
     public T parse(String sourceData) {
         AbstractStandardX12Document x12Doc = null;
 
-        if (!StringUtils.isEmpty(sourceData)) {
-            x12Doc = this.createX12Document();
-            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
-            int segmentIdx = 0;
-            this.parseInterchangeControlHeader(segmentLines.get(segmentIdx++), x12Doc);
-            this.parseGroupHeader(segmentLines.get(segmentIdx++), x12Doc);
-            this.parseCustom(segmentLines, x12Doc);
+        try {
+            if (!StringUtils.isEmpty(sourceData)) {
+                x12Doc = this.createX12Document();
+                List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
+                int segmentIdx = 0;
+                this.parseInterchangeControlHeader(segmentLines.get(segmentIdx++), x12Doc);
+                this.parseGroupHeader(segmentLines.get(segmentIdx++), x12Doc);
+                this.parseCustom(segmentLines, x12Doc);
+            }
+        } catch (Exception e) {
+            throw new X12ParserException("Invalid EDI X12 message: unexpected error", e);
         }
 
         return (T) x12Doc;
@@ -107,12 +111,12 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
             groupHeader.setDate(segment.getSegmentElement(4));
             groupHeader.setTime(segment.getSegmentElement(5));
             groupHeader.setGroupControlNumber(segment.getSegmentElement(6));
-            groupHeader.setResponsibeAgencyCode(segment.getSegmentElement(7));
+            groupHeader.setResponsibleAgencyCode(segment.getSegmentElement(7));
             groupHeader.setVersion(segment.getSegmentElement(8));
 
             x12Doc.setGroupHeader(groupHeader);
         } else {
-            handleUnexpectedSegment(ISA_ID, segmentIdentifier);
+            handleUnexpectedSegment(GROUP_SEGMENT_ID, segmentIdentifier);
         }
     }
 }

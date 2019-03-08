@@ -29,7 +29,7 @@ public class GroupHeader {
     // GS06
     private String groupControlNumber;
     // GS07
-    private String responsibeAgencyCode;
+    private String responsibleAgencyCode;
     // GS08
     private String version;
 
@@ -81,12 +81,12 @@ public class GroupHeader {
         this.groupControlNumber = groupControlNumber;
     }
 
-    public String getResponsibeAgencyCode() {
-        return responsibeAgencyCode;
+    public String getResponsibleAgencyCode() {
+        return responsibleAgencyCode;
     }
 
-    public void setResponsibeAgencyCode(String responsibeAgencyCode) {
-        this.responsibeAgencyCode = responsibeAgencyCode;
+    public void setResponsibleAgencyCode(String responsibeAgencyCode) {
+        this.responsibleAgencyCode = responsibeAgencyCode;
     }
 
     public String getVersion() {

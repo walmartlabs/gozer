@@ -16,6 +16,7 @@ limitations under the License.
 package com.walmartlabs.x12.common;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class AbstractStandardX12ParserTest {
 
@@ -60,6 +62,18 @@ public class AbstractStandardX12ParserTest {
     }
 
     @Test
+    public void test_parseInterchangeControlHeader_incorrectSegment() {
+        MockStandardDocument x12Doc = new MockStandardDocument();
+        X12Segment segment = new X12Segment("GS*SH*4090032Z*925485US00*20181212*0901*113733*X*005010");
+        try {
+            standardParser.parseInterchangeControlHeader(segment, x12Doc);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected ISA segment but found GS", e.getMessage());
+        }
+    }
+
+    @Test
     public void test_parseGroupHeader() {
         MockStandardDocument x12Doc = new MockStandardDocument();
         X12Segment segment = new X12Segment("GS*SH*4090032Z*925485US00*20181212*0901*113733*X*005010");
@@ -73,8 +87,20 @@ public class AbstractStandardX12ParserTest {
         assertEquals("20181212", groupHeader.getDate());
         assertEquals("0901", groupHeader.getTime());
         assertEquals("113733", groupHeader.getGroupControlNumber());
-        assertEquals("X", groupHeader.getResponsibeAgencyCode());
+        assertEquals("X", groupHeader.getResponsibleAgencyCode());
         assertEquals("005010", groupHeader.getVersion());
+    }
+
+    @Test
+    public void test_parseGroupHeader_incorrectSegment() {
+        MockStandardDocument x12Doc = new MockStandardDocument();
+        X12Segment segment = new X12Segment("ISA*SH*4090032Z*925485US00*20181212*0901*113733*X*005010");
+        try {
+            standardParser.parseGroupHeader(segment, x12Doc);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected GS segment but found ISA", e.getMessage());
+        }
     }
 
     public class MockStandardParser extends AbstractStandardX12Parser {
