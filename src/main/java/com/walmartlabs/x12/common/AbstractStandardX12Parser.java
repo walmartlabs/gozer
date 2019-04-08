@@ -24,7 +24,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-
 /**
  * DEX 894 Base Record Transaction Set is essentially a set of invoices
  *
