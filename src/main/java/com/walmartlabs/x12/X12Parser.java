@@ -15,6 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12;
 
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.springframework.util.StringUtils;
 
@@ -43,6 +44,21 @@ public interface X12Parser<T extends X12Document> {
                 .map(segment -> new X12Segment(segment))
                 .collect(Collectors.toList());
         }
+    }
+
+    /**
+     * will throw X12ParserException with message indicating the segment found
+     * was not the one that was expected
+     * @param expectedSegmentId
+     * @param actualSegmentId
+     * @throws {@link X12ParserException}
+     */
+    default void handleUnexpectedSegment(String expectedSegmentId, String actualSegmentId) {
+        StringBuilder sb = new StringBuilder("expected ");
+        sb.append(expectedSegmentId);
+        sb.append(" segment but found ");
+        sb.append(actualSegmentId);
+        throw new X12ParserException(new X12ErrorDetail(actualSegmentId, null, sb.toString()));
     }
 
 }

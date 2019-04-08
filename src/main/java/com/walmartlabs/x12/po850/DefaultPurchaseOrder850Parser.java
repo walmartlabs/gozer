@@ -13,34 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.asn856;
+package com.walmartlabs.x12.po850;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.AbstractStandardX12Document;
 import com.walmartlabs.x12.common.AbstractStandardX12Parser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * ASN 856 is the Advance Shipping Notice Used to communicate the contents of a shipment prior to arriving at the facility where the contents will be
- * delivered.
- *
- */
-public class DefaultAsn856Parser extends AbstractStandardX12Parser<Asn856> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856Parser.class);
+public class DefaultPurchaseOrder850Parser extends AbstractStandardX12Parser<PurchaseOrder850> {
 
     @Override
     protected AbstractStandardX12Document createX12Document() {
-        return new Asn856();
+        return new PurchaseOrder850();
     }
 
     @Override
     protected void parseCustom(List<X12Segment> segmentLines, AbstractStandardX12Document x12Doc) {
-        Asn856 asn = (Asn856) x12Doc;
-        asn.setSampleAsnOnly("TEST");
     }
-
-
 }

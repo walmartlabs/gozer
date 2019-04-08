@@ -17,7 +17,6 @@ package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.VersionUtil;
 import org.slf4j.Logger;
@@ -258,7 +257,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
                     segmentIdx++;
                 } else {
                     // unexpected segment
-                    this.throwParserException(G83_ID, segmentId);
+                    this.handleUnexpectedSegment(G83_ID, segmentId);
                 }
 
             } while (!LOOP_TRAILER_ID.equals(segmentId));
@@ -331,7 +330,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dex.setReceiverCommId(headerSegment.getSegmentElement(5));
             dex.setTestIndicator(headerSegment.getSegmentElement(6));
         } else {
-            throwParserException(APPLICATION_HEADER_ID, segmentIdentifer);
+            handleUnexpectedSegment(APPLICATION_HEADER_ID, segmentIdentifer);
         }
     }
 
@@ -356,7 +355,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexTx.setTransactionSetIdentifierCode(segment.getSegmentElement(1));
             dexTx.setHeaderControlNumber(segment.getSegmentElement(2));
         } else {
-            throwParserException(TRANSACTION_SET_HEADER_ID, segmentIdentifier);
+            handleUnexpectedSegment(TRANSACTION_SET_HEADER_ID, segmentIdentifier);
         }
 
     }
@@ -383,7 +382,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexTx.setPurchaseOrderNumber(segment.getSegmentElement(8));
             dexTx.setPurchaseOrderDate(segment.getSegmentElement(9));
         } else {
-            throwParserException(G82_ID, segmentIdentifier);
+            handleUnexpectedSegment(G82_ID, segmentIdentifier);
         }
     }
 
@@ -399,7 +398,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         String segmentIdentifier = segment.getSegmentIdentifier();
         if (!LOOP_HEADER_ID.equals(segmentIdentifier)) {
-            throwParserException(LOOP_HEADER_ID, segmentIdentifier);
+            handleUnexpectedSegment(LOOP_HEADER_ID, segmentIdentifier);
         }
     }
 
@@ -434,7 +433,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexItem.setCaseProductId(segment.getSegmentElement(12));
             dexItem.setInnerPackCount(this.convertStringToInteger(segment.getSegmentElement(13)));
         } else {
-            throwParserException(G83_ID, segmentIdentifier);
+            handleUnexpectedSegment(G83_ID, segmentIdentifier);
         }
     }
 
@@ -479,7 +478,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexAllowance.setAllowancePercent(this.convertStringToBigDecimal(segment.getSegmentElement(9), 3));
             dexAllowance.setOptionNumber(segment.getSegmentElement(10));
         } else {
-            throwParserException(G72_ID, segmentIdentifier);
+            handleUnexpectedSegment(G72_ID, segmentIdentifier);
         }
     }
 
@@ -496,7 +495,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         String segmentIdentifier = segment.getSegmentIdentifier();
         if (!LOOP_TRAILER_ID.equals(segmentIdentifier)) {
-            throwParserException(LOOP_TRAILER_ID, segmentIdentifier);
+            handleUnexpectedSegment(LOOP_TRAILER_ID, segmentIdentifier);
         }
     }
 
@@ -517,7 +516,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexTx.setTransactionTotalAmount(this.convertStringToBigDecimal(segment.getSegmentElement(2), 2));
             dexTx.setTransactionTotalDepositAmount(this.convertStringToBigDecimal(segment.getSegmentElement(3), 2));
         } else {
-            throwParserException(G84_ID, segmentIdentifier);
+            handleUnexpectedSegment(G84_ID, segmentIdentifier);
         }
     }
 
@@ -536,7 +535,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         if (G85_ID.equals(segmentIdentifier)) {
             dexTx.setIntegrityCheckValue(segment.getSegmentElement(1));
         } else {
-            throwParserException(G85_ID, segmentIdentifier);
+            handleUnexpectedSegment(G85_ID, segmentIdentifier);
         }
     }
 
@@ -556,7 +555,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexTx.setElectronicSignature(segment.getSegmentElement(1));
             dexTx.setSignatureName(segment.getSegmentElement(2));
         } else {
-            throwParserException(G86_ID, segmentIdentifier);
+            handleUnexpectedSegment(G86_ID, segmentIdentifier);
         }
     }
 
@@ -575,7 +574,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexTx.setExpectedNumberOfSegments(this.convertStringToInteger(segment.getSegmentElement(1)));
             dexTx.setTrailerControlNumber(segment.getSegmentElement(2));
         } else {
-            throwParserException(TRANSACTION_SET_TRAILER_ID, segmentIdentifier);
+            handleUnexpectedSegment(TRANSACTION_SET_TRAILER_ID, segmentIdentifier);
         }
     }
 
@@ -594,16 +593,8 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dex.setTrailerTransmissionControlNumber(trailerSegment.getSegmentElement(1));
             dex.setNumberOfTransactions(this.convertStringToInteger(trailerSegment.getSegmentElement(2)));
         } else {
-            throwParserException(APPLICATION_TRAILER_ID, segmentIdentifier);
+            handleUnexpectedSegment(APPLICATION_TRAILER_ID, segmentIdentifier);
         }
-    }
-
-    protected void throwParserException(String expectedSegmentId, String actualSegmentId) {
-        StringBuilder sb = new StringBuilder("expected ");
-        sb.append(expectedSegmentId);
-        sb.append(" segment but found ");
-        sb.append(actualSegmentId);
-        throw new X12ParserException(new X12ErrorDetail(actualSegmentId, null, sb.toString()));
     }
 
     protected int findLastSegmentIndex(List<X12Segment> dexSegments) {

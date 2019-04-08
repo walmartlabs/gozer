@@ -42,14 +42,6 @@ public class Dex894 implements X12Document {
     private List<Dex894TransactionSet> transactions;
 
     /**
-     * DEX type
-     */
-    @Override
-    public String getX12DocumentType() {
-        return "DX";
-    }
-
-    /**
      * add a DEX transaction
      * @param dexTx
      */

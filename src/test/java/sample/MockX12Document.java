@@ -13,11 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12;
+package sample;
 
-/**
- *
- */
-public interface X12Document {
+import com.walmartlabs.x12.X12Document;
+
+public class MockX12Document implements X12Document {
+    private String functionalId;
+
+    public String getFunctionalId() {
+        return functionalId;
+    }
+
+    public void setFunctionalId(String functionalId) {
+        this.functionalId = functionalId;
+    }
 
 }
