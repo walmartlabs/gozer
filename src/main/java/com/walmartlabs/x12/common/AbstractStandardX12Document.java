@@ -17,10 +17,21 @@ package com.walmartlabs.x12.common;
 
 import com.walmartlabs.x12.X12Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AbstractStandardX12Document implements X12Document {
 
     private InterchangeControlHeader interchangeControlHeader;
-    private GroupHeader groupHeader;
+    private List<X12Group> groups;
+    private InterchangeControlTrailer interchangeControlTrailer;
+
+    public void addGroupHeader(X12Group group) {
+        if (groups == null) {
+            groups = new ArrayList<>();
+        }
+        groups.add(group);
+    }
 
     public void setInterchangeControlHeader(InterchangeControlHeader isa) {
         this.interchangeControlHeader = isa;
@@ -30,12 +41,20 @@ public abstract class AbstractStandardX12Document implements X12Document {
         return interchangeControlHeader;
     }
 
-    public void setGroupHeader(GroupHeader groupHeader) {
-        this.groupHeader = groupHeader;
+    public InterchangeControlTrailer getInterchangeControlTrailer() {
+        return interchangeControlTrailer;
     }
 
-    public GroupHeader getGroupHeader() {
-        return groupHeader;
+    public void setInterchangeControlTrailer(InterchangeControlTrailer interchangeControlTrailer) {
+        this.interchangeControlTrailer = interchangeControlTrailer;
+    }
+
+    public List<X12Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<X12Group> groups) {
+        this.groups = groups;
     }
 
 }

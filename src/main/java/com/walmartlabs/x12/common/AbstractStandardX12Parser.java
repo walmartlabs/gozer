@@ -24,11 +24,33 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+
+/**
+ * DEX 894 Base Record Transaction Set is essentially a set of invoices
+ *
+ * Envelope
+ * -- ISA
+ * ----- Groups
+ * -- ISE
+ *
+ * Group
+ * -- GS
+ * ----- Transactions
+ * -- GE
+ *
+ * Transaction
+ * -- ST
+ * ----- Transaction Details
+ * -- SE
+ */
 public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Document> implements X12Parser<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStandardX12Parser.class);
 
-    public static final String ISA_ID = "ISA";
-    public static final String GROUP_SEGMENT_ID = "GS";
+    public static final String ISA_HEADER_ID = "ISA";
+    public static final String ISA_TRAILER_ID = "ISE";
+
+    public static final String GROUP_HEADER_ID = "GS";
+    public static final String GROUP_TRAILER_ID = "GE";
 
     /**
      * template for parsing a standard EDI X12 document
@@ -69,7 +91,7 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
         LOGGER.debug(segment.getSegmentIdentifier());
 
         String segmentIdentifier = segment.getSegmentIdentifier();
-        if (ISA_ID.equals(segmentIdentifier)) {
+        if (ISA_HEADER_ID.equals(segmentIdentifier)) {
             InterchangeControlHeader isa = new InterchangeControlHeader();
             isa.setAuthorizationInformationQualifier(segment.getSegmentElement(1));
             isa.setAuthorizationInformation(segment.getSegmentElement(2));
@@ -90,7 +112,7 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
 
             x12Doc.setInterchangeControlHeader(isa);
         } else {
-            handleUnexpectedSegment(ISA_ID, segmentIdentifier);
+            handleUnexpectedSegment(ISA_HEADER_ID, segmentIdentifier);
         }
     }
 
@@ -103,20 +125,20 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
         LOGGER.debug(segment.getSegmentIdentifier());
 
         String segmentIdentifier = segment.getSegmentIdentifier();
-        if (GROUP_SEGMENT_ID.equals(segmentIdentifier)) {
-            GroupHeader groupHeader = new GroupHeader();
+        if (GROUP_HEADER_ID.equals(segmentIdentifier)) {
+            X12Group groupHeader = new X12Group();
             groupHeader.setFunctionalCodeId(segment.getSegmentElement(1));
             groupHeader.setApplicationSenderCode(segment.getSegmentElement(2));
             groupHeader.setApplicationReceiverCode(segment.getSegmentElement(3));
             groupHeader.setDate(segment.getSegmentElement(4));
             groupHeader.setTime(segment.getSegmentElement(5));
-            groupHeader.setGroupControlNumber(segment.getSegmentElement(6));
+            groupHeader.setHeaderGroupControlNumber(segment.getSegmentElement(6));
             groupHeader.setResponsibleAgencyCode(segment.getSegmentElement(7));
             groupHeader.setVersion(segment.getSegmentElement(8));
 
-            x12Doc.setGroupHeader(groupHeader);
+            x12Doc.addGroupHeader(groupHeader);
         } else {
-            handleUnexpectedSegment(GROUP_SEGMENT_ID, segmentIdentifier);
+            handleUnexpectedSegment(GROUP_HEADER_ID, segmentIdentifier);
         }
     }
 }

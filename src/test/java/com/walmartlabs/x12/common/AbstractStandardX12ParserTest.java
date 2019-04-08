@@ -79,14 +79,17 @@ public class AbstractStandardX12ParserTest {
         X12Segment segment = new X12Segment("GS*SH*4090032Z*925485US00*20181212*0901*113733*X*005010");
         standardParser.parseGroupHeader(segment, x12Doc);
 
-        GroupHeader groupHeader = x12Doc.getGroupHeader();
+        assertNotNull(x12Doc.getGroups());
+        assertEquals(1, x12Doc.getGroups().size());
+
+        X12Group groupHeader = x12Doc.getGroups().get(0);
         assertNotNull(groupHeader);
         assertEquals("SH", groupHeader.getFunctionalCodeId());
         assertEquals("4090032Z", groupHeader.getApplicationSenderCode());
         assertEquals("925485US00", groupHeader.getApplicationReceiverCode());
         assertEquals("20181212", groupHeader.getDate());
         assertEquals("0901", groupHeader.getTime());
-        assertEquals("113733", groupHeader.getGroupControlNumber());
+        assertEquals("113733", groupHeader.getHeaderGroupControlNumber());
         assertEquals("X", groupHeader.getResponsibleAgencyCode());
         assertEquals("005010", groupHeader.getVersion());
     }

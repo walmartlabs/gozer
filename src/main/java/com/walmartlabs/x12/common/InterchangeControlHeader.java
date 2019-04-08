@@ -21,49 +21,34 @@ package com.walmartlabs.x12.common;
 public class InterchangeControlHeader {
     // ISA01
     private String authorizationInformationQualifier;
-
    // ISA02
     private String authorizationInformation;
-
     // ISA03
     private String securityInformationQualifier;
-
     // ISA04
     private String securityInformation;
-
     // ISA05
     private String interchangeIdQualifier;
-
     // ISA06
     private String interchangeSenderId;
-
     // ISA07
     private String interchangeIdQualifier_2;
-
     // ISA08
     private String interchangeReceiverId;
-
     // ISA09
     private String interchangeDate;
-
     // ISA10
     private String interchangeTime;
-
     // ISA11
     private String interchangeControlStandardId;
-
     // ISA12
     private String interchangeControlVersion;
-
     // ISA13
     private String interchangeControlNumber;
-
     // ISA14
     private String acknowledgementRequested;
-
     // ISA15
     private String usageIndicator;
-
     // ISA16
     private String elementSeparator;
 

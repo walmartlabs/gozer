@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dex894 implements X12Document {
+    // DEX Header Data Elements
     // DXS01
     private String senderCommId;
     // DXS02
@@ -34,12 +35,16 @@ public class Dex894 implements X12Document {
     private String receiverCommId;
     // DXS06
     private String testIndicator;
+
+    // DEX Transactions
+    private List<Dex894TransactionSet> transactions;
+
+    // DEX Trailer Data Elements
     // DXE01
     private String trailerTransmissionControlNumber;
     // DXE02
     private Integer numberOfTransactions;
 
-    private List<Dex894TransactionSet> transactions;
 
     /**
      * add a DEX transaction
