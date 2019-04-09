@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class DefaultDex894ParserTest {
@@ -33,51 +32,6 @@ public class DefaultDex894ParserTest {
     @Before
     public void init() {
         dexParser = new DefaultDex894Parser();
-    }
-
-    @Test
-    public void test_convertStringToInteger_Null() {
-        assertEquals(null, dexParser.convertStringToInteger(null));
-    }
-
-    @Test
-    public void test_convertStringToInteger_None() {
-        assertEquals(null, dexParser.convertStringToInteger(""));
-    }
-
-    @Test
-    public void test_convertStringToInteger_Number() {
-        assertEquals(new Integer(1), dexParser.convertStringToInteger("1"));
-    }
-
-    @Test(expected = X12ParserException.class)
-    public void test_convertStringToInteger_Alpha() {
-        dexParser.convertStringToInteger("X");
-    }
-
-    @Test
-    public void test_convertStringToBigDecimal_Null() {
-        assertEquals(null, dexParser.convertStringToBigDecimal(null, 2));
-    }
-
-    @Test
-    public void test_convertStringToBigDecimal_None() {
-        assertEquals(null, dexParser.convertStringToBigDecimal("", 2));
-    }
-
-    @Test
-    public void test_convertStringToBigDecimal_Number() {
-        assertEquals("1.00", dexParser.convertStringToBigDecimal("1", 2).toString());
-    }
-
-    @Test
-    public void test_convertStringToBigDecimal_Negative_Number() {
-        assertEquals("-1.00", dexParser.convertStringToBigDecimal("-1", 2).toString());
-    }
-
-    @Test(expected = X12ParserException.class)
-    public void test_convertStringToBigDecimal_Alpha() {
-        dexParser.convertStringToBigDecimal("X", 2);
     }
 
     @Test

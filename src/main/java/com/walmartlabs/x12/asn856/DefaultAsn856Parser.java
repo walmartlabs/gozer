@@ -18,6 +18,7 @@ package com.walmartlabs.x12.asn856;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.AbstractStandardX12Document;
 import com.walmartlabs.x12.common.AbstractStandardX12Parser;
+import com.walmartlabs.x12.common.X12Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +38,10 @@ public class DefaultAsn856Parser extends AbstractStandardX12Parser<Asn856> {
     }
 
     @Override
-    protected void parseCustom(List<X12Segment> segmentLines, AbstractStandardX12Document x12Doc) {
-        Asn856 asn = (Asn856) x12Doc;
-        asn.setSampleAsnOnly("TEST");
+    protected void parseTransasctionSet(List<X12Segment> segmentLines, X12Group x12Group) {
+        AsnTransactionSet asnTx = new AsnTransactionSet();
+        asnTx.setSampleAsnOnly("TEST");
+        x12Group.addTransactionSet(asnTx);
     }
 
 

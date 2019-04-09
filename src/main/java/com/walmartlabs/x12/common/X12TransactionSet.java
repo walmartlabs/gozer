@@ -15,6 +15,6 @@ limitations under the License.
  */
 package com.walmartlabs.x12.common;
 
-public abstract class X12TransactionSet {
+public interface X12TransactionSet {
 
 }

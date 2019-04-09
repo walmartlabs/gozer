@@ -17,6 +17,14 @@ package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.common.X12TransactionSet;
 
-public class AsnTransactionSet extends X12TransactionSet {
+public class AsnTransactionSet implements X12TransactionSet {
+    private String sampleAsnOnly;
 
+    public String getSampleAsnOnly() {
+        return sampleAsnOnly;
+    }
+
+    public void setSampleAsnOnly(String sampleAsnOnly) {
+        this.sampleAsnOnly = sampleAsnOnly;
+    }
 }

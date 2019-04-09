@@ -18,6 +18,7 @@ package com.walmartlabs.x12.po850;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.AbstractStandardX12Document;
 import com.walmartlabs.x12.common.AbstractStandardX12Parser;
+import com.walmartlabs.x12.common.X12Group;
 
 import java.util.List;
 
@@ -29,6 +30,6 @@ public class DefaultPurchaseOrder850Parser extends AbstractStandardX12Parser<Pur
     }
 
     @Override
-    protected void parseCustom(List<X12Segment> segmentLines, AbstractStandardX12Document x12Doc) {
+    protected void parseTransasctionSet(List<X12Segment> segmentLines, X12Group x12Group) {
     }
 }

@@ -16,15 +16,19 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.common.InterchangeControlHeader;
+import com.walmartlabs.x12.common.X12Group;
+import com.walmartlabs.x12.common.X12TransactionSet;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class DefaultAsn856ParserTest {
 
@@ -34,12 +38,27 @@ public class DefaultAsn856ParserTest {
     public void init() {
         asnParser = new DefaultAsn856Parser();
     }
+
     @Test
-    public void testParsingShipmentWithMissingDxe() throws IOException {
+    public void test_Parsing_SourceIsNull() throws IOException {
+        String sourceData = null;
+        Asn856 asn = asnParser.parse(sourceData);
+        assertNull(asn);
+    }
+
+    @Test
+    public void test_Parsing_SourceIsEmpty() throws IOException {
+        String sourceData = "";
+        Asn856 asn = asnParser.parse(sourceData);
+        assertNull(asn);
+    }
+
+    @Test
+    public void test_Parsing_Asn856() throws IOException {
         byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
         Asn856 asn = asnParser.parse(new String(asnBytes));
-
         assertNotNull(asn);
+
         // ISA segment
         InterchangeControlHeader isa = asn.getInterchangeControlHeader();
         assertNotNull(isa);
@@ -60,10 +79,17 @@ public class DefaultAsn856ParserTest {
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
 
-        // GS segment
-
         // TODO: quick test
-        assertEquals("TEST", asn.getSampleAsnOnly());
+        List<X12Group> groups = asn.getGroups();
+        assertNotNull(groups);
+        assertEquals(1, groups.size());
+
+        List<X12TransactionSet> txForGroupOne = asn.getGroups().get(0).getTransactions();
+        assertNotNull(txForGroupOne);
+        assertEquals(1, txForGroupOne.size());
+
+        AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
+        assertEquals("TEST", asnTx.getSampleAsnOnly());
     }
 
 }

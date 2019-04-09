@@ -17,6 +17,6 @@ package com.walmartlabs.x12.po850;
 
 import com.walmartlabs.x12.common.X12TransactionSet;
 
-public class PurchaseOrderTransactionSet extends X12TransactionSet {
+public class PurchaseOrderTransactionSet implements X12TransactionSet {
 
 }
