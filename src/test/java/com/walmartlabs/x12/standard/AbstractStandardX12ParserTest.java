@@ -147,6 +147,12 @@ public class AbstractStandardX12ParserTest {
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
 
+        // ise trailer
+        InterchangeControlTrailer ise = x12.getInterchangeControlTrailer();
+        assertNotNull(ise);
+        assertEquals("000000049", ise.getInterchangeControlNumber());
+        assertEquals(new Integer(2), ise.getNumberOfGroups());
+
         // groups
         assertNotNull(x12.getGroups());
         assertEquals(2, x12.getGroups().size());

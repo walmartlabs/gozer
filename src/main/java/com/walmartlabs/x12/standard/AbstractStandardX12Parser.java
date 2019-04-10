@@ -19,6 +19,7 @@ import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.util.SegmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -73,10 +74,10 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
                 x12Doc = this.createX12Document();
 
                 // break document up into segment lines
-                List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
+                SegmentUtil segments = new SegmentUtil(this.splitSourceDataIntoSegments(sourceData));
 
                 // standard parsing of segment lines
-                this.standardParsingTemplate(segmentLines, x12Doc);
+                this.standardParsingTemplate(segments, x12Doc);
             }
         } catch (Exception e) {
             throw new X12ParserException("Invalid EDI X12 message: unexpected error", e);
@@ -90,13 +91,14 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
      *
      * @throws X12ParserException if the document can't be parsed
      */
-    private void standardParsingTemplate(List<X12Segment> segmentLines, StandardX12Document x12Doc) {
+    private void standardParsingTemplate(SegmentUtil segments, StandardX12Document x12Doc) {
 
         //
         // interchange control header
         //
-        int segmentIdx = 0;
-        X12Segment currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+//        int segmentIdx = 0;
+//        X12Segment currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+        X12Segment currentSegment = segments.nextSegment();
         this.parseInterchangeControlHeader(currentSegment, x12Doc);
 
         //
@@ -105,9 +107,10 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
         boolean insideGroup = false;
         boolean insideTransaction = false;
 
-        while (this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
+        while (segments.hasMoreSegmentLines()) {
             // get the next segment
-            currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+//            currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+            currentSegment = segments.nextSegment();
 
             // parse group header
             X12Group currentGroup = this.parseGroupHeader(currentSegment, x12Doc);
@@ -118,9 +121,10 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
             // there may be more than one transaction set
             // in a group
             List<X12Segment> transactionSet = new ArrayList<>();
-            while (insideGroup && this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
+            while (insideGroup && segments.hasMoreSegmentLines()) {
                 // get the next segment
-                currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+//                currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+                currentSegment = segments.nextSegment();
 
                 if (TRANSACTION_HEADER_ID.equals(currentSegment.getSegmentIdentifier())) {
                     if (insideTransaction) {
@@ -176,35 +180,15 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
             this.parseGroupTrailer(currentSegment, currentGroup);
 
             // check for end of message
-            if (this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
-                currentSegment = this.nextSegment(segmentIdx, segmentLines);
+            if (segments.hasMoreSegmentLines()) {
+//                currentSegment = this.nextSegment(segmentIdx, segmentLines);
+                currentSegment = segments.peekSegment();
                 if (ISA_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
                     this.parseInterchangeControlTrailer(currentSegment, x12Doc);
-                    segmentIdx++;
+                    currentSegment = segments.nextSegment();
+//                    segmentIdx++;
                 }
             }
-        }
-    }
-
-    /**
-     * TODO: candidate for object that manages segment lines
-     * compare the current segment index with the segment lines
-     */
-    private boolean hasMoreSegmentLines(int currentSegmentIdx, List<X12Segment> segmentLines) {
-        return (currentSegmentIdx < segmentLines.size()) ;
-    }
-
-    /**
-     * TODO: candidate for object that manages segment lines
-     * @param currentSegmentIdx
-     * @param segmentLines
-     * @return
-     */
-    private X12Segment nextSegment(int currentSegmentIdx, List<X12Segment> segmentLines) {
-        if (this.hasMoreSegmentLines(currentSegmentIdx, segmentLines)) {
-            return segmentLines.get(currentSegmentIdx);
-        } else {
-            return null;
         }
     }
 
@@ -263,7 +247,17 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
      * @param x12Doc
      */
     protected void parseInterchangeControlTrailer(X12Segment segment, StandardX12Document x12Doc) {
+        LOGGER.debug(segment.getSegmentIdentifier());
 
+        String segmentIdentifier = segment.getSegmentIdentifier();
+        if (ISA_TRAILER_ID.equals(segmentIdentifier)) {
+            InterchangeControlTrailer isa = new InterchangeControlTrailer();
+            isa.setNumberOfGroups(ConversionUtil.convertStringToInteger(segment.getSegmentElement(1)));
+            isa.setInterchangeControlNumber(segment.getSegmentElement(2));
+            x12Doc.setInterchangeControlTrailer(isa);
+        } else {
+            handleUnexpectedSegment(ISA_TRAILER_ID, segmentIdentifier);
+        }
     }
 
     /**
