@@ -15,7 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12.asn856;
 
-import com.walmartlabs.x12.common.X12TransactionSet;
+import com.walmartlabs.x12.X12TransactionSet;
 
 public class AsnTransactionSet implements X12TransactionSet {
     private String sampleAsnOnly;

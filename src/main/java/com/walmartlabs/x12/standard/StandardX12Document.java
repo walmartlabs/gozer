@@ -13,14 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.common;
+package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractStandardX12Document implements X12Document {
+public class StandardX12Document implements X12Document {
 
     private InterchangeControlHeader interchangeControlHeader;
     private List<X12Group> groups;

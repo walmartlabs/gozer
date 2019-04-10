@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.common;
+package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
@@ -41,7 +41,7 @@ public class AbstractStandardX12ParserTest {
 
     @Test
     public void test_parseInterchangeControlHeader() {
-        MockStandardDocument x12Doc = new MockStandardDocument();
+        StandardX12Document x12Doc = new StandardX12Document();
         X12Segment segment = new X12Segment("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*XX*123456789012345*101127*1719*U*00400*000003438*0*P*");
         standardParser.parseInterchangeControlHeader(segment, x12Doc);
 
@@ -67,7 +67,7 @@ public class AbstractStandardX12ParserTest {
 
     @Test
     public void test_parseInterchangeControlHeader_incorrectSegment() {
-        MockStandardDocument x12Doc = new MockStandardDocument();
+        StandardX12Document x12Doc = new StandardX12Document();
         X12Segment segment = new X12Segment("GS*SH*4090032Z*925485US00*20181212*0901*113733*X*005010");
         try {
             standardParser.parseInterchangeControlHeader(segment, x12Doc);
@@ -79,7 +79,7 @@ public class AbstractStandardX12ParserTest {
 
     @Test
     public void test_parseGroupHeader() {
-        MockStandardDocument x12Doc = new MockStandardDocument();
+        StandardX12Document x12Doc = new StandardX12Document();
         X12Segment segment = new X12Segment("GS*SH*4090032Z*925485US00*20181212*0901*113733*X*005010");
         X12Group groupHeader = standardParser.parseGroupHeader(segment, x12Doc);
 
@@ -96,7 +96,7 @@ public class AbstractStandardX12ParserTest {
 
     @Test
     public void test_parseGroupHeader_incorrectSegment() {
-        MockStandardDocument x12Doc = new MockStandardDocument();
+        StandardX12Document x12Doc = new StandardX12Document();
         X12Segment segment = new X12Segment("ISA*SH*4090032Z*925485US00*20181212*0901*113733*X*005010");
         try {
             standardParser.parseGroupHeader(segment, x12Doc);
@@ -109,14 +109,14 @@ public class AbstractStandardX12ParserTest {
     @Test
     public void test_Parsing_SourceIsNull() throws IOException {
         String sourceData = null;
-        MockStandardDocument x12 = standardParser.parse(sourceData);
+        StandardX12Document x12 = standardParser.parse(sourceData);
         assertNull(x12);
     }
 
     @Test
     public void test_Parsing_SourceIsEmpty() throws IOException {
         String sourceData = "";
-        MockStandardDocument x12 = standardParser.parse(sourceData);
+        StandardX12Document x12 = standardParser.parse(sourceData);
         assertNull(x12);
     }
 
@@ -124,7 +124,7 @@ public class AbstractStandardX12ParserTest {
     @Test
     public void test_Parsing_BaseDocument() throws IOException {
         byte[] x12Bytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.txt"));
-        MockStandardDocument x12 = standardParser.parse(new String(x12Bytes));
+        StandardX12Document x12 = standardParser.parse(new String(x12Bytes));
         assertNotNull(x12);
 
         // ISA segment
@@ -154,11 +154,11 @@ public class AbstractStandardX12ParserTest {
         assertEquals("99", x12.getGroups().get(1).getHeaderGroupControlNumber());
     }
 
-    public class MockStandardParser extends AbstractStandardX12Parser<MockStandardDocument> {
+    public class MockStandardParser extends AbstractStandardX12Parser<StandardX12Document> {
 
         @Override
-        protected AbstractStandardX12Document createX12Document() {
-            return new MockStandardDocument();
+        protected StandardX12Document createX12Document() {
+            return new StandardX12Document();
         }
 
         @Override
@@ -169,10 +169,6 @@ public class AbstractStandardX12ParserTest {
             assertEquals("TEST", txLines.get(1).getSegmentIdentifier());
             assertEquals("SE", txLines.get(2).getSegmentIdentifier());
         }
-
-    }
-
-    public class MockStandardDocument extends AbstractStandardX12Document {
 
     }
 

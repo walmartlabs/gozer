@@ -15,7 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12.po850;
 
-import com.walmartlabs.x12.common.X12TransactionSet;
+import com.walmartlabs.x12.X12TransactionSet;
 
 public class PurchaseOrderTransactionSet implements X12TransactionSet {
 

@@ -15,9 +15,11 @@ limitations under the License.
  */
 package com.walmartlabs.x12.asn856;
 
-import com.walmartlabs.x12.common.InterchangeControlHeader;
-import com.walmartlabs.x12.common.X12Group;
-import com.walmartlabs.x12.common.X12TransactionSet;
+import com.walmartlabs.x12.X12Document;
+import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.standard.InterchangeControlHeader;
+import com.walmartlabs.x12.standard.StandardX12Document;
+import com.walmartlabs.x12.standard.X12Group;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,23 +44,24 @@ public class DefaultAsn856ParserTest {
     @Test
     public void test_Parsing_SourceIsNull() throws IOException {
         String sourceData = null;
-        Asn856 asn = asnParser.parse(sourceData);
-        assertNull(asn);
+        X12Document x12 = asnParser.parse(sourceData);
+        assertNull(x12);
     }
 
     @Test
     public void test_Parsing_SourceIsEmpty() throws IOException {
         String sourceData = "";
-        Asn856 asn = asnParser.parse(sourceData);
-        assertNull(asn);
+        X12Document x12 = asnParser.parse(sourceData);
+        assertNull(x12);
     }
 
     @Test
     public void test_Parsing_Asn856() throws IOException {
         byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
-        Asn856 asn = asnParser.parse(new String(asnBytes));
-        assertNotNull(asn);
+        X12Document x12 = asnParser.parse(new String(asnBytes));
+        assertNotNull(x12);
 
+        StandardX12Document asn = (StandardX12Document)x12;
         // ISA segment
         InterchangeControlHeader isa = asn.getInterchangeControlHeader();
         assertNotNull(isa);

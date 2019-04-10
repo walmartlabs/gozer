@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.common;
+package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
@@ -45,7 +45,7 @@ import java.util.List;
  * -- SE
  *
  */
-public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Document> implements X12Parser<T> {
+public abstract class AbstractStandardX12Parser<T extends StandardX12Document> implements X12Parser<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStandardX12Parser.class);
 
     public static final String ISA_HEADER_ID = "ISA";
@@ -58,14 +58,14 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
     public static final String TRANSACTION_TRAILER_ID = "SE";
 
     /**
-     * template for parsing a standard EDI X12 document
+     * parse an X12 document into the representative Java POJO
      *
      * @return T (the Class associated with the parser)
      * @throws X12ParserException if the document can't be parsed
      */
     @Override
     public T parse(String sourceData) {
-        AbstractStandardX12Document x12Doc = null;
+        StandardX12Document x12Doc = null;
 
         try {
             if (!StringUtils.isEmpty(sourceData)) {
@@ -75,105 +75,115 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
                 // break document up into segment lines
                 List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
 
-                //
-                // interchange control header
-                //
-                int segmentIdx = 0;
-                X12Segment currentSegment = this.nextSegment(segmentIdx++, segmentLines);
-                this.parseInterchangeControlHeader(currentSegment, x12Doc);
-
-                //
-                // parse groups
-                //
-                boolean insideGroup = false;
-                boolean insideTransaction = false;
-
-                while (this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
-                    // get the next segment
-                    currentSegment = this.nextSegment(segmentIdx++, segmentLines);
-
-                    // parse group header
-                    X12Group currentGroup = this.parseGroupHeader(currentSegment, x12Doc);
-                    x12Doc.addGroupHeader(currentGroup);
-                    insideGroup = true;
-
-                    // get all segment lines for a single transaction
-                    // there may be more than one transaction set
-                    // in a group
-                    List<X12Segment> transactionSet = new ArrayList<>();
-                    while (insideGroup && this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
-                        // get the next segment
-                        currentSegment = this.nextSegment(segmentIdx++, segmentLines);
-
-                        if (TRANSACTION_HEADER_ID.equals(currentSegment.getSegmentIdentifier())) {
-                            if (insideTransaction) {
-                                // we are already in a transaction
-                                // and have not encountered the end
-                                // so we will stop parsing
-                                handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
-                            } else {
-                                insideTransaction = true;
-                                transactionSet.add(currentSegment);
-                            }
-                        } else if (TRANSACTION_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
-                            if (insideTransaction) {
-                                transactionSet.add(currentSegment);
-                                // delegate parsing of transaction set
-                                this.parseTransasctionSet(transactionSet, currentGroup);
-                                // get ready for next segment
-                                insideTransaction = false;
-                                transactionSet.clear();
-                            } else {
-                                // we are not in a transaction
-                                // so should not have gotten transaction trailer
-                                handleUnexpectedSegment(TRANSACTION_HEADER_ID, currentSegment.getSegmentIdentifier());
-                            }
-                        } else if (GROUP_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
-                            if (insideTransaction) {
-                                // we are already in a transaction
-                                // and have not encountered the end
-                                // so we will stop parsing
-                                handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
-                            } else {
-                                insideGroup = false;
-                            }
-
-                        } else {
-                            // add the segment to the current transaction set
-                            transactionSet.add(currentSegment);
-                        }
-                    }
-
-                    // if we got here we should have cleanly
-                    // exited a transaction
-                    if (insideTransaction) {
-                        handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
-                    }
-
-                    // if we got here we should have cleanly
-                    // exited a group
-                    if (insideGroup) {
-                        handleUnexpectedSegment(GROUP_TRAILER_ID, currentSegment.getSegmentIdentifier());
-                    }
-
-                    // parse group trailer
-                    this.parseGroupTrailer(currentSegment, currentGroup);
-
-                    // check for end of message
-                    if (this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
-                        currentSegment = this.nextSegment(segmentIdx, segmentLines);
-                        if (ISA_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
-                            this.parseInterchangeControlTrailer(currentSegment, x12Doc);
-                            segmentIdx++;
-                        }
-                    }
-                }
+                // standard parsing of segment lines
+                this.standardParsingTemplate(segmentLines, x12Doc);
             }
         } catch (Exception e) {
             throw new X12ParserException("Invalid EDI X12 message: unexpected error", e);
         }
 
         return (T) x12Doc;
+    }
+
+    /**
+     * template for parsing a standard EDI X12 document
+     *
+     * @throws X12ParserException if the document can't be parsed
+     */
+    private void standardParsingTemplate(List<X12Segment> segmentLines, StandardX12Document x12Doc) {
+
+        //
+        // interchange control header
+        //
+        int segmentIdx = 0;
+        X12Segment currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+        this.parseInterchangeControlHeader(currentSegment, x12Doc);
+
+        //
+        // parse groups
+        //
+        boolean insideGroup = false;
+        boolean insideTransaction = false;
+
+        while (this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
+            // get the next segment
+            currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+
+            // parse group header
+            X12Group currentGroup = this.parseGroupHeader(currentSegment, x12Doc);
+            x12Doc.addGroupHeader(currentGroup);
+            insideGroup = true;
+
+            // get all segment lines for a single transaction
+            // there may be more than one transaction set
+            // in a group
+            List<X12Segment> transactionSet = new ArrayList<>();
+            while (insideGroup && this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
+                // get the next segment
+                currentSegment = this.nextSegment(segmentIdx++, segmentLines);
+
+                if (TRANSACTION_HEADER_ID.equals(currentSegment.getSegmentIdentifier())) {
+                    if (insideTransaction) {
+                        // we are already in a transaction
+                        // and have not encountered the end
+                        // so we will stop parsing
+                        handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
+                    } else {
+                        insideTransaction = true;
+                        transactionSet.add(currentSegment);
+                    }
+                } else if (TRANSACTION_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
+                    if (insideTransaction) {
+                        transactionSet.add(currentSegment);
+                        // delegate parsing of transaction set
+                        this.parseTransasctionSet(transactionSet, currentGroup);
+                        // get ready for next segment
+                        insideTransaction = false;
+                        transactionSet.clear();
+                    } else {
+                        // we are not in a transaction
+                        // so should not have gotten transaction trailer
+                        handleUnexpectedSegment(TRANSACTION_HEADER_ID, currentSegment.getSegmentIdentifier());
+                    }
+                } else if (GROUP_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
+                    if (insideTransaction) {
+                        // we are already in a transaction
+                        // and have not encountered the end
+                        // so we will stop parsing
+                        handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
+                    } else {
+                        insideGroup = false;
+                    }
+                } else {
+                    // add the segment to the current transaction set
+                    transactionSet.add(currentSegment);
+                }
+            }
+
+            // if we got here we should have cleanly
+            // exited a transaction
+            if (insideTransaction) {
+                handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
+            }
+
+            // if we got here we should have cleanly
+            // exited a group
+            if (insideGroup) {
+                handleUnexpectedSegment(GROUP_TRAILER_ID, currentSegment.getSegmentIdentifier());
+            }
+
+            // parse group trailer
+            this.parseGroupTrailer(currentSegment, currentGroup);
+
+            // check for end of message
+            if (this.hasMoreSegmentLines(segmentIdx, segmentLines)) {
+                currentSegment = this.nextSegment(segmentIdx, segmentLines);
+                if (ISA_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
+                    this.parseInterchangeControlTrailer(currentSegment, x12Doc);
+                    segmentIdx++;
+                }
+            }
+        }
     }
 
     /**
@@ -198,7 +208,16 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
         }
     }
 
-    protected abstract AbstractStandardX12Document createX12Document();
+    /**
+     * create a Standard X12 Document
+     * concrete parsers may override this as necessary to
+     * create a subclass of the StandardX12Document for
+     * use within the parser
+     * @return
+     */
+    protected StandardX12Document createX12Document() {
+        return new StandardX12Document();
+    }
 
     protected abstract void parseTransasctionSet(List<X12Segment> transactionSegments, X12Group x12Group);
 
@@ -208,7 +227,7 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
      * @param segment
      * @param x12Doc
      */
-    protected void parseInterchangeControlHeader(X12Segment segment, AbstractStandardX12Document x12Doc) {
+    protected void parseInterchangeControlHeader(X12Segment segment, StandardX12Document x12Doc) {
         LOGGER.debug(segment.getSegmentIdentifier());
 
         String segmentIdentifier = segment.getSegmentIdentifier();
@@ -243,7 +262,7 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
      * @param segment
      * @param x12Doc
      */
-    protected void parseInterchangeControlTrailer(X12Segment segment, AbstractStandardX12Document x12Doc) {
+    protected void parseInterchangeControlTrailer(X12Segment segment, StandardX12Document x12Doc) {
 
     }
 
@@ -253,7 +272,7 @@ public abstract class AbstractStandardX12Parser<T extends AbstractStandardX12Doc
      * @param segment
      * @param x12Doc
      */
-    protected X12Group parseGroupHeader(X12Segment segment, AbstractStandardX12Document x12Doc) {
+    protected X12Group parseGroupHeader(X12Segment segment, StandardX12Document x12Doc) {
         LOGGER.debug(segment.getSegmentIdentifier());
 
         X12Group groupHeader = null;
