@@ -21,17 +21,6 @@ public class SegmentIterator implements ListIterator<X12Segment> {
     }
 
     /**
-     * retrieve the Segment that is AFTER the current index without advancing the current index if there is not another segment return null
-     */
-    public X12Segment peekSegment() {
-        if (this.hasNext()) {
-            return segmentLines.get(currentSegmentIdx);
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Returns true if this list iterator has more elements when traversing the list in the forward direction.
      */
     @Override
