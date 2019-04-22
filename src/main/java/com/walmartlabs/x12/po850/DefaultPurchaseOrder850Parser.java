@@ -25,6 +25,6 @@ import java.util.List;
 public class DefaultPurchaseOrder850Parser extends AbstractStandardX12Parser<StandardX12Document> {
 
     @Override
-    protected void parseTransasctionSet(List<X12Segment> segmentLines, X12Group x12Group) {
+    protected void parseTransactionSet(List<X12Segment> segmentLines, X12Group x12Group) {
     }
 }

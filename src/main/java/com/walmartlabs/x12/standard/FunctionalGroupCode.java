@@ -31,7 +31,7 @@ public enum FunctionalGroupCode {
    CA("865"),
    IN("810"),
    AG("824"),
-   FS("997");
+   FA("997");
 
    private String documentType;
 

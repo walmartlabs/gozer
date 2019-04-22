@@ -45,7 +45,7 @@ public class AbstractStandardX12ParserTest {
         X12Segment segment = new X12Segment("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*XX*123456789012345*101127*1719*U*00400*000003438*0*P*");
         standardParser.parseInterchangeControlHeader(segment, x12Doc);
 
-        InterchangeControlHeader isa = x12Doc.getInterchangeControlHeader();
+        InterchangeControlEnvelope isa = x12Doc.getInterchangeControlEnvelope();
         assertNotNull(isa);
         assertEquals("01", isa.getAuthorizationInformationQualifier());
         assertEquals("0000000000", isa.getAuthorizationInformation());
@@ -128,7 +128,7 @@ public class AbstractStandardX12ParserTest {
         assertNotNull(x12);
 
         // ISA segment
-        InterchangeControlHeader isa = x12.getInterchangeControlHeader();
+        InterchangeControlEnvelope isa = x12.getInterchangeControlEnvelope();
         assertNotNull(isa);
         assertEquals("01", isa.getAuthorizationInformationQualifier());
         assertEquals("0000000000", isa.getAuthorizationInformation());
@@ -148,7 +148,7 @@ public class AbstractStandardX12ParserTest {
         assertEquals(">", isa.getElementSeparator());
 
         // ise trailer
-        InterchangeControlTrailer ise = x12.getInterchangeControlTrailer();
+        InterchangeControlEnvelope ise = x12.getInterchangeControlEnvelope();
         assertNotNull(ise);
         assertEquals("000000049", ise.getInterchangeControlNumber());
         assertEquals(new Integer(2), ise.getNumberOfGroups());
@@ -168,7 +168,7 @@ public class AbstractStandardX12ParserTest {
         }
 
         @Override
-        protected void parseTransasctionSet(List<X12Segment> txLines, X12Group x12Group) {
+        protected void parseTransactionSet(List<X12Segment> txLines, X12Group x12Group) {
             assertNotNull(txLines);
             assertEquals(3, txLines.size());
             assertEquals("ST", txLines.get(0).getSegmentIdentifier());

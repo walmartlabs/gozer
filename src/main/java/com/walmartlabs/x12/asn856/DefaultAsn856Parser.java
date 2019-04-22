@@ -33,7 +33,7 @@ public class DefaultAsn856Parser extends AbstractStandardX12Parser<StandardX12Do
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856Parser.class);
 
     @Override
-    protected void parseTransasctionSet(List<X12Segment> segmentLines, X12Group x12Group) {
+    protected void parseTransactionSet(List<X12Segment> segmentLines, X12Group x12Group) {
         AsnTransactionSet asnTx = new AsnTransactionSet();
         asnTx.setSampleAsnOnly("TEST");
         x12Group.addTransactionSet(asnTx);

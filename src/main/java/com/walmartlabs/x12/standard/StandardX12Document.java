@@ -22,9 +22,8 @@ import java.util.List;
 
 public class StandardX12Document implements X12Document {
 
-    private InterchangeControlHeader interchangeControlHeader;
+    private InterchangeControlEnvelope interchangeControlEnvelope;
     private List<X12Group> groups;
-    private InterchangeControlTrailer interchangeControlTrailer;
 
     public void addGroupHeader(X12Group group) {
         if (groups == null) {
@@ -33,20 +32,12 @@ public class StandardX12Document implements X12Document {
         groups.add(group);
     }
 
-    public void setInterchangeControlHeader(InterchangeControlHeader isa) {
-        this.interchangeControlHeader = isa;
+    public void setInterchangeControlEnvelope(InterchangeControlEnvelope isa) {
+        this.interchangeControlEnvelope = isa;
     }
 
-    public InterchangeControlHeader getInterchangeControlHeader() {
-        return interchangeControlHeader;
-    }
-
-    public InterchangeControlTrailer getInterchangeControlTrailer() {
-        return interchangeControlTrailer;
-    }
-
-    public void setInterchangeControlTrailer(InterchangeControlTrailer interchangeControlTrailer) {
-        this.interchangeControlTrailer = interchangeControlTrailer;
+    public InterchangeControlEnvelope getInterchangeControlEnvelope() {
+        return interchangeControlEnvelope;
     }
 
     public List<X12Group> getGroups() {

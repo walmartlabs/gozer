@@ -17,7 +17,7 @@ package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Document;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.standard.InterchangeControlHeader;
+import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
 import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.X12Group;
 import org.junit.Before;
@@ -58,12 +58,11 @@ public class DefaultAsn856ParserTest {
     @Test
     public void test_Parsing_Asn856() throws IOException {
         byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
-        X12Document x12 = asnParser.parse(new String(asnBytes));
+        StandardX12Document x12 = asnParser.parse(new String(asnBytes));
         assertNotNull(x12);
 
-        StandardX12Document asn = (StandardX12Document)x12;
         // ISA segment
-        InterchangeControlHeader isa = asn.getInterchangeControlHeader();
+        InterchangeControlEnvelope isa = x12.getInterchangeControlEnvelope();
         assertNotNull(isa);
         assertEquals("01", isa.getAuthorizationInformationQualifier());
         assertEquals("0000000000", isa.getAuthorizationInformation());
@@ -81,13 +80,16 @@ public class DefaultAsn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
+        // ISA segment
+        assertEquals(new Integer(1), isa.getNumberOfGroups());
+        assertEquals("000000049", isa.getTrailerInterchangeControlNumber());
 
         // TODO: quick test
-        List<X12Group> groups = asn.getGroups();
+        List<X12Group> groups = x12.getGroups();
         assertNotNull(groups);
         assertEquals(1, groups.size());
 
-        List<X12TransactionSet> txForGroupOne = asn.getGroups().get(0).getTransactions();
+        List<X12TransactionSet> txForGroupOne = x12.getGroups().get(0).getTransactions();
         assertNotNull(txForGroupOne);
         assertEquals(1, txForGroupOne.size());
 

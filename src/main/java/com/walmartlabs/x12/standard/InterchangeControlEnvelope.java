@@ -18,7 +18,10 @@ package com.walmartlabs.x12.standard;
 /**
  * PURPOSE: To indicate the start of an EDI interchange and assign a control number
  */
-public class InterchangeControlHeader {
+public class InterchangeControlEnvelope {
+    //
+    // Interchange control header
+    //
     // ISA01
     private String authorizationInformationQualifier;
    // ISA02
@@ -52,6 +55,13 @@ public class InterchangeControlHeader {
     // ISA16
     private String elementSeparator;
 
+    //
+    // Interchange control trailers
+    //
+    // ISE02
+    private Integer numberOfGroups;
+    // ISE02
+    private String trailerInterchangeControlNumber;
 
     public String getAuthorizationInformationQualifier() {
         return authorizationInformationQualifier;
@@ -179,6 +189,22 @@ public class InterchangeControlHeader {
 
     public void setElementSeparator(String elementSeparator) {
         this.elementSeparator = elementSeparator;
+    }
+
+    public Integer getNumberOfGroups() {
+        return numberOfGroups;
+    }
+
+    public void setNumberOfGroups(Integer numberOfGroups) {
+        this.numberOfGroups = numberOfGroups;
+    }
+
+    public String getTrailerInterchangeControlNumber() {
+        return trailerInterchangeControlNumber;
+    }
+
+    public void setTrailerInterchangeControlNumber(String trailerInterchangeControlNumber) {
+        this.trailerInterchangeControlNumber = trailerInterchangeControlNumber;
     }
 
 }

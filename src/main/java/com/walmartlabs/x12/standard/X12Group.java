@@ -41,7 +41,7 @@ public class X12Group {
     private String version;
 
     // ST...SE loops within the group
-    List<X12TransactionSet> transactions;
+    private List<X12TransactionSet> transactions;
 
     // Trailer Data Elements
     // GE01
