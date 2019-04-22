@@ -39,7 +39,7 @@ public class SegmentIterator implements ListIterator<X12Segment> {
         if (this.hasNext()) {
             return segmentLines.get(currentSegmentIdx++);
         } else {
-            return null;
+            throw new NoSuchElementException();
         }
     }
 
@@ -62,7 +62,7 @@ public class SegmentIterator implements ListIterator<X12Segment> {
         if (this.hasPrevious()) {
             return segmentLines.get(--currentSegmentIdx);
         } else {
-            return null;
+            throw new NoSuchElementException();
         }
     }
 

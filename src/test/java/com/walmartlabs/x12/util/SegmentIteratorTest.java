@@ -6,12 +6,13 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SegmentIteratorTest {
 
@@ -28,11 +29,11 @@ public class SegmentIteratorTest {
 
         assertFalse(iter.hasNext());
         assertEquals(0, iter.nextIndex());
-        assertNull(iter.next());
+        assertNextWithNoSuchElementException(iter);
 
         assertFalse(iter.hasPrevious());
         assertEquals(-1, iter.previousIndex());
-        assertNull(iter.previous());
+        assertPreviousWithNoSuchElementException(iter);
     }
 
     @Test
@@ -57,8 +58,7 @@ public class SegmentIteratorTest {
         // advance again
         assertFalse(iter.hasNext());
         assertEquals(2, iter.nextIndex());
-        segment = iter.next();
-        assertNull(segment);
+        assertNextWithNoSuchElementException(iter);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class SegmentIteratorTest {
         // previous at the start
         assertFalse(iter.hasPrevious());
         assertEquals(-1, iter.previousIndex());
-        assertNull(iter.previous());
+        assertPreviousWithNoSuchElementException(iter);
 
         // advance one
         assertTrue(iter.hasNext());
@@ -106,6 +106,24 @@ public class SegmentIteratorTest {
         segmentLines.add(new X12Segment("LINE1"));
         segmentLines.add(new X12Segment("LINE2"));
         return segmentLines;
+    }
+
+    private void assertNextWithNoSuchElementException(SegmentIterator iter) {
+        try {
+            iter.next();
+            fail("expected NoSuchElementException");
+        } catch (NoSuchElementException e) {
+            // ignore
+        }
+    }
+
+    private void assertPreviousWithNoSuchElementException(SegmentIterator iter) {
+        try {
+            iter.previous();
+            fail("expected NoSuchElementException");
+        } catch (NoSuchElementException e) {
+            // ignore
+        }
     }
 
 }
