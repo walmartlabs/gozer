@@ -13,60 +13,55 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.common;
+package com.walmartlabs.x12.standard;
 
 /**
  * PURPOSE: To indicate the start of an EDI interchange and assign a control number
  */
-public class InterchangeControlHeader {
+public class InterchangeControlEnvelope {
+    //
+    // Interchange control header
+    //
     // ISA01
     private String authorizationInformationQualifier;
-
    // ISA02
     private String authorizationInformation;
-
     // ISA03
     private String securityInformationQualifier;
-
     // ISA04
     private String securityInformation;
-
     // ISA05
     private String interchangeIdQualifier;
-
     // ISA06
     private String interchangeSenderId;
-
     // ISA07
     private String interchangeIdQualifier_2;
-
     // ISA08
     private String interchangeReceiverId;
-
     // ISA09
     private String interchangeDate;
-
     // ISA10
     private String interchangeTime;
-
     // ISA11
     private String interchangeControlStandardId;
-
     // ISA12
     private String interchangeControlVersion;
-
     // ISA13
     private String interchangeControlNumber;
-
     // ISA14
     private String acknowledgementRequested;
-
     // ISA15
     private String usageIndicator;
-
     // ISA16
     private String elementSeparator;
 
+    //
+    // Interchange control trailers
+    //
+    // ISE02
+    private Integer numberOfGroups;
+    // ISE02
+    private String trailerInterchangeControlNumber;
 
     public String getAuthorizationInformationQualifier() {
         return authorizationInformationQualifier;
@@ -194,6 +189,22 @@ public class InterchangeControlHeader {
 
     public void setElementSeparator(String elementSeparator) {
         this.elementSeparator = elementSeparator;
+    }
+
+    public Integer getNumberOfGroups() {
+        return numberOfGroups;
+    }
+
+    public void setNumberOfGroups(Integer numberOfGroups) {
+        this.numberOfGroups = numberOfGroups;
+    }
+
+    public String getTrailerInterchangeControlNumber() {
+        return trailerInterchangeControlNumber;
+    }
+
+    public void setTrailerInterchangeControlNumber(String trailerInterchangeControlNumber) {
+        this.trailerInterchangeControlNumber = trailerInterchangeControlNumber;
     }
 
 }

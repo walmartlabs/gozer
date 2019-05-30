@@ -18,13 +18,12 @@ package com.walmartlabs.x12.dex.dx894;
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.VersionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -420,18 +419,18 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             // this will do a simple parsing of the G83 elements
             // a separate utility will need to determine the retail selling unit
             dexItem.setItemSequenceNumber(segment.getSegmentElement(1));
-            dexItem.setQuantity(this.convertStringToBigDecimal(segment.getSegmentElement(2), 3));
+            dexItem.setQuantity(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(2), 3));
             dexItem.setUom(UnitMeasure.convertUnitMeasure(segment.getSegmentElement(3)));
             dexItem.setUpc(segment.getSegmentElement(4));
             dexItem.setConsumerProductQualifier(ProductQualifier.convertProductQualifier(segment.getSegmentElement(5)));
             dexItem.setConsumerProductId(segment.getSegmentElement(6));
             dexItem.setCaseUpc(segment.getSegmentElement(7));
-            dexItem.setItemListCost(this.convertStringToBigDecimal(segment.getSegmentElement(8), 2));
-            dexItem.setPackCount(this.convertStringToInteger(segment.getSegmentElement(9)));
+            dexItem.setItemListCost(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(8), 2));
+            dexItem.setPackCount(ConversionUtil.convertStringToInteger(segment.getSegmentElement(9)));
             dexItem.setItemDescription(segment.getSegmentElement(10));
             dexItem.setCaseProductQualifier(ProductQualifier.convertProductQualifier(segment.getSegmentElement(11)));
             dexItem.setCaseProductId(segment.getSegmentElement(12));
-            dexItem.setInnerPackCount(this.convertStringToInteger(segment.getSegmentElement(13)));
+            dexItem.setInnerPackCount(ConversionUtil.convertStringToInteger(segment.getSegmentElement(13)));
         } else {
             handleUnexpectedSegment(G83_ID, segmentIdentifier);
         }
@@ -471,11 +470,11 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexAllowance.setMethodOfHandlingCode(segment.getSegmentElement(2));
             dexAllowance.setAllowanceNumber(segment.getSegmentElement(3));
             dexAllowance.setExceptionNumber(segment.getSegmentElement(4));
-            dexAllowance.setAllowanceRate(this.convertStringToBigDecimal(segment.getSegmentElement(5), 4));
-            dexAllowance.setAllowanceQuantity(this.convertStringToBigDecimal(segment.getSegmentElement(6), 3));
+            dexAllowance.setAllowanceRate(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(5), 4));
+            dexAllowance.setAllowanceQuantity(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(6), 3));
             dexAllowance.setAllowanceUom(UnitMeasure.convertUnitMeasure(segment.getSegmentElement(7)));
-            dexAllowance.setAllowanceAmount(this.convertStringToBigDecimal(segment.getSegmentElement(8), 2));
-            dexAllowance.setAllowancePercent(this.convertStringToBigDecimal(segment.getSegmentElement(9), 3));
+            dexAllowance.setAllowanceAmount(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(8), 2));
+            dexAllowance.setAllowancePercent(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(9), 3));
             dexAllowance.setOptionNumber(segment.getSegmentElement(10));
         } else {
             handleUnexpectedSegment(G72_ID, segmentIdentifier);
@@ -512,9 +511,9 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         String segmentIdentifier = segment.getSegmentIdentifier();
         if (G84_ID.equals(segmentIdentifier)) {
-            dexTx.setTransactionTotalQuantity(this.convertStringToBigDecimal(segment.getSegmentElement(1), 3));
-            dexTx.setTransactionTotalAmount(this.convertStringToBigDecimal(segment.getSegmentElement(2), 2));
-            dexTx.setTransactionTotalDepositAmount(this.convertStringToBigDecimal(segment.getSegmentElement(3), 2));
+            dexTx.setTransactionTotalQuantity(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(1), 3));
+            dexTx.setTransactionTotalAmount(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(2), 2));
+            dexTx.setTransactionTotalDepositAmount(ConversionUtil.convertStringToBigDecimal(segment.getSegmentElement(3), 2));
         } else {
             handleUnexpectedSegment(G84_ID, segmentIdentifier);
         }
@@ -571,7 +570,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         String segmentIdentifier = segment.getSegmentIdentifier();
         if (TRANSACTION_SET_TRAILER_ID.equals(segmentIdentifier)) {
-            dexTx.setExpectedNumberOfSegments(this.convertStringToInteger(segment.getSegmentElement(1)));
+            dexTx.setExpectedNumberOfSegments(ConversionUtil.convertStringToInteger(segment.getSegmentElement(1)));
             dexTx.setTrailerControlNumber(segment.getSegmentElement(2));
         } else {
             handleUnexpectedSegment(TRANSACTION_SET_TRAILER_ID, segmentIdentifier);
@@ -591,7 +590,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         String segmentIdentifier = trailerSegment.getSegmentIdentifier();
         if (APPLICATION_TRAILER_ID.equals(segmentIdentifier)) {
             dex.setTrailerTransmissionControlNumber(trailerSegment.getSegmentElement(1));
-            dex.setNumberOfTransactions(this.convertStringToInteger(trailerSegment.getSegmentElement(2)));
+            dex.setNumberOfTransactions(ConversionUtil.convertStringToInteger(trailerSegment.getSegmentElement(2)));
         } else {
             handleUnexpectedSegment(APPLICATION_TRAILER_ID, segmentIdentifier);
         }
@@ -601,29 +600,4 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         return dexSegments.size() - 1;
     }
 
-    protected BigDecimal convertStringToBigDecimal(String theString, int decimalPlaces) {
-        BigDecimal returnValue = null;
-        try {
-            if (theString != null && theString.trim().length() > 0) {
-                returnValue = new BigDecimal(theString).setScale(decimalPlaces, RoundingMode.HALF_UP);
-            }
-        } catch (NumberFormatException e) {
-            throw new X12ParserException("Invalid numeric value");
-        }
-        return returnValue;
-    }
-
-    protected Integer convertStringToInteger(String theString) {
-        Integer returnInteger = null;
-
-        try {
-            if (theString != null && theString.trim().length() > 0) {
-                returnInteger = Integer.valueOf(theString);
-            }
-        } catch (NumberFormatException e) {
-            throw new X12ParserException("Invalid numeric value");
-        }
-
-        return returnInteger;
-    }
 }

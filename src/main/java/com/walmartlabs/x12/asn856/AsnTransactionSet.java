@@ -15,10 +15,9 @@ limitations under the License.
  */
 package com.walmartlabs.x12.asn856;
 
-import com.walmartlabs.x12.common.AbstractStandardX12Document;
+import com.walmartlabs.x12.X12TransactionSet;
 
-public class Asn856 extends AbstractStandardX12Document {
-
+public class AsnTransactionSet implements X12TransactionSet {
     private String sampleAsnOnly;
 
     public String getSampleAsnOnly() {
@@ -28,5 +27,4 @@ public class Asn856 extends AbstractStandardX12Document {
     public void setSampleAsnOnly(String sampleAsnOnly) {
         this.sampleAsnOnly = sampleAsnOnly;
     }
-
 }
