@@ -15,6 +15,8 @@ limitations under the License.
  */
 package com.walmartlabs.x12.dex.dx894;
 
+import com.walmartlabs.x12.X12TransactionSet;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.List;
  * The 894 Base Record Transaction Set is essentially an invoice.
  * Note: Debits and credits cannot mix on the same invoice
  */
-public class Dex894TransactionSet {
+public class Dex894TransactionSet implements X12TransactionSet {
     /*
      * ST
      */

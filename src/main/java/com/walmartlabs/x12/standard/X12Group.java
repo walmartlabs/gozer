@@ -13,9 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.common;
+package com.walmartlabs.x12.standard;
 
-public class GroupHeader {
+import com.walmartlabs.x12.X12TransactionSet;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class X12Group {
+
+    // Header Data Elements
     // GS01
     private String functionalCodeId;
     // GS02
@@ -27,11 +34,27 @@ public class GroupHeader {
     // GS05
     private String time;
     // GS06
-    private String groupControlNumber;
+    private String headerGroupControlNumber;
     // GS07
     private String responsibleAgencyCode;
     // GS08
     private String version;
+
+    // ST...SE loops within the group
+    private List<X12TransactionSet> transactions;
+
+    // Trailer Data Elements
+    // GE01
+    private Integer numberOfTransactions;
+    // GE02
+    private String trailerGroupControlNumber;
+
+    public void addTransactionSet(X12TransactionSet tx) {
+        if (transactions == null) {
+            transactions = new ArrayList<>();
+        }
+        transactions.add(tx);
+    }
 
     public String getFunctionalCodeId() {
         return functionalCodeId;
@@ -73,20 +96,20 @@ public class GroupHeader {
         this.time = time;
     }
 
-    public String getGroupControlNumber() {
-        return groupControlNumber;
+    public String getHeaderGroupControlNumber() {
+        return headerGroupControlNumber;
     }
 
-    public void setGroupControlNumber(String groupControlNumber) {
-        this.groupControlNumber = groupControlNumber;
+    public void setHeaderGroupControlNumber(String headerGroupControlNumber) {
+        this.headerGroupControlNumber = headerGroupControlNumber;
     }
 
     public String getResponsibleAgencyCode() {
         return responsibleAgencyCode;
     }
 
-    public void setResponsibleAgencyCode(String responsibeAgencyCode) {
-        this.responsibleAgencyCode = responsibeAgencyCode;
+    public void setResponsibleAgencyCode(String responsibleAgencyCode) {
+        this.responsibleAgencyCode = responsibleAgencyCode;
     }
 
     public String getVersion() {
@@ -95,6 +118,30 @@ public class GroupHeader {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public List<X12TransactionSet> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<X12TransactionSet> transactions) {
+        this.transactions = transactions;
+    }
+
+    public Integer getNumberOfTransactions() {
+        return numberOfTransactions;
+    }
+
+    public void setNumberOfTransactions(Integer numberOfTransactions) {
+        this.numberOfTransactions = numberOfTransactions;
+    }
+
+    public String getTrailerGroupControlNumber() {
+        return trailerGroupControlNumber;
+    }
+
+    public void setTrailerGroupControlNumber(String trailerGroupControlNumber) {
+        this.trailerGroupControlNumber = trailerGroupControlNumber;
     }
 
 }

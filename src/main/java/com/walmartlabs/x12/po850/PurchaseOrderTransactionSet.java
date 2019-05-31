@@ -15,16 +15,8 @@ limitations under the License.
  */
 package com.walmartlabs.x12.po850;
 
-import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.standard.AbstractStandardX12Parser;
-import com.walmartlabs.x12.standard.StandardX12Document;
-import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.X12TransactionSet;
 
-import java.util.List;
+public class PurchaseOrderTransactionSet implements X12TransactionSet {
 
-public class DefaultPurchaseOrder850Parser extends AbstractStandardX12Parser<StandardX12Document> {
-
-    @Override
-    protected void parseTransactionSet(List<X12Segment> segmentLines, X12Group x12Group) {
-    }
 }

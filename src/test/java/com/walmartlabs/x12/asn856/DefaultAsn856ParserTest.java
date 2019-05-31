@@ -15,16 +15,22 @@ limitations under the License.
  */
 package com.walmartlabs.x12.asn856;
 
-import com.walmartlabs.x12.common.InterchangeControlHeader;
+import com.walmartlabs.x12.X12Document;
+import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
+import com.walmartlabs.x12.standard.StandardX12Document;
+import com.walmartlabs.x12.standard.X12Group;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class DefaultAsn856ParserTest {
 
@@ -34,14 +40,29 @@ public class DefaultAsn856ParserTest {
     public void init() {
         asnParser = new DefaultAsn856Parser();
     }
-    @Test
-    public void testParsingShipmentWithMissingDxe() throws IOException {
-        byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
-        Asn856 asn = asnParser.parse(new String(asnBytes));
 
-        assertNotNull(asn);
+    @Test
+    public void test_Parsing_SourceIsNull() throws IOException {
+        String sourceData = null;
+        X12Document x12 = asnParser.parse(sourceData);
+        assertNull(x12);
+    }
+
+    @Test
+    public void test_Parsing_SourceIsEmpty() throws IOException {
+        String sourceData = "";
+        X12Document x12 = asnParser.parse(sourceData);
+        assertNull(x12);
+    }
+
+    @Test
+    public void test_Parsing_Asn856() throws IOException {
+        byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
+        StandardX12Document x12 = asnParser.parse(new String(asnBytes));
+        assertNotNull(x12);
+
         // ISA segment
-        InterchangeControlHeader isa = asn.getInterchangeControlHeader();
+        InterchangeControlEnvelope isa = x12.getInterchangeControlEnvelope();
         assertNotNull(isa);
         assertEquals("01", isa.getAuthorizationInformationQualifier());
         assertEquals("0000000000", isa.getAuthorizationInformation());
@@ -59,11 +80,21 @@ public class DefaultAsn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-
-        // GS segment
+        // ISA segment
+        assertEquals(new Integer(1), isa.getNumberOfGroups());
+        assertEquals("000000049", isa.getTrailerInterchangeControlNumber());
 
         // TODO: quick test
-        assertEquals("TEST", asn.getSampleAsnOnly());
+        List<X12Group> groups = x12.getGroups();
+        assertNotNull(groups);
+        assertEquals(1, groups.size());
+
+        List<X12TransactionSet> txForGroupOne = x12.getGroups().get(0).getTransactions();
+        assertNotNull(txForGroupOne);
+        assertEquals(1, txForGroupOne.size());
+
+        AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
+        assertEquals("TEST", asnTx.getSampleAsnOnly());
     }
 
 }

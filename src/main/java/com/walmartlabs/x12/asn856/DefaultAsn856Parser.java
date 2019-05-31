@@ -16,8 +16,9 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.AbstractStandardX12Document;
-import com.walmartlabs.x12.common.AbstractStandardX12Parser;
+import com.walmartlabs.x12.standard.AbstractStandardX12Parser;
+import com.walmartlabs.x12.standard.StandardX12Document;
+import com.walmartlabs.x12.standard.X12Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,18 +29,14 @@ import java.util.List;
  * delivered.
  *
  */
-public class DefaultAsn856Parser extends AbstractStandardX12Parser<Asn856> {
+public class DefaultAsn856Parser extends AbstractStandardX12Parser<StandardX12Document> {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856Parser.class);
 
     @Override
-    protected AbstractStandardX12Document createX12Document() {
-        return new Asn856();
-    }
-
-    @Override
-    protected void parseCustom(List<X12Segment> segmentLines, AbstractStandardX12Document x12Doc) {
-        Asn856 asn = (Asn856) x12Doc;
-        asn.setSampleAsnOnly("TEST");
+    protected void parseTransactionSet(List<X12Segment> segmentLines, X12Group x12Group) {
+        AsnTransactionSet asnTx = new AsnTransactionSet();
+        asnTx.setSampleAsnOnly("TEST");
+        x12Group.addTransactionSet(asnTx);
     }
 
 

@@ -32,6 +32,7 @@ public final class VersionUtil {
             String versionNum = VersionUtil.remove0LeftPadding(versionValue).replace("UCS", "");
             return Integer.valueOf(versionNum);
         } catch (NumberFormatException e) {
+            // TODO: need to remove coupling to DefaultDex894Parser
             throw new X12ParserException(new X12ErrorDetail(DefaultDex894Parser.APPLICATION_HEADER_ID, "DXS03", "Invalid version format"));
         }
     }
