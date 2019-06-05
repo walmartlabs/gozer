@@ -62,6 +62,18 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validate_transactionCount_null() {
+        Dex894 dex = new Dex894();
+        dex.setNumberOfTransactions(null);
+        dex.setTransactions(this.generateTransactions(5));
+
+        Set<X12ErrorDetail> errorSet = dexValidator.validate(dex);
+        assertNotNull(errorSet);
+        assertEquals(1, errorSet.size());
+        assertEquals("DXE", errorSet.stream().findFirst().get().getSegmentId());
+    }
+
+    @Test
     public void test_validate_segmentCountWrong() {
         Dex894 dex = new Dex894();
         dex.setNumberOfTransactions(5);

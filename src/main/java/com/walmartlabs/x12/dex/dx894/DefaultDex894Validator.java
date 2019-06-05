@@ -65,7 +65,10 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
     protected X12ErrorDetail compareTransactionCounts(Dex894 dex) {
         X12ErrorDetail detail = null;
         int actualTransactionCount = (dex.getTransactions() != null ? dex.getTransactions().size() : 0);
-        if (dex.getNumberOfTransactions() != actualTransactionCount) {
+        if (dex.getNumberOfTransactions() == null) {
+            detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "DXE02",
+                "DXE02(transaction count) can not be null.");
+        } else if (dex.getNumberOfTransactions() != actualTransactionCount) {
             StringBuilder sb = new StringBuilder();
             sb.append("Expected ").append(dex.getNumberOfTransactions()).append(" transactions");
             sb.append(" but got ").append(actualTransactionCount).append(" transactions");
