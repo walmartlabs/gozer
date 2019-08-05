@@ -106,3 +106,4 @@ local.properties
 *.log
 *.DS_Store
 mqjms.log*
+/.checkstyle
