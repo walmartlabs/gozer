@@ -16,6 +16,7 @@ limitations under the License.
 package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +31,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class AbstractStandardX12ParserTest {
+public class StandardX12ParserTest {
 
-    MockStandardParser standardParser;
+    StandardX12Parser<StandardX12Document> standardParser;
 
     @Before
     public void init() {
-        standardParser = new MockStandardParser();
+        standardParser = new StandardX12Parser<>();
+        standardParser.registerTransactionSetParser(new MockTransactionSetParser());
     }
 
     @Test
@@ -156,26 +158,57 @@ public class AbstractStandardX12ParserTest {
         // groups
         assertNotNull(x12.getGroups());
         assertEquals(2, x12.getGroups().size());
-        assertEquals("00", x12.getGroups().get(0).getHeaderGroupControlNumber());
-        assertEquals("99", x12.getGroups().get(1).getHeaderGroupControlNumber());
+        
+        // group 1
+        X12Group group1 = x12.getGroups().get(0);
+        assertEquals("00", group1.getHeaderGroupControlNumber());
+        List<X12TransactionSet> group1TxList = group1.getTransactions();
+        assertNotNull(group1TxList);
+        assertEquals(2, group1TxList.size());
+        X12TransactionSet tx1 = group1TxList.get(0);
+        assertEquals("1", ((MockTransactionSet)tx1).getValue());
+        X12TransactionSet tx2 = group1TxList.get(1);
+        assertEquals("2", ((MockTransactionSet)tx2).getValue());
+        
+        // group 2
+        X12Group group2 = x12.getGroups().get(1);
+        assertEquals("99", group2.getHeaderGroupControlNumber());
+        List<X12TransactionSet> group2TxList = group2.getTransactions();
+        assertNotNull(group2TxList);
+        assertEquals(1, group2TxList.size());
+        X12TransactionSet tx3 = group2TxList.get(0);
+        assertEquals("3", ((MockTransactionSet)tx3).getValue());
     }
 
-    public class MockStandardParser extends AbstractStandardX12Parser<StandardX12Document> {
+    public class MockTransactionSetParser extends AbstractTransactionSetParser {
 
-        @Override
-        protected StandardX12Document createX12Document() {
-            return new StandardX12Document();
-        }
-
-        @Override
-        protected void parseTransactionSet(List<X12Segment> txLines, X12Group x12Group) {
+        protected X12TransactionSet doParse(List<X12Segment> txLines, X12Group x12Group) {
             assertNotNull(txLines);
             assertEquals(3, txLines.size());
             assertEquals("ST", txLines.get(0).getSegmentIdentifier());
             assertEquals("TEST", txLines.get(1).getSegmentIdentifier());
             assertEquals("SE", txLines.get(2).getSegmentIdentifier());
+            
+            MockTransactionSet tx = new MockTransactionSet();
+            tx.setValue(txLines.get(1).getSegmentElement(1));
+            return tx;
         }
 
+        protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
+            return true;
+        }
+    }
+    
+    public class MockTransactionSet implements X12TransactionSet {
+        private String value;
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 
 }

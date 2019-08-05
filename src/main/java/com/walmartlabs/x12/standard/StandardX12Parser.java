@@ -17,6 +17,7 @@ package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.SegmentIterator;
@@ -46,8 +47,8 @@ import java.util.List;
  * -- SE
  *
  */
-public abstract class AbstractStandardX12Parser<T extends StandardX12Document> implements X12Parser<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStandardX12Parser.class);
+public class StandardX12Parser<T extends StandardX12Document> implements X12Parser<T> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StandardX12Parser.class);
 
     public static final String ISA_HEADER_ID = "ISA";
     public static final String ISA_TRAILER_ID = "IEA";
@@ -57,6 +58,8 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
 
     public static final String TRANSACTION_HEADER_ID = "ST";
     public static final String TRANSACTION_TRAILER_ID = "SE";
+    
+    private TransactionSetParser transactionParser;
 
     /**
      * parse an X12 document into the representative Java POJO
@@ -202,13 +205,6 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
     }
 
     /**
-     * subclasses should parse the transaction set(s) and add the resulting objects to the X12 Group
-     * @param transactionSegments
-     * @param x12Group
-     */
-    protected abstract void parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group);
-
-    /**
      * parse the ISA segment
      *
      * @param segment
@@ -303,6 +299,31 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
             x12Group.setTrailerGroupControlNumber(segment.getSegmentElement(2));
         } else {
             handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
+        }
+    }
+    
+
+    public void registerTransactionSetParser(TransactionSetParser transactionParser) {
+        if (this.transactionParser == null) {
+            this.transactionParser = transactionParser;
+        } else {
+            // TODO setup the chain
+        }
+    }
+    
+    /**
+     * register the correct {@link TransactionSetParser} to parse the transaction set(s) and add the resulting objects to the X12 Group
+     * @param transactionSegments
+     * @param x12Group
+     */
+    protected void parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
+        if (transactionParser != null) {
+            X12TransactionSet txSet = transactionParser.parseTransactionSet(transactionSegments, x12Group);
+            if (txSet != null) {
+                x12Group.addTransactionSet(txSet);
+            }
+        } else {
+            LOGGER.warn("No TransactionSetParser has been registered!");
         }
     }
 }

@@ -18,9 +18,9 @@ For example the element ISA08 represents the interchange receiver id. It is mode
 	// ISA08
 	private String interchangeReceiverId;
 
-The next step is to determine whether the format shares segments with other EDI documents. For example the ISA and GS segment lines are common (ASN 856 and PO 850).
+The next step is to determine whether the format shares segments with other EDI documents. For example the ISA and GS segment lines are common for most document types.
 
-If the format shares common segments then the domain object should probably `extend` the `AbstractStandardX12Document`. This will provide an object with all of the common segments, allowing the developer to add the elements unique to the format in the concrete class. If the format does not share any (or many) common segments then it should `implement` the `X12Document` interface. 
+If the format shares common segments then the domain object should `extend` the `AbstractStandardX12Document`. This will provide an object with all of the common segments, allowing the developer to add the elements unique to the format in the concrete class. If the format does not share any (or many) common segments then it should `implement` the `X12Document` interface. 
 
 ![X12Document hierarchy](X12DocHierarchy.png)
 

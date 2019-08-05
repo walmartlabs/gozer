@@ -32,6 +32,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+/**
+ * 
+ * @deprecated
+ *
+ */
 public class DefaultAsn856ParserTest {
 
     DefaultAsn856Parser asnParser;

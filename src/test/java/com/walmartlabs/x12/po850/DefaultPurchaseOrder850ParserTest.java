@@ -17,6 +17,11 @@ package com.walmartlabs.x12.po850;
 
 import org.junit.Test;
 
+/**
+ * 
+ * @deprecated
+ *
+ */
 public class DefaultPurchaseOrder850ParserTest {
 
     @Test
