@@ -116,6 +116,7 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
 
         // SE validations
         errors.add(this.checkSupplierNumber(dexVersion, dexTx));
+        errors.add(this.checkReceiverLocationNumber(dexVersion, dexTx));
         errors.add(this.checkSupplierDate(dexVersion, dexTx));
         errors.add(this.compareTransactionSegmentCounts(dexVersion, dexTx));
         errors.add(this.compareTransactionControlNumbers(dexVersion, dexTx));
@@ -252,6 +253,21 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         if (dexTx != null) {
             if (StringUtils.isEmpty(dexTx.getSupplierNumber())) {
                 detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8202", "Missing supplier number");
+            }
+        }
+
+        return detail;
+    }
+
+    /**
+     * make sure G8204 has value
+     */
+    protected X12ErrorDetail checkReceiverLocationNumber(Integer dexVersion, Dex894TransactionSet dexTx) {
+        X12ErrorDetail detail = null;
+
+        if (dexTx != null) {
+            if (StringUtils.isEmpty(dexTx.getReceiverLocation())) {
+                detail = new X12ErrorDetail(DefaultDex894Parser.G82_ID, "G8204", "Missing receiver location number");
             }
         }
 

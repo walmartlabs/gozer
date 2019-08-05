@@ -365,6 +365,22 @@ public class DefaultDex894ValidatorTest {
     }
 
     @Test
+    public void test_validateTransactions_null_receiver_location_number_4010() {
+        Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
+        dexTx.setReceiverLocation(null);
+        dexTx.addItem(this.generateOneItem("1", UnitMeasure.EA));
+
+        Set<X12ErrorDetail> errors = dexValidator.validateDexTransaction(4010, dexTx, false);
+        assertNotNull(errors);
+        assertEquals(1, errors.size());
+
+        X12ErrorDetail x12ErrorDetail = errors.stream().findFirst().get();
+        assertEquals("G82", x12ErrorDetail.getSegmentId());
+        assertEquals("G8204", x12ErrorDetail.getElementId());
+        assertEquals("Missing receiver location number", x12ErrorDetail.getMessage());
+    }
+
+    @Test
     public void test_validateTransactions_null_supplier_number_5010() {
         Dex894TransactionSet dexTx = this.generateOneTransaction("INVOICE-A");
         dexTx.setSupplierNumber(null);
@@ -1080,6 +1096,7 @@ public class DefaultDex894ValidatorTest {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         dexTx.setHeaderControlNumber("569145631");
         dexTx.setTrailerControlNumber("569145631");
+        dexTx.setReceiverLocation("00100");
         dexTx.setSupplierNumber(invoiceNumber);
         dexTx.setTransactionDate("19770525");
         dexTx.setExpectedNumberOfSegments(10);
