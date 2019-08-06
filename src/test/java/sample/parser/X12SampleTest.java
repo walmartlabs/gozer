@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package sample;
+package sample.parser;
 
 import com.walmartlabs.x12.X12Document;
 import com.walmartlabs.x12.X12Parser;
@@ -34,8 +34,8 @@ public class X12SampleTest {
 
     @Before
     public void init() {
-        defaultParser = new MockX12Parser();
-        defaultValidator = new MockX12Validator();
+        defaultParser = new SampleX12Parser();
+        defaultValidator = new SampleX12Validator();
     }
 
     @Test
@@ -47,7 +47,7 @@ public class X12SampleTest {
         assertNotNull(errors);
         assertEquals(0, errors.size());
 
-        assertEquals("123", ((MockX12Document) x12).getFunctionalId());
+        assertEquals("123", ((SampleX12Document) x12).getFunctionalId());
     }
 
     @Test
@@ -59,6 +59,6 @@ public class X12SampleTest {
         assertNotNull(errors);
         assertEquals(1, errors.size());
 
-        assertEquals(null, ((MockX12Document) x12).getFunctionalId());
+        assertEquals(null, ((SampleX12Document) x12).getFunctionalId());
     }
 }

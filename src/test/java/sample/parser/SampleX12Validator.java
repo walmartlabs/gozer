@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package sample;
+package sample.parser;
 
 import com.walmartlabs.x12.X12Validator;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
@@ -22,10 +22,10 @@ import org.springframework.util.StringUtils;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MockX12Validator implements X12Validator<MockX12Document> {
+public class SampleX12Validator implements X12Validator<SampleX12Document> {
 
     @Override
-    public Set<X12ErrorDetail> validate(MockX12Document pojo, boolean performCrcCheck) {
+    public Set<X12ErrorDetail> validate(SampleX12Document pojo, boolean performCrcCheck) {
         Set<X12ErrorDetail> errors = new HashSet<>();
         if (pojo == null) {
             errors.add(new X12ErrorDetail(null, null, "no object"));
