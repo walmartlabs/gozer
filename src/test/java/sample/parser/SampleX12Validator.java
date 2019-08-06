@@ -22,10 +22,10 @@ import org.springframework.util.StringUtils;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MockX12Validator implements X12Validator<MockX12Document> {
+public class SampleX12Validator implements X12Validator<SampleX12Document> {
 
     @Override
-    public Set<X12ErrorDetail> validate(MockX12Document pojo, boolean performCrcCheck) {
+    public Set<X12ErrorDetail> validate(SampleX12Document pojo, boolean performCrcCheck) {
         Set<X12ErrorDetail> errors = new HashSet<>();
         if (pojo == null) {
             errors.add(new X12ErrorDetail(null, null, "no object"));

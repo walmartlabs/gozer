@@ -22,15 +22,15 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-public class MockX12Parser implements X12Parser<MockX12Document> {
+public class SampleX12Parser implements X12Parser<SampleX12Document> {
 
     @Override
-    public MockX12Document parse(String sourceData) {
-        MockX12Document mockX12 = null;
+    public SampleX12Document parse(String sourceData) {
+        SampleX12Document mockX12 = null;
 
         try {
             if (!StringUtils.isEmpty(sourceData)) {
-                mockX12 = new MockX12Document();
+                mockX12 = new SampleX12Document();
                 List<X12Segment> segments = this.splitSourceDataIntoSegments(sourceData);
                 if (!segments.isEmpty()) {
                     mockX12.setFunctionalId(segments.get(0).getSegmentElement(1));
