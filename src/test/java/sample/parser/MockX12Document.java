@@ -13,23 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.po850;
+package sample.parser;
 
-import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.standard.StandardX12Parser;
-import com.walmartlabs.x12.standard.StandardX12Document;
-import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.X12Document;
 
-import java.util.List;
+public class MockX12Document implements X12Document {
+    private String functionalId;
 
-/**
- * 
- * @deprecated
- *
- */
-public class DefaultPurchaseOrder850Parser extends StandardX12Parser<StandardX12Document> {
-
-    @Override
-    protected void parseTransactionSet(List<X12Segment> segmentLines, X12Group x12Group) {
+    public String getFunctionalId() {
+        return functionalId;
     }
+
+    public void setFunctionalId(String functionalId) {
+        this.functionalId = functionalId;
+    }
+
 }

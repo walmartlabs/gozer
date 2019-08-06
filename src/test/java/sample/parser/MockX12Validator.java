@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package sample;
+package sample.parser;
 
 import com.walmartlabs.x12.X12Validator;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;

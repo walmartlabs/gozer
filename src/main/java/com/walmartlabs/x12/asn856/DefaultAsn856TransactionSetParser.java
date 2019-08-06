@@ -43,7 +43,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     protected X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group) {
         AsnTransactionSet asnTx = new AsnTransactionSet();
         asnTx.setSampleAsnOnly("TEST");
-        x12Group.addTransactionSet(asnTx);
         return asnTx;
     }
 

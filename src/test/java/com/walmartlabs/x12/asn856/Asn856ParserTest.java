@@ -19,6 +19,7 @@ import com.walmartlabs.x12.X12Document;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
 import com.walmartlabs.x12.standard.StandardX12Document;
+import com.walmartlabs.x12.standard.StandardX12Parser;
 import com.walmartlabs.x12.standard.X12Group;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,18 +33,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-/**
- * 
- * @deprecated
- *
- */
-public class DefaultAsn856ParserTest {
+public class Asn856ParserTest {
 
-    DefaultAsn856Parser asnParser;
+    StandardX12Parser<StandardX12Document> asnParser;
 
     @Before
     public void init() {
-        asnParser = new DefaultAsn856Parser();
+        asnParser = new StandardX12Parser<>();
+        asnParser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
     }
 
     @Test

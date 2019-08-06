@@ -20,6 +20,10 @@ import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Before;
 import org.junit.Test;
+import sample.aaa.AaaTransactionSetParser;
+import sample.aaa.TypeAaaTransactionSet;
+import sample.bbb.BbbTransactionSetParser;
+import sample.bbb.TypeBbbTransactionSet;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +33,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class StandardX12ParserTest {
@@ -38,7 +43,8 @@ public class StandardX12ParserTest {
     @Before
     public void init() {
         standardParser = new StandardX12Parser<>();
-        standardParser.registerTransactionSetParser(new MockTransactionSetParser());
+        standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
+        standardParser.registerTransactionSetParser(new BbbTransactionSetParser());
     }
 
     @Test
@@ -166,9 +172,11 @@ public class StandardX12ParserTest {
         assertNotNull(group1TxList);
         assertEquals(2, group1TxList.size());
         X12TransactionSet tx1 = group1TxList.get(0);
-        assertEquals("1", ((MockTransactionSet)tx1).getValue());
+        assertTrue(tx1 instanceof TypeAaaTransactionSet);
+        assertEquals("1", ((TypeAaaTransactionSet)tx1).getValue());
         X12TransactionSet tx2 = group1TxList.get(1);
-        assertEquals("2", ((MockTransactionSet)tx2).getValue());
+        assertTrue(tx2 instanceof TypeBbbTransactionSet);
+        assertEquals("2", ((TypeBbbTransactionSet)tx2).getValue());
         
         // group 2
         X12Group group2 = x12.getGroups().get(1);
@@ -177,38 +185,7 @@ public class StandardX12ParserTest {
         assertNotNull(group2TxList);
         assertEquals(1, group2TxList.size());
         X12TransactionSet tx3 = group2TxList.get(0);
-        assertEquals("3", ((MockTransactionSet)tx3).getValue());
+        assertTrue(tx3 instanceof TypeAaaTransactionSet);
+        assertEquals("3", ((TypeAaaTransactionSet)tx3).getValue());
     }
-
-    public class MockTransactionSetParser extends AbstractTransactionSetParserChainable {
-
-        protected X12TransactionSet doParse(List<X12Segment> txLines, X12Group x12Group) {
-            assertNotNull(txLines);
-            assertEquals(3, txLines.size());
-            assertEquals("ST", txLines.get(0).getSegmentIdentifier());
-            assertEquals("TEST", txLines.get(1).getSegmentIdentifier());
-            assertEquals("SE", txLines.get(2).getSegmentIdentifier());
-            
-            MockTransactionSet tx = new MockTransactionSet();
-            tx.setValue(txLines.get(1).getSegmentElement(1));
-            return tx;
-        }
-
-        protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
-            return true;
-        }
-    }
-    
-    public class MockTransactionSet implements X12TransactionSet {
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-    }
-
 }

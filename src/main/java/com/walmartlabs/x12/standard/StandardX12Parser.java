@@ -88,6 +88,24 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
 
         return (T) x12Doc;
     }
+    
+    /**
+     * convenience method that will allow one or more {@link TransactionSetParser} 
+     * to be registered w/ the parser
+     * if a transaction set type does not have a registered parser it is ignored
+     * @param transactionParser
+     */
+    public boolean registerTransactionSetParser(TransactionSetParser transactionParser) {
+        boolean isAdded = false;
+        if (this.transactionParser == null) {
+            isAdded = true;
+            this.transactionParser = transactionParser;
+        } else if (this.transactionParser instanceof AbstractTransactionSetParserChainable) {
+            return ((AbstractTransactionSetParserChainable) this.transactionParser)
+                .registerNextTransactionSetParser(transactionParser);
+        }
+        return isAdded;
+    }
 
     /**
      * template for parsing a standard EDI X12 document
@@ -299,15 +317,6 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
             x12Group.setTrailerGroupControlNumber(segment.getSegmentElement(2));
         } else {
             handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
-        }
-    }
-    
-
-    public void registerTransactionSetParser(TransactionSetParser transactionParser) {
-        if (this.transactionParser == null) {
-            this.transactionParser = transactionParser;
-        } else {
-            // TODO setup the chain
         }
     }
     
