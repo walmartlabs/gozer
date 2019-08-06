@@ -180,7 +180,7 @@ public class StandardX12ParserTest {
         assertEquals("3", ((MockTransactionSet)tx3).getValue());
     }
 
-    public class MockTransactionSetParser extends AbstractTransactionSetParser {
+    public class MockTransactionSetParser extends AbstractTransactionSetParserChainable {
 
         protected X12TransactionSet doParse(List<X12Segment> txLines, X12Group x12Group) {
             assertNotNull(txLines);

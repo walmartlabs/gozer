@@ -17,7 +17,7 @@ package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.standard.AbstractTransactionSetParser;
+import com.walmartlabs.x12.standard.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.standard.TransactionSetParser;
 import com.walmartlabs.x12.standard.X12Group;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import java.util.List;
  * delivered.
  *
  */
-public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetParser {
+public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetParserChainable {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856TransactionSetParser.class);
 

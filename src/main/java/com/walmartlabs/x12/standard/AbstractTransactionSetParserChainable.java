@@ -5,9 +5,9 @@ import com.walmartlabs.x12.X12TransactionSet;
 
 import java.util.List;
 
-public abstract class AbstractTransactionSetParser implements TransactionSetParser {
+public abstract class AbstractTransactionSetParserChainable implements TransactionSetParser {
 
-    AbstractTransactionSetParser nextParser;
+    AbstractTransactionSetParserChainable nextParser;
     
     @Override
     public X12TransactionSet parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
