@@ -215,6 +215,7 @@ public class StandardX12ParserTest {
     private StandardX12Parser<StandardX12Document> createParserWithRegistration() {
         StandardX12Parser<StandardX12Document> standardParser = new StandardX12Parser<>();
         standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
+        standardParser.registerTransactionSetParser((TransactionSetParser)null);
         standardParser.registerTransactionSetParser(new BbbTransactionSetParser());
         return standardParser;
     }

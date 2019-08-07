@@ -35,18 +35,27 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
     /**
      * convenience method that will allow one or more {@link TransactionSetParser} 
      * to be registered w/ the parser
-     * if a transaction set type does not have a registered parser it is ignored
+     * 
+     * Note: if a transaction set type does not have a registered parser it is ignored
+     * 
      * @param transactionParser
+     * @return true if non-null and added, otherwise false
      */
     public boolean registerNextTransactionSetParser(TransactionSetParser txParser) {
         boolean isAdded = false;
         
-        if (this.nextParser == null) {
-            isAdded = true;
-            this.nextParser = txParser;
-        } else if (this.nextParser instanceof AbstractTransactionSetParserChainable) {
-            isAdded = ((AbstractTransactionSetParserChainable) this.nextParser)
-                .registerNextTransactionSetParser(txParser);
+        if (txParser != null) {
+            if (this.nextParser == null) {
+                // we don't have a next parser
+                // so we will register it 
+                isAdded = true;
+                this.nextParser = txParser;
+            } else if (this.nextParser instanceof AbstractTransactionSetParserChainable) {
+                // we have a next parser already
+                // try to add this to the end of the chain
+                isAdded = ((AbstractTransactionSetParserChainable) this.nextParser)
+                    .registerNextTransactionSetParser(txParser);
+            }
         }
         
         return isAdded;
