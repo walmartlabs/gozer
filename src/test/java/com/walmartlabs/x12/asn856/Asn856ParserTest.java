@@ -35,7 +35,7 @@ import static org.junit.Assert.assertNull;
 
 public class Asn856ParserTest {
 
-    StandardX12Parser<StandardX12Document> asnParser;
+    private StandardX12Parser<StandardX12Document> asnParser;
 
     @Before
     public void init() {

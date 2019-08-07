@@ -26,7 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * X12 Parser
@@ -90,10 +93,38 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
     }
     
     /**
+     * convenience method that will allow a Collection of {@link TransactionSetParser} 
+     * to be registered w/ the parser
+     * 
+     * Any null value in the Collection will be ignored.
+     * 
+     * Note: if there are one or more {@link TransactionSetParser} already registered 
+     * with the parser, this method will append the parsers in the Collection 
+     * to the existing chain of parsers. 
+     * 
+     * @param transactionParsers - a Collection of TransactionSetParser(s)
+     * @return true if all were added, false otherwise
+     */
+    public boolean registerTransactionSetParser(Collection<TransactionSetParser> transactionParsers) {
+        boolean isAdded = false;
+        
+        if (transactionParsers != null && !transactionParsers.isEmpty()) {
+            isAdded = transactionParsers.stream()
+                .filter(Objects::nonNull)
+                .map(this::registerTransactionSetParser)
+                .reduce(true, (currAdded, wasAdded) -> currAdded && wasAdded);
+        }
+
+        return isAdded;
+    }
+    
+    /**
      * convenience method that will allow one or more {@link TransactionSetParser} 
      * to be registered w/ the parser
-     * if a transaction set type does not have a registered parser it is ignored
-     * @param transactionParser
+     * Note: if a transaction set type does not have a registered parser it is ignored
+     * 
+     * @param transactionParsers
+     * @return true if added, false otherwise
      */
     public boolean registerTransactionSetParser(TransactionSetParser transactionParser) {
         boolean isAdded = false;
