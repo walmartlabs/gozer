@@ -20,7 +20,7 @@ import com.walmartlabs.x12.X12Document;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StandardX12Document implements X12Document {
+public final class StandardX12Document implements X12Document {
 
     private InterchangeControlEnvelope interchangeControlEnvelope;
     private List<X12Group> groups;

@@ -17,6 +17,12 @@ package com.walmartlabs.x12.po850;
 
 import com.walmartlabs.x12.X12TransactionSet;
 
+/**
+ * 
+ * TODO: implement the POJO that will store the state of
+ * a parsed PO 850 transaction set
+ *
+ */
 public class PurchaseOrderTransactionSet implements X12TransactionSet {
 
 }

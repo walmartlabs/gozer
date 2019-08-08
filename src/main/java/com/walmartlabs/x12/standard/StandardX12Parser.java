@@ -17,6 +17,7 @@ package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.SegmentIterator;
@@ -25,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * X12 Parser
@@ -46,8 +49,8 @@ import java.util.List;
  * -- SE
  *
  */
-public abstract class AbstractStandardX12Parser<T extends StandardX12Document> implements X12Parser<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStandardX12Parser.class);
+public class StandardX12Parser<T extends StandardX12Document> implements X12Parser<T> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StandardX12Parser.class);
 
     public static final String ISA_HEADER_ID = "ISA";
     public static final String ISA_TRAILER_ID = "IEA";
@@ -57,6 +60,8 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
 
     public static final String TRANSACTION_HEADER_ID = "ST";
     public static final String TRANSACTION_TRAILER_ID = "SE";
+    
+    private TransactionSetParser transactionParser;
 
     /**
      * parse an X12 document into the representative Java POJO
@@ -84,6 +89,60 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
         }
 
         return (T) x12Doc;
+    }
+    
+    /**
+     * convenience method that will allow a Collection of {@link TransactionSetParser} 
+     * to be registered w/ the parser
+     * 
+     * Any null value in the Collection will be ignored.
+     * 
+     * Note: if there are one or more {@link TransactionSetParser} already registered 
+     * with the parser, this method will append the parsers in the Collection 
+     * to the existing chain of parsers. 
+     * 
+     * @param transactionParsers - a Collection of TransactionSetParser(s)
+     * @return true if all were added, false otherwise
+     */
+    public boolean registerTransactionSetParser(Collection<TransactionSetParser> transactionParsers) {
+        boolean isAdded = false;
+        
+        if (transactionParsers != null && !transactionParsers.isEmpty()) {
+            isAdded = transactionParsers.stream()
+                .filter(Objects::nonNull)
+                .map(this::registerTransactionSetParser)
+                .reduce(true, (currAdded, wasAdded) -> currAdded && wasAdded);
+        }
+
+        return isAdded;
+    }
+    
+    /**
+     * convenience method that will allow one or more {@link TransactionSetParser} 
+     * to be registered w/ the parser
+     * Note: if a transaction set type does not have a registered parser it is ignored
+     * 
+     * @param transactionParsers
+     * @return true if non-null and added, otherwise false
+     */
+    public boolean registerTransactionSetParser(TransactionSetParser txParser) {
+        boolean isAdded = false;
+        
+        if (txParser != null) {
+            if (this.transactionParser == null) {
+                // we don't have a transaction set parser
+                // so we will register this one
+                isAdded = true;
+                this.transactionParser = txParser;
+            } else if (this.transactionParser instanceof AbstractTransactionSetParserChainable) {
+                // we have a transaction set parser
+                // so try to add this to the end of the existing chain
+                return ((AbstractTransactionSetParserChainable) this.transactionParser)
+                    .registerNextTransactionSetParser(txParser);
+            }
+        }
+        
+        return isAdded;
     }
 
     /**
@@ -202,13 +261,6 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
     }
 
     /**
-     * subclasses should parse the transaction set(s) and add the resulting objects to the X12 Group
-     * @param transactionSegments
-     * @param x12Group
-     */
-    protected abstract void parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group);
-
-    /**
      * parse the ISA segment
      *
      * @param segment
@@ -303,6 +355,22 @@ public abstract class AbstractStandardX12Parser<T extends StandardX12Document> i
             x12Group.setTrailerGroupControlNumber(segment.getSegmentElement(2));
         } else {
             handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
+        }
+    }
+    
+    /**
+     * register the correct {@link TransactionSetParser} to parse the transaction set(s) and add the resulting objects to the X12 Group
+     * @param transactionSegments
+     * @param x12Group
+     */
+    protected void parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
+        if (transactionParser != null) {
+            X12TransactionSet txSet = transactionParser.parseTransactionSet(transactionSegments, x12Group);
+            if (txSet != null) {
+                x12Group.addTransactionSet(txSet);
+            }
+        } else {
+            LOGGER.warn("No TransactionSetParser has been registered!");
         }
     }
 }

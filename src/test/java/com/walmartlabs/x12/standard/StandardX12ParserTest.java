@@ -16,27 +16,43 @@ limitations under the License.
 package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import sample.aaa.AaaTransactionSetParser;
+import sample.aaa.TypeAaaTransactionSet;
+import sample.bbb.BbbTransactionSetParser;
+import sample.bbb.TypeBbbTransactionSet;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class AbstractStandardX12ParserTest {
+public class StandardX12ParserTest {
 
-    MockStandardParser standardParser;
+    private static byte[] x12Bytes;
+    private StandardX12Parser<StandardX12Document> standardParser;
 
+    @BeforeClass
+    public static void setup() throws IOException {
+        x12Bytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.txt"));
+    }
+    
     @Before
     public void init() {
-        standardParser = new MockStandardParser();
+        standardParser = createParserWithRegistration();
     }
 
     @Test
@@ -107,26 +123,62 @@ public class AbstractStandardX12ParserTest {
     }
 
     @Test
-    public void test_Parsing_SourceIsNull() throws IOException {
+    public void test_ParsingWhenSourceIsNull() throws IOException {
         String sourceData = null;
         StandardX12Document x12 = standardParser.parse(sourceData);
         assertNull(x12);
     }
 
     @Test
-    public void test_Parsing_SourceIsEmpty() throws IOException {
+    public void test_ParsingWhenSourceIsEmpty() throws IOException {
         String sourceData = "";
         StandardX12Document x12 = standardParser.parse(sourceData);
         assertNull(x12);
     }
 
+    @Test
+    public void test_creationWithNullTransactionSetParser() throws IOException {
+        StandardX12Parser<StandardX12Document> localParser = new StandardX12Parser<>();
+        assertFalse(localParser.registerTransactionSetParser((TransactionSetParser) null));
+    }
+    
+    @Test
+    public void test_creationWithNullTransactionSetParserCollection() throws IOException {
+        List<TransactionSetParser> parsers = null;
+        StandardX12Parser<StandardX12Document> localParser = new StandardX12Parser<>();
+        assertFalse(localParser.registerTransactionSetParser(parsers));
+    }
+    
+    @Test
+    public void test_creationWithEmptuyTransactionSetParserCollection() throws IOException {
+        List<TransactionSetParser> parsers = Collections.emptyList();
+        StandardX12Parser<StandardX12Document> localParser = new StandardX12Parser<>();
+        assertFalse(localParser.registerTransactionSetParser(parsers));
+    }
 
     @Test
-    public void test_Parsing_BaseDocument() throws IOException {
-        byte[] x12Bytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.txt"));
+    public void test_Parsing_BaseDocument_register_each() throws IOException {
         StandardX12Document x12 = standardParser.parse(new String(x12Bytes));
+        this.verifyParsingOfBaseDocument(x12);
+    }
+    
+    @Test
+    public void test_Parsing_BaseDocument_register_collection() throws IOException {
+        StandardX12Parser<StandardX12Document> localParser = this.createParserWithRegistrationViaCollection();
+        StandardX12Document x12 = localParser.parse(new String(x12Bytes));
+        this.verifyParsingOfBaseDocument(x12);
+    }
+    
+    @Test
+    public void test_Parsing_BaseDocument_register_mixed() throws IOException {
+        StandardX12Parser<StandardX12Document> localParser = this.createParserWithRegistrationMixed();
+        StandardX12Document x12 = localParser.parse(new String(x12Bytes));
+        this.verifyParsingOfBaseDocument(x12);
+    }
+    
+    private void verifyParsingOfBaseDocument(StandardX12Document x12) {
         assertNotNull(x12);
-
+        
         // ISA segment
         InterchangeControlEnvelope isa = x12.getInterchangeControlEnvelope();
         assertNotNull(isa);
@@ -156,26 +208,56 @@ public class AbstractStandardX12ParserTest {
         // groups
         assertNotNull(x12.getGroups());
         assertEquals(2, x12.getGroups().size());
-        assertEquals("00", x12.getGroups().get(0).getHeaderGroupControlNumber());
-        assertEquals("99", x12.getGroups().get(1).getHeaderGroupControlNumber());
+        
+        // group 1
+        X12Group group1 = x12.getGroups().get(0);
+        assertEquals("00", group1.getHeaderGroupControlNumber());
+        List<X12TransactionSet> group1TxList = group1.getTransactions();
+        assertNotNull(group1TxList);
+        assertEquals(2, group1TxList.size());
+        X12TransactionSet tx1 = group1TxList.get(0);
+        assertTrue(tx1 instanceof TypeAaaTransactionSet);
+        assertEquals("1", ((TypeAaaTransactionSet)tx1).getValue());
+        X12TransactionSet tx2 = group1TxList.get(1);
+        assertTrue(tx2 instanceof TypeBbbTransactionSet);
+        assertEquals("2", ((TypeBbbTransactionSet)tx2).getValue());
+        
+        // group 2
+        X12Group group2 = x12.getGroups().get(1);
+        assertEquals("99", group2.getHeaderGroupControlNumber());
+        List<X12TransactionSet> group2TxList = group2.getTransactions();
+        assertNotNull(group2TxList);
+        assertEquals(1, group2TxList.size());
+        X12TransactionSet tx3 = group2TxList.get(0);
+        assertTrue(tx3 instanceof TypeAaaTransactionSet);
+        assertEquals("3", ((TypeAaaTransactionSet)tx3).getValue());
     }
-
-    public class MockStandardParser extends AbstractStandardX12Parser<StandardX12Document> {
-
-        @Override
-        protected StandardX12Document createX12Document() {
-            return new StandardX12Document();
-        }
-
-        @Override
-        protected void parseTransactionSet(List<X12Segment> txLines, X12Group x12Group) {
-            assertNotNull(txLines);
-            assertEquals(3, txLines.size());
-            assertEquals("ST", txLines.get(0).getSegmentIdentifier());
-            assertEquals("TEST", txLines.get(1).getSegmentIdentifier());
-            assertEquals("SE", txLines.get(2).getSegmentIdentifier());
-        }
-
+    
+    private StandardX12Parser<StandardX12Document> createParserWithRegistration() {
+        StandardX12Parser<StandardX12Document> standardParser = new StandardX12Parser<>();
+        standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
+        standardParser.registerTransactionSetParser((TransactionSetParser)null);
+        standardParser.registerTransactionSetParser(new BbbTransactionSetParser());
+        return standardParser;
     }
-
+    
+    private StandardX12Parser<StandardX12Document> createParserWithRegistrationViaCollection() {
+        List<TransactionSetParser> parsers = new ArrayList<>();
+        parsers.add(new AaaTransactionSetParser());
+        parsers.add(new BbbTransactionSetParser());
+        
+        StandardX12Parser<StandardX12Document> standardParser = new StandardX12Parser<>();
+        standardParser.registerTransactionSetParser(parsers);
+        return standardParser;
+    }
+    
+    private StandardX12Parser<StandardX12Document> createParserWithRegistrationMixed() {
+        List<TransactionSetParser> parsers = new ArrayList<>();
+        parsers.add(new BbbTransactionSetParser());
+        
+        StandardX12Parser<StandardX12Document> standardParser = new StandardX12Parser<>();
+        standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
+        standardParser.registerTransactionSetParser(parsers);
+        return standardParser;
+    }
 }

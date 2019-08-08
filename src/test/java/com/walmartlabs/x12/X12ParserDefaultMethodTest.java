@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class X12ParserDefaultMethodTest {
 
-    X12Parser<?> defaultParser;
+    private X12Parser<?> defaultParser;
 
     @Before
     public void init() {

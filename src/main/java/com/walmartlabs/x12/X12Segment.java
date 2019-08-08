@@ -42,7 +42,7 @@ public class X12Segment {
      * otherwise return an empty String
      */
     public String getSegmentIdentifier() {
-        if (segmentElements.size() > 0) {
+        if (segmentElements != null && !segmentElements.isEmpty()) {
             return segmentElements.get(0);
         } else {
             return "";
