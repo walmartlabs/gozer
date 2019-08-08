@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class AbstractTransactionSetParserChainable implements TransactionSetParser {
 
-    TransactionSetParser nextParser;
+    private TransactionSetParser nextParser;
     
     /**
      * chainable implementation of the {@link TransactionSetParser} interface

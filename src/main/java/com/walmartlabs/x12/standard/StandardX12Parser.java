@@ -124,21 +124,25 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
      * Note: if a transaction set type does not have a registered parser it is ignored
      * 
      * @param transactionParsers
-     * @return true if added, false otherwise
+     * @return true if non-null and added, otherwise false
      */
-    public boolean registerTransactionSetParser(TransactionSetParser transactionParser) {
+    public boolean registerTransactionSetParser(TransactionSetParser txParser) {
         boolean isAdded = false;
-        if (this.transactionParser == null) {
-            // we don't have a transaction set parser
-            // so we will register this one
-            isAdded = true;
-            this.transactionParser = transactionParser;
-        } else if (this.transactionParser instanceof AbstractTransactionSetParserChainable) {
-            // we have a transaction set parser
-            // so try to add this to the end of the existing chain
-            return ((AbstractTransactionSetParserChainable) this.transactionParser)
-                .registerNextTransactionSetParser(transactionParser);
+        
+        if (txParser != null) {
+            if (this.transactionParser == null) {
+                // we don't have a transaction set parser
+                // so we will register this one
+                isAdded = true;
+                this.transactionParser = txParser;
+            } else if (this.transactionParser instanceof AbstractTransactionSetParserChainable) {
+                // we have a transaction set parser
+                // so try to add this to the end of the existing chain
+                return ((AbstractTransactionSetParserChainable) this.transactionParser)
+                    .registerNextTransactionSetParser(txParser);
+            }
         }
+        
         return isAdded;
     }
 
