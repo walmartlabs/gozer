@@ -16,8 +16,9 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.standard.AbstractStandardX12Parser;
-import com.walmartlabs.x12.standard.StandardX12Document;
+import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.standard.AbstractTransactionSetParserChainable;
+import com.walmartlabs.x12.standard.TransactionSetParser;
 import com.walmartlabs.x12.standard.X12Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +26,24 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * ASN 856 is the Advance Shipping Notice Used to communicate the contents of a shipment prior to arriving at the facility where the contents will be
+ * ASN 856 is the Advance Shipping Notice Used to communicate the contents of a
+ * shipment prior to arriving at the facility where the contents will be
  * delivered.
  *
  */
-public class DefaultAsn856Parser extends AbstractStandardX12Parser<StandardX12Document> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856Parser.class);
+public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetParserChainable {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAsn856TransactionSetParser.class);
 
-    @Override
-    protected void parseTransactionSet(List<X12Segment> segmentLines, X12Group x12Group) {
-        AsnTransactionSet asnTx = new AsnTransactionSet();
-        asnTx.setSampleAsnOnly("TEST");
-        x12Group.addTransactionSet(asnTx);
+    protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
+        // TODO implement me
+        return true;
     }
 
+    protected X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group) {
+        AsnTransactionSet asnTx = new AsnTransactionSet();
+        asnTx.setSampleAsnOnly("TEST");
+        return asnTx;
+    }
 
 }
