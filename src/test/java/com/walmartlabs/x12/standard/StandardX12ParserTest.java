@@ -30,9 +30,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -121,19 +123,38 @@ public class StandardX12ParserTest {
     }
 
     @Test
-    public void test_Parsing_SourceIsNull() throws IOException {
+    public void test_ParsingWhenSourceIsNull() throws IOException {
         String sourceData = null;
         StandardX12Document x12 = standardParser.parse(sourceData);
         assertNull(x12);
     }
 
     @Test
-    public void test_Parsing_SourceIsEmpty() throws IOException {
+    public void test_ParsingWhenSourceIsEmpty() throws IOException {
         String sourceData = "";
         StandardX12Document x12 = standardParser.parse(sourceData);
         assertNull(x12);
     }
 
+    @Test
+    public void test_creationWithNullTransactionSetParser() throws IOException {
+        StandardX12Parser<StandardX12Document> localParser = new StandardX12Parser<>();
+        assertFalse(localParser.registerTransactionSetParser((TransactionSetParser) null));
+    }
+    
+    @Test
+    public void test_creationWithNullTransactionSetParserCollection() throws IOException {
+        List<TransactionSetParser> parsers = null;
+        StandardX12Parser<StandardX12Document> localParser = new StandardX12Parser<>();
+        assertFalse(localParser.registerTransactionSetParser(parsers));
+    }
+    
+    @Test
+    public void test_creationWithEmptuyTransactionSetParserCollection() throws IOException {
+        List<TransactionSetParser> parsers = Collections.emptyList();
+        StandardX12Parser<StandardX12Document> localParser = new StandardX12Parser<>();
+        assertFalse(localParser.registerTransactionSetParser(parsers));
+    }
 
     @Test
     public void test_Parsing_BaseDocument_register_each() throws IOException {
