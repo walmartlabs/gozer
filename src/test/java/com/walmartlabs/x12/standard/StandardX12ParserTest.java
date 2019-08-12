@@ -15,6 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12.standard;
 
+import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Before;
@@ -235,6 +236,17 @@ public class StandardX12ParserTest {
         standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
         standardParser.registerTransactionSetParser((TransactionSetParser)null);
         standardParser.registerTransactionSetParser(new BbbTransactionSetParser());
+        
+        standardParser.registerUnhandledTransactionSet(new UnhandledTransactionSet() {
+            
+            @Override
+            public void unhandledTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
+                assertNotNull(transactionSegments);
+                assertFalse(transactionSegments.isEmpty());
+                String txSetId = transactionSegments.get(0).getSegmentElement(1);
+                assertEquals("YYZ", txSetId);
+            }
+        });
         return standardParser;
     }
     
