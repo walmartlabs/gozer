@@ -49,7 +49,7 @@ import java.util.Objects;
  * -- SE
  *
  */
-public class StandardX12Parser<T extends StandardX12Document> implements X12Parser<T> {
+public final class StandardX12Parser implements X12Parser<StandardX12Document> {
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardX12Parser.class);
 
     public static final String ISA_HEADER_ID = "ISA";
@@ -62,21 +62,22 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
     public static final String TRANSACTION_TRAILER_ID = "SE";
     
     private TransactionSetParser transactionParser;
+    private UnhandledTransactionSet unhandledTransactionSet;
 
     /**
      * parse an X12 document into the representative Java POJO
      *
-     * @return T (the Class associated with the parser)
+     * @param sourceData the document to be parsed
+     * @return a {@link StandardX12Document} or null if sourceData is null
      * @throws X12ParserException if the document can't be parsed
      */
     @Override
-    public T parse(String sourceData) {
+    public StandardX12Document parse(String sourceData) {
         StandardX12Document x12Doc = null;
 
         try {
             if (!StringUtils.isEmpty(sourceData)) {
-                // delegate creation of the concrete X12 document
-                x12Doc = this.createX12Document();
+                x12Doc = new StandardX12Document();
 
                 // break document up into segment lines
                 SegmentIterator segments = new SegmentIterator(this.splitSourceDataIntoSegments(sourceData));
@@ -84,11 +85,17 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
                 // standard parsing of segment lines
                 this.standardParsingTemplate(segments, x12Doc);
             }
+        } catch (X12ParserException e) {
+            // if the exception is already an
+            // X12ParserException pass it through
+            throw e;
         } catch (Exception e) {
+            // all exceptions except an X12ParserException
+            // should be wrapped
             throw new X12ParserException("Invalid EDI X12 message: unexpected error", e);
         }
 
-        return (T) x12Doc;
+        return x12Doc;
     }
     
     /**
@@ -143,6 +150,17 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
         }
         
         return isAdded;
+    }
+    
+    /**
+     * register a handler for unhandled transaction sets
+     * an unhandled transaction set is one that did not have 
+     * a {@link TransactionSetParser} registered.
+     * 
+     * @param txUnhandled
+     */
+    public void registerUnhandledTransactionSet(UnhandledTransactionSet txUnhandled) {
+        this.unhandledTransactionSet = txUnhandled;
     }
 
     /**
@@ -250,23 +268,12 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
     }
 
     /**
-     * create a Standard X12 Document
-     * concrete parsers may override this as necessary to
-     * create a subclass of the StandardX12Document for
-     * use within the parser
-     * @return
-     */
-    protected StandardX12Document createX12Document() {
-        return new StandardX12Document();
-    }
-
-    /**
      * parse the ISA segment
      *
      * @param segment
      * @param x12Doc
      */
-    protected void parseInterchangeControlHeader(X12Segment segment, StandardX12Document x12Doc) {
+    private void parseInterchangeControlHeader(X12Segment segment, StandardX12Document x12Doc) {
         LOGGER.debug(segment.getSegmentIdentifier());
 
         String segmentIdentifier = segment.getSegmentIdentifier();
@@ -301,7 +308,7 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
      * @param segment
      * @param x12Doc
      */
-    protected void parseInterchangeControlTrailer(X12Segment segment, StandardX12Document x12Doc) {
+    private void parseInterchangeControlTrailer(X12Segment segment, StandardX12Document x12Doc) {
         LOGGER.debug(segment.getSegmentIdentifier());
 
         String segmentIdentifier = segment.getSegmentIdentifier();
@@ -320,7 +327,7 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
      * @param segment
      * @param x12Doc
      */
-    protected X12Group parseGroupHeader(X12Segment segment, StandardX12Document x12Doc) {
+    private X12Group parseGroupHeader(X12Segment segment, StandardX12Document x12Doc) {
         LOGGER.debug(segment.getSegmentIdentifier());
 
         X12Group groupHeader = null;
@@ -346,7 +353,7 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
      * @param segment
      * @param x12Doc
      */
-    protected void parseGroupTrailer(X12Segment segment, X12Group x12Group) {
+    private void parseGroupTrailer(X12Segment segment, X12Group x12Group) {
         LOGGER.debug(segment.getSegmentIdentifier());
 
         String segmentIdentifier = segment.getSegmentIdentifier();
@@ -363,7 +370,7 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
      * @param transactionSegments
      * @param x12Group
      */
-    protected void parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
+    private void parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
         if (transactionParser != null) {
             X12TransactionSet txSet = transactionParser.parseTransactionSet(transactionSegments, x12Group);
             if (txSet != null) {
@@ -371,6 +378,9 @@ public class StandardX12Parser<T extends StandardX12Document> implements X12Pars
             }
         } else {
             LOGGER.warn("No TransactionSetParser has been registered!");
+            if (unhandledTransactionSet != null) {
+                unhandledTransactionSet.unhandledTransactionSet(transactionSegments, x12Group);
+            }
         }
     }
 }

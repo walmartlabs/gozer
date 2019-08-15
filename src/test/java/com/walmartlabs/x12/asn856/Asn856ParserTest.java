@@ -35,11 +35,11 @@ import static org.junit.Assert.assertNull;
 
 public class Asn856ParserTest {
 
-    private StandardX12Parser<StandardX12Document> asnParser;
+    private StandardX12Parser asnParser;
 
     @Before
     public void init() {
-        asnParser = new StandardX12Parser<>();
+        asnParser = new StandardX12Parser();
         asnParser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
     }
 
