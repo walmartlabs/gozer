@@ -60,7 +60,9 @@ String itf14 = util.convertRetailNumberToItf14(dexItem.getUpc());
 
 [About EDI Standards](http://ediacademy.com/blog/edi-x12-standard/)
 
-[EDI formats](https://www.spscommerce.com/resources/edi-documents-transactions/)
+[EDI file format basics](https://www.xtranslator.com/prod/beginguidex12.pdf)
+
+[EDI transaction set codes](https://www.spscommerce.com/resources/edi-documents-transactions/)
 
 [GTIN formats](https://www.gtin.info/)
 
