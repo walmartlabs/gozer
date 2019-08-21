@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface X12Parser<T extends X12Document> {
-
+    
+    public static final String DEFAULT_SEGMENT_SEPARATOR = "~";
+    
     /**
      * parse the X12 transmission into a representative Java object
      *
@@ -33,21 +35,95 @@ public interface X12Parser<T extends X12Document> {
      */
     T parse(String sourceData);
 
+    
     /**
-     * parses the source data into a list of segments each line in the source data is a segment
+     * parses the source data into a list of segments 
+     * it considers each line in source data as a segment
+     * 1) assume each segment is on separate line
+     * 2) otherwise use the default segment delimiter
+     */
+    default List<X12Segment> splitSourceDataIntoSegmentsX(String sourceData) {
+        return this.splitSourceDataIntoSegments(sourceData, DEFAULT_SEGMENT_SEPARATOR);
+    }
+    
+    /**
+     * parses the source data into a list of segments 
+     * it considers each line in source data as a segment
+     * 1) assume each segment is on separate line
+     * 2) otherwise use the the segment delimiter that was passed in
+     */
+    default List<X12Segment> splitSourceDataIntoSegmentsX(String sourceData, String segmentSeparator) {
+        if (StringUtils.isEmpty(sourceData)) {
+            return Arrays.asList();
+        } else {
+            // assume that the source data has 
+            // each segment on a separate line
+            // and that ALL valid EDI / X12 documents
+            // are > 1 segment 
+            List<String> segments = Arrays.asList(sourceData.split("\\r?\\n"));
+            if (segments.size() > 1) {
+                return segments.stream()
+                    .map(segment -> new X12Segment(segment))
+                    .collect(Collectors.toList());
+            } else {
+                // if there is only one line in the source data
+                // we should attempt to use the segment separator passed in
+                // and see if we can split up this source data
+                String segmentSeparatorRegEx = "\\" + segmentSeparator;
+                return Arrays.asList(sourceData.split(segmentSeparatorRegEx)).stream()
+                    .map(segment -> new X12Segment(segment))
+                    .collect(Collectors.toList());
+            }
+        }
+    }
+    
+    /**
+     * parses the source data into a list of segments 
+     * 1) assume each segment is on separate line
+     * 2) otherwise try default segment delimiter (~)
+     * 3) otherwise try last character (TODO)
      */
     default List<X12Segment> splitSourceDataIntoSegments(String sourceData) {
         if (StringUtils.isEmpty(sourceData)) {
             return Arrays.asList();
         } else {
-            return Arrays.asList(sourceData.split("\\r?\\n")).stream()
+            // assume that the source data has 
+            // each segment on a separate line
+            // and that ALL valid EDI / X12 documents
+            // are > 1 segment 
+            List<X12Segment> segments = splitSourceDataIntoSegments(sourceData, "\\r?\\n");
+            if (segments.size() > 1) {
+                return segments;
+            } else {
+                // if there is only one line in the source data
+                // we should attempt to use the segment separator passed in
+                // and see if we can split up this source data
+                segments = splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
+                return segments;
+            }
+        }
+    }
+    
+    /**
+     * parses the source data into a list of segments 
+     * using the the segment delimiter that was passed in
+     * @param sourceData
+     * @param segmentSeparator a regex to split segments
+     */
+    default List<X12Segment> splitSourceDataIntoSegments(String sourceData, String segmentSeparator) {
+        if (StringUtils.isEmpty(sourceData)) {
+            return Arrays.asList();
+        } else {
+            String segmentSeparatorRegEx = segmentSeparator;
+            return Arrays.asList(sourceData.split(segmentSeparatorRegEx)).stream()
                 .map(segment -> new X12Segment(segment))
                 .collect(Collectors.toList());
         }
     }
 
     /**
-     * will throw X12ParserException with message indicating the segment found
+     * convenience method that will throw X12ParserException 
+     * with a message indicating that the segment that was found
      * was not the one that was expected
      * @param expectedSegmentId
      * @param actualSegmentId

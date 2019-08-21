@@ -63,7 +63,7 @@ public class StandardX12ParserTest {
             fail("expected parsing exception");
         } catch (X12ParserException e) {
             e.printStackTrace();
-            assertEquals("expected ISA segment but found XX", e.getMessage());
+            assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
         } catch (IOException e) {
             fail("expected parsing exception");
         }
@@ -76,7 +76,7 @@ public class StandardX12ParserTest {
             standardParser.parse(sourceData);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
-            assertEquals("expected ISA segment but found GS", e.getMessage());
+            assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
         } catch (IOException e) {
             fail("expected parsing exception");
         }
@@ -154,6 +154,30 @@ public class StandardX12ParserTest {
         StandardX12Parser localParser = this.createParserWithRegistrationMixed();
         StandardX12Document x12 = localParser.parse(sourceData);
         this.verifyParsingOfBaseDocument(x12);
+    }
+    
+    @Test
+    public void test_Parsing_BaseDocument_no_line_breaks() throws IOException {
+        byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.txt"));
+        String sourceData = new String(x12MsgBytes);
+        StandardX12Parser localParser = this.createParserWithRegistrationViaCollection();
+        StandardX12Document x12 = localParser.parse(sourceData);
+        this.verifyParsingOfBaseDocument(x12);
+    }
+    
+    @Test
+    public void test_Parsing_BaseDocument_no_line_breaks_no_delim() throws IOException {
+        try {
+            byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.no.line.break.no.delim.txt"));
+            String sourceData = new String(x12MsgBytes);
+            StandardX12Parser localParser = this.createParserWithRegistrationViaCollection();
+            localParser.parse(sourceData);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
+        } catch (IOException e) {
+            fail("expected parsing exception");
+        }
     }
     
     private void verifyParsingOfBaseDocument(StandardX12Document x12) {

@@ -21,6 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class X12Segment {
+    
+    public static final String DEFAULT_ELEMENT_SEPARATOR = "*";
+    
     private String segmentValue;
     private List<String> segmentElements;
 
@@ -73,7 +76,8 @@ public class X12Segment {
         if (StringUtils.isEmpty(segment)) {
             return Arrays.asList();
         } else {
-            return Arrays.asList(segment.split("\\*"));
+            String splitRefEx = "\\" + DEFAULT_ELEMENT_SEPARATOR;
+            return Arrays.asList(segment.split(splitRefEx));
         }
     }
 }

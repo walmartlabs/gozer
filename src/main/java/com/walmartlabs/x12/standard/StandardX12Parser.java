@@ -80,10 +80,14 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                 x12Doc = new StandardX12Document();
 
                 // break document up into segment lines
-                SegmentIterator segments = new SegmentIterator(this.splitSourceDataIntoSegments(sourceData));
-
-                // standard parsing of segment lines
-                this.standardParsingTemplate(segments, x12Doc);
+                List<X12Segment> segmentList = this.splitSourceDataIntoSegments(sourceData);
+                if (this.isValidEnvelope(segmentList)) {
+                    // standard parsing of segment lines
+                    SegmentIterator segments = new SegmentIterator(segmentList);
+                    this.standardParsingTemplate(segments, x12Doc);
+                } else  {
+                    throw new X12ParserException("Invalid EDI X12 message: must be wrapped in ISA/ISE");
+                }
             }
         } catch (X12ParserException e) {
             // if the exception is already an
@@ -163,6 +167,26 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
         this.unhandledTransactionSet = txUnhandled;
     }
 
+    /**
+     * All EDI X12 messages MUST be enclosed in a ISA/ISE envelope.
+     *
+     * @param segmentList
+     * @return true when valid and false otherwise
+     */
+    private boolean isValidEnvelope(List<X12Segment> segmentList) {
+        boolean isValidEnvelope = false;
+        int lastSegmentIndex = segmentList.size() - 1;
+        if (segmentList.size() > 2) {
+            X12Segment headerSegment = segmentList.get(0);
+            X12Segment trailerSegment = segmentList.get(lastSegmentIndex);
+            if (ISA_HEADER_ID.equals(headerSegment.getSegmentIdentifier())
+                    && ISA_TRAILER_ID.equals(trailerSegment.getSegmentIdentifier())) {
+                isValidEnvelope = true;
+            }
+        }
+        return isValidEnvelope;
+    }
+    
     /**
      * template for parsing a standard EDI X12 document
      *
