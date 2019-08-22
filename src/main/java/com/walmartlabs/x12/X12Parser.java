@@ -42,23 +42,19 @@ public interface X12Parser<T extends X12Document> {
      * 3) otherwise try last character (TODO)
      */
     default List<X12Segment> splitSourceDataIntoSegments(String sourceData) {
-        if (StringUtils.isEmpty(sourceData)) {
-            return Arrays.asList();
+        // assume that the source data has 
+        // each segment on a separate line
+        // and that ALL valid EDI / X12 documents
+        // are > 1 segment 
+        List<X12Segment> segments = splitSourceDataIntoSegments(sourceData, "\\r?\\n");
+        if (segments.size() > 1) {
+            return segments;
         } else {
-            // assume that the source data has 
-            // each segment on a separate line
-            // and that ALL valid EDI / X12 documents
-            // are > 1 segment 
-            List<X12Segment> segments = splitSourceDataIntoSegments(sourceData, "\\r?\\n");
-            if (segments.size() > 1) {
-                return segments;
-            } else {
-                // if there is only one line in the source data
-                // we should attempt to use the segment separator passed in
-                // and see if we can split up this source data
-                segments = splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
-                return segments;
-            }
+            // if there is only one line in the source data
+            // we should attempt to use the segment separator passed in
+            // and see if we can split up this source data
+            segments = splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
+            return segments;
         }
     }
     
