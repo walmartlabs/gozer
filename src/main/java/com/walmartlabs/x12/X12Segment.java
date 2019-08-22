@@ -76,8 +76,8 @@ public class X12Segment {
         if (StringUtils.isEmpty(segment)) {
             return Arrays.asList();
         } else {
-            String splitRefEx = "\\" + DEFAULT_ELEMENT_SEPARATOR;
-            return Arrays.asList(segment.split(splitRefEx));
+            String splitRegEx = "\\" + DEFAULT_ELEMENT_SEPARATOR;
+            return Arrays.asList(segment.split(splitRegEx));
         }
     }
 }
