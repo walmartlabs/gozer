@@ -14,7 +14,12 @@ This open source library, available through @WalmartLabs, provides Java based cl
 
 ## Basic Design Approach
 
-Gozer seeks to provide more than a generic X12 parsing capability that turns an EDI X12 message into a list of segments and elements. Gozer hopes to provide a library of easy to use classes, that can transform the parsed message into a POJO that corresponds with a specific X12 format. Attributes are labeled with their business names rather than the more cryptic segement identifiers. It further provides basic validation capabilities as defined in the EDI X12 manuals for each format.   
+Gozer seeks to provide more than a generic X12 parsing capability that turns an EDI X12 message into a list of segments and elements. Gozer hopes to provide a library of easy to use classes, that can transform the parsed message into a POJO that corresponds with a specific X12 format. Attributes are labeled with their business names rather than the more cryptic segement identifiers. It further provides basic validation capabilities as defined in the EDI X12 manuals for each format.  
+
+### Practical Approach to Parsing
+The Gozer parsers, that implement `X12Parser`, are designed to parse the EDI X12 message. Successfully parsing a document would require the message to be well-formed. The segments must have the correct segment identifiers, which must be nested correctly and appear in the proper order.
+
+The parser is does not attempt to validate the values within the segment elements. Furthermore, it attempts to be as loose as possible regarding the parsing of different versions of the EDI X12 message. After parsing, it is considered the responsibility of the consumer to perform any additional validations on the data that was provided in various segments and elements.  
 
 ## Why the name Gozer
 
@@ -61,6 +66,8 @@ String itf14 = util.convertRetailNumberToItf14(dexItem.getUpc());
 [About EDI Standards](http://ediacademy.com/blog/edi-x12-standard/)
 
 [EDI file format basics](https://www.xtranslator.com/prod/beginguidex12.pdf)
+
+[ASC X12 Standards](http://edi.aaltsys.info/01_standards.html)
 
 [EDI transaction set codes](https://www.spscommerce.com/resources/edi-documents-transactions/)
 
