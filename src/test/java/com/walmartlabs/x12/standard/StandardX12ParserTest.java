@@ -81,6 +81,17 @@ public class StandardX12ParserTest {
             fail("expected parsing exception");
         }
     }
+    
+    @Test
+    public void test_parseInterchangeControlHeader_one_line_file() {
+        try {
+            String sourceData = "ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>";
+            standardParser.parse(sourceData);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
+        }
+    }
 
     @Test
     public void test_parseGroupHeader_invalidSegment() {

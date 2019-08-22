@@ -20,6 +20,7 @@ import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,14 +48,13 @@ public interface X12Parser<T extends X12Document> {
         // and that ALL valid EDI / X12 documents
         // are > 1 segment 
         List<X12Segment> segments = splitSourceDataIntoSegments(sourceData, "\\r?\\n");
-        if (segments.size() > 1) {
+        if (segments != null && segments.size() > 1) {
             return segments;
         } else {
             // if there is only one line in the source data
             // we should attempt to use the segment separator passed in
             // and see if we can split up this source data
-            segments = splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
-            return segments;
+            return splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
         }
     }
     
@@ -62,14 +62,13 @@ public interface X12Parser<T extends X12Document> {
      * parses the source data into a list of segments 
      * using the the segment delimiter that was passed in
      * @param sourceData
-     * @param segmentSeparator a regex to split segments
+     * @param segmentSeparatorRegEx a regex to split segments
      */
-    default List<X12Segment> splitSourceDataIntoSegments(String sourceData, String segmentSeparator) {
+    default List<X12Segment> splitSourceDataIntoSegments(String sourceData, String segmentSeparatorRegEx) {
         if (StringUtils.isEmpty(sourceData)) {
-            return Arrays.asList();
+            return Collections.emptyList();
         } else {
-            String segmentSeparatorRegEx = segmentSeparator;
-            return Arrays.asList(sourceData.split(segmentSeparatorRegEx)).stream()
+            return Arrays.stream(sourceData.split(segmentSeparatorRegEx))
                 .map(segment -> new X12Segment(segment))
                 .collect(Collectors.toList());
         }

@@ -175,15 +175,21 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
      */
     private boolean isValidEnvelope(List<X12Segment> segmentList) {
         boolean isValidEnvelope = false;
-        int lastSegmentIndex = segmentList.size() - 1;
-        if (segmentList.size() > 2) {
-            X12Segment headerSegment = segmentList.get(0);
-            X12Segment trailerSegment = segmentList.get(lastSegmentIndex);
-            if (ISA_HEADER_ID.equals(headerSegment.getSegmentIdentifier())
+        
+        if (segmentList != null) {
+            int segmentCount = segmentList.size();
+            int lastSegmentIndex = segmentCount - 1;
+            if (segmentCount > 1) {
+                // need at least 2 lines to have valid envelope
+                X12Segment headerSegment = segmentList.get(0);
+                X12Segment trailerSegment = segmentList.get(lastSegmentIndex);
+                if (ISA_HEADER_ID.equals(headerSegment.getSegmentIdentifier())
                     && ISA_TRAILER_ID.equals(trailerSegment.getSegmentIdentifier())) {
-                isValidEnvelope = true;
+                    isValidEnvelope = true;
+                }
             }
         }
+        
         return isValidEnvelope;
     }
     
