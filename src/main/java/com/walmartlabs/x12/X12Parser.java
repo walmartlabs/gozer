@@ -35,48 +35,6 @@ public interface X12Parser<T extends X12Document> {
      */
     T parse(String sourceData);
 
-    
-    /**
-     * parses the source data into a list of segments 
-     * it considers each line in source data as a segment
-     * 1) assume each segment is on separate line
-     * 2) otherwise use the default segment delimiter
-     */
-    default List<X12Segment> splitSourceDataIntoSegmentsX(String sourceData) {
-        return this.splitSourceDataIntoSegments(sourceData, DEFAULT_SEGMENT_SEPARATOR);
-    }
-    
-    /**
-     * parses the source data into a list of segments 
-     * it considers each line in source data as a segment
-     * 1) assume each segment is on separate line
-     * 2) otherwise use the the segment delimiter that was passed in
-     */
-    default List<X12Segment> splitSourceDataIntoSegmentsX(String sourceData, String segmentSeparator) {
-        if (StringUtils.isEmpty(sourceData)) {
-            return Arrays.asList();
-        } else {
-            // assume that the source data has 
-            // each segment on a separate line
-            // and that ALL valid EDI / X12 documents
-            // are > 1 segment 
-            List<String> segments = Arrays.asList(sourceData.split("\\r?\\n"));
-            if (segments.size() > 1) {
-                return segments.stream()
-                    .map(segment -> new X12Segment(segment))
-                    .collect(Collectors.toList());
-            } else {
-                // if there is only one line in the source data
-                // we should attempt to use the segment separator passed in
-                // and see if we can split up this source data
-                String segmentSeparatorRegEx = "\\" + segmentSeparator;
-                return Arrays.asList(sourceData.split(segmentSeparatorRegEx)).stream()
-                    .map(segment -> new X12Segment(segment))
-                    .collect(Collectors.toList());
-            }
-        }
-    }
-    
     /**
      * parses the source data into a list of segments 
      * 1) assume each segment is on separate line
