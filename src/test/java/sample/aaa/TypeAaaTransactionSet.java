@@ -1,15 +1,15 @@
 package sample.aaa;
 
-import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.AbstractX12TransactionSet;
 
-public class TypeAaaTransactionSet implements X12TransactionSet {
-    private String value;
-
-    public String getValue() {
-        return value;
+public class TypeAaaTransactionSet extends AbstractX12TransactionSet {
+    private String anAaaOnlyValue;
+    
+    public String getAaaOnlyValue() {
+        return anAaaOnlyValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setAaaOnlyValue(String value) {
+        this.anAaaOnlyValue = value;
     }
 }

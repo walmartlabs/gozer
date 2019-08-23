@@ -21,6 +21,7 @@ public class BbbTransactionSetParser extends AbstractTransactionSetParserChainab
         assertEquals("SE", txLines.get(2).getSegmentIdentifier());
         
         TypeBbbTransactionSet tx = new TypeBbbTransactionSet();
+        tx.setTransactionSetIdentifierCode(txLines.get(0).getSegmentElement(1));
         tx.setValue(txLines.get(1).getSegmentElement(1));
         return tx;
     }

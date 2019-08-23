@@ -21,7 +21,8 @@ public class AaaTransactionSetParser extends AbstractTransactionSetParserChainab
         assertEquals("SE", txLines.get(2).getSegmentIdentifier());
         
         TypeAaaTransactionSet tx = new TypeAaaTransactionSet();
-        tx.setValue(txLines.get(1).getSegmentElement(1));
+        tx.setTransactionSetIdentifierCode(txLines.get(0).getSegmentElement(1));
+        tx.setAaaOnlyValue(txLines.get(1).getSegmentElement(1));
         return tx;
     }
 
