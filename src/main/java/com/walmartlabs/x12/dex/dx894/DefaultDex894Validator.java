@@ -66,12 +66,12 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         X12ErrorDetail detail = null;
         int actualTransactionCount = (dex.getTransactions() != null ? dex.getTransactions().size() : 0);
         if (dex.getNumberOfTransactions() == null) {
-            detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "DXE02", "Transaction count is missing");
+            detail = new X12ErrorDetail(DefaultDex894Parser.DEX_TRAILER_ID, "DXE02", "Transaction count is missing");
         } else if (dex.getNumberOfTransactions() != actualTransactionCount) {
             StringBuilder sb = new StringBuilder();
             sb.append("Expected ").append(dex.getNumberOfTransactions()).append(" transactions");
             sb.append(" but got ").append(actualTransactionCount).append(" transactions");
-            detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "", sb.toString());
+            detail = new X12ErrorDetail(DefaultDex894Parser.DEX_TRAILER_ID, "", sb.toString());
         }
         return detail;
     }
