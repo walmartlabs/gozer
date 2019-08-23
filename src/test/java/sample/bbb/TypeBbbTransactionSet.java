@@ -1,8 +1,9 @@
 package sample.bbb;
 
-import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.AbstractX12TransactionSet;
 
-public class TypeBbbTransactionSet implements X12TransactionSet {
+public class TypeBbbTransactionSet extends AbstractX12TransactionSet {
+    
     private String value;
 
     public String getValue() {
@@ -12,4 +13,5 @@ public class TypeBbbTransactionSet implements X12TransactionSet {
     public void setValue(String value) {
         this.value = value;
     }
+
 }

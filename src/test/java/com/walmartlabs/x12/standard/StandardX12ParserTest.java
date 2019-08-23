@@ -241,9 +241,11 @@ public class StandardX12ParserTest {
         assertEquals(2, group1TxList.size());
         X12TransactionSet tx1 = group1TxList.get(0);
         assertTrue(tx1 instanceof TypeAaaTransactionSet);
-        assertEquals("1", ((TypeAaaTransactionSet)tx1).getValue());
+        assertEquals("AAA", tx1.getTransactionSetIdentifierCode());
+        assertEquals("1", ((TypeAaaTransactionSet)tx1).getAaaOnlyValue());
         X12TransactionSet tx2 = group1TxList.get(1);
         assertTrue(tx2 instanceof TypeBbbTransactionSet);
+        assertEquals("BBB", tx2.getTransactionSetIdentifierCode());
         assertEquals("2", ((TypeBbbTransactionSet)tx2).getValue());
         
         // group 2
@@ -263,7 +265,8 @@ public class StandardX12ParserTest {
         assertEquals(1, group2TxList.size());
         X12TransactionSet tx3 = group2TxList.get(0);
         assertTrue(tx3 instanceof TypeAaaTransactionSet);
-        assertEquals("3", ((TypeAaaTransactionSet)tx3).getValue());
+        assertEquals("AAA", tx3.getTransactionSetIdentifierCode());
+        assertEquals("3", ((TypeAaaTransactionSet)tx3).getAaaOnlyValue());
     }
     
     private StandardX12Parser createParserWithRegistration() {

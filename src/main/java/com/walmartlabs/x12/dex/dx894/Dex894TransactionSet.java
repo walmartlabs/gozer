@@ -15,7 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12.dex.dx894;
 
-import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.AbstractX12TransactionSet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,22 +25,8 @@ import java.util.List;
  * The 894 Base Record Transaction Set is essentially an invoice.
  * Note: Debits and credits cannot mix on the same invoice
  */
-public class Dex894TransactionSet implements X12TransactionSet {
-    /*
-     * ST
-     */
-    // ST01
-    private String transactionSetIdentifierCode;
-    // ST02
-    private String headerControlNumber;
+public class Dex894TransactionSet extends AbstractX12TransactionSet {
 
-    /*
-     * SE
-     */
-    // SE01
-    private Integer expectedNumberOfSegments;
-    // SE02
-    private String trailerControlNumber;
     // used for validation routines
     // to cmp against expected segments
     private Integer actualNumberOfSegments;
@@ -107,30 +93,6 @@ public class Dex894TransactionSet implements X12TransactionSet {
             items = new ArrayList<>();
         }
         items.add(dexItem);
-    }
-
-    public String getTransactionSetIdentifierCode() {
-        return transactionSetIdentifierCode;
-    }
-
-    public void setTransactionSetIdentifierCode(String transactionSetIdentifierCode) {
-        this.transactionSetIdentifierCode = transactionSetIdentifierCode;
-    }
-
-    public String getHeaderControlNumber() {
-        return headerControlNumber;
-    }
-
-    public void setHeaderControlNumber(String headerControlNumber) {
-        this.headerControlNumber = headerControlNumber;
-    }
-
-    public String getTrailerControlNumber() {
-        return trailerControlNumber;
-    }
-
-    public void setTrailerControlNumber(String trailerControlNumber) {
-        this.trailerControlNumber = trailerControlNumber;
     }
 
     public String getSupplierNumber() {
@@ -235,14 +197,6 @@ public class Dex894TransactionSet implements X12TransactionSet {
 
     public void setSignatureName(String signatureName) {
         this.signatureName = signatureName;
-    }
-
-    public Integer getExpectedNumberOfSegments() {
-        return expectedNumberOfSegments;
-    }
-
-    public void setExpectedNumberOfSegments(Integer expectedNumberOfSegments) {
-        this.expectedNumberOfSegments = expectedNumberOfSegments;
     }
 
     public Integer getActualNumberOfSegments() {
