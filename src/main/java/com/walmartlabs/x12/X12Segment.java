@@ -18,9 +18,13 @@ package com.walmartlabs.x12;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class X12Segment {
+    
+    public static final String DEFAULT_ELEMENT_SEPARATOR = "*";
+    
     private String segmentValue;
     private List<String> segmentElements;
 
@@ -71,9 +75,10 @@ public class X12Segment {
      */
     private List<String> splitSegmentIntoDataElements(String segment) {
         if (StringUtils.isEmpty(segment)) {
-            return Arrays.asList();
+            return Collections.emptyList();
         } else {
-            return Arrays.asList(segment.split("\\*"));
+            String splitRegEx = "\\" + DEFAULT_ELEMENT_SEPARATOR;
+            return Arrays.asList(segment.split(splitRegEx));
         }
     }
 }
