@@ -21,7 +21,7 @@ public final class X12ParsingUtil {
     public static boolean isValidEnvelope(List<X12Segment> segmentList, String headerIdentifier, String trailerIdentifier) {
         boolean isValidEnvelope = false;
         
-        if (segmentList != null) {
+        if (segmentList != null && headerIdentifier!= null && trailerIdentifier != null) {
             int segmentCount = segmentList.size();
             int lastSegmentIndex = segmentCount - 1;
             if (segmentCount > 1) {
