@@ -17,6 +17,7 @@ package com.walmartlabs.x12.util;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.standard.X12Loop;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -25,11 +26,175 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class X12ParsingUtilTest {
 
+    
+    @Test
+    public void test_findHierarchicalLoops_null() {
+        List<X12Segment> segmentList = null;
+        assertNull(X12ParsingUtil.findHierarchicalLoops(segmentList));
+    }
+    
+    @Test
+    public void test_findHierarchicalLoops_empty() {
+        List<X12Segment> segmentList = Collections.emptyList();
+        assertNull(X12ParsingUtil.findHierarchicalLoops(segmentList));
+    }
+    
+    @Test
+    public void test_findHierarchicalLoops_one_loop() {
+        List<X12Segment> segmentList = new ArrayList<>();
+        X12Segment segment = new X12Segment("HL*1**S");
+        segmentList.add(segment);
+        segment = new X12Segment("DTM*011*20190524");
+        segmentList.add(segment);
+        segment = new X12Segment("TD3*TL");
+        segmentList.add(segment);  
+        
+        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        assertNotNull(loops);
+        assertEquals(1, loops.size());
+        
+        X12Loop loop = loops.get(0);
+        assertNotNull(loop);
+        assertEquals("1", loop.getHierarchicalId());
+        assertEquals(null, loop.getParentHierarchicalId());
+        assertEquals("S", loop.getCode());
+        
+        List<X12Segment> segmentsInLoop = loop.getSegments();
+        assertNotNull(segmentsInLoop);
+        assertEquals(2, segmentsInLoop.size());
+        assertEquals("DTM", segmentsInLoop.get(0).getSegmentIdentifier());
+        assertEquals("TD3", segmentsInLoop.get(1).getSegmentIdentifier());
+        
+        List<X12Loop> childLoops = loop.getChildLoops();
+        assertNull(childLoops);
+    }
+    
+    @Test
+    public void test_findHierarchicalLoops_one_loop_with_children() {
+        List<X12Segment> segmentList = new ArrayList<>();
+        // shipment
+        X12Segment segment = new X12Segment("HL*1**S");
+        segmentList.add(segment);
+        segment = new X12Segment("DTM*011*20190524");
+        segmentList.add(segment);
+        segment = new X12Segment("TD3*TL");
+        segmentList.add(segment);  
+        // order 1
+        segment = new X12Segment("HL*2*1*O");
+        segmentList.add(segment);
+        segment = new X12Segment("PRF*222");
+        segmentList.add(segment);
+        segment = new X12Segment("REF*IA*12345");
+        segmentList.add(segment);
+        // order 2
+        segment = new X12Segment("HL*3*1*O");
+        segmentList.add(segment);
+        segment = new X12Segment("PRF*333");
+        segmentList.add(segment);
+        segment = new X12Segment("REF*IA*54321");
+        segmentList.add(segment); 
+        
+        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        assertNotNull(loops);
+        assertEquals(1, loops.size());
+        
+        // shipment loop
+        X12Loop loop = loops.get(0);
+        assertNotNull(loop);
+        assertEquals("1", loop.getHierarchicalId());
+        assertEquals(null, loop.getParentHierarchicalId());
+        assertEquals("S", loop.getCode());
+        
+        List<X12Segment> segmentsInLoop = loop.getSegments();
+        assertNotNull(segmentsInLoop);
+        assertEquals(2, segmentsInLoop.size());
+        assertEquals("DTM", segmentsInLoop.get(0).getSegmentIdentifier());
+        assertEquals("TD3", segmentsInLoop.get(1).getSegmentIdentifier());
+        
+        List<X12Loop> childLoops = loop.getChildLoops();
+        assertNotNull(childLoops);
+        assertEquals(2, childLoops.size());
+        
+        // loop order 1
+        // TODO
+        
+        // loop order 2
+        // TODO
+    }
+    
+    @Test
+    public void test_findHierarchicalLoops_multiple_loops() {
+        List<X12Segment> segmentList = new ArrayList<>();
+        // shipment 1
+        X12Segment segment = new X12Segment("HL*1**S");
+        segmentList.add(segment);
+        segment = new X12Segment("DTM*011*20190524");
+        segmentList.add(segment);
+        segment = new X12Segment("TD3*A");
+        segmentList.add(segment);
+        // shipment 2
+        segment = new X12Segment("HL*2**S");
+        segmentList.add(segment);
+        segment = new X12Segment("TD3*B");
+        segmentList.add(segment);          
+        
+        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        assertNotNull(loops);
+        assertEquals(2, loops.size());
+        
+        // first loop
+        X12Loop loop = loops.get(0);
+        assertNotNull(loop);
+        assertEquals("1", loop.getHierarchicalId());
+        assertEquals(null, loop.getParentHierarchicalId());
+        assertEquals("S", loop.getCode());
+        
+        List<X12Segment> segmentsInLoop = loop.getSegments();
+        assertNotNull(segmentsInLoop);
+        assertEquals(2, segmentsInLoop.size());
+        assertEquals("DTM", segmentsInLoop.get(0).getSegmentIdentifier());
+        assertEquals("TD3", segmentsInLoop.get(1).getSegmentIdentifier());
+        assertEquals("A", segmentsInLoop.get(1).getSegmentElement(1));
+        
+        List<X12Loop> childLoops = loop.getChildLoops();
+        assertNull(childLoops);
+        
+        // second loop
+        loop = loops.get(1);
+        assertNotNull(loop);
+        assertEquals("2", loop.getHierarchicalId());
+        assertEquals(null, loop.getParentHierarchicalId());
+        assertEquals("S", loop.getCode());
+        
+        segmentsInLoop = loop.getSegments();
+        assertNotNull(segmentsInLoop);
+        assertEquals(1, segmentsInLoop.size());
+        assertEquals("TD3", segmentsInLoop.get(0).getSegmentIdentifier());
+        assertEquals("B", segmentsInLoop.get(0).getSegmentElement(1));
+        
+        childLoops = loop.getChildLoops();
+        assertNull(childLoops);
+    }
+    
+    @Test
+    public void test_findHierarchicalLoops_wrong_starting_segment() {
+        List<X12Segment> segmentList = new ArrayList<>();
+        X12Segment segment = new X12Segment("TOP*1");
+        segmentList.add(segment);
+        segment = new X12Segment("HL*1**S");
+        segmentList.add(segment);
+        segment = new X12Segment("TD3*TL");
+        segmentList.add(segment);  
+        
+        assertNull(X12ParsingUtil.findHierarchicalLoops(segmentList));
+    }
+    
     @Test
     public void test_isValidEnvelope() {
         List<X12Segment> segmentList = new ArrayList<>();

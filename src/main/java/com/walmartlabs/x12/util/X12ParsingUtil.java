@@ -7,7 +7,7 @@ import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Loop;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +102,7 @@ public final class X12ParsingUtil {
      * @throws X12ParserException if the first segment is not an HL
      */
     public static List<X12Loop> findHierarchicalLoops(List<X12Segment> segmentList) {
-        List<X12Loop> loops = Collections.emptyList();
+        List<X12Loop> loops = new ArrayList<>();
         
         if (segmentList != null && !segmentList.isEmpty()) {
             X12Segment firstSegment = segmentList.get(0);
@@ -122,6 +122,10 @@ public final class X12ParsingUtil {
                         loop.setParentHierarchicalId(x12Segment.getSegmentElement(2));
                         loop.setCode(x12Segment.getSegmentElement(3));
                         
+                        // TODO: adding here is wrong!!
+                        // if it is child of loop
+                        // do not add it
+                        loops.add(loop);
                         loopMap.putIfAbsent(loopId, loop);
                         currLoopId = loopId;
                         

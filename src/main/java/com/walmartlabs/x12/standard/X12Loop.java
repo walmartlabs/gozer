@@ -2,7 +2,7 @@ package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Segment;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,14 +33,14 @@ public class X12Loop {
 
     public void addSegment(X12Segment segment) {
         if (segments == null) {
-            segments = Arrays.asList();
+            segments = new ArrayList<>();
         }
         segments.add(segment);
     }
     
     public void addLoop(X12Loop loop) {
         if (childLoops == null) {
-            childLoops = Arrays.asList();
+            childLoops = new ArrayList<>();
         }
         childLoops.add(loop);
     }
