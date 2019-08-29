@@ -33,7 +33,7 @@ public final class X12ParsingUtil {
         sb.append(actualSegmentId);
         return new X12ParserException(new X12ErrorDetail(actualSegmentId, null, sb.toString()));
     }
-    
+
     /**
      * given a set of segment lines it will examine the first 
      * and last segments and evaluate whether they match 
