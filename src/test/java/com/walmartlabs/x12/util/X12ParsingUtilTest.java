@@ -29,6 +29,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class X12ParsingUtilTest {
 
@@ -36,13 +37,17 @@ public class X12ParsingUtilTest {
     @Test
     public void test_findHierarchicalLoops_null() {
         List<X12Segment> segmentList = null;
-        assertNull(X12ParsingUtil.findHierarchicalLoops(segmentList));
+        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        assertNotNull(loops);
+        assertTrue(loops.isEmpty());
     }
     
     @Test
     public void test_findHierarchicalLoops_empty() {
         List<X12Segment> segmentList = Collections.emptyList();
-        assertNull(X12ParsingUtil.findHierarchicalLoops(segmentList));
+        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        assertNotNull(loops);
+        assertTrue(loops.isEmpty());
     }
     
     @Test
@@ -176,6 +181,68 @@ public class X12ParsingUtilTest {
     }
     
     @Test
+    public void test_findHierarchicalLoops_one_loop_missing_parent() {
+        List<X12Segment> segmentList = new ArrayList<>();
+        // shipment
+        X12Segment segment = new X12Segment("HL*1**S");
+        segmentList.add(segment);
+        segment = new X12Segment("DTM*011*20190524");
+        segmentList.add(segment);
+        segment = new X12Segment("TD3*TL");
+        segmentList.add(segment);  
+        // order 1
+        segment = new X12Segment("HL*2*1*O");
+        segmentList.add(segment);
+        segment = new X12Segment("PRF*222");
+        segmentList.add(segment);
+        segment = new X12Segment("REF*IA*12345");
+        segmentList.add(segment);
+        // pack 1 on order 2 which does not exit
+        segment = new X12Segment("HL*4*3*P");
+        segmentList.add(segment);
+        segment = new X12Segment("MAN*GM*56");
+        segmentList.add(segment);
+        
+        try {
+            X12ParsingUtil.findHierarchicalLoops(segmentList);
+            fail("expected X12ParserException");
+        } catch (X12ParserException e) {
+            assertEquals("HL segment (4) is missing parent (3)", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test_findHierarchicalLoops_one_loop_repeated_id() {
+        List<X12Segment> segmentList = new ArrayList<>();
+        // shipment
+        X12Segment segment = new X12Segment("HL*1**S");
+        segmentList.add(segment);
+        segment = new X12Segment("DTM*011*20190524");
+        segmentList.add(segment);
+        segment = new X12Segment("TD3*TL");
+        segmentList.add(segment);  
+        // order 1
+        segment = new X12Segment("HL*2*1*O");
+        segmentList.add(segment);
+        segment = new X12Segment("PRF*222");
+        segmentList.add(segment);
+        segment = new X12Segment("REF*IA*12345");
+        segmentList.add(segment);
+        // pack 1 on order 1 but repeats the id 
+        segment = new X12Segment("HL*2*2*P");
+        segmentList.add(segment);
+        segment = new X12Segment("MAN*GM*56");
+        segmentList.add(segment);
+        
+        try {
+            X12ParsingUtil.findHierarchicalLoops(segmentList);
+            fail("expected X12ParserException");
+        } catch (X12ParserException e) {
+            assertEquals("HL segment with id (2) already exists", e.getMessage());
+        }
+    }
+    
+    @Test
     public void test_findHierarchicalLoops_multiple_loops() {
         List<X12Segment> segmentList = new ArrayList<>();
         // shipment 1
@@ -239,7 +306,12 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("TD3*TL");
         segmentList.add(segment);  
         
-        assertNull(X12ParsingUtil.findHierarchicalLoops(segmentList));
+        try {
+            X12ParsingUtil.findHierarchicalLoops(segmentList);
+            fail("expected X12ParserException");
+        } catch (X12ParserException e) {
+            assertEquals("expected HL segment but found TOP", e.getMessage());
+        }
     }
     
     @Test

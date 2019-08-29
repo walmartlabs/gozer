@@ -15,6 +15,24 @@ import java.util.Map;
 
 public final class X12ParsingUtil {
 
+    /**
+     * builds an {@link X12ParserException} w/ consistent message when 
+     * an unexpected segment is encountered
+     * 
+     * the caller of the method must throw this exception 
+     * if that is what is desired
+     * 
+     * @param expectedSegmentId
+     * @param actualSegmentId
+     * @return the X12ParserException
+     */
+    public static X12ParserException handleUnexpectedSegment(String expectedSegmentId, String actualSegmentId) {
+        StringBuilder sb = new StringBuilder("expected ");
+        sb.append(expectedSegmentId);
+        sb.append(" segment but found ");
+        sb.append(actualSegmentId);
+        return new X12ParserException(new X12ErrorDetail(actualSegmentId, null, sb.toString()));
+    }
     
     /**
      * given a set of segment lines it will examine the first 
@@ -113,7 +131,8 @@ public final class X12ParsingUtil {
             if (isHierarchalLoopStart(firstSegment)) {
                 loops = processLoops(segmentList);
             } else {
-                // TODO: the first line is not HL
+                String actualSegment = (firstSegment != null ? firstSegment.getSegmentIdentifier() : "");
+                throw handleUnexpectedSegment("HL", actualSegment);
             }
         }
         
@@ -125,7 +144,10 @@ public final class X12ParsingUtil {
      * as defined by the segment lines
      * 
      * @param segmentList
-     * @return
+     * @return list of loops
+     * 
+     * @throws an {@link X12ParserException} if id is reused an
+     * HL segment
      */
     private static List<X12Loop> processLoops(List<X12Segment> segmentList) {
         List<X12Loop> loops = new ArrayList<>();
@@ -148,7 +170,14 @@ public final class X12ParsingUtil {
                 // add the loop to the map
                 // to allow parent/child associations
                 // to be found quickly
-                loopMap.putIfAbsent(loop.getHierarchicalId(), loop);
+                if (loopMap.containsKey(loop.getHierarchicalId())) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("HL segment with id (").append(loop.getHierarchicalId())
+                        .append(") already exists");
+                    throw new X12ParserException(sb.toString());
+                } else {
+                    loopMap.put(loop.getHierarchicalId(), loop);
+                }
 
                 // update the current loop
                 currLoopId = loop.getHierarchicalId();
@@ -202,7 +231,10 @@ public final class X12ParsingUtil {
             if (parentLoop != null) {
                 parentLoop.addLoop(loop);
             } else {
-                // TODO: parent is missing
+                StringBuilder sb = new StringBuilder();
+                sb.append("HL segment (").append(loop.getHierarchicalId()).append(")");
+                sb.append(" is missing parent (").append(loop.getParentHierarchicalId()).append(")");
+                throw new X12ParserException(sb.toString());
             }
         }
     }
