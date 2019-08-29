@@ -121,6 +121,19 @@ public class X12ParsingUtilTest {
     }
     
     @Test
+    public void test_verifyTransactionSetType_partial_header() {
+        List<X12Segment> segmentList = new ArrayList<>();
+        X12Segment segment = new X12Segment("ST");
+        segmentList.add(segment);
+        segment = new X12Segment("BSN*00****0001");
+        segmentList.add(segment);
+        segment = new X12Segment("SE*1*0001");
+        segmentList.add(segment);  
+        
+        assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "999"));
+    }
+    
+    @Test
     public void test_verifyTransactionSetType_wrong_first_line() {
         List<X12Segment> segmentList = new ArrayList<>();
         X12Segment segment = new X12Segment("XX*856*0001");
