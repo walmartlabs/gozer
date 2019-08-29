@@ -19,7 +19,7 @@ import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.ConversionUtil;
-import com.walmartlabs.x12.util.VersionUtil;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -58,8 +58,8 @@ import java.util.stream.IntStream;
 public class DefaultDex894Parser implements X12Parser<Dex894> {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDex894Parser.class);
 
-    public static final String APPLICATION_HEADER_ID = "DXS";
-    public static final String APPLICATION_TRAILER_ID = "DXE";
+    public static final String DEX_HEADER_ID = "DXS";
+    public static final String DEX_TRAILER_ID = "DXE";
     public static final String TRANSACTION_SET_HEADER_ID = "ST";
     public static final String TRANSACTION_SET_TRAILER_ID = "SE";
     public static final String G82_ID = "G82";
@@ -125,17 +125,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
      * @return true when valid and false otherwise
      */
     protected boolean isValidEnvelope(List<X12Segment> dexSegments) {
-        boolean isValidEnvelope = false;
-        int lastSegmentIndex = this.findLastSegmentIndex(dexSegments);
-        if (dexSegments.size() > 2) {
-            X12Segment headerSegment = dexSegments.get(0);
-            X12Segment trailerSegment = dexSegments.get(lastSegmentIndex);
-            if (APPLICATION_HEADER_ID.equals(headerSegment.getSegmentIdentifier())
-                    && APPLICATION_TRAILER_ID.equals(trailerSegment.getSegmentIdentifier())) {
-                isValidEnvelope = true;
-            }
-        }
-        return isValidEnvelope;
+        return X12ParsingUtil.isValidEnvelope(dexSegments, DEX_HEADER_ID, DEX_TRAILER_ID);
     }
 
     /**
@@ -320,7 +310,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         LOGGER.debug(headerSegment.getSegmentIdentifier());
 
         String segmentIdentifer = headerSegment.getSegmentIdentifier();
-        if (APPLICATION_HEADER_ID.equals(segmentIdentifer)) {
+        if (DEX_HEADER_ID.equals(segmentIdentifer)) {
             dex.setSenderCommId(headerSegment.getSegmentElement(1));
             dex.setFunctionalId(headerSegment.getSegmentElement(2));
             dex.setVersion(headerSegment.getSegmentElement(3));
@@ -329,12 +319,12 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dex.setReceiverCommId(headerSegment.getSegmentElement(5));
             dex.setTestIndicator(headerSegment.getSegmentElement(6));
         } else {
-            handleUnexpectedSegment(APPLICATION_HEADER_ID, segmentIdentifer);
+            handleUnexpectedSegment(DEX_HEADER_ID, segmentIdentifer);
         }
     }
 
     protected void parseVersion(Dex894 dex) {
-        dex.setVersionNumber(VersionUtil.parseVersion(dex.getVersion()));
+        dex.setVersionNumber(X12ParsingUtil.parseVersion(dex.getVersion()));
     }
 
     /**
@@ -588,11 +578,11 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
         LOGGER.debug(trailerSegment.getSegmentIdentifier());
 
         String segmentIdentifier = trailerSegment.getSegmentIdentifier();
-        if (APPLICATION_TRAILER_ID.equals(segmentIdentifier)) {
+        if (DEX_TRAILER_ID.equals(segmentIdentifier)) {
             dex.setTrailerTransmissionControlNumber(trailerSegment.getSegmentElement(1));
             dex.setNumberOfTransactions(ConversionUtil.convertStringToInteger(trailerSegment.getSegmentElement(2)));
         } else {
-            handleUnexpectedSegment(APPLICATION_TRAILER_ID, segmentIdentifier);
+            handleUnexpectedSegment(DEX_TRAILER_ID, segmentIdentifier);
         }
     }
 

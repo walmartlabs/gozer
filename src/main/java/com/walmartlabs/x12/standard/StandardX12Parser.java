@@ -21,6 +21,7 @@ import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.SegmentIterator;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -58,9 +59,6 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
     public static final String GROUP_HEADER_ID = "GS";
     public static final String GROUP_TRAILER_ID = "GE";
 
-    public static final String TRANSACTION_HEADER_ID = "ST";
-    public static final String TRANSACTION_TRAILER_ID = "SE";
-    
     private TransactionSetParser transactionParser;
     private UnhandledTransactionSet unhandledTransactionSet;
 
@@ -81,7 +79,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
                 // break document up into segment lines
                 List<X12Segment> segmentList = this.splitSourceDataIntoSegments(sourceData);
-                if (this.isValidEnvelope(segmentList)) {
+                if (X12ParsingUtil.isValidEnvelope(segmentList, ISA_HEADER_ID, ISA_TRAILER_ID)) {
                     // standard parsing of segment lines
                     SegmentIterator segments = new SegmentIterator(segmentList);
                     this.standardParsingTemplate(segments, x12Doc);
@@ -168,32 +166,6 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
     }
 
     /**
-     * All EDI X12 messages MUST be enclosed in a ISA/ISE envelope.
-     *
-     * @param segmentList
-     * @return true when valid and false otherwise
-     */
-    private boolean isValidEnvelope(List<X12Segment> segmentList) {
-        boolean isValidEnvelope = false;
-        
-        if (segmentList != null) {
-            int segmentCount = segmentList.size();
-            int lastSegmentIndex = segmentCount - 1;
-            if (segmentCount > 1) {
-                // need at least 2 lines to have valid envelope
-                X12Segment headerSegment = segmentList.get(0);
-                X12Segment trailerSegment = segmentList.get(lastSegmentIndex);
-                if (ISA_HEADER_ID.equals(headerSegment.getSegmentIdentifier())
-                    && ISA_TRAILER_ID.equals(trailerSegment.getSegmentIdentifier())) {
-                    isValidEnvelope = true;
-                }
-            }
-        }
-        
-        return isValidEnvelope;
-    }
-    
-    /**
      * template for parsing a standard EDI X12 document
      *
      * @throws X12ParserException if the document can't be parsed
@@ -229,17 +201,17 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                 // get the next segment
                 currentSegment = segments.next();
 
-                if (TRANSACTION_HEADER_ID.equals(currentSegment.getSegmentIdentifier())) {
+                if (X12TransactionSet.TRANSACTION_SET_HEADER.equals(currentSegment.getSegmentIdentifier())) {
                     if (insideTransaction) {
                         // we are already in a transaction
                         // and have not encountered the end
                         // so we will stop parsing
-                        handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
+                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getSegmentIdentifier());
                     } else {
                         insideTransaction = true;
                         transactionSet.add(currentSegment);
                     }
-                } else if (TRANSACTION_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
+                } else if (X12TransactionSet.TRANSACTION_SET_TRAILER.equals(currentSegment.getSegmentIdentifier())) {
                     if (insideTransaction) {
                         transactionSet.add(currentSegment);
                         // delegate parsing of transaction set
@@ -250,14 +222,14 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                     } else {
                         // we are not in a transaction
                         // so should not have gotten transaction trailer
-                        handleUnexpectedSegment(TRANSACTION_HEADER_ID, currentSegment.getSegmentIdentifier());
+                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, currentSegment.getSegmentIdentifier());
                     }
                 } else if (GROUP_TRAILER_ID.equals(currentSegment.getSegmentIdentifier())) {
                     if (insideTransaction) {
                         // we are already in a transaction
                         // and have not encountered the end
                         // so we will stop parsing
-                        handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
+                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getSegmentIdentifier());
                     } else {
                         insideGroup = false;
                     }
@@ -270,7 +242,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             // if we got here we should have cleanly
             // exited a transaction
             if (insideTransaction) {
-                handleUnexpectedSegment(TRANSACTION_TRAILER_ID, currentSegment.getSegmentIdentifier());
+                handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getSegmentIdentifier());
             }
 
             // if we got here we should have cleanly

@@ -24,6 +24,9 @@ package com.walmartlabs.x12;
  */
 public interface X12TransactionSet {
     
+    public static final String TRANSACTION_SET_HEADER = "ST";
+    public static final String TRANSACTION_SET_TRAILER = "SE";
+    
     /**
      * The ST01 segment element contains the functional group code, which 
      * identifies the X12 transaction type 
