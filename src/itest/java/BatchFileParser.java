@@ -25,7 +25,10 @@ public class BatchFileParser {
 
             if (Files.exists(inputFolder)) {
                 Path okFolder = Paths.get(inputDirectory + "/success");
+                createFolderIfNotExists(okFolder);
                 Path rejectFolder = Paths.get(inputDirectory + "/failed");
+                createFolderIfNotExists(rejectFolder);
+                
                 processDirectory(inputFolder, okFolder, rejectFolder);
             } else {
                 LOGGER.warn("the input folder does not exist");
@@ -99,13 +102,16 @@ public class BatchFileParser {
     
     private static void copyFile(Path fileToCopy, Path folder) {
         try {
-            if (!Files.exists(folder)) {
-                Files.createDirectories(folder);
-            }
             Path targetFile = folder.resolve(fileToCopy.getFileName());
             Files.copy(fileToCopy, targetFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
            LOGGER.error(e.getMessage(), e);
+        }
+    }
+    
+    private static void createFolderIfNotExists(Path folder) throws IOException {
+        if (!Files.exists(folder)) {
+            Files.createDirectories(folder);
         }
     }
 
