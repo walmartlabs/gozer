@@ -98,34 +98,81 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("PRF*333");
         segmentList.add(segment);
         segment = new X12Segment("REF*IA*54321");
-        segmentList.add(segment); 
+        segmentList.add(segment);
+        // pack 1 on order 2
+        segment = new X12Segment("HL*4*3*P");
+        segmentList.add(segment);
+        segment = new X12Segment("MAN*GM*56");
+        segmentList.add(segment);
         
         List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
         assertNotNull(loops);
         assertEquals(1, loops.size());
         
         // shipment loop
-        X12Loop loop = loops.get(0);
-        assertNotNull(loop);
-        assertEquals("1", loop.getHierarchicalId());
-        assertEquals(null, loop.getParentHierarchicalId());
-        assertEquals("S", loop.getCode());
+        X12Loop shipmentLoop = loops.get(0);
+        assertNotNull(shipmentLoop);
+        assertEquals("1", shipmentLoop.getHierarchicalId());
+        assertEquals(null, shipmentLoop.getParentHierarchicalId());
+        assertEquals("S", shipmentLoop.getCode());
         
-        List<X12Segment> segmentsInLoop = loop.getSegments();
-        assertNotNull(segmentsInLoop);
-        assertEquals(2, segmentsInLoop.size());
-        assertEquals("DTM", segmentsInLoop.get(0).getSegmentIdentifier());
-        assertEquals("TD3", segmentsInLoop.get(1).getSegmentIdentifier());
+        List<X12Segment> segmentsInShipmentLoop = shipmentLoop.getSegments();
+        assertNotNull(segmentsInShipmentLoop);
+        assertEquals(2, segmentsInShipmentLoop.size());
+        assertEquals("DTM", segmentsInShipmentLoop.get(0).getSegmentIdentifier());
+        assertEquals("TD3", segmentsInShipmentLoop.get(1).getSegmentIdentifier());
         
-        List<X12Loop> childLoops = loop.getChildLoops();
-        assertNotNull(childLoops);
-        assertEquals(2, childLoops.size());
+        List<X12Loop> childrenOfShipmentLoop = shipmentLoop.getChildLoops();
+        assertNotNull(childrenOfShipmentLoop);
+        assertEquals(2, childrenOfShipmentLoop.size());
         
         // loop order 1
-        // TODO
+        X12Loop orderLoop = childrenOfShipmentLoop.get(0);
+        assertNotNull(orderLoop);
+        assertEquals("2", orderLoop.getHierarchicalId());
+        assertEquals("1", orderLoop.getParentHierarchicalId());
+        assertEquals("O", orderLoop.getCode());
+        
+        List<X12Segment> segmentsInOrderLoop = orderLoop.getSegments();
+        assertNotNull(segmentsInOrderLoop);
+        assertEquals(2, segmentsInOrderLoop.size());
+        assertEquals("PRF", segmentsInOrderLoop.get(0).getSegmentIdentifier());
+        assertEquals("222", segmentsInOrderLoop.get(0).getSegmentElement(1));
+        assertEquals("REF", segmentsInOrderLoop.get(1).getSegmentIdentifier());
+        
+        assertNull(orderLoop.getChildLoops());
         
         // loop order 2
-        // TODO
+        orderLoop = childrenOfShipmentLoop.get(1);
+        assertNotNull(orderLoop);
+        assertEquals("3", orderLoop.getHierarchicalId());
+        assertEquals("1", orderLoop.getParentHierarchicalId());
+        assertEquals("O", orderLoop.getCode());
+        
+        segmentsInOrderLoop = orderLoop.getSegments();
+        assertNotNull(segmentsInOrderLoop);
+        assertEquals(2, segmentsInOrderLoop.size());
+        assertEquals("PRF", segmentsInOrderLoop.get(0).getSegmentIdentifier());
+        assertEquals("333", segmentsInOrderLoop.get(0).getSegmentElement(1));
+        assertEquals("REF", segmentsInOrderLoop.get(1).getSegmentIdentifier());
+        
+        List<X12Loop>childrenOfOrderLoop = orderLoop.getChildLoops();
+        assertNotNull(childrenOfOrderLoop);
+        assertEquals(1, childrenOfOrderLoop.size());
+        
+        // pack on order 2
+        X12Loop packLoop = childrenOfOrderLoop.get(0);
+        assertNotNull(packLoop);
+        assertEquals("4", packLoop.getHierarchicalId());
+        assertEquals("3", packLoop.getParentHierarchicalId());
+        assertEquals("P", packLoop.getCode());
+        
+        List<X12Segment> segmentsInPackLoop = packLoop.getSegments();
+        assertNotNull(segmentsInPackLoop);
+        assertEquals(1, segmentsInPackLoop.size());
+        assertEquals("MAN", segmentsInPackLoop.get(0).getSegmentIdentifier());
+        
+        assertNull(packLoop.getChildLoops());
     }
     
     @Test

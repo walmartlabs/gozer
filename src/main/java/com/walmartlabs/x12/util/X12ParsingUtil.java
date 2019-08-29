@@ -116,17 +116,25 @@ public final class X12ParsingUtil {
                     if (isHierarchalLoopStart(x12Segment)) {
                         // starting new loop
                         String loopId = x12Segment.getSegmentElement(1);
+                        String parentLoopId = x12Segment.getSegmentElement(2);
                         
                         X12Loop loop = new X12Loop();
                         loop.setHierarchicalId(loopId);
-                        loop.setParentHierarchicalId(x12Segment.getSegmentElement(2));
+                        loop.setParentHierarchicalId(parentLoopId);
                         loop.setCode(x12Segment.getSegmentElement(3));
                         
-                        // TODO: adding here is wrong!!
-                        // if it is child of loop
-                        // do not add it
-                        loops.add(loop);
+                        // when the HL has no parent 
+                        // we will add it to the top level 
+                        if (parentLoopId == null || parentLoopId.trim().isEmpty()) {
+                            loops.add(loop);
+                        }
+                        
+                        // add the loop to the map 
+                        // to allow parent/child associations
+                        // to be found quickly
                         loopMap.putIfAbsent(loopId, loop);
+                        
+                        // update the current loop
                         currLoopId = loopId;
                         
                         handleParentLoop(loop, loopMap);
