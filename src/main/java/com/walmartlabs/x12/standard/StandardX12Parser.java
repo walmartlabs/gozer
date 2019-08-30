@@ -77,8 +77,10 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             if (!StringUtils.isEmpty(sourceData)) {
                 x12Doc = new StandardX12Document();
 
+                // remove any excess white space
+                // and
                 // break document up into segment lines
-                List<X12Segment> segmentList = this.splitSourceDataIntoSegments(sourceData);
+                List<X12Segment> segmentList = this.splitSourceDataIntoSegments(sourceData.trim());
                 if (X12ParsingUtil.isValidEnvelope(segmentList, ISA_HEADER_ID, ISA_TRAILER_ID)) {
                     // standard parsing of segment lines
                     SegmentIterator segments = new SegmentIterator(segmentList);

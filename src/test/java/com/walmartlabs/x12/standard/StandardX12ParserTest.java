@@ -168,6 +168,15 @@ public class StandardX12ParserTest {
     }
     
     @Test
+    public void test_Parsing_BaseDocument_empty_lines_at_end() throws IOException {
+        byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.empty.line.txt"));
+        String sourceData = new String(x12MsgBytes);
+        StandardX12Parser localParser = this.createParserWithRegistrationViaCollection();
+        StandardX12Document x12 = localParser.parse(sourceData);
+        this.verifyParsingOfBaseDocument(x12);
+    }
+    
+    @Test
     public void test_Parsing_BaseDocument_no_line_breaks() throws IOException {
         byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.txt"));
         String sourceData = new String(x12MsgBytes);
