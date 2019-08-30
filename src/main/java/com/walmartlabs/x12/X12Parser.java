@@ -17,6 +17,7 @@ package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -83,11 +84,7 @@ public interface X12Parser<T extends X12Document> {
      * @throws {@link X12ParserException}
      */
     default void handleUnexpectedSegment(String expectedSegmentId, String actualSegmentId) {
-        StringBuilder sb = new StringBuilder("expected ");
-        sb.append(expectedSegmentId);
-        sb.append(" segment but found ");
-        sb.append(actualSegmentId);
-        throw new X12ParserException(new X12ErrorDetail(actualSegmentId, null, sb.toString()));
+        throw X12ParsingUtil.handleUnexpectedSegment(expectedSegmentId, actualSegmentId);
     }
 
 }

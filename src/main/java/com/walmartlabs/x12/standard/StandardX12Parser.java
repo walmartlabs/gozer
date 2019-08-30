@@ -387,4 +387,5 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             }
         }
     }
+    
 }
