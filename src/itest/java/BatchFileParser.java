@@ -90,19 +90,19 @@ public class BatchFileParser {
     }
 
     private static String readFile(Path sourceFile) throws IOException {
-        String stuff = null;
+        String fileContents = null;
         try {
-            stuff = readFile(sourceFile, UTF8_CHARSET);
+            fileContents = readFile(sourceFile, UTF8_CHARSET);
         } catch (UncheckedIOException e) {
             Throwable t = e.getCause();
             if (t != null && t instanceof MalformedInputException) {
                 LOGGER.warn("switching encoding to Latin-1");
-                stuff = readFile(sourceFile, LATIN_ONE_CHARSET);
+                fileContents = readFile(sourceFile, LATIN_ONE_CHARSET);
             } else {
                 throw e;
             }
         }
-        return stuff;
+        return fileContents;
     }
     
     private static String readFile(Path sourceFile, Charset charSet) throws IOException {
