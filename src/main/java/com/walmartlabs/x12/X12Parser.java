@@ -64,15 +64,13 @@ public interface X12Parser<T extends X12Document> {
             return segments;
         } else {
             // if there is only one line in the source data
-            // we should attempt to use the segment separator passed in
-            // and see if we can split up this source data
+            // we should attempt to use the default segment separator
             segments = splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
             if (segments != null && segments.size() > 1) {
                 return segments;
             } else {
                 // if there is only one line in the source data
-                // we should attempt to use the segment separator passed in
-                // and see if we can split up this source data
+                // now try to get the specified delimiter
                 return splitSourceDataIntoSegments(sourceData, "\\" + findSegmentDelimiterCharacter(sourceData));
             }
         }
