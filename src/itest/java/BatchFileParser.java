@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +19,10 @@ import java.util.stream.Stream;
 public class BatchFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatchFileParser.class);
     private static final StandardX12Parser x12Parser = new StandardX12Parser();
+    
+    private static final Charset UTF8_CHARSET = StandardCharsets.UTF_8;
+    private static final Charset LATIN_ONE_CHARSET = StandardCharsets.ISO_8859_1;
+    private static final Charset MAC_CHARSET = Charset.forName("x-MacRoman");
     
     public static void main(String[] args) throws IOException {
         if (args != null && args.length > 0) {
@@ -82,10 +89,26 @@ public class BatchFileParser {
         return isSuccess;
     }
 
-    private static String readFile(Path sourceFile) throws IOException, UncheckedIOException {
+    private static String readFile(Path sourceFile) throws IOException {
+        String fileContents = null;
+        try {
+            fileContents = readFile(sourceFile, UTF8_CHARSET);
+        } catch (UncheckedIOException e) {
+            Throwable t = e.getCause();
+            if (t != null && t instanceof MalformedInputException) {
+                LOGGER.warn("switching encoding to Latin-1");
+                fileContents = readFile(sourceFile, LATIN_ONE_CHARSET);
+            } else {
+                throw e;
+            }
+        }
+        return fileContents;
+    }
+    
+    private static String readFile(Path sourceFile, Charset charSet) throws IOException {
         // read the file
         String content = null;
-        try (Stream<String> lines = Files.lines(sourceFile)) {
+        try (Stream<String> lines = Files.lines(sourceFile, charSet)) {
             content = lines.collect(Collectors.joining(System.lineSeparator()));
         }
         return content;
