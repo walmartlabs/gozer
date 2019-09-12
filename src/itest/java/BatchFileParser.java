@@ -95,9 +95,11 @@ public class BatchFileParser {
             stuff = readFile(sourceFile, UTF8_CHARSET);
         } catch (UncheckedIOException e) {
             Throwable t = e.getCause();
-            if (t instanceof MalformedInputException) {
+            if (t != null && t instanceof MalformedInputException) {
                 LOGGER.warn("switching encoding to Latin-1");
                 stuff = readFile(sourceFile, LATIN_ONE_CHARSET);
+            } else {
+                throw e;
             }
         }
         return stuff;
