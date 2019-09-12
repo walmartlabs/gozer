@@ -23,8 +23,6 @@ import java.util.List;
 
 public class X12Segment {
     
-    public static final String DEFAULT_ELEMENT_SEPARATOR = "*";
-    
     private String segmentValue;
     private List<String> segmentElements;
 
@@ -77,7 +75,7 @@ public class X12Segment {
         if (StringUtils.isEmpty(segment)) {
             return Collections.emptyList();
         } else {
-            String splitRegEx = "\\" + DEFAULT_ELEMENT_SEPARATOR;
+            String splitRegEx = "\\" + X12Parser.DEFAULT_DATA_ELEMENT_SEPARATOR;
             return Arrays.asList(segment.split(splitRegEx));
         }
     }

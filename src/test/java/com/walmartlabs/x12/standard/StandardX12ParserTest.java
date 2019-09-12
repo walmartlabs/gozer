@@ -177,6 +177,28 @@ public class StandardX12ParserTest {
     }
     
     @Test
+    public void test_Parsing_BaseDocument_no_line_breaks_different_delimiter() throws IOException {
+        byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.odd.char.txt"));
+        String sourceData = new String(x12MsgBytes);
+        StandardX12Parser localParser = this.createParserWithRegistrationViaCollection();
+        StandardX12Document x12 = localParser.parse(sourceData);
+        this.verifyParsingOfBaseDocument(x12);
+    }
+    
+    @Test
+    public void test_Parsing_BaseDocument_no_line_breaks_short_file() {
+        try {
+            String sourceData = "ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ";
+            StandardX12Parser localParser = this.createParserWithRegistrationViaCollection();
+            localParser.parse(sourceData);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            e.printStackTrace();
+            assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
+        }
+    }
+    
+    @Test
     public void test_Parsing_BaseDocument_no_line_breaks() throws IOException {
         byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.txt"));
         String sourceData = new String(x12MsgBytes);
