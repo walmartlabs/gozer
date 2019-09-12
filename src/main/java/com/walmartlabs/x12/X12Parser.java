@@ -15,7 +15,6 @@ limitations under the License.
  */
 package com.walmartlabs.x12;
 
-import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.springframework.util.StringUtils;
@@ -27,8 +26,20 @@ import java.util.stream.Collectors;
 
 public interface X12Parser<T extends X12Document> {
     
+    public static final String DEFAULT_DATA_ELEMENT_SEPARATOR = "*";
+    public static final String DEFAULT_REPETITION_ELEMENT_SEPARATOR = "^";
+    public static final String DEFAULT_COMPOSITE_ELEMENT_SEPARATOR = ":";
     public static final String DEFAULT_SEGMENT_SEPARATOR = "~";
+
+    // note: Java Strings use a zero based index
+    // so these are one less than the value 
+    // provided in various EDI documentation
+    public static final int DATA_ELEMENT_SEPARATOR_INDEX = 4;
+    public static final int REPETITION_ELEMENT_SEPARATOR_INDEX = 82;
+    public static final int COMPOSITE_ELEMENT_SEPARATOR_INDEX = 104;
+    public static final int SEGMENT_SEPARATOR_INDEX = 105;
     
+
     /**
      * parse the X12 transmission into a representative Java object
      *
@@ -41,7 +52,7 @@ public interface X12Parser<T extends X12Document> {
      * parses the source data into a list of segments 
      * 1) assume each segment is on separate line
      * 2) otherwise try default segment delimiter (~)
-     * 3) otherwise try last character (TODO)
+     * 3) otherwise try 106th character in source data
      */
     default List<X12Segment> splitSourceDataIntoSegments(String sourceData) {
         // assume that the source data has 
@@ -55,7 +66,28 @@ public interface X12Parser<T extends X12Document> {
             // if there is only one line in the source data
             // we should attempt to use the segment separator passed in
             // and see if we can split up this source data
-            return splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
+            segments = splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
+            if (segments != null && segments.size() > 1) {
+                return segments;
+            } else {
+                // if there is only one line in the source data
+                // we should attempt to use the segment separator passed in
+                // and see if we can split up this source data
+                return splitSourceDataIntoSegments(sourceData, "\\" + findSegmentDelimiterCharacter(sourceData));
+            }
+        }
+    }
+    
+    /**
+     * get the segment delimiter/separator character
+     * @param sourceData
+     * @return the character at the 106th position
+     */
+    default Character findSegmentDelimiterCharacter(String sourceData) {
+        if (sourceData != null && sourceData.length() > SEGMENT_SEPARATOR_INDEX) {
+            return Character.valueOf(sourceData.charAt(SEGMENT_SEPARATOR_INDEX));
+        } else {
+            return null;
         }
     }
     
