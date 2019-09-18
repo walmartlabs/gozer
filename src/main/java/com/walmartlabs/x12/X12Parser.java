@@ -51,8 +51,10 @@ public interface X12Parser<T extends X12Document> {
     /**
      * parses the source data into a list of segments 
      * 1) assume each segment is on separate line
-     * 2) otherwise try default segment delimiter (~)
-     * 3) otherwise try 106th character in source data
+     * 2) otherwise try 106th character in source data
+     * 
+     * @param sourceData
+     * @return a {@link List} of {@link X12Segment} or empty if there are issues w/ source data
      */
     default List<X12Segment> splitSourceDataIntoSegments(String sourceData) {
         // assume that the source data has 
@@ -64,23 +66,16 @@ public interface X12Parser<T extends X12Document> {
             return segments;
         } else {
             // if there is only one line in the source data
-            // we should attempt to use the default segment separator
-            segments = splitSourceDataIntoSegments(sourceData, "\\" + DEFAULT_SEGMENT_SEPARATOR);
-            if (segments != null && segments.size() > 1) {
-                return segments;
-            } else {
-                // if there is only one line in the source data
-                // now try to get the specified delimiter
-                String segmentDelimiterRegex = "\\" + findSegmentDelimiterCharacter(sourceData);
-                return splitSourceDataIntoSegments(sourceData, segmentDelimiterRegex);
-            }
+            // now try to get the specified delimiter
+            String segmentDelimiterRegex = "\\" + findSegmentDelimiterCharacter(sourceData);
+            return splitSourceDataIntoSegments(sourceData, segmentDelimiterRegex);
         }
     }
     
     /**
      * get the segment delimiter/separator character
      * @param sourceData
-     * @return the character at the 106th position
+     * @return the character at the 106th position or null if there are not enough characters
      */
     default Character findSegmentDelimiterCharacter(String sourceData) {
         if (sourceData != null && sourceData.length() > SEGMENT_SEPARATOR_INDEX) {
@@ -93,7 +88,7 @@ public interface X12Parser<T extends X12Document> {
     /**
      * get the element delimiter/separator character
      * @param sourceData
-     * @return the character at the 4th position
+     * @return the character at the 4th position or null if there are not enough characters
      */
     default Character findElementDelimiterCharacter(String sourceData) {
         if (sourceData != null && sourceData.length() > COMPOSITE_ELEMENT_SEPARATOR_INDEX) {
@@ -108,12 +103,15 @@ public interface X12Parser<T extends X12Document> {
      * using the the segment delimiter that was passed in
      * @param sourceData
      * @param segmentSeparatorRegEx a regex to split segments
+     * @return a {@link List} of {@link X12Segment} or empty is either parameter is missing
+     * @throws @{link PatternSyntaxException} if the regular expression is invalid
      */
     default List<X12Segment> splitSourceDataIntoSegments(String sourceData, String segmentSeparatorRegEx) {
-        if (StringUtils.isEmpty(sourceData)) {
+        if (StringUtils.isEmpty(sourceData) || StringUtils.isEmpty(segmentSeparatorRegEx)) {
             return Collections.emptyList();
         } else {
-            return Arrays.stream(sourceData.split(segmentSeparatorRegEx))
+            String[] segments = sourceData.split(segmentSeparatorRegEx);
+            return Arrays.stream(segments)
                 .map(segment -> new X12Segment(segment))
                 .collect(Collectors.toList());
         }
