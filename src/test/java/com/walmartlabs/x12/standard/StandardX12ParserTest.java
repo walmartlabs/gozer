@@ -193,7 +193,6 @@ public class StandardX12ParserTest {
             localParser.parse(sourceData);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
-            e.printStackTrace();
             assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
         }
     }

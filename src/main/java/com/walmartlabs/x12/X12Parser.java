@@ -71,7 +71,8 @@ public interface X12Parser<T extends X12Document> {
             } else {
                 // if there is only one line in the source data
                 // now try to get the specified delimiter
-                return splitSourceDataIntoSegments(sourceData, "\\" + findSegmentDelimiterCharacter(sourceData));
+                String segmentDelimiterRegex = "\\" + findSegmentDelimiterCharacter(sourceData);
+                return splitSourceDataIntoSegments(sourceData, segmentDelimiterRegex);
             }
         }
     }
@@ -84,6 +85,19 @@ public interface X12Parser<T extends X12Document> {
     default Character findSegmentDelimiterCharacter(String sourceData) {
         if (sourceData != null && sourceData.length() > SEGMENT_SEPARATOR_INDEX) {
             return Character.valueOf(sourceData.charAt(SEGMENT_SEPARATOR_INDEX));
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * get the element delimiter/separator character
+     * @param sourceData
+     * @return the character at the 4th position
+     */
+    default Character findElementDelimiterCharacter(String sourceData) {
+        if (sourceData != null && sourceData.length() > COMPOSITE_ELEMENT_SEPARATOR_INDEX) {
+            return Character.valueOf(sourceData.charAt(COMPOSITE_ELEMENT_SEPARATOR_INDEX));
         } else {
             return null;
         }
