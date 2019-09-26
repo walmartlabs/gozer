@@ -26,15 +26,15 @@ import java.util.stream.Collectors;
 
 public interface X12Parser<T extends X12Document> {
     
-    public static final String DEFAULT_DATA_ELEMENT_SEPARATOR = "*";
-    public static final String DEFAULT_REPETITION_ELEMENT_SEPARATOR = "^";
-    public static final String DEFAULT_COMPOSITE_ELEMENT_SEPARATOR = ":";
-    public static final String DEFAULT_SEGMENT_SEPARATOR = "~";
+    public static final Character DEFAULT_DATA_ELEMENT_SEPARATOR = '*';
+    public static final Character DEFAULT_REPETITION_ELEMENT_SEPARATOR = '^';
+    public static final Character DEFAULT_COMPOSITE_ELEMENT_SEPARATOR = ':';
+    public static final Character DEFAULT_SEGMENT_SEPARATOR = '~';
 
     // note: Java Strings use a zero based index
     // so these are one less than the value 
     // provided in various EDI documentation
-    public static final int DATA_ELEMENT_SEPARATOR_INDEX = 4;
+    public static final int DATA_ELEMENT_SEPARATOR_INDEX = 3;
     public static final int REPETITION_ELEMENT_SEPARATOR_INDEX = 82;
     public static final int COMPOSITE_ELEMENT_SEPARATOR_INDEX = 104;
     public static final int SEGMENT_SEPARATOR_INDEX = 105;
@@ -91,8 +91,8 @@ public interface X12Parser<T extends X12Document> {
      * @return the character at the 4th position or null if there are not enough characters
      */
     default Character findElementDelimiterCharacter(String sourceData) {
-        if (sourceData != null && sourceData.length() > COMPOSITE_ELEMENT_SEPARATOR_INDEX) {
-            return Character.valueOf(sourceData.charAt(COMPOSITE_ELEMENT_SEPARATOR_INDEX));
+        if (sourceData != null && sourceData.length() > DATA_ELEMENT_SEPARATOR_INDEX) {
+            return Character.valueOf(sourceData.charAt(DATA_ELEMENT_SEPARATOR_INDEX));
         } else {
             return null;
         }
@@ -110,9 +110,10 @@ public interface X12Parser<T extends X12Document> {
         if (StringUtils.isEmpty(sourceData) || StringUtils.isEmpty(segmentSeparatorRegEx)) {
             return Collections.emptyList();
         } else {
+            Character segmentDataElementDelimiter = findElementDelimiterCharacter(sourceData);
             String[] segments = sourceData.split(segmentSeparatorRegEx);
             return Arrays.stream(segments)
-                .map(segment -> new X12Segment(segment))
+                .map(segment -> new X12Segment(segment, segmentDataElementDelimiter))
                 .collect(Collectors.toList());
         }
     }
