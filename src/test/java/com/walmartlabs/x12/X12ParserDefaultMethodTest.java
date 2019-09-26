@@ -22,23 +22,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class X12ParserDefaultMethodTest {
 
+    private String sourceData;
     private X12Parser<?> defaultParser;
 
     @Before
-    public void init() {
+    public void init() throws IOException {
+        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
+        sourceData = new String(dexBytes);
         defaultParser = new MockX12Parser();
     }
 
     @Test
-    public void test_splitSourceDataIntoSegments() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
-        List<X12Segment> segmentsList = defaultParser.splitSourceDataIntoSegments(new String(dexBytes));
+    public void test_splitSourceDataIntoSegments() {
+        List<X12Segment> segmentsList = defaultParser.splitSourceDataIntoSegments(sourceData);
         assertNotNull(segmentsList);
         assertEquals(22, segmentsList.size());
         assertEquals("DXS*9251230013*DX*004010UCS*1*9254850000", segmentsList.get(0).toString());
@@ -57,6 +60,18 @@ public class X12ParserDefaultMethodTest {
         List<X12Segment> segmentsList = defaultParser.splitSourceDataIntoSegments(null);
         assertNotNull(segmentsList);
         assertEquals(0, segmentsList.size());
+    }
+    
+    @Test
+    public void test_splitSourceDataIntoSegments_null_delimiter() {
+        List<X12Segment> segmentsList = defaultParser.splitSourceDataIntoSegments(sourceData, null);
+        assertNotNull(segmentsList);
+        assertEquals(0, segmentsList.size());
+    }
+    
+    @Test(expected = PatternSyntaxException.class)
+    public void test_splitSourceDataIntoSegments_partial_delimiter() {
+        defaultParser.splitSourceDataIntoSegments(sourceData, "\\");
     }
 
     private class MockX12Parser implements X12Parser<X12Document> {
