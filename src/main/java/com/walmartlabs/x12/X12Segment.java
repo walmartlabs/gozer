@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 
 public class X12Segment {
     
@@ -42,9 +41,9 @@ public class X12Segment {
      * @return {@link X12Segment}
      * @throws PatternSyntaxException if the delimiter results in invalid regular expression
      */
-    public X12Segment(String segment, Character dateElementDelimiter) {
+    public X12Segment(String segment, Character dataElementDelimiter) {
         segmentValue = segment;
-        segmentElements = this.splitSegmentIntoDataElements(segment, dateElementDelimiter);
+        segmentElements = this.splitSegmentIntoDataElements(segment, dataElementDelimiter);
     }
 
     /**
@@ -87,11 +86,11 @@ public class X12Segment {
      * parses the segment into a list of data elements
      * each date element is separated by an asterisk (*)
      */
-    private List<String> splitSegmentIntoDataElements(String segment, Character dateElementDelimiter) {
+    private List<String> splitSegmentIntoDataElements(String segment, Character dataElementDelimiter) {
         if (StringUtils.isEmpty(segment)) {
             return Collections.emptyList();
         } else {
-            String splitRegEx = "\\" + dateElementDelimiter;
+            String splitRegEx = "\\" + dataElementDelimiter;
             return Arrays.asList(segment.split(splitRegEx));
         }
     }
