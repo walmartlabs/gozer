@@ -19,13 +19,40 @@ import com.walmartlabs.x12.AbstractX12TransactionSet;
 
 public class AsnTransactionSet extends AbstractX12TransactionSet {
 
-    private String sampleAsnOnly;
+    //
+    // BSN
+    // 
+    private String purposeCode;
+    private String shipmentIdentification;
+    
+    //
+    // CTT
+    //
+    private Integer transactionLineItems;
 
-    public String getSampleAsnOnly() {
-        return sampleAsnOnly;
+    public String getPurposeCode() {
+        return purposeCode;
     }
 
-    public void setSampleAsnOnly(String sampleAsnOnly) {
-        this.sampleAsnOnly = sampleAsnOnly;
+    public void setPurposeCode(String purposeCode) {
+        this.purposeCode = purposeCode;
     }
+
+    public String getShipmentIdentification() {
+        return shipmentIdentification;
+    }
+
+    public void setShipmentIdentification(String shipmentIdentification) {
+        this.shipmentIdentification = shipmentIdentification;
+    }
+
+    public Integer getTransactionLineItems() {
+        return transactionLineItems;
+    }
+
+    public void setTransactionLineItems(Integer transactionLineItems) {
+        this.transactionLineItems = transactionLineItems;
+    }
+    
+
 }

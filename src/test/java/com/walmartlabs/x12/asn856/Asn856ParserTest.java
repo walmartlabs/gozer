@@ -95,8 +95,18 @@ public class Asn856ParserTest {
         assertNotNull(txForGroupOne);
         assertEquals(1, txForGroupOne.size());
 
+        // ST
         AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
-        assertEquals("TEST", asnTx.getSampleAsnOnly());
+        assertEquals("856", asnTx.getTransactionSetIdentifierCode());
+        assertEquals("0008", asnTx.getHeaderControlNumber());
+        
+        // BSN
+        assertEquals("14", asnTx.getPurposeCode());
+        assertEquals("829716", asnTx.getShipmentIdentification());
+        
+        // SE
+        assertEquals(Integer.valueOf(31), asnTx.getExpectedNumberOfSegments());
+        assertEquals("0008", asnTx.getTrailerControlNumber());
     }
 
 }

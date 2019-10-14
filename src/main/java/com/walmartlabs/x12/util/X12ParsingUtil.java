@@ -37,7 +37,7 @@ public final class X12ParsingUtil {
     /**
      * given a set of segment lines it will examine the first 
      * and last segments and evaluate whether they match 
-     * the header and trailer 
+     * the header and trailer values passed into the method
      * 
      * @return true if envelope matches otherwise false
      */
@@ -62,7 +62,7 @@ public final class X12ParsingUtil {
     }
     
     /**
-     * The first segment in the list should be an ST segment 
+     * The segment list should wrapped in valid transaction envelope (ST/SE) 
      * with the transaction type (ST01) matching the provided type
      * @param segmentList
      * @param transactionType
@@ -72,13 +72,17 @@ public final class X12ParsingUtil {
         boolean isTransactionType = false;
         
         if (segmentList != null && !segmentList.isEmpty() && transactionType != null) {
-            X12Segment firstSegment = segmentList.get(0);
-            if (firstSegment != null) {
-                String segmentId = firstSegment.getSegmentIdentifier();
-                String segmentType = firstSegment.getSegmentElement(1);
-                if (X12TransactionSet.TRANSACTION_SET_HEADER.equals(segmentId)
-                    && transactionType.equals(segmentType)) {
-                    isTransactionType = true;
+            
+            if (X12ParsingUtil.isValidEnvelope(segmentList, 
+                X12TransactionSet.TRANSACTION_SET_HEADER,
+                X12TransactionSet.TRANSACTION_SET_TRAILER)) {
+                
+                X12Segment firstSegment = segmentList.get(0);
+                if (firstSegment != null) {
+                    String segmentType = firstSegment.getSegmentElement(1);
+                    if (transactionType.equals(segmentType)) {
+                        isTransactionType = true;
+                    }
                 }
             }
         }
