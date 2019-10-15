@@ -55,7 +55,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     protected X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group) {
         AsnTransactionSet asnTx = null;
 
-        if (transactionSegments != null) {
+        if (transactionSegments != null && transactionSegments.size() > 0) {
             asnTx = new AsnTransactionSet();
             
             this.doParsing(transactionSegments, asnTx);
@@ -66,10 +66,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
     protected void doParsing(List<X12Segment> transactionSegments, AsnTransactionSet asnTx) {
         int segmentCount = transactionSegments.size();
-
-        int segementAfterHierarchicalLoops = this.findSegmentAfterHierarchicalLoops(transactionSegments);
-        List<X12Segment> loopSegments = transactionSegments.subList(2, segementAfterHierarchicalLoops);
-        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
         
         //
         // ST
@@ -86,6 +82,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         //
         // Hierarchical Loops
         // 
+
+        int segementAfterHierarchicalLoops = this.findSegmentAfterHierarchicalLoops(transactionSegments);
+        List<X12Segment> loopSegments = transactionSegments.subList(2, segementAfterHierarchicalLoops);
+        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
         // TODO: add loop parsing
         
         //
