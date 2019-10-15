@@ -22,14 +22,28 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     //
     // BSN
     // 
+    // BSN 01
     private String purposeCode;
+    // BSN 02
     private String shipmentIdentification;
+    // BSN 03
+    private String shipmentDate; // CCYYMMDD
+    // BSN 04
+    private String shipmentTime;
+    // BSN 05
+    private String hierarchicalStructureCode;
+    
+    // HL (Shipment)
+    Shipment shipment;
     
     //
     // CTT
     //
+    // CTT 01
     private Integer transactionLineItems;
 
+    
+    
     public String getPurposeCode() {
         return purposeCode;
     }
@@ -46,6 +60,38 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
         this.shipmentIdentification = shipmentIdentification;
     }
 
+    public String getShipmentDate() {
+        return shipmentDate;
+    }
+
+    public void setShipmentDate(String shipmentDate) {
+        this.shipmentDate = shipmentDate;
+    }
+
+    public String getShipmentTime() {
+        return shipmentTime;
+    }
+
+    public void setShipmentTime(String shipmentTime) {
+        this.shipmentTime = shipmentTime;
+    }
+
+    public String getHierarchicalStructureCode() {
+        return hierarchicalStructureCode;
+    }
+
+    public void setHierarchicalStructureCode(String hierarchicalStructureCode) {
+        this.hierarchicalStructureCode = hierarchicalStructureCode;
+    }
+
+    public Shipment getShipment() {
+        return shipment;
+    }
+
+    public void setShipment(Shipment shipment) {
+        this.shipment = shipment;
+    }
+
     public Integer getTransactionLineItems() {
         return transactionLineItems;
     }
@@ -54,5 +100,4 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
         this.transactionLineItems = transactionLineItems;
     }
     
-
 }

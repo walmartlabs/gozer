@@ -82,15 +82,16 @@ public class Asn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-        // ISA segment
+        
+        // Groups
         assertEquals(new Integer(1), isa.getNumberOfGroups());
         assertEquals("000000049", isa.getTrailerInterchangeControlNumber());
 
-        // TODO: quick test
         List<X12Group> groups = x12.getGroups();
         assertNotNull(groups);
         assertEquals(1, groups.size());
 
+        // Transaction Sets
         List<X12TransactionSet> txForGroupOne = x12.getGroups().get(0).getTransactions();
         assertNotNull(txForGroupOne);
         assertEquals(1, txForGroupOne.size());
@@ -103,6 +104,9 @@ public class Asn856ParserTest {
         // BSN
         assertEquals("14", asnTx.getPurposeCode());
         assertEquals("829716", asnTx.getShipmentIdentification());
+        assertEquals("20111206", asnTx.getShipmentDate());
+        assertEquals("142428", asnTx.getShipmentTime());
+        assertEquals("0002", asnTx.getHierarchicalStructureCode());
         
         // SE
         assertEquals(Integer.valueOf(31), asnTx.getExpectedNumberOfSegments());

@@ -163,8 +163,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         if (ASN_TRANSACTION_HEADER.equals(segmentIdentifier)) {
             asnTx.setPurposeCode(segment.getSegmentElement(1));
             asnTx.setShipmentIdentification(segment.getSegmentElement(2));
-            
-            // TODO: add BSN elements
+            asnTx.setShipmentDate(segment.getSegmentElement(3));
+            asnTx.setShipmentTime(segment.getSegmentElement(4));
+            asnTx.setHierarchicalStructureCode(segment.getSegmentElement(5));
         } else {
             throw X12ParsingUtil.handleUnexpectedSegment(ASN_TRANSACTION_HEADER, segmentIdentifier);
         }
