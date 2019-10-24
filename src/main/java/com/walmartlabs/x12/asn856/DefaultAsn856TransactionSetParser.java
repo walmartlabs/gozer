@@ -103,6 +103,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         this.parseTransactionSetTrailer(currentSegment, asnTx);
     }
 
+    protected Shipment doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
+        return null;
+    }
+    
     private int findSegmentAfterHierarchicalLoops(List<X12Segment> transactionSegments) {
         int segmentCount = transactionSegments.size();
         int secondToLastSegmentIndex = segmentCount - 2;
