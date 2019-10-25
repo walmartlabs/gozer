@@ -16,28 +16,42 @@ limitations under the License.
 package com.walmartlabs.x12.types;
 
 /**
- * debit/credit flag
- * used on the DEX G8201 
+ * Weight Qualifier
  *
  */
-public enum InvoiceType {
-    C, // CREDIT
-    D, // DEBIT
-    UNKNOWN;
+public enum WeightQualifier {
+    G("GROSS WEIGHT"),
+    N("ACTUAL_NET_WEIGHT"),
+    UNKNOWN("");
 
+    private String description;
+    
+    private WeightQualifier(String desc) {
+        this.description = desc;
+    }
+    
+    private void setDescription(String desc) {
+        this.description = desc;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+    
     /**
      * Convert the code to an enum
      * @param code
      * @return
      */
-    public static InvoiceType convert(String code) {
+    public static WeightQualifier convert(String code) {
         if (code == null) {
             return null;
         } else {
-            InvoiceType returnEnum = InvoiceType.UNKNOWN;
+            WeightQualifier returnEnum = WeightQualifier.UNKNOWN;
+            returnEnum.setDescription(code);
 
             try {
-                returnEnum = InvoiceType.valueOf(code);
+                returnEnum = WeightQualifier.valueOf(code);
             } catch (Exception e) {
                 // illegal value so returning UNKNOWN
             }

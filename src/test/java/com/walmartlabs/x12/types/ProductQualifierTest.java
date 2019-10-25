@@ -24,22 +24,28 @@ public class ProductQualifierTest {
 
     @Test
     public void test_valid_value() {
-        assertEquals(ProductQualifier.EN, ProductQualifier.convertProductQualifier("EN"));
+        ProductQualifier pq = ProductQualifier.convert("EN");
+        assertEquals(ProductQualifier.EN, pq);
+        assertEquals("EAN/UCC-13", pq.getDescription());
     }
 
     @Test
     public void test_invalid_value() {
-        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertProductQualifier("BOGUS"));
+        ProductQualifier pq = ProductQualifier.convert("BOGUS");
+        assertEquals(ProductQualifier.UNKNOWN, pq);
+        assertEquals("BOGUS", pq.getDescription());
     }
 
     @Test
     public void test_invalid_empty() {
-        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertProductQualifier(""));
+        ProductQualifier pq = ProductQualifier.convert("");
+        assertEquals(ProductQualifier.UNKNOWN, pq);
+        assertEquals("", pq.getDescription());
     }
 
     @Test
     public void test_invalid_null() {
-        assertEquals(null, ProductQualifier.convertProductQualifier(null));
+        assertEquals(null, ProductQualifier.convert(null));
     }
 
 }

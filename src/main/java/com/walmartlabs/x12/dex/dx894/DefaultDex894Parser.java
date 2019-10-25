@@ -364,7 +364,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         String segmentIdentifier = segment.getIdentifier();
         if (G82_ID.equals(segmentIdentifier)) {
-            dexTx.setDebitCreditFlag(InvoiceType.convertDebitCreditFlag(segment.getElement(1)));
+            dexTx.setDebitCreditFlag(InvoiceType.convert(segment.getElement(1)));
             dexTx.setSupplierNumber(segment.getElement(2));
             dexTx.setReceiverDuns(segment.getElement(3));
             dexTx.setReceiverLocation(segment.getElement(4));
@@ -413,15 +413,15 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             // a separate utility will need to determine the retail selling unit
             dexItem.setItemSequenceNumber(segment.getElement(1));
             dexItem.setQuantity(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 3));
-            dexItem.setUom(UnitMeasure.convertUnitMeasure(segment.getElement(3)));
+            dexItem.setUom(UnitMeasure.convert(segment.getElement(3)));
             dexItem.setUpc(segment.getElement(4));
-            dexItem.setConsumerProductQualifier(ProductQualifier.convertProductQualifier(segment.getElement(5)));
+            dexItem.setConsumerProductQualifier(ProductQualifier.convert(segment.getElement(5)));
             dexItem.setConsumerProductId(segment.getElement(6));
             dexItem.setCaseUpc(segment.getElement(7));
             dexItem.setItemListCost(ConversionUtil.convertStringToBigDecimal(segment.getElement(8), 2));
             dexItem.setPackCount(ConversionUtil.convertStringToInteger(segment.getElement(9)));
             dexItem.setItemDescription(segment.getElement(10));
-            dexItem.setCaseProductQualifier(ProductQualifier.convertProductQualifier(segment.getElement(11)));
+            dexItem.setCaseProductQualifier(ProductQualifier.convert(segment.getElement(11)));
             dexItem.setCaseProductId(segment.getElement(12));
             dexItem.setInnerPackCount(ConversionUtil.convertStringToInteger(segment.getElement(13)));
         } else {
@@ -465,7 +465,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             dexAllowance.setExceptionNumber(segment.getElement(4));
             dexAllowance.setAllowanceRate(ConversionUtil.convertStringToBigDecimal(segment.getElement(5), 4));
             dexAllowance.setAllowanceQuantity(ConversionUtil.convertStringToBigDecimal(segment.getElement(6), 3));
-            dexAllowance.setAllowanceUom(UnitMeasure.convertUnitMeasure(segment.getElement(7)));
+            dexAllowance.setAllowanceUom(UnitMeasure.convert(segment.getElement(7)));
             dexAllowance.setAllowanceAmount(ConversionUtil.convertStringToBigDecimal(segment.getElement(8), 2));
             dexAllowance.setAllowancePercent(ConversionUtil.convertStringToBigDecimal(segment.getElement(9), 3));
             dexAllowance.setOptionNumber(segment.getElement(10));

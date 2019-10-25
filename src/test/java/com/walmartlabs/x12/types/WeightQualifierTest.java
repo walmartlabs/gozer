@@ -17,29 +17,29 @@ package com.walmartlabs.x12.types;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class UnitMeasureTest {
+public class WeightQualifierTest {
 
     @Test
     public void test_valid_value() {
-        UnitMeasure um = UnitMeasure.convert("BX");
-        assertEquals(UnitMeasure.BX, um);
-        assertEquals("BOX", um.getDescription());
+        WeightQualifier wq = WeightQualifier.convert("N");
+        assertEquals(WeightQualifier.N, wq);
+        assertEquals("ACTUAL_NET_WEIGHT", wq.getDescription());
     }
 
     @Test
     public void test_invalid_value() {
-        UnitMeasure um = UnitMeasure.convert("BOGUS");
-        assertEquals(UnitMeasure.UNKNOWN, um);
-        assertEquals("BOGUS", um.getDescription());
+        WeightQualifier wq = WeightQualifier.convert("BOGUS");
+        assertEquals(WeightQualifier.UNKNOWN, wq);
+        assertEquals("BOGUS", wq.getDescription());
     }
 
     @Test
     public void test_invalid_empty() {
-        UnitMeasure um = UnitMeasure.convert("");
-        assertEquals(UnitMeasure.UNKNOWN, um);
-        assertEquals("", um.getDescription());
+        WeightQualifier wq = WeightQualifier.convert("");
+        assertEquals(WeightQualifier.UNKNOWN, wq);
+        assertEquals("", wq.getDescription());
     }
 
     @Test

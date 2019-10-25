@@ -42,23 +42,28 @@ public enum UnitMeasure {
         this.description = desc;
     }
 
+    private void setDescription(String desc) {
+        this.description = desc;
+    }
+    
     public String getDescription() {
         return this.description;
     }
 
     /**
-     * Convert the unit of measure value to an enum
-     * @param uom
+     * Convert the code to an enum
+     * @param code
      * @return
      */
-    public static UnitMeasure convertUnitMeasure(String uom) {
-        if (uom == null) {
+    public static UnitMeasure convert(String code) {
+        if (code == null) {
             return null;
         } else {
             UnitMeasure returnEnum = UnitMeasure.UNKNOWN;
+            returnEnum.setDescription(code);
 
             try {
-                returnEnum = UnitMeasure.valueOf(uom);
+                returnEnum = UnitMeasure.valueOf(code);
             } catch (Exception e) {
                 // illegal value so returning UNKNOWN
             }

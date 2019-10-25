@@ -31,28 +31,33 @@ public enum ProductQualifier {
     UNKNOWN("UNKNOWN");
 
     private String description;
-
+    
     private ProductQualifier(String desc) {
         this.description = desc;
     }
 
+    private void setDescription(String desc) {
+        this.description = desc;
+    }
+    
     public String getDescription() {
         return this.description;
     }
 
     /**
-     * Convert the unit of measure value to an enum
-     * @param productQualifierCode
+     * Convert the code to an enum
+     * @param code
      * @return
      */
-    public static ProductQualifier convertProductQualifier(String productQualifierCode) {
-        if (productQualifierCode == null) {
+    public static ProductQualifier convert(String code) {
+        if (code == null) {
             return null;
         } else {
             ProductQualifier returnEnum = ProductQualifier.UNKNOWN;
+            returnEnum.setDescription(code);
 
             try {
-                returnEnum = ProductQualifier.valueOf(productQualifierCode);
+                returnEnum = ProductQualifier.valueOf(code);
             } catch (Exception e) {
                 // illegal value so returning UNKNOWN
             }
