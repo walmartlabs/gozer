@@ -13,44 +13,45 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.checksum;
+package com.walmartlabs.x12.util.checksum;
 
-public class BarCodeMod10Checksum implements Checksum {
+public class LuhnMod10Checksum implements Checksum {
 
-    private static final int THREE = 3;
+    private static final int NINE = 9;
     private static final int TEN = 10;
 
+    @Override
     /**
-     * Yet another Modulo 10 to generate checksum digit
+     * Luhn algorithm (Modulo 10) to generate checksum digit
      * This implementation assumes that there is NO checksum digit
      * included in the number provided
-     * https://www.activebarcode.com/codes/checkdigit/modulo10.html
-     * https://www.idautomation.com/barcode-faq/upc-ean/#MOD_10
+     * https://en.wikipedia.org/wiki/Luhn_algorithm
      * @param number
-     * @return
+     * @return the checksum digit
      */
-    @Override
     public String generateChecksumDigit(String number) {
         if (number != null && number.length() > 0) {
             // work from rightmost digit
             StringBuilder sb = new StringBuilder(number);
             String reversedNumber = sb.reverse().toString();
             char[] val = reversedNumber.toCharArray();
-            int even = 0;
-            int odd = 0;
+            int sum = 0;
             for (int i = 0; i < val.length; i++) {
                 int currentVal = Integer.parseInt(String.valueOf(val[i]));
+                int calcVal = currentVal;
                 if (i % 2 == 0) {
-                    even = currentVal + even;
-                } else {
-                    odd = currentVal + odd;
+                    // double every other digit
+                    // starting with rightmost digit
+                    int product = currentVal * 2;
+                    if (product > NINE) {
+                        calcVal = product - NINE;
+                    } else {
+                        calcVal = product;
+                    }
                 }
+                sum += calcVal;
             }
-            int cd = ((even * THREE) + odd) % TEN;
-            if (cd != 0) {
-                cd = TEN - cd;
-            }
-
+            int cd = (sum * NINE) % TEN;
             return Integer.toString(cd);
         } else {
             return null;

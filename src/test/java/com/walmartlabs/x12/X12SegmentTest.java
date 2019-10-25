@@ -27,14 +27,14 @@ public class X12SegmentTest {
         X12Segment segment = new X12Segment("DXS*9251230013*DX*004010UCS*1*9254850000");
         assertNotNull(segment);
         assertEquals(6, segment.segmentSize());
-        assertEquals("DXS", segment.getSegmentIdentifier());
-        assertEquals("DXS", segment.getSegmentElement(0));
-        assertEquals("9251230013", segment.getSegmentElement(1));
-        assertEquals("DX", segment.getSegmentElement(2));
-        assertEquals("004010UCS", segment.getSegmentElement(3));
-        assertEquals("1", segment.getSegmentElement(4));
-        assertEquals("9254850000", segment.getSegmentElement(5));
-        assertEquals(null, segment.getSegmentElement(6));
+        assertEquals("DXS", segment.getIdentifier());
+        assertEquals("DXS", segment.getElement(0));
+        assertEquals("9251230013", segment.getElement(1));
+        assertEquals("DX", segment.getElement(2));
+        assertEquals("004010UCS", segment.getElement(3));
+        assertEquals("1", segment.getElement(4));
+        assertEquals("9254850000", segment.getElement(5));
+        assertEquals(null, segment.getElement(6));
     }
 
 
@@ -43,14 +43,14 @@ public class X12SegmentTest {
         X12Segment segment = new X12Segment("ST*9251230013*DX*004010UCS*1*9254850000");
         assertNotNull(segment);
         assertEquals(6, segment.segmentSize());
-        assertEquals("ST", segment.getSegmentIdentifier());
-        assertEquals("ST", segment.getSegmentElement(0));
-        assertEquals("9251230013", segment.getSegmentElement(1));
-        assertEquals("DX", segment.getSegmentElement(2));
-        assertEquals("004010UCS", segment.getSegmentElement(3));
-        assertEquals("1", segment.getSegmentElement(4));
-        assertEquals("9254850000", segment.getSegmentElement(5));
-        assertEquals(null, segment.getSegmentElement(6));
+        assertEquals("ST", segment.getIdentifier());
+        assertEquals("ST", segment.getElement(0));
+        assertEquals("9251230013", segment.getElement(1));
+        assertEquals("DX", segment.getElement(2));
+        assertEquals("004010UCS", segment.getElement(3));
+        assertEquals("1", segment.getElement(4));
+        assertEquals("9254850000", segment.getElement(5));
+        assertEquals(null, segment.getElement(6));
     }
 
     @Test
@@ -58,15 +58,15 @@ public class X12SegmentTest {
         X12Segment segment = new X12Segment("*ST*9251230013*DX*004010UCS*1*9254850000");
         assertNotNull(segment);
         assertEquals(7, segment.segmentSize());
-        assertEquals("", segment.getSegmentIdentifier());
-        assertEquals(null, segment.getSegmentElement(0));
-        assertEquals("ST", segment.getSegmentElement(1));
-        assertEquals("9251230013", segment.getSegmentElement(2));
-        assertEquals("DX", segment.getSegmentElement(3));
-        assertEquals("004010UCS", segment.getSegmentElement(4));
-        assertEquals("1", segment.getSegmentElement(5));
-        assertEquals("9254850000", segment.getSegmentElement(6));
-        assertEquals(null, segment.getSegmentElement(7));
+        assertEquals("", segment.getIdentifier());
+        assertEquals(null, segment.getElement(0));
+        assertEquals("ST", segment.getElement(1));
+        assertEquals("9251230013", segment.getElement(2));
+        assertEquals("DX", segment.getElement(3));
+        assertEquals("004010UCS", segment.getElement(4));
+        assertEquals("1", segment.getElement(5));
+        assertEquals("9254850000", segment.getElement(6));
+        assertEquals(null, segment.getElement(7));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class X12SegmentTest {
         X12Segment segment = new X12Segment("TESTING 123");
         assertNotNull(segment);
         assertEquals(1, segment.segmentSize());
-        assertEquals("TESTING 123", segment.getSegmentIdentifier());
+        assertEquals("TESTING 123", segment.getIdentifier());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class X12SegmentTest {
         X12Segment segment = new X12Segment("");
         assertNotNull(segment);
         assertEquals(0, segment.segmentSize());
-        assertEquals("", segment.getSegmentIdentifier());
+        assertEquals("", segment.getIdentifier());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class X12SegmentTest {
         X12Segment segment = new X12Segment(null);
         assertNotNull(segment);
         assertEquals(0, segment.segmentSize());
-        assertEquals("", segment.getSegmentIdentifier());
+        assertEquals("", segment.getIdentifier());
     }
 
 }

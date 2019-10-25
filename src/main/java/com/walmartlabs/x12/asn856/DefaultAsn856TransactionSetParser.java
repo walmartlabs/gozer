@@ -15,13 +15,13 @@ limitations under the License.
  */
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.standard.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.util.ConversionUtil;
-import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         // CTT (optional)
         //
         currentSegment = transactionSegments.get(segementAfterHierarchicalLoops);
-        if (ASN_TRANSACTION_TOTALS.equals(currentSegment.getSegmentIdentifier())) {
+        if (ASN_TRANSACTION_TOTALS.equals(currentSegment.getIdentifier())) {
             this.parseTransactionTotals(currentSegment, asnTx);
             currentSegment = transactionSegments.get(segmentCount - 1);
         }
@@ -112,7 +112,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         int secondToLastSegmentIndex = segmentCount - 2;
         X12Segment segment = transactionSegments.get(secondToLastSegmentIndex);
         // 2nd to last line is CTT (optional) otherwise it is part of HL
-        if (ASN_TRANSACTION_TOTALS.equals(segment.getSegmentIdentifier())) {
+        if (ASN_TRANSACTION_TOTALS.equals(segment.getIdentifier())) {
             // CTT segment
             return secondToLastSegmentIndex;
         } else {
@@ -127,12 +127,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param asnTx
      */
     private void parseTransactionSetHeader(X12Segment segment, AsnTransactionSet asnTx) {
-        LOGGER.debug(segment.getSegmentIdentifier());
+        LOGGER.debug(segment.getIdentifier());
 
-        String segmentIdentifier = segment.getSegmentIdentifier();
+        String segmentIdentifier = segment.getIdentifier();
         if (X12TransactionSet.TRANSACTION_SET_HEADER.equals(segmentIdentifier)) {
-            asnTx.setTransactionSetIdentifierCode(segment.getSegmentElement(1));
-            asnTx.setHeaderControlNumber(segment.getSegmentElement(2));
+            asnTx.setTransactionSetIdentifierCode(segment.getElement(1));
+            asnTx.setHeaderControlNumber(segment.getElement(2));
         } else {
             throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, segmentIdentifier);
         }
@@ -144,12 +144,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param asnTx
      */
     private void parseTransactionSetTrailer(X12Segment segment, AsnTransactionSet asnTx) {
-        LOGGER.debug(segment.getSegmentIdentifier());
+        LOGGER.debug(segment.getIdentifier());
 
-        String segmentIdentifier = segment.getSegmentIdentifier();
+        String segmentIdentifier = segment.getIdentifier();
         if (X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentIdentifier)) {
-            asnTx.setExpectedNumberOfSegments(ConversionUtil.convertStringToInteger(segment.getSegmentElement(1)));
-            asnTx.setTrailerControlNumber(segment.getSegmentElement(2));
+            asnTx.setExpectedNumberOfSegments(ConversionUtil.convertStringToInteger(segment.getElement(1)));
+            asnTx.setTrailerControlNumber(segment.getElement(2));
         } else {
             throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, segmentIdentifier);
         }
@@ -161,15 +161,15 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param asnTx
      */
     private void parseBeginningSegment(X12Segment segment, AsnTransactionSet asnTx) {
-        LOGGER.debug(segment.getSegmentIdentifier());
+        LOGGER.debug(segment.getIdentifier());
         
-        String segmentIdentifier = segment.getSegmentIdentifier();
+        String segmentIdentifier = segment.getIdentifier();
         if (ASN_TRANSACTION_HEADER.equals(segmentIdentifier)) {
-            asnTx.setPurposeCode(segment.getSegmentElement(1));
-            asnTx.setShipmentIdentification(segment.getSegmentElement(2));
-            asnTx.setShipmentDate(segment.getSegmentElement(3));
-            asnTx.setShipmentTime(segment.getSegmentElement(4));
-            asnTx.setHierarchicalStructureCode(segment.getSegmentElement(5));
+            asnTx.setPurposeCode(segment.getElement(1));
+            asnTx.setShipmentIdentification(segment.getElement(2));
+            asnTx.setShipmentDate(segment.getElement(3));
+            asnTx.setShipmentTime(segment.getElement(4));
+            asnTx.setHierarchicalStructureCode(segment.getElement(5));
         } else {
             throw X12ParsingUtil.handleUnexpectedSegment(ASN_TRANSACTION_HEADER, segmentIdentifier);
         }
@@ -181,11 +181,11 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param asnTx
      */
     private void parseTransactionTotals(X12Segment segment, AsnTransactionSet asnTx) {
-        LOGGER.debug(segment.getSegmentIdentifier());
+        LOGGER.debug(segment.getIdentifier());
 
-        String segmentIdentifier = segment.getSegmentIdentifier();
+        String segmentIdentifier = segment.getIdentifier();
         if (ASN_TRANSACTION_TOTALS.equals(segmentIdentifier)) {
-            asnTx.setTransactionLineItems(ConversionUtil.convertStringToInteger(segment.getSegmentElement(1)));
+            asnTx.setTransactionLineItems(ConversionUtil.convertStringToInteger(segment.getElement(1)));
         } else {
             throw X12ParsingUtil.handleUnexpectedSegment(ASN_TRANSACTION_TOTALS, segmentIdentifier);
         }

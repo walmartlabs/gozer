@@ -1,6 +1,4 @@
-package com.walmartlabs.x12.util;
-
-import com.walmartlabs.x12.X12Segment;
+package com.walmartlabs.x12;
 
 import java.util.List;
 import java.util.ListIterator;

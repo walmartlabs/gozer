@@ -21,6 +21,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ *  Each line in an X12 document is called a segment
+ *  Each segment contains one or more elements
+ *  The first element identifies the type of segment
+ *  
+ *  This class will parse a segment into the individual elements
+ */
 public class X12Segment {
     
     private String segmentValue;
@@ -58,7 +65,7 @@ public class X12Segment {
      * extracts the first data element in a segment which is the segment identifier
      * otherwise return an empty String
      */
-    public String getSegmentIdentifier() {
+    public String getIdentifier() {
         if (segmentElements != null && !segmentElements.isEmpty()) {
             return segmentElements.get(0);
         } else {
@@ -69,7 +76,7 @@ public class X12Segment {
     /**
      * retrieve the element at a particular index in the segment
      */
-    public String getSegmentElement(int index) {
+    public String getElement(int index) {
         if (segmentElements.size() > index) {
             String value = segmentElements.get(index);
             return StringUtils.isEmpty(value) ? null : value;

@@ -16,6 +16,8 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import com.walmartlabs.x12.types.ProductQualifier;
+import com.walmartlabs.x12.types.UnitMeasure;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -17,6 +17,8 @@ package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.types.InvoiceType;
+import com.walmartlabs.x12.types.UnitMeasure;
 import org.junit.Before;
 import org.junit.Test;
 

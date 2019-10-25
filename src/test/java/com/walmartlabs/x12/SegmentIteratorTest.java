@@ -1,5 +1,6 @@
-package com.walmartlabs.x12.util;
+package com.walmartlabs.x12;
 
+import com.walmartlabs.x12.SegmentIterator;
 import com.walmartlabs.x12.X12Segment;
 import org.junit.Test;
 
@@ -46,14 +47,14 @@ public class SegmentIteratorTest {
         assertEquals(0, iter.nextIndex());
         X12Segment segment = iter.next();
         assertNotNull(segment);
-        assertEquals("LINE1", segment.getSegmentElement(0));
+        assertEquals("LINE1", segment.getElement(0));
 
         // advance again
         assertTrue(iter.hasNext());
         assertEquals(1, iter.nextIndex());
         segment = iter.next();
         assertNotNull(segment);
-        assertEquals("LINE2", segment.getSegmentElement(0));
+        assertEquals("LINE2", segment.getElement(0));
 
         // advance again
         assertFalse(iter.hasNext());
@@ -76,28 +77,28 @@ public class SegmentIteratorTest {
         assertEquals(0, iter.nextIndex());
         X12Segment segment = iter.next();
         assertNotNull(segment);
-        assertEquals("LINE1", segment.getSegmentElement(0));
+        assertEquals("LINE1", segment.getElement(0));
 
         // advance again
         assertTrue(iter.hasNext());
         assertEquals(1, iter.nextIndex());
         segment = iter.next();
         assertNotNull(segment);
-        assertEquals("LINE2", segment.getSegmentElement(0));
+        assertEquals("LINE2", segment.getElement(0));
 
         // previous
         assertTrue(iter.hasPrevious());
         assertEquals(1, iter.previousIndex());
         segment = iter.previous();
         assertNotNull(segment);
-        assertEquals("LINE2", segment.getSegmentElement(0));
+        assertEquals("LINE2", segment.getElement(0));
 
         // previous again
         assertTrue(iter.hasPrevious());
         assertEquals(0, iter.previousIndex());
         segment = iter.previous();
         assertNotNull(segment);
-        assertEquals("LINE1", segment.getSegmentElement(0));
+        assertEquals("LINE1", segment.getElement(0));
 
     }
 

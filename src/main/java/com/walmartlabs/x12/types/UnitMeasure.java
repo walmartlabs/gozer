@@ -13,25 +13,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12.types;
 
 /**
- * represents the G8305 - product/service id qualifier values
- *
+ * unit of measure code set of values
+ * used on DEX G8303
+ * used on ASN LIN08
  */
-public enum ProductQualifier {
-    DI("DEPOSIT ITEM NUMBER"),
-    EN("EAN/UCC-13"),
-    EO("EAN/UCC-8"),
-    NR("NONRESALABLE ITEM"),
-    UK("EAN/UCC-14"),
-    UP("EAN/UCC-12"),
-    VN("VENDOR ITEM NUMBER"),
+public enum UnitMeasure {
+    BX("BOX"),
+    CA("CASE"),
+    CT("CARTON"),
+    EA("EACH"),
+    DZ("DOZEN"),
+    GA("GALLON"),
+    KE("KEG"),
+    KG("KILOGRAM"),
+    LB("POUND"),
+    PK("PACKAGE"),
+    PL("PALLET"),
+    TK("TANK"),
+    UN("UNIT"),
     UNKNOWN("UNKNOWN");
 
     private String description;
 
-    private ProductQualifier(String desc) {
+    private UnitMeasure(String desc) {
         this.description = desc;
     }
 
@@ -41,17 +48,17 @@ public enum ProductQualifier {
 
     /**
      * Convert the unit of measure value to an enum
-     * @param productQualifierCode
+     * @param uom
      * @return
      */
-    public static ProductQualifier convertProductQualifier(String productQualifierCode) {
-        if (productQualifierCode == null) {
+    public static UnitMeasure convertUnitMeasure(String uom) {
+        if (uom == null) {
             return null;
         } else {
-            ProductQualifier returnEnum = ProductQualifier.UNKNOWN;
+            UnitMeasure returnEnum = UnitMeasure.UNKNOWN;
 
             try {
-                returnEnum = ProductQualifier.valueOf(productQualifierCode);
+                returnEnum = UnitMeasure.valueOf(uom);
             } catch (Exception e) {
                 // illegal value so returning UNKNOWN
             }

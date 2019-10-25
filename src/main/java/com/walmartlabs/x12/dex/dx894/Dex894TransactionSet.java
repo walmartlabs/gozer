@@ -16,6 +16,7 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.AbstractX12TransactionSet;
+import com.walmartlabs.x12.types.InvoiceType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

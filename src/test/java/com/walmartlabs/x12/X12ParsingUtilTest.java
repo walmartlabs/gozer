@@ -13,8 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.util;
+package com.walmartlabs.x12;
 
+import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Loop;
@@ -73,8 +74,8 @@ public class X12ParsingUtilTest {
         List<X12Segment> segmentsInLoop = loop.getSegments();
         assertNotNull(segmentsInLoop);
         assertEquals(2, segmentsInLoop.size());
-        assertEquals("DTM", segmentsInLoop.get(0).getSegmentIdentifier());
-        assertEquals("TD3", segmentsInLoop.get(1).getSegmentIdentifier());
+        assertEquals("DTM", segmentsInLoop.get(0).getIdentifier());
+        assertEquals("TD3", segmentsInLoop.get(1).getIdentifier());
         
         List<X12Loop> childLoops = loop.getChildLoops();
         assertNull(childLoops);
@@ -124,8 +125,8 @@ public class X12ParsingUtilTest {
         List<X12Segment> segmentsInShipmentLoop = shipmentLoop.getSegments();
         assertNotNull(segmentsInShipmentLoop);
         assertEquals(2, segmentsInShipmentLoop.size());
-        assertEquals("DTM", segmentsInShipmentLoop.get(0).getSegmentIdentifier());
-        assertEquals("TD3", segmentsInShipmentLoop.get(1).getSegmentIdentifier());
+        assertEquals("DTM", segmentsInShipmentLoop.get(0).getIdentifier());
+        assertEquals("TD3", segmentsInShipmentLoop.get(1).getIdentifier());
         
         List<X12Loop> childrenOfShipmentLoop = shipmentLoop.getChildLoops();
         assertNotNull(childrenOfShipmentLoop);
@@ -141,9 +142,9 @@ public class X12ParsingUtilTest {
         List<X12Segment> segmentsInOrderLoop = orderLoop.getSegments();
         assertNotNull(segmentsInOrderLoop);
         assertEquals(2, segmentsInOrderLoop.size());
-        assertEquals("PRF", segmentsInOrderLoop.get(0).getSegmentIdentifier());
-        assertEquals("222", segmentsInOrderLoop.get(0).getSegmentElement(1));
-        assertEquals("REF", segmentsInOrderLoop.get(1).getSegmentIdentifier());
+        assertEquals("PRF", segmentsInOrderLoop.get(0).getIdentifier());
+        assertEquals("222", segmentsInOrderLoop.get(0).getElement(1));
+        assertEquals("REF", segmentsInOrderLoop.get(1).getIdentifier());
         
         assertNull(orderLoop.getChildLoops());
         
@@ -157,9 +158,9 @@ public class X12ParsingUtilTest {
         segmentsInOrderLoop = orderLoop.getSegments();
         assertNotNull(segmentsInOrderLoop);
         assertEquals(2, segmentsInOrderLoop.size());
-        assertEquals("PRF", segmentsInOrderLoop.get(0).getSegmentIdentifier());
-        assertEquals("333", segmentsInOrderLoop.get(0).getSegmentElement(1));
-        assertEquals("REF", segmentsInOrderLoop.get(1).getSegmentIdentifier());
+        assertEquals("PRF", segmentsInOrderLoop.get(0).getIdentifier());
+        assertEquals("333", segmentsInOrderLoop.get(0).getElement(1));
+        assertEquals("REF", segmentsInOrderLoop.get(1).getIdentifier());
         
         List<X12Loop>childrenOfOrderLoop = orderLoop.getChildLoops();
         assertNotNull(childrenOfOrderLoop);
@@ -175,7 +176,7 @@ public class X12ParsingUtilTest {
         List<X12Segment> segmentsInPackLoop = packLoop.getSegments();
         assertNotNull(segmentsInPackLoop);
         assertEquals(1, segmentsInPackLoop.size());
-        assertEquals("MAN", segmentsInPackLoop.get(0).getSegmentIdentifier());
+        assertEquals("MAN", segmentsInPackLoop.get(0).getIdentifier());
         
         assertNull(packLoop.getChildLoops());
     }
@@ -272,9 +273,9 @@ public class X12ParsingUtilTest {
         List<X12Segment> segmentsInLoop = loop.getSegments();
         assertNotNull(segmentsInLoop);
         assertEquals(2, segmentsInLoop.size());
-        assertEquals("DTM", segmentsInLoop.get(0).getSegmentIdentifier());
-        assertEquals("TD3", segmentsInLoop.get(1).getSegmentIdentifier());
-        assertEquals("A", segmentsInLoop.get(1).getSegmentElement(1));
+        assertEquals("DTM", segmentsInLoop.get(0).getIdentifier());
+        assertEquals("TD3", segmentsInLoop.get(1).getIdentifier());
+        assertEquals("A", segmentsInLoop.get(1).getElement(1));
         
         List<X12Loop> childLoops = loop.getChildLoops();
         assertNull(childLoops);
@@ -289,8 +290,8 @@ public class X12ParsingUtilTest {
         segmentsInLoop = loop.getSegments();
         assertNotNull(segmentsInLoop);
         assertEquals(1, segmentsInLoop.size());
-        assertEquals("TD3", segmentsInLoop.get(0).getSegmentIdentifier());
-        assertEquals("B", segmentsInLoop.get(0).getSegmentElement(1));
+        assertEquals("TD3", segmentsInLoop.get(0).getIdentifier());
+        assertEquals("B", segmentsInLoop.get(0).getElement(1));
         
         childLoops = loop.getChildLoops();
         assertNull(childLoops);

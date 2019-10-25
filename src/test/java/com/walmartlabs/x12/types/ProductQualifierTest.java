@@ -13,32 +13,33 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12.types;
 
+import com.walmartlabs.x12.types.ProductQualifier;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class UnitMeasureTest {
+public class ProductQualifierTest {
 
     @Test
     public void test_valid_value() {
-        assertEquals(UnitMeasure.BX, UnitMeasure.convertUnitMeasure("BX"));
+        assertEquals(ProductQualifier.EN, ProductQualifier.convertProductQualifier("EN"));
     }
 
     @Test
     public void test_invalid_value() {
-        assertEquals(UnitMeasure.UNKNOWN, UnitMeasure.convertUnitMeasure("BOGUS"));
+        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertProductQualifier("BOGUS"));
     }
 
     @Test
     public void test_invalid_empty() {
-        assertEquals(UnitMeasure.UNKNOWN, UnitMeasure.convertUnitMeasure(""));
+        assertEquals(ProductQualifier.UNKNOWN, ProductQualifier.convertProductQualifier(""));
     }
 
     @Test
     public void test_invalid_null() {
-        assertEquals(null, UnitMeasure.convertUnitMeasure(null));
+        assertEquals(null, ProductQualifier.convertProductQualifier(null));
     }
 
 }

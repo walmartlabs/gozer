@@ -15,6 +15,9 @@ limitations under the License.
  */
 package com.walmartlabs.x12.dex.dx894;
 
+import com.walmartlabs.x12.types.ProductQualifier;
+import com.walmartlabs.x12.types.UnitMeasure;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
