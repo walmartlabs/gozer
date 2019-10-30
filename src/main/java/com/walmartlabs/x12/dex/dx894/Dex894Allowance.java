@@ -15,6 +15,8 @@ limitations under the License.
  */
 package com.walmartlabs.x12.dex.dx894;
 
+import com.walmartlabs.x12.types.UnitMeasure;
+
 import java.math.BigDecimal;
 
 public class Dex894Allowance {

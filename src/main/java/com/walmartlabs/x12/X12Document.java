@@ -16,7 +16,7 @@ limitations under the License.
 package com.walmartlabs.x12;
 
 /**
- *
+ * standard interface for all X12 documents
  */
 public interface X12Document {
 

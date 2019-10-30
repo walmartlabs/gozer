@@ -33,7 +33,7 @@ public class SampleX12Parser implements X12Parser<SampleX12Document> {
                 mockX12 = new SampleX12Document();
                 List<X12Segment> segments = this.splitSourceDataIntoSegments(sourceData);
                 if (!segments.isEmpty()) {
-                    mockX12.setFunctionalId(segments.get(0).getSegmentElement(1));
+                    mockX12.setFunctionalId(segments.get(0).getElement(1));
                 }
             }
         } catch (Exception e) {

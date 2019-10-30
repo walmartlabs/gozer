@@ -13,10 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12.types;
 
 /**
- * represents the G8201 - debit/credit flag
+ * debit/credit flag
+ * used on the DEX G8201 
  *
  */
 public enum InvoiceType {
@@ -25,18 +26,18 @@ public enum InvoiceType {
     UNKNOWN;
 
     /**
-     * Convert the debit credit value to an enum
-     * @param debitCreditFlag
+     * Convert the code to an enum
+     * @param code
      * @return
      */
-    public static InvoiceType convertDebitCreditFlag(String debitCreditFlag) {
-        if (debitCreditFlag == null) {
+    public static InvoiceType convert(String code) {
+        if (code == null) {
             return null;
         } else {
             InvoiceType returnEnum = InvoiceType.UNKNOWN;
 
             try {
-                returnEnum = InvoiceType.valueOf(debitCreditFlag);
+                returnEnum = InvoiceType.valueOf(code);
             } catch (Exception e) {
                 // illegal value so returning UNKNOWN
             }

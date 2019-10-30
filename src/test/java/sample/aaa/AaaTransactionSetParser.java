@@ -15,14 +15,14 @@ public class AaaTransactionSetParser extends AbstractTransactionSetParserChainab
     protected X12TransactionSet doParse(List<X12Segment> txLines, X12Group x12Group) {
         assertNotNull(txLines);
         assertEquals(3, txLines.size());
-        assertEquals("ST", txLines.get(0).getSegmentIdentifier());
-        assertEquals("AAA", txLines.get(0).getSegmentElement(1));
-        assertEquals("TEST", txLines.get(1).getSegmentIdentifier());
-        assertEquals("SE", txLines.get(2).getSegmentIdentifier());
+        assertEquals("ST", txLines.get(0).getIdentifier());
+        assertEquals("AAA", txLines.get(0).getElement(1));
+        assertEquals("TEST", txLines.get(1).getIdentifier());
+        assertEquals("SE", txLines.get(2).getIdentifier());
         
         TypeAaaTransactionSet tx = new TypeAaaTransactionSet();
-        tx.setTransactionSetIdentifierCode(txLines.get(0).getSegmentElement(1));
-        tx.setAaaOnlyValue(txLines.get(1).getSegmentElement(1));
+        tx.setTransactionSetIdentifierCode(txLines.get(0).getElement(1));
+        tx.setAaaOnlyValue(txLines.get(1).getElement(1));
         return tx;
     }
 
@@ -30,7 +30,7 @@ public class AaaTransactionSetParser extends AbstractTransactionSetParserChainab
         boolean isHandled = false;
         if (transactionSegments != null) {
             X12Segment segment = transactionSegments.get(0);
-            if (segment != null && "AAA".equals(segment.getSegmentElement(1))) {
+            if (segment != null && "AAA".equals(segment.getElement(1))) {
                 isHandled = true;
             }
         }

@@ -1,7 +1,5 @@
-package com.walmartlabs.x12.util;
+package com.walmartlabs.x12;
 
-import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.dex.dx894.DefaultDex894Parser;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
@@ -51,8 +49,8 @@ public final class X12ParsingUtil {
                 // need at least 2 lines to have valid envelope
                 X12Segment headerSegment = segmentList.get(0);
                 X12Segment trailerSegment = segmentList.get(lastSegmentIndex);
-                if (headerIdentifier.equals(headerSegment.getSegmentIdentifier())
-                    && trailerIdentifier.equals(trailerSegment.getSegmentIdentifier())) {
+                if (headerIdentifier.equals(headerSegment.getIdentifier())
+                    && trailerIdentifier.equals(trailerSegment.getIdentifier())) {
                     isValidEnvelope = true;
                 }
             }
@@ -79,7 +77,7 @@ public final class X12ParsingUtil {
                 
                 X12Segment firstSegment = segmentList.get(0);
                 if (firstSegment != null) {
-                    String segmentType = firstSegment.getSegmentElement(1);
+                    String segmentType = firstSegment.getElement(1);
                     if (transactionType.equals(segmentType)) {
                         isTransactionType = true;
                     }
@@ -135,7 +133,7 @@ public final class X12ParsingUtil {
             if (isHierarchalLoopStart(firstSegment)) {
                 loops = processLoops(segmentList);
             } else {
-                String actualSegment = (firstSegment != null ? firstSegment.getSegmentIdentifier() : "");
+                String actualSegment = (firstSegment != null ? firstSegment.getIdentifier() : "");
                 throw handleUnexpectedSegment("HL", actualSegment);
             }
         }
@@ -205,18 +203,18 @@ public final class X12ParsingUtil {
      * @return true if HL otherwise false
      */
     private static boolean isHierarchalLoopStart(X12Segment segment) {
-        return segment != null && "HL".equals(segment.getSegmentIdentifier());
+        return segment != null && "HL".equals(segment.getIdentifier());
     }
     
     private static X12Loop buildHierarchalLoop(X12Segment x12Segment) {
         // starting new loop
-        String loopId = x12Segment.getSegmentElement(1);
-        String parentLoopId = x12Segment.getSegmentElement(2);
+        String loopId = x12Segment.getElement(1);
+        String parentLoopId = x12Segment.getElement(2);
 
         X12Loop loop = new X12Loop();
         loop.setHierarchicalId(loopId);
         loop.setParentHierarchicalId(parentLoopId);
-        loop.setCode(x12Segment.getSegmentElement(3));
+        loop.setCode(x12Segment.getElement(3));
         
         return loop;
     }

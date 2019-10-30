@@ -311,7 +311,7 @@ public class StandardX12ParserTest {
             public void unhandledTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
                 assertNotNull(transactionSegments);
                 assertFalse(transactionSegments.isEmpty());
-                String txSetId = transactionSegments.get(0).getSegmentElement(1);
+                String txSetId = transactionSegments.get(0).getElement(1);
                 assertEquals("YYZ", txSetId);
             }
         });

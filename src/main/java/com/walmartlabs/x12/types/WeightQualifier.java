@@ -13,45 +13,45 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12.types;
 
 /**
- * represents the G8305 - product/service id qualifier values
+ * Weight Qualifier
  *
  */
-public enum ProductQualifier {
-    DI("DEPOSIT ITEM NUMBER"),
-    EN("EAN/UCC-13"),
-    EO("EAN/UCC-8"),
-    NR("NONRESALABLE ITEM"),
-    UK("EAN/UCC-14"),
-    UP("EAN/UCC-12"),
-    VN("VENDOR ITEM NUMBER"),
-    UNKNOWN("UNKNOWN");
+public enum WeightQualifier {
+    G("GROSS WEIGHT"),
+    N("ACTUAL_NET_WEIGHT"),
+    UNKNOWN("");
 
     private String description;
-
-    private ProductQualifier(String desc) {
+    
+    private WeightQualifier(String desc) {
+        this.description = desc;
+    }
+    
+    private void setDescription(String desc) {
         this.description = desc;
     }
 
     public String getDescription() {
         return this.description;
     }
-
+    
     /**
-     * Convert the unit of measure value to an enum
-     * @param productQualifierCode
+     * Convert the code to an enum
+     * @param code
      * @return
      */
-    public static ProductQualifier convertProductQualifier(String productQualifierCode) {
-        if (productQualifierCode == null) {
+    public static WeightQualifier convert(String code) {
+        if (code == null) {
             return null;
         } else {
-            ProductQualifier returnEnum = ProductQualifier.UNKNOWN;
+            WeightQualifier returnEnum = WeightQualifier.UNKNOWN;
+            returnEnum.setDescription(code);
 
             try {
-                returnEnum = ProductQualifier.valueOf(productQualifierCode);
+                returnEnum = WeightQualifier.valueOf(code);
             } catch (Exception e) {
                 // illegal value so returning UNKNOWN
             }
@@ -59,5 +59,4 @@ public enum ProductQualifier {
             return returnEnum;
         }
     }
-
 }

@@ -16,7 +16,6 @@ limitations under the License.
 package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;

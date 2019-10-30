@@ -13,51 +13,51 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12.types;
 
 /**
- * represents the G8303 - unit of measure code set of values
- *
+ * product/service id qualifier values
+ * used on DEX G8305
+ * used on ASN SN103
  */
-public enum UnitMeasure {
-    BX("BOX"),
-    CA("CASE"),
-    CT("CARTON"),
-    EA("EACH"),
-    DZ("DOZEN"),
-    GA("GALLON"),
-    KE("KEG"),
-    KG("KILOGRAM"),
-    LB("POUND"),
-    PK("PACKAGE"),
-    PL("PALLET"),
-    TK("TANK"),
-    UN("UNIT"),
+public enum ProductQualifier {
+    DI("DEPOSIT ITEM NUMBER"),
+    EN("EAN/UCC-13"),
+    EO("EAN/UCC-8"),
+    NR("NONRESALABLE ITEM"),
+    UK("EAN/UCC-14"),
+    UP("EAN/UCC-12"),
+    VN("VENDOR ITEM NUMBER"),
     UNKNOWN("UNKNOWN");
 
     private String description;
-
-    private UnitMeasure(String desc) {
+    
+    private ProductQualifier(String desc) {
         this.description = desc;
     }
 
+    private void setDescription(String desc) {
+        this.description = desc;
+    }
+    
     public String getDescription() {
         return this.description;
     }
 
     /**
-     * Convert the unit of measure value to an enum
-     * @param uom
+     * Convert the code to an enum
+     * @param code
      * @return
      */
-    public static UnitMeasure convertUnitMeasure(String uom) {
-        if (uom == null) {
+    public static ProductQualifier convert(String code) {
+        if (code == null) {
             return null;
         } else {
-            UnitMeasure returnEnum = UnitMeasure.UNKNOWN;
+            ProductQualifier returnEnum = ProductQualifier.UNKNOWN;
+            returnEnum.setDescription(code);
 
             try {
-                returnEnum = UnitMeasure.valueOf(uom);
+                returnEnum = ProductQualifier.valueOf(code);
             } catch (Exception e) {
                 // illegal value so returning UNKNOWN
             }

@@ -13,32 +13,38 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.walmartlabs.x12.dex.dx894;
+package com.walmartlabs.x12.types;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class UnitMeasureTest {
+public class WeightQualifierTest {
 
     @Test
     public void test_valid_value() {
-        assertEquals(UnitMeasure.BX, UnitMeasure.convertUnitMeasure("BX"));
+        WeightQualifier wq = WeightQualifier.convert("N");
+        assertEquals(WeightQualifier.N, wq);
+        assertEquals("ACTUAL_NET_WEIGHT", wq.getDescription());
     }
 
     @Test
     public void test_invalid_value() {
-        assertEquals(UnitMeasure.UNKNOWN, UnitMeasure.convertUnitMeasure("BOGUS"));
+        WeightQualifier wq = WeightQualifier.convert("BOGUS");
+        assertEquals(WeightQualifier.UNKNOWN, wq);
+        assertEquals("BOGUS", wq.getDescription());
     }
 
     @Test
     public void test_invalid_empty() {
-        assertEquals(UnitMeasure.UNKNOWN, UnitMeasure.convertUnitMeasure(""));
+        WeightQualifier wq = WeightQualifier.convert("");
+        assertEquals(WeightQualifier.UNKNOWN, wq);
+        assertEquals("", wq.getDescription());
     }
 
     @Test
     public void test_invalid_null() {
-        assertEquals(null, UnitMeasure.convertUnitMeasure(null));
+        assertEquals(null, UnitMeasure.convert(null));
     }
 
 }
