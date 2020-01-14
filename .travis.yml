@@ -1,0 +1,13 @@
+# Travis CI Java documentation can be found in:
+# https://docs.travis-ci.com/user/languages/java/
+
+# This enables the 'defaults' to test java applications:
+language: java
+
+# We can specify a list of JDKs to be used for testing
+# A list of available JDKs in Trusty can be seed in:
+# https://docs.travis-ci.com/user/reference/xenial/#jvm-clojure-groovy-java-scala-support
+jdk:
+ - openjdk8
+ 
+ 
