@@ -19,6 +19,10 @@ import com.walmartlabs.x12.standard.X12Loop;
 
 import java.util.List;
 
+/**
+ * Represents the Tare (Pallet) level of information
+ * 
+ */
 public class Tare extends X12Loop {
 
     private List<X12Loop> loops;
