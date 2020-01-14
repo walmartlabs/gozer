@@ -204,4 +204,18 @@ public class DefaultCrc16Test {
         assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), -1));
         assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), 0));
     }
+    
+    @Test
+    public void test_from_customer() {
+        String eol = "\r\n";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("ST*895*1000").append(eol);
+        sb.append("G87*R*D*020012345678*E219*1").append(eol);
+        sb.append("G86*0B72").append(eol);
+
+        String value = crcUtil.generateCyclicRedundancyCheck(sb.toString());
+        System.out.println(value);
+        assertTrue(crcUtil.verifyBlockOfText("27B8", sb.toString()));
+    }
 }
