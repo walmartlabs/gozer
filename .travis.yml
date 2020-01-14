@@ -4,10 +4,20 @@
 # This enables the 'defaults' to test java applications:
 language: java
 
-# We can specify a list of JDKs to be used for testing
-# A list of available JDKs in Trusty can be seed in:
+# List of JDKs to be used for testing
 # https://docs.travis-ci.com/user/reference/xenial/#jvm-clojure-groovy-java-scala-support
 jdk:
  - openjdk8
+
+# keep the maven repo w/ downloaded dependencies
+cache:
+  directories:
+  - $HOME/.m2
  
- 
+# Job Configuration
+# https://docs.travis-ci.com/user/job-lifecycle
+# the job on Travis CI is made up of two main parts:
+# install: install any dependencies required
+# script: run the build script
+
+# TODO: add code coverage
