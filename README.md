@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/walmartlabs/gozer.svg?branch=master)](https://travis-ci.org/walmartlabs/gozer)
+
 # EDI X12 Standard Parsing Library
 
 The EDI X12 Standard provides a uniform way for companies to exchange information across different sectors. 
