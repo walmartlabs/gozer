@@ -19,6 +19,11 @@ import com.walmartlabs.x12.standard.X12Loop;
 
 import java.util.List;
 
+/**
+ * 
+ * Information captured in the Pack loop 
+ *
+ */
 public class Pack extends X12Loop {
 
     private List<X12Loop> loops;
