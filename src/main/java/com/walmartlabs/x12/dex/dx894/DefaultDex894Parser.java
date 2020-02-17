@@ -412,13 +412,13 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             // this will do a simple parsing of the G83 elements
             // a separate utility will need to determine the retail selling unit
             dexItem.setItemSequenceNumber(segment.getElement(1));
-            dexItem.setQuantity(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 3));
+            dexItem.setQuantity(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 3));        
             dexItem.setUom(UnitMeasure.convert(segment.getElement(3)));
             dexItem.setUpc(segment.getElement(4));
             dexItem.setConsumerProductQualifier(ProductQualifier.convert(segment.getElement(5)));
             dexItem.setConsumerProductId(segment.getElement(6));
             dexItem.setCaseUpc(segment.getElement(7));
-            dexItem.setItemListCost(ConversionUtil.convertStringToBigDecimal(segment.getElement(8), 2));
+            dexItem.setItemListCost(ConversionUtil.convertStringToBigDecimal(segment.getElement(8), 4));
             dexItem.setPackCount(ConversionUtil.convertStringToInteger(segment.getElement(9)));
             dexItem.setItemDescription(segment.getElement(10));
             dexItem.setCaseProductQualifier(ProductQualifier.convert(segment.getElement(11)));

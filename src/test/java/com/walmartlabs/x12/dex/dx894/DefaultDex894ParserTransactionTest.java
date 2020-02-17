@@ -156,7 +156,7 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(null, dexItem.getConsumerProductQualifier());
         assertEquals(null, dexItem.getConsumerProductId());
         assertEquals(null, dexItem.getCaseUpc());
-        assertEquals("1.83", dexItem.getItemListCost().toString());
+        assertEquals("1.8300", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
         assertEquals(null, dexItem.getCaseProductQualifier());
@@ -176,7 +176,7 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(null, dexItem.getConsumerProductQualifier());
         assertEquals(null, dexItem.getConsumerProductId());
         assertEquals("007800001181", dexItem.getCaseUpc());
-        assertEquals("14.00", dexItem.getItemListCost().toString());
+        assertEquals("14.0000", dexItem.getItemListCost().toString());
         assertEquals("2", dexItem.getPackCount().toString());
         assertEquals("12z12P Dt 7Up", dexItem.getItemDescription());
         assertEquals(null, dexItem.getCaseProductQualifier());
@@ -196,7 +196,7 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(null, dexItem.getConsumerProductQualifier());
         assertEquals(null, dexItem.getConsumerProductId());
         assertEquals(null, dexItem.getCaseUpc());
-        assertEquals("1.83", dexItem.getItemListCost().toString());
+        assertEquals("1.8300", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals("DESCRIPTION", dexItem.getItemDescription());
         assertEquals(null, dexItem.getCaseProductQualifier());
