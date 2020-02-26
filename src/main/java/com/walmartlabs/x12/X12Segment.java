@@ -97,8 +97,20 @@ public class X12Segment {
         if (StringUtils.isEmpty(segment)) {
             return Collections.emptyList();
         } else {
-            String splitRegEx = "\\" + dataElementDelimiter;
+            String splitRegEx = this.convertDataElementDelimiterToRegEx(dataElementDelimiter);
             return Arrays.asList(segment.split(splitRegEx));
+        }
+    }
+    
+    private String convertDataElementDelimiterToRegEx(Character dataElementDelimiter) {
+        if (dataElementDelimiter != null) {
+            if (Character.isLetterOrDigit(dataElementDelimiter.charValue())) {
+                return dataElementDelimiter.toString();
+            } else {
+                return "\\" + dataElementDelimiter;
+            }
+        } else {
+            return String.valueOf(Character.MIN_VALUE);
         }
     }
 }
