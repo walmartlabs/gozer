@@ -103,10 +103,14 @@ public class X12Segment {
     }
     
     private String convertDataElementDelimiterToRegEx(Character dataElementDelimiter) {
-        if (Character.isLetterOrDigit(dataElementDelimiter.charValue())) {
-            return dataElementDelimiter.toString();
+        if (dataElementDelimiter != null) {
+            if (Character.isLetterOrDigit(dataElementDelimiter.charValue())) {
+                return dataElementDelimiter.toString();
+            } else {
+                return "\\" + dataElementDelimiter;
+            }
         } else {
-            return "\\" + dataElementDelimiter;
+            return String.valueOf(Character.MIN_VALUE);
         }
     }
 }

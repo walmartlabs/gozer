@@ -28,6 +28,7 @@ import java.util.regex.PatternSyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -69,12 +70,16 @@ public class X12SampleTest {
     @Test
     public void test_parse_and_validate_failed_bad_delimiter() {
         try {
-            defaultParser.parse("MOCK*123");
+            defaultParser.parse("BOO*123");
             fail("expected exception!");
         } catch (X12ParserException e) {
             Throwable cause = e.getCause();
-            assertNotNull(cause);
-            assertTrue(cause instanceof PatternSyntaxException);
+            assertNull(cause);
+            assertEquals("invalid identifier", e.getMessage());
+            X12ErrorDetail x12Error = e.getErrorDetail();
+            assertNotNull(x12Error);
+            assertEquals("YYZ", x12Error.getSegmentId());
+            assertEquals("YYZ00", x12Error.getElementId());
         }
     }
     

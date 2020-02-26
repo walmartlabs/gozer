@@ -85,6 +85,22 @@ public class X12SegmentTest {
     }
     
     @Test
+    public void test_SegmentId_DifferentDelimiter_null() {
+        X12Segment segment = new X12Segment("FOO_BAR", null);
+        assertNotNull(segment);
+        assertEquals(1, segment.segmentSize());
+        assertEquals("FOO_BAR", segment.getIdentifier());
+    }
+    
+    @Test
+    public void test_SegmentId_DifferentDelimiter_Empty() {
+        X12Segment segment = new X12Segment("FOO_BAR", Character.MIN_VALUE);
+        assertNotNull(segment);
+        assertEquals(1, segment.segmentSize());
+        assertEquals("FOO_BAR", segment.getIdentifier());
+    }
+    
+    @Test
     public void test_SegmentId_DifferentDelimiter_UnderScore() {
         X12Segment segment = new X12Segment("FOO_BAR", '_');
         assertNotNull(segment);
