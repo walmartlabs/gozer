@@ -147,16 +147,16 @@ public class DefaultDex894ParserTransactionTest {
     @Test
     public void testParseG83SimpleItem() {
         Dex894Item dexItem = new Dex894Item();
-        X12Segment segment = new X12Segment("G83*1*48*EA*001410008547****1.83");
+        X12Segment segment = new X12Segment("G83*1*48.123*EA*001410008547****1.8345");
         dexParser.parseG83(segment, dexItem);
         assertEquals("1", dexItem.getItemSequenceNumber());
-        assertEquals("48.000", dexItem.getQuantity().toString());
+        assertEquals("48.123", dexItem.getQuantity().toString());
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008547", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
         assertEquals(null, dexItem.getConsumerProductId());
         assertEquals(null, dexItem.getCaseUpc());
-        assertEquals("1.8300", dexItem.getItemListCost().toString());
+        assertEquals("1.8345", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
         assertEquals(null, dexItem.getCaseProductQualifier());

@@ -36,6 +36,21 @@ public class X12SegmentTest {
         assertEquals("9254850000", segment.getElement(5));
         assertEquals(null, segment.getElement(6));
     }
+    
+    @Test
+    public void test_SegmentId_ThreeCharacter_DifferentDelimiter() {
+        X12Segment segment = new X12Segment("DXS_9251230013_DX_004010UCS_1_9254850000", '_');
+        assertNotNull(segment);
+        assertEquals(6, segment.segmentSize());
+        assertEquals("DXS", segment.getIdentifier());
+        assertEquals("DXS", segment.getElement(0));
+        assertEquals("9251230013", segment.getElement(1));
+        assertEquals("DX", segment.getElement(2));
+        assertEquals("004010UCS", segment.getElement(3));
+        assertEquals("1", segment.getElement(4));
+        assertEquals("9254850000", segment.getElement(5));
+        assertEquals(null, segment.getElement(6));
+    }
 
 
     @Test
@@ -52,7 +67,7 @@ public class X12SegmentTest {
         assertEquals("9254850000", segment.getElement(5));
         assertEquals(null, segment.getElement(6));
     }
-
+    
     @Test
     public void test_SegmentId_None() {
         X12Segment segment = new X12Segment("*ST*9251230013*DX*004010UCS*1*9254850000");
@@ -67,6 +82,34 @@ public class X12SegmentTest {
         assertEquals("1", segment.getElement(5));
         assertEquals("9254850000", segment.getElement(6));
         assertEquals(null, segment.getElement(7));
+    }
+    
+    @Test
+    public void test_SegmentId_DifferentDelimiter_UnderScore() {
+        X12Segment segment = new X12Segment("FOO_BAR", '_');
+        assertNotNull(segment);
+        assertEquals(2, segment.segmentSize());
+        assertEquals("FOO", segment.getIdentifier());
+        assertEquals("BAR", segment.getElement(1));
+    }
+    
+    @Test
+    public void test_SegmentId_DifferentDelimiter_Number() {
+        X12Segment segment = new X12Segment("FOO0BAR", '0');
+        assertNotNull(segment);
+        assertEquals(2, segment.segmentSize());
+        assertEquals("FOO", segment.getIdentifier());
+        assertEquals("BAR", segment.getElement(1));
+    }
+    
+    @Test
+    public void test_SegmentId_DifferentDelimiter_Letter() {
+        X12Segment segment = new X12Segment("HELLO", 'L');
+        assertNotNull(segment);
+        assertEquals(3, segment.segmentSize());
+        assertEquals("HE", segment.getIdentifier());
+        assertEquals(null, segment.getElement(1));
+        assertEquals("O", segment.getElement(2));
     }
 
     @Test
