@@ -20,6 +20,8 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetailsParser;
+import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD3CarrierDetailsParser;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetailsParser;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
@@ -190,6 +192,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                     case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
                         shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
                         break;
+                    case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                        shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
+                        break;                        
                     case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
                         shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
                         break;
