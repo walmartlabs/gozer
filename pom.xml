@@ -15,6 +15,8 @@
   <packaging>takari-jar</packaging>
 
   <properties>
+    <checkstyle.fail.on.violation>false</checkstyle.fail.on.violation>
+    <checkstyle.fail.on.error>false</checkstyle.fail.on.error>
     <junit.version>4.12</junit.version>
     <slf4j.version>1.7.21</slf4j.version>
     <logback.version>1.1.7</logback.version>
@@ -100,8 +102,8 @@
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <consoleOutput>true</consoleOutput>
           <linkXRef>true</linkXRef>
-          <failOnViolation>false</failOnViolation>
-          <failsOnError>false</failsOnError>
+          <failOnViolation>${checkstyle.fail.on.violation}</failOnViolation>
+          <failsOnError>${checkstyle.fail.on.error}</failsOnError>
         </configuration>
       </plugin>
     </plugins>

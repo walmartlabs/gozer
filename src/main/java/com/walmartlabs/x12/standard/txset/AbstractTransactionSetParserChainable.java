@@ -1,11 +1,17 @@
-package com.walmartlabs.x12.standard;
+package com.walmartlabs.x12.standard.txset;
 
+import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.util.ConversionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public abstract class AbstractTransactionSetParserChainable implements TransactionSetParser {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTransactionSetParserChainable.class);
 
     private TransactionSetParser nextParser;
     
@@ -17,7 +23,7 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
      */
     @Override
     public X12TransactionSet parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
-        if (handlesTransactionSet(transactionSegments, x12Group)) {
+        if (this.handlesTransactionSet(transactionSegments, x12Group)) {
             // we handle this transaction
             // so parse it
             return this.doParse(transactionSegments, x12Group);
@@ -70,6 +76,7 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
      */
     protected abstract boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group);
 
+    
     /**
      * parse the transaction set 
      * 
@@ -78,4 +85,38 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
      * @return the parsed transaction set
      */
     protected abstract X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group);
+    
+    /**
+     * parse the ST segment (reusable from concrete class)
+     * @param segment
+     * @param transactionSet
+     */
+    protected void parseTransactionSetHeader(X12Segment segment, X12TransactionSet transactionSet) {
+        LOGGER.debug(segment.getIdentifier());
+
+        String segmentIdentifier = segment.getIdentifier();
+        if (X12TransactionSet.TRANSACTION_SET_HEADER.equals(segmentIdentifier)) {
+            transactionSet.setTransactionSetIdentifierCode(segment.getElement(1));
+            transactionSet.setHeaderControlNumber(segment.getElement(2));
+        } else {
+            throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, segmentIdentifier);
+        }
+    }
+    
+    /**
+     * parse the SE segment (reusable from concrete class)
+     * @param segment
+     * @param transactionSet
+     */
+    protected void parseTransactionSetTrailer(X12Segment segment, X12TransactionSet transactionSet) {
+        LOGGER.debug(segment.getIdentifier());
+
+        String segmentIdentifier = segment.getIdentifier();
+        if (X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentIdentifier)) {
+            transactionSet.setExpectedNumberOfSegments(ConversionUtil.convertStringToInteger(segment.getElement(1)));
+            transactionSet.setTrailerControlNumber(segment.getElement(2));
+        } else {
+            throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, segmentIdentifier);
+        }
+    }
 }

@@ -18,6 +18,8 @@ package com.walmartlabs.x12.standard;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.standard.txset.TransactionSetParser;
+import com.walmartlabs.x12.standard.txset.UnhandledTransactionSet;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

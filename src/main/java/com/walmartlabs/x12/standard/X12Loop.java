@@ -4,6 +4,8 @@ import com.walmartlabs.x12.X12Segment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * models a basic HL loop
@@ -45,6 +47,13 @@ public class X12Loop {
         childLoops.add(loop);
     }
     
+    public static boolean isLoopWithCode(X12Loop loop, String desiredCode) {
+        Optional<String> os =  Optional.ofNullable(loop)
+            .map(notNullLoop -> notNullLoop.getCode())
+            .filter(Objects::nonNull)
+            .filter(code -> code.equals(desiredCode));
+        return os.isPresent();
+    }
     
     public List<X12Segment> getSegments() {
         return segments;

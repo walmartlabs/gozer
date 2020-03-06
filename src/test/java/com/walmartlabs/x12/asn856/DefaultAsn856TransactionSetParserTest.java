@@ -78,6 +78,42 @@ public class DefaultAsn856TransactionSetParserTest {
     }
     
     @Test
+    public void test_doParse_OnlyEnvelope() {
+        try {
+            X12Group x12Group = new X12Group();
+            List<X12Segment> segments = this.getSegmentsOnlyEnvelope();
+            txParser.doParse(segments, x12Group);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected BSN segment but found SE", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test_doParse_NoHierarchicalLoops() {
+        try {
+            X12Group x12Group = new X12Group();
+            List<X12Segment> segments = this.getSegmentsNoHierarchicalLoops();
+            txParser.doParse(segments, x12Group);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected one top level HL", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test_doParse_TwoTopLevelHierarchicalLoops() {
+        try {
+            X12Group x12Group = new X12Group();
+            List<X12Segment> segments = this.getTwoShipmentLoops();
+            txParser.doParse(segments, x12Group);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected one top level HL", e.getMessage());
+        }
+    }
+
+    @Test
     public void test_doParse() {
         X12Group x12Group = new X12Group();
         List<X12Segment> segments = this.getTestSegments();
@@ -85,29 +121,36 @@ public class DefaultAsn856TransactionSetParserTest {
         assertNotNull(txSet);
     }
     
-    @Test
-    public void test_doParse_NoHierarchicalLoops() {
-        X12Group x12Group = new X12Group();
-        List<X12Segment> segments = this.getTestSegments();
-        segments.remove(2); // HL(S)
-        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
-        assertNotNull(txSet);
+    private List<X12Segment> getSegmentsOnlyEnvelope() {
+        List<X12Segment> txSegments = new ArrayList<>();
+        
+        txSegments.add(new X12Segment("ST*856*368090001"));
+        txSegments.add(new X12Segment("SE*296*368090001"));
+        
+        return txSegments;
     }
     
-    @Test
-    public void test_doParse_OnlyEnvelope() {
-        try {
-            X12Group x12Group = new X12Group();
-            List<X12Segment> segments = this.getTestSegments();
-            segments.remove(2); // HL(S)
-            segments.remove(1); // BSN
-            txParser.doParse(segments, x12Group);
-            fail("expected parsing exception");
-        } catch (X12ParserException e) {
-            assertEquals("expected BSN segment but found SE", e.getMessage());
-        }
+    private List<X12Segment> getSegmentsNoHierarchicalLoops() {
+        List<X12Segment> txSegments = new ArrayList<>();
+        
+        txSegments.add(new X12Segment("ST*856*368090001"));
+        txSegments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        txSegments.add(new X12Segment("SE*296*368090001"));
+        
+        return txSegments;
     }
-
+    
+    private List<X12Segment> getTwoShipmentLoops() {
+        List<X12Segment> txSegments = new ArrayList<>();
+        
+        txSegments.add(new X12Segment("ST*856*368090001"));
+        txSegments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        txSegments.add(new X12Segment("HL*1**S"));
+        txSegments.add(new X12Segment("HL*2**S"));
+        txSegments.add(new X12Segment("SE*296*368090001"));
+        
+        return txSegments;
+    }
     
     private List<X12Segment> getTestSegments() {
         List<X12Segment> txSegments = new ArrayList<>();
