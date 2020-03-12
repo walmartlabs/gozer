@@ -1,4 +1,4 @@
-package com.walmartlabs.x12.standard;
+package com.walmartlabs.x12.standard.txset;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;

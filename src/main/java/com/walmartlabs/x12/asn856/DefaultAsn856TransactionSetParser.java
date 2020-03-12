@@ -18,12 +18,21 @@ package com.walmartlabs.x12.asn856;
 import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.standard.AbstractTransactionSetParserChainable;
+import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD1CarrierDetailsParser;
+import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD3CarrierDetailsParser;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetailsParser;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
+import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.util.ConversionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -55,9 +64,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     protected X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group) {
         AsnTransactionSet asnTx = null;
 
-        if (transactionSegments != null && transactionSegments.size() > 0) {
+        if (!CollectionUtils.isEmpty(transactionSegments)) {
             asnTx = new AsnTransactionSet();
-            
             this.doParsing(transactionSegments, asnTx);
         }
 
@@ -77,16 +85,15 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         // BSN
         //
         currentSegment = transactionSegments.get(1);
-        this.parseBeginningSegment(currentSegment, asnTx);
+        this.parseBeginningSegmentForShipNotice(currentSegment, asnTx);
         
         //
         // Hierarchical Loops
         // 
-
         int segementAfterHierarchicalLoops = this.findSegmentAfterHierarchicalLoops(transactionSegments);
         List<X12Segment> loopSegments = transactionSegments.subList(2, segementAfterHierarchicalLoops);
         List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
-        // TODO: add loop parsing
+        this.doLoopParsing(loops, asnTx);
         
         //
         // CTT (optional)
@@ -101,10 +108,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         // SE
         //
         this.parseTransactionSetTrailer(currentSegment, asnTx);
-    }
-
-    protected Shipment doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
-        return null;
     }
     
     private int findSegmentAfterHierarchicalLoops(List<X12Segment> transactionSegments) {
@@ -122,45 +125,11 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     }
     
     /**
-     * parse the ST segment
-     * @param segment
-     * @param asnTx
-     */
-    private void parseTransactionSetHeader(X12Segment segment, AsnTransactionSet asnTx) {
-        LOGGER.debug(segment.getIdentifier());
-
-        String segmentIdentifier = segment.getIdentifier();
-        if (X12TransactionSet.TRANSACTION_SET_HEADER.equals(segmentIdentifier)) {
-            asnTx.setTransactionSetIdentifierCode(segment.getElement(1));
-            asnTx.setHeaderControlNumber(segment.getElement(2));
-        } else {
-            throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, segmentIdentifier);
-        }
-    }
-    
-    /**
-     * parse the SE segment
-     * @param segment
-     * @param asnTx
-     */
-    private void parseTransactionSetTrailer(X12Segment segment, AsnTransactionSet asnTx) {
-        LOGGER.debug(segment.getIdentifier());
-
-        String segmentIdentifier = segment.getIdentifier();
-        if (X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentIdentifier)) {
-            asnTx.setExpectedNumberOfSegments(ConversionUtil.convertStringToInteger(segment.getElement(1)));
-            asnTx.setTrailerControlNumber(segment.getElement(2));
-        } else {
-            throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, segmentIdentifier);
-        }
-    }
-
-    /**
      * parse the BSN segment
      * @param segment
      * @param asnTx
      */
-    private void parseBeginningSegment(X12Segment segment, AsnTransactionSet asnTx) {
+    private void parseBeginningSegmentForShipNotice(X12Segment segment, AsnTransactionSet asnTx) {
         LOGGER.debug(segment.getIdentifier());
         
         String segmentIdentifier = segment.getIdentifier();
@@ -188,6 +157,54 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             asnTx.setTransactionLineItems(ConversionUtil.convertStringToInteger(segment.getElement(1)));
         } else {
             throw X12ParsingUtil.handleUnexpectedSegment(ASN_TRANSACTION_TOTALS, segmentIdentifier);
+        }
+    }
+    
+
+    /**
+     * currently enforcing only 1 top level HL in the transaction set
+     * (ie) only one Shipment HL
+     * 
+     * @param loops
+     * @param asnTx
+     * @return
+     */
+    protected void doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
+        if (!CollectionUtils.isEmpty(loops) && loops.size() == 1) {
+            X12Loop firstLoop = loops.get(0);
+            if (Shipment.isShipmentLoop(firstLoop)) {
+                this.parseShipmentLoop(firstLoop, asnTx);
+            } else {
+                throw new X12ParserException(new X12ErrorDetail("HL", "HL03", "first HL is not a shipment"));
+            }
+        } else {
+            throw new X12ParserException(new X12ErrorDetail("HL", "HL00", "expected one top level HL"));
+        }
+    }
+    
+    private void parseShipmentLoop(X12Loop shipmentLoop, AsnTransactionSet asnTx) {
+        Shipment shipment = new Shipment();
+        
+        List<X12Segment> shipmentSegments = shipmentLoop.getSegments();
+        if (!CollectionUtils.isEmpty(shipmentSegments)) {
+            shipmentSegments.forEach(segment -> {
+                switch (segment.getIdentifier()) {
+                    case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                        shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
+                        break;
+                    case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                        shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
+                        break;                        
+                    case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                        shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
+                        break;
+                        // TODO: need to keep working on this and add tests
+                    default:
+                        // TODO: what do we do w/ an unidentified segment
+                        break;
+                }
+                
+            });
         }
     }
 }

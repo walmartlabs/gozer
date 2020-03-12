@@ -2,8 +2,8 @@ package sample.yyz;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.standard.TransactionSetParser;
 import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.standard.txset.TransactionSetParser;
 
 import java.util.List;
 

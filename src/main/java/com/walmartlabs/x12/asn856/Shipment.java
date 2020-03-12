@@ -15,33 +15,54 @@ limitations under the License.
  */
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
 import com.walmartlabs.x12.standard.X12Loop;
-import com.walmartlabs.x12.types.UnitMeasure;
-import com.walmartlabs.x12.types.WeightQualifier;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public class Shipment extends X12Loop {
+
+    public static final String SHIPMENT_LOOP_CODE = "S";
 
     /*
      * TD1: Carrier Details
      */
-    // TD101: Packaging Code
-    private String packagingCodePartOne;
-    private String packagingCodePartTwo;
-    // TD102: Lading Quantity = Number of packages in shipment
-    private BigDecimal ladingQuantity;
-    // TD106: Weight Qualifier
-    private WeightQualifier weightQualifier;
-    // TD107: weight
-    private BigDecimal weight;
-    // TD108: uom
-    private UnitMeasure weightUom;
-    // TD109: ??
-    
-    // TD110: uom
-    private UnitMeasure uom;
-    
-    private List<X12Loop> loops;
+    private TD1CarrierDetails td1;
+    /*
+     * TD3: Carrier Details
+     */
+    private TD3CarrierDetails td3;
+    /*
+     * TD5: Carrier Details
+     */
+    private TD5CarrierDetails td5;
+
+    public static boolean isShipmentLoop(X12Loop loop) {
+        return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
+    }
+
+    public TD1CarrierDetails getTd1() {
+        return td1;
+    }
+
+    public void setTd1(TD1CarrierDetails td1) {
+        this.td1 = td1;
+    }
+
+    public TD3CarrierDetails getTd3() {
+        return td3;
+    }
+
+    public void setTd3(TD3CarrierDetails td3) {
+        this.td3 = td3;
+    }
+
+    public TD5CarrierDetails getTd5() {
+        return td5;
+    }
+
+    public void setTd5(TD5CarrierDetails td5) {
+        this.td5 = td5;
+    }
+
 }
