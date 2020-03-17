@@ -36,5 +36,12 @@ public class N1PartyIdentificationParserTest {
         assertEquals("UL", n1.getIdentificationCodeQualifier());
         assertEquals("0078742090955", n1.getIdentificationCode().toString());
     }
+    
+    @Test
+    public void test_parse_segment_bad_identifier() {
+        X12Segment segment = new X12Segment("XX*ST*REGIONAL DISTRIBUTION CENTER 6285*UL*0078742090955");
+        N1PartyIdentification n1 = N1PartyIdentificationParser.parse(segment);
+        assertNull(n1);
+    }
 
 }
