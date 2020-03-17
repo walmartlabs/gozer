@@ -1,6 +1,8 @@
-package com.walmartlabs.x12.common.segment;
+package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
+import com.walmartlabs.x12.common.segment.parser.TD5CarrierDetailsParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

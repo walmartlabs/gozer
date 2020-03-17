@@ -1,6 +1,7 @@
-package com.walmartlabs.x12.common.segment;
+package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
 import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.ConversionUtil;
 import org.springframework.util.StringUtils;
