@@ -17,39 +17,42 @@ package com.walmartlabs.x12.common.segment;
 
 /**
  * 
- * Purpose: To specify the carrier and sequence of routing and provide transit
- * time information
+ * Purpose: To identify a party by type of organization, name, and code
  *
  */
-public class TD5CarrierDetails {
+public class N1PartyIdentification {
 
-    public static final String CARRIER_DETAILS_IDENTIFIER = "TD5";
+    public static final String PARTY_IDENTIFICATION_IDENTIFIER = "N1";
 
-    // TD501
-    private String routingSequenceCode;
-    // TD502
+    // N101
+    private String entityIdentifierCode;
+    // N102
+    private String name;
+    // N103
     private String identificationCodeQualifier;
-    // TD503
+    // N104
     private String identificationCode;
-    // TD504
-    private String transportationMethodTypeCode;
-    // TD505
-    private String routingDescription;
 
-    public String getRoutingSequenceCode() {
-        return routingSequenceCode;
+    // N3 Party Identification
+    N3PartyLocation n3;
+
+    // N4 Party Geographic Identification
+    N4GeographicLocation n4;
+
+    public String getEntityIdentifierCode() {
+        return entityIdentifierCode;
     }
 
-    public void setRoutingSequenceCode(String routingSequenceCode) {
-        this.routingSequenceCode = routingSequenceCode;
+    public void setEntityIdentifierCode(String entityIdentifierCode) {
+        this.entityIdentifierCode = entityIdentifierCode;
     }
 
-    public String getRoutingDescription() {
-        return routingDescription;
+    public String getName() {
+        return name;
     }
 
-    public void setRoutingDescription(String routingDescription) {
-        this.routingDescription = routingDescription;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getIdentificationCodeQualifier() {
@@ -68,12 +71,20 @@ public class TD5CarrierDetails {
         this.identificationCode = identificationCode;
     }
 
-    public String getTransportationMethodTypeCode() {
-        return transportationMethodTypeCode;
+    public N3PartyLocation getN3() {
+        return n3;
     }
 
-    public void setTransportationMethodTypeCode(String transportationMethodTypeCode) {
-        this.transportationMethodTypeCode = transportationMethodTypeCode;
+    public void setN3(N3PartyLocation n3) {
+        this.n3 = n3;
+    }
+
+    public N4GeographicLocation getN4() {
+        return n4;
+    }
+
+    public void setN4(N4GeographicLocation n4) {
+        this.n4 = n4;
     }
 
 }
