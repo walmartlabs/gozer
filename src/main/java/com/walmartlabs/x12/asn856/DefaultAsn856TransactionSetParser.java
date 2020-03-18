@@ -15,6 +15,7 @@ limitations under the License.
  */
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.SegmentIterator;
 import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
@@ -188,28 +189,31 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         Shipment shipment = new Shipment();
         
         List<X12Segment> shipmentSegments = shipmentLoop.getSegments();
-        if (!CollectionUtils.isEmpty(shipmentSegments)) {
-            shipmentSegments.forEach(segment -> {
-                switch (segment.getIdentifier()) {
-                    case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                        shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
-                        break;
-                    case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                        shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
-                        break;                     
-                    case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                        shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
-                        break;
-                    case N1PartyIdentification.PARTY_IDENTIFICATION_IDENTIFIER:
-                        shipment.addN1PartyIdentification(N1PartyIdentificationParser.parse(segment));
-                        break;
-                        // TODO: need to keep working on this and add tests
-                    default:
-                        // TODO: what do we do w/ an unidentified segment
-                        break;
-                }
-                
-            });
+        
+        SegmentIterator segmentIterator = new SegmentIterator(shipmentSegments);
+        while (segmentIterator.hasNext()) {
+            X12Segment segment = segmentIterator.next();
+            
+            switch (segment.getIdentifier()) {
+                case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                    shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
+                    break;
+                case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                    shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
+                    break;                     
+                case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                    shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
+                    break;
+                case N1PartyIdentification.PARTY_IDENTIFICATION_IDENTIFIER:
+                    N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
+                    shipment.addN1PartyIdentification(n1);
+                    break;
+                    // TODO: need to keep working on this and add tests
+                default:
+                    // TODO: what do we do w/ an unidentified segment
+                    break;
+            }
         }
+        
     }
 }
