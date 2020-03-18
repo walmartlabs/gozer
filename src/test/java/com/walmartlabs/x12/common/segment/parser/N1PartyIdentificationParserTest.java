@@ -121,13 +121,40 @@ public class N1PartyIdentificationParserTest {
     }
     
     @Test
+    public void test_parse_handleN1Loop_one_N1_only() {
+        List<X12Segment> segments = new ArrayList<>();
+        segments.add(new X12Segment("N1*ST*REGIONAL DISTRIBUTION CENTER 6285*UL*0078742090955B"));
+        segments.add(new X12Segment("N1*SF*RESER'S FINE FOODS, INC.*UL*0090266420000"));
+        SegmentIterator iterator = new SegmentIterator(segments);
+        X12Segment topSegment = iterator.next();
+        
+        N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(topSegment, iterator);
+        assertNotNull(n1);
+        assertEquals("ST", n1.getEntityIdentifierCode());
+        assertEquals("REGIONAL DISTRIBUTION CENTER 6285", n1.getName());
+        assertEquals("UL", n1.getIdentificationCodeQualifier());
+        assertEquals("0078742090955B", n1.getIdentificationCode().toString());
+        
+        N3PartyLocation n3 = n1.getN3();
+        assertNull(n3);
+        
+        N4GeographicLocation n4 = n1.getN4();
+        assertNull(n4);
+        
+        assertTrue(iterator.hasNext());
+        X12Segment nextOne = iterator.next();
+        assertNotNull(nextOne);
+        assertEquals("N1*SF*RESER'S FINE FOODS, INC.*UL*0090266420000", nextOne.toString());
+    }
+    
+    @Test
     public void test_parse_handleN1Loop_one_not_N1() {
         List<X12Segment> segments = new ArrayList<>();
         segments.add(new X12Segment("TD1*PLT94*1****G*31302*LB"));
         segments.addAll(this.getN1LoopOne());
         SegmentIterator iterator = new SegmentIterator(segments);
         X12Segment topSegment = iterator.next();
-        
+         
         N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(topSegment, iterator);
         assertNull(n1);
         
