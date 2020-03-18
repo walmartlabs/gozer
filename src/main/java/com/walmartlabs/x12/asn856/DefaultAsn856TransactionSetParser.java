@@ -189,31 +189,31 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         Shipment shipment = new Shipment();
         
         List<X12Segment> shipmentSegments = shipmentLoop.getSegments();
-        
-        SegmentIterator segmentIterator = new SegmentIterator(shipmentSegments);
-        while (segmentIterator.hasNext()) {
-            X12Segment segment = segmentIterator.next();
-            
-            switch (segment.getIdentifier()) {
-                case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                    shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
-                    break;
-                case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                    shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
-                    break;                     
-                case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                    shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
-                    break;
-                case N1PartyIdentification.PARTY_IDENTIFICATION_IDENTIFIER:
-                    N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
-                    shipment.addN1PartyIdentification(n1);
-                    break;
-                    // TODO: need to keep working on this and add tests
-                default:
-                    // TODO: what do we do w/ an unidentified segment
-                    break;
+        if (!CollectionUtils.isEmpty(shipmentSegments)) {
+            SegmentIterator segmentIterator = new SegmentIterator(shipmentSegments);
+            while (segmentIterator.hasNext()) {
+                X12Segment segment = segmentIterator.next();
+                
+                switch (segment.getIdentifier()) {
+                    case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                        shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
+                        break;
+                    case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                        shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
+                        break;                     
+                    case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                        shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
+                        break;
+                    case N1PartyIdentification.PARTY_IDENTIFICATION_IDENTIFIER:
+                        N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
+                        shipment.addN1PartyIdentification(n1);
+                        break;
+                        // TODO: need to keep working on this and add tests
+                    default:
+                        // TODO: what do we do w/ an unidentified segment
+                        break;
+                }
             }
         }
-        
     }
 }
