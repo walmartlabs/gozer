@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Document;
@@ -72,7 +73,7 @@ public class Asn856ParserTest {
         assertEquals("0000000000", isa.getSecurityInformation());
         assertEquals("ZZ", isa.getInterchangeIdQualifier());
         assertEquals("ABCDEFGHIJKLMNO", isa.getInterchangeSenderId());
-        assertEquals("ZZ", isa.getInterchangeIdQualifier_2());
+        assertEquals("ZZ", isa.getInterchangeIdQualifierTwo());
         assertEquals("123456789012345", isa.getInterchangeReceiverId());
         assertEquals("101127", isa.getInterchangeDate());
         assertEquals("1719", isa.getInterchangeTime());

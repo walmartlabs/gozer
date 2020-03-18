@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12TransactionSet;
@@ -49,6 +50,10 @@ public class X12Group {
     // GE02
     private String trailerGroupControlNumber;
 
+    /**
+     * helper method to add {@link X12TransactionSet} to list
+     * @param tx
+     */
     public void addTransactionSet(X12TransactionSet tx) {
         if (transactions == null) {
             transactions = new ArrayList<>();

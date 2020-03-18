@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
@@ -72,6 +73,26 @@ public interface X12Parser<T extends X12Document> {
     }
     
     /**
+     * parses the source data into a list of segments 
+     * using the the segment delimiter that was passed in
+     * @param sourceData
+     * @param segmentSeparatorRegEx a regex to split segments
+     * @return a {@link List} of {@link X12Segment} or empty is either parameter is missing
+     * @throws @{link PatternSyntaxException} if the regular expression is invalid
+     */
+    default List<X12Segment> splitSourceDataIntoSegments(String sourceData, String segmentSeparatorRegEx) {
+        if (StringUtils.isEmpty(sourceData) || StringUtils.isEmpty(segmentSeparatorRegEx)) {
+            return Collections.emptyList();
+        } else {
+            Character segmentDataElementDelimiter = findElementDelimiterCharacter(sourceData);
+            String[] segments = sourceData.split(segmentSeparatorRegEx);
+            return Arrays.stream(segments)
+                .map(segment -> new X12Segment(segment, segmentDataElementDelimiter))
+                .collect(Collectors.toList());
+        }
+    }
+    
+    /**
      * get the segment delimiter/separator character
      * @param sourceData
      * @return the character at the 106th position or null if there are not enough characters
@@ -97,26 +118,6 @@ public interface X12Parser<T extends X12Document> {
         }
     }
     
-    /**
-     * parses the source data into a list of segments 
-     * using the the segment delimiter that was passed in
-     * @param sourceData
-     * @param segmentSeparatorRegEx a regex to split segments
-     * @return a {@link List} of {@link X12Segment} or empty is either parameter is missing
-     * @throws @{link PatternSyntaxException} if the regular expression is invalid
-     */
-    default List<X12Segment> splitSourceDataIntoSegments(String sourceData, String segmentSeparatorRegEx) {
-        if (StringUtils.isEmpty(sourceData) || StringUtils.isEmpty(segmentSeparatorRegEx)) {
-            return Collections.emptyList();
-        } else {
-            Character segmentDataElementDelimiter = findElementDelimiterCharacter(sourceData);
-            String[] segments = sourceData.split(segmentSeparatorRegEx);
-            return Arrays.stream(segments)
-                .map(segment -> new X12Segment(segment, segmentDataElementDelimiter))
-                .collect(Collectors.toList());
-        }
-    }
-
     /**
      * convenience method that will throw X12ParserException 
      * with a message indicating that the segment that was found

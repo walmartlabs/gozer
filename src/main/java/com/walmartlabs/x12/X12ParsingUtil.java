@@ -42,7 +42,7 @@ public final class X12ParsingUtil {
     public static boolean isValidEnvelope(List<X12Segment> segmentList, String headerIdentifier, String trailerIdentifier) {
         boolean isValidEnvelope = false;
         
-        if (segmentList != null && headerIdentifier!= null && trailerIdentifier != null) {
+        if (segmentList != null && headerIdentifier != null && trailerIdentifier != null) {
             int segmentCount = segmentList.size();
             int lastSegmentIndex = segmentCount - 1;
             if (segmentCount > 1) {
@@ -109,19 +109,19 @@ public final class X12ParsingUtil {
     }
     
     /**
-     * generic method that takes a given a set of segment lines and 
-     * it will break them up into separate hierarchical loops 
-     * using the HL as the break since there is no terminating segment 
-     * for the loop - only the start of the next loop
+     * generic method that takes a given a set of segment lines and it will break
+     * them up into separate hierarchical loops using the HL as the break since
+     * there is no terminating segment for the loop - only the start of the next
+     * loop
      * 
-     * this method will only work when the first segment is an HL
-     * and when this set of segments has already been extracted from 
-     * the ST/SE and the parts of the header and trailer of the transaction set 
+     * this method will only work when the first segment is an HL and when this set
+     * of segments has already been extracted from the ST/SE and the parts of the
+     * header and trailer of the transaction set
      * 
      * @return list of {@link X12Loop} or empty list if there is a problem
      * 
-     * @throws X12ParserException if the first segment is not an HL or if the parent 
-     * that an HL loop has is not found
+     * @throws X12ParserException if the first segment is not an HL or if the parent
+     *                            that an HL loop has is not found
      */
     public static List<X12Loop> findHierarchicalLoops(List<X12Segment> segmentList) {
         List<X12Loop> loops = Collections.emptyList();
@@ -142,14 +142,12 @@ public final class X12ParsingUtil {
     }
     
     /**
-     * handle the loops and build nested structure
-     * as defined by the segment lines
+     * handle the loops and build nested structure as defined by the segment lines
      * 
      * @param segmentList
      * @return list of loops
      * 
-     * @throws an {@link X12ParserException} if id is reused an
-     * HL segment
+     * @throws an {@link X12ParserException} if id is reused an HL segment
      */
     private static List<X12Loop> processLoops(List<X12Segment> segmentList) {
         List<X12Loop> loops = new ArrayList<>();

@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.SegmentIterator;
@@ -292,7 +293,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             isa.setSecurityInformation(segment.getElement(4));
             isa.setInterchangeIdQualifier(segment.getElement(5));
             isa.setInterchangeSenderId(segment.getElement(6));
-            isa.setInterchangeIdQualifier_2(segment.getElement(7));
+            isa.setInterchangeIdQualifierTwo(segment.getElement(7));
             isa.setInterchangeReceiverId(segment.getElement(8));
             isa.setInterchangeDate(segment.getElement(9));
             isa.setInterchangeTime(segment.getElement(10));

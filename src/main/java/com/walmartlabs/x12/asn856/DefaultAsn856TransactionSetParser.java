@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.SegmentIterator;
@@ -194,6 +195,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             while (segmentIterator.hasNext()) {
                 X12Segment segment = segmentIterator.next();
                 
+                // TODO: need to keep working on this and add tests
                 switch (segment.getIdentifier()) {
                     case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
                         shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
@@ -208,7 +210,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                         N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
                         shipment.addN1PartyIdentification(n1);
                         break;
-                        // TODO: need to keep working on this and add tests
                     default:
                         // TODO: what do we do w/ an unidentified segment
                         break;
