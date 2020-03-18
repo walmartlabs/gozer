@@ -70,7 +70,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(td5);
         assertEquals("SQCA", td5.getIdentificationCode());
         
-        List<N1PartyIdentification> n1List = shipment.getN1PartyIdenfiers();
+        List<N1PartyIdentification> n1List = shipment.getN1PartyIdenfications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
 

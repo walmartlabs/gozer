@@ -49,7 +49,7 @@ public class Shipment extends X12Loop {
     /*
      * N1: Party Identifiers
      */
-    private List<N1PartyIdentification> n1PartyIdenfiers;
+    private List<N1PartyIdentification> n1PartyIdentifications;
     
     /*
      * the HL Order loops
@@ -65,10 +65,10 @@ public class Shipment extends X12Loop {
      * @param n1
      */
     public void addN1PartyIdentification(N1PartyIdentification n1) {
-        if (CollectionUtils.isEmpty(n1PartyIdenfiers)) {
-            n1PartyIdenfiers = new ArrayList<>();
+        if (CollectionUtils.isEmpty(n1PartyIdentifications)) {
+            n1PartyIdentifications = new ArrayList<>();
         }
-        n1PartyIdenfiers.add(n1);
+        n1PartyIdentifications.add(n1);
     }
     
     /**
@@ -106,12 +106,12 @@ public class Shipment extends X12Loop {
         this.td5 = td5;
     }
 
-    public List<N1PartyIdentification> getN1PartyIdenfiers() {
-        return n1PartyIdenfiers;
+    public List<N1PartyIdentification> getN1PartyIdenfications() {
+        return n1PartyIdentifications;
     }
 
-    public void setN1PartyIdenfiers(List<N1PartyIdentification> n1PartyIdenfiers) {
-        this.n1PartyIdenfiers = n1PartyIdenfiers;
+    public void setN1PartIdentifications(List<N1PartyIdentification> n1PartyIdenfiers) {
+        this.n1PartyIdentifications = n1PartyIdenfiers;
     }
 
     public List<Order> getOrders() {
