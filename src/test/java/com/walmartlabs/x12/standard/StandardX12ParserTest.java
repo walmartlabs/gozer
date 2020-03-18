@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Segment;
@@ -147,8 +148,8 @@ public class StandardX12ParserTest {
     public void test_Parsing_BaseDocument_register_each() throws IOException {
         String sourceData = new String(x12Bytes);
         StandardX12Document x12 = standardParser.parse(sourceData);
-        standardParser.registerUnhandledTransactionSet((a,b) -> {
-            assertEquals("","");
+        standardParser.registerUnhandledTransactionSet((arg1, arg2) -> {
+            assertEquals("", "");
         });
         this.verifyParsingOfBaseDocument(x12);
     }
@@ -235,7 +236,7 @@ public class StandardX12ParserTest {
         assertEquals("0000000000", isa.getSecurityInformation());
         assertEquals("ZZ", isa.getInterchangeIdQualifier());
         assertEquals("ABCDEFGHIJKLMNO", isa.getInterchangeSenderId());
-        assertEquals("ZZ", isa.getInterchangeIdQualifier_2());
+        assertEquals("ZZ", isa.getInterchangeIdQualifierTwo());
         assertEquals("123456789012345", isa.getInterchangeReceiverId());
         assertEquals("101127", isa.getInterchangeDate());
         assertEquals("1719", isa.getInterchangeTime());

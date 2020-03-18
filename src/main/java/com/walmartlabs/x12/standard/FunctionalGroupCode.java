@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.standard;
 
 /**
@@ -22,18 +23,18 @@ package com.walmartlabs.x12.standard;
  * https://www-01.ibm.com/support/docview.wss?uid=swg21548276
  */
 public enum FunctionalGroupCode {
-   DX("894"),//also 895
-   PO("850"),
-   PR("855"),
-   SH("856"),
-   BS("857"),
-   PC("860"),
-   CA("865"),
-   IN("810"),
-   AG("824"),
-   FA("997");
+    DX("894"), // also 895
+    PO("850"),
+    PR("855"),
+    SH("856"),
+    BS("857"),
+    PC("860"),
+    CA("865"),
+    IN("810"),
+    AG("824"),
+    FA("997");
 
-   private String documentType;
+    private String documentType;
 
     FunctionalGroupCode(String docType) {
         this.documentType = docType;

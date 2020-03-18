@@ -13,12 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.types;
 
 /**
- * unit of measure code set of values
- * used on DEX G8303
- * used on ASN LIN08
+ * unit of measure code set of values used on DEX G8303 used on ASN LIN08
  */
 public enum UnitMeasure {
     BX("BOX"),
@@ -45,13 +44,14 @@ public enum UnitMeasure {
     private void setDescription(String desc) {
         this.description = desc;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
 
     /**
      * Convert the code to an enum
+     * 
      * @param code
      * @return
      */

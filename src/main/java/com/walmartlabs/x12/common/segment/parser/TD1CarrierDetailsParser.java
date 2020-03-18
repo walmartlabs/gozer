@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
@@ -23,6 +24,11 @@ import org.springframework.util.StringUtils;
 
 public final class TD1CarrierDetailsParser {
 
+    /**
+     * parse the segment
+     * @param segment
+     * @return
+     */
     public static TD1CarrierDetails parse(X12Segment segment) {
         TD1CarrierDetails td1 = null;
 

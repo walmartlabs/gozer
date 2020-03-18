@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.SegmentIterator;
@@ -23,6 +24,11 @@ import com.walmartlabs.x12.common.segment.N4GeographicLocation;
 
 public final class N1PartyIdentificationParser {
 
+    /**
+     * parse the segment
+     * @param segment
+     * @return
+     */
     public static N1PartyIdentification parse(X12Segment segment) {
         N1PartyIdentification n1 = null;
 
@@ -39,24 +45,31 @@ public final class N1PartyIdentificationParser {
         return n1;
     }
 
+    /**
+     * parse the N1 segment and "attach" all related segment lines
+     * this is the preferred method to use
+     * @param segment
+     * @param segmentIterator
+     * @return
+     */
     public static N1PartyIdentification handleN1Loop(X12Segment segment, SegmentIterator segmentIterator) {
         N1PartyIdentification n1 = N1PartyIdentificationParser.parse(segment);
         boolean keepLooping = true;
         while (n1 != null && keepLooping && segmentIterator.hasNext()) {
             X12Segment nextSegment = segmentIterator.next();
             switch (nextSegment.getIdentifier()) {
-            case N3PartyLocation.PARTY_LOCATION_IDENTIFIER:
-                n1.setN3(N3PartyLocationParser.parse(nextSegment));
-                break;
-            case N4GeographicLocation.PARTY_GEOGRAPHIC_IDENTIFIER:
-                n1.setN4(N4GeographicLocationParser.parse(nextSegment));
-                break;
-            default:
-                // assume any other identifier is a break out of the N1 loop
-                // and let the other parser deal with it
-                segmentIterator.previous();
-                keepLooping = false;
-                break;
+                case N3PartyLocation.PARTY_LOCATION_IDENTIFIER:
+                    n1.setN3(N3PartyLocationParser.parse(nextSegment));
+                    break;
+                case N4GeographicLocation.PARTY_GEOGRAPHIC_IDENTIFIER:
+                    n1.setN4(N4GeographicLocationParser.parse(nextSegment));
+                    break;
+                default:
+                    // assume any other identifier is a break out of the N1 loop
+                    // and let the other parser deal with it
+                    segmentIterator.previous();
+                    keepLooping = false;
+                    break;
             }
         }
         return n1;

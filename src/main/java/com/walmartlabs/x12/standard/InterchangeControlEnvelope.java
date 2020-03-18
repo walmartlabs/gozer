@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.standard;
 
 /**
@@ -24,7 +25,7 @@ public class InterchangeControlEnvelope {
     //
     // ISA01
     private String authorizationInformationQualifier;
-   // ISA02
+    // ISA02
     private String authorizationInformation;
     // ISA03
     private String securityInformationQualifier;
@@ -35,7 +36,7 @@ public class InterchangeControlEnvelope {
     // ISA06
     private String interchangeSenderId;
     // ISA07
-    private String interchangeIdQualifier_2;
+    private String interchangeIdQualifierTwo;
     // ISA08
     private String interchangeReceiverId;
     // ISA09
@@ -111,12 +112,12 @@ public class InterchangeControlEnvelope {
         this.interchangeSenderId = interchangeSenderId;
     }
 
-    public String getInterchangeIdQualifier_2() {
-        return interchangeIdQualifier_2;
+    public String getInterchangeIdQualifierTwo() {
+        return interchangeIdQualifierTwo;
     }
 
-    public void setInterchangeIdQualifier_2(String interchangeIdQualifier_2) {
-        this.interchangeIdQualifier_2 = interchangeIdQualifier_2;
+    public void setInterchangeIdQualifierTwo(String interchangeIdQualifierTwo) {
+        this.interchangeIdQualifierTwo = interchangeIdQualifierTwo;
     }
 
     public String getInterchangeReceiverId() {

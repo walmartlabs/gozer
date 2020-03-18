@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.X12ParsingUtil;
@@ -162,7 +163,7 @@ public class X12ParsingUtilTest {
         assertEquals("333", segmentsInOrderLoop.get(0).getElement(1));
         assertEquals("REF", segmentsInOrderLoop.get(1).getIdentifier());
         
-        List<X12Loop>childrenOfOrderLoop = orderLoop.getChildLoops();
+        List<X12Loop> childrenOfOrderLoop = orderLoop.getChildLoops();
         assertNotNull(childrenOfOrderLoop);
         assertEquals(1, childrenOfOrderLoop.size());
         

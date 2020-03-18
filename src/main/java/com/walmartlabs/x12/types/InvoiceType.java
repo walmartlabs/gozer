@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.types;
 
 /**
- * debit/credit flag
- * used on the DEX G8201 
+ * debit/credit flag used on the DEX G8201
  *
  */
 public enum InvoiceType {
@@ -27,6 +27,7 @@ public enum InvoiceType {
 
     /**
      * Convert the code to an enum
+     * 
      * @param code
      * @return
      */

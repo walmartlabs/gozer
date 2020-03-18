@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Document;
@@ -25,6 +26,10 @@ public final class StandardX12Document implements X12Document {
     private InterchangeControlEnvelope interchangeControlEnvelope;
     private List<X12Group> groups;
 
+    /**
+     * helper method to add {@link X12Group} to the list
+     * @param group
+     */
     public void addGroupHeader(X12Group group) {
         if (groups == null) {
             groups = new ArrayList<>();

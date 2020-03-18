@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
@@ -20,6 +21,11 @@ import com.walmartlabs.x12.common.segment.N4GeographicLocation;
 
 public final class N4GeographicLocationParser {
 
+    /**
+     * parse the segment
+     * @param segment
+     * @return
+     */
     public static N4GeographicLocation parse(X12Segment segment) {
         N4GeographicLocation n4 = null;
 

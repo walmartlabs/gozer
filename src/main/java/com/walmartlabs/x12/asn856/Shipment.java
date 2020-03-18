@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
@@ -23,7 +24,6 @@ import com.walmartlabs.x12.standard.X12Loop;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Shipment extends X12Loop {
@@ -51,6 +51,10 @@ public class Shipment extends X12Loop {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
     }
 
+    /**
+     * helper method to add N1 to list
+     * @param n1
+     */
     public void addN1PartyIdentification(N1PartyIdentification n1) {
         if (CollectionUtils.isEmpty(n1PartyIdenfiers)) {
             n1PartyIdenfiers = new ArrayList<>();

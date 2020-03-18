@@ -95,7 +95,7 @@ public class SegmentIterator implements ListIterator<X12Segment> {
      * Inserts the specified element into the list (optional operation).
      */
     @Override
-    public void add(X12Segment e) {
+    public void add(X12Segment segment) {
         throw new UnsupportedOperationException();
     }
 
@@ -111,7 +111,7 @@ public class SegmentIterator implements ListIterator<X12Segment> {
      * Replaces the last element returned by next() or previous() with the specified element (optional operation).
      */
     @Override
-    public void set(X12Segment e) {
+    public void set(X12Segment segment) {
         throw new UnsupportedOperationException();
     }
 
