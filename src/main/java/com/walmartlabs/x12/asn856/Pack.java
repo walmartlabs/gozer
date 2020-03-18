@@ -21,11 +21,16 @@ import com.walmartlabs.x12.standard.X12Loop;
 import java.util.List;
 
 /**
+ * Represents the Pack level of information
  * 
- * Information captured in the Pack loop 
- *
  */
 public class Pack extends X12Loop {
 
+    public static final String PACK_LOOP_CODE = "P";
+    
     private List<X12Loop> loops;
+    
+    public static boolean isPackLoop(X12Loop loop) {
+        return X12Loop.isLoopWithCode(loop, PACK_LOOP_CODE);
+    }
 }

@@ -21,16 +21,16 @@ import com.walmartlabs.x12.standard.X12Loop;
 import java.util.List;
 
 /**
- * Represents the Tare (Pallet) level of information
+ * Represents the Order level of information
  * 
  */
-public class Tare extends X12Loop {
+public class Order extends X12Loop {
 
-    public static final String TARE_LOOP_CODE = "T";
+    public static final String ORDER_LOOP_CODE = "O";
     
     private List<X12Loop> loops;
     
-    public static boolean isTareLoop(X12Loop loop) {
-        return X12Loop.isLoopWithCode(loop, TARE_LOOP_CODE);
+    public static boolean isOrderLoop(X12Loop loop) {
+        return X12Loop.isLoopWithCode(loop, ORDER_LOOP_CODE);
     }
 }

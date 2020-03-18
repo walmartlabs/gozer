@@ -34,11 +34,13 @@ import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.util.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * ASN 856 is the Advance Shipping Notice Used to communicate the contents of a
@@ -78,7 +80,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
     protected void doParsing(List<X12Segment> transactionSegments, AsnTransactionSet asnTx) {
         int segmentCount = transactionSegments.size();
-        
+
         //
         // ST
         //
@@ -90,15 +92,15 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         //
         currentSegment = transactionSegments.get(1);
         this.parseBeginningSegmentForShipNotice(currentSegment, asnTx);
-        
+
         //
         // Hierarchical Loops
-        // 
+        //
         int segementAfterHierarchicalLoops = this.findSegmentAfterHierarchicalLoops(transactionSegments);
         List<X12Segment> loopSegments = transactionSegments.subList(2, segementAfterHierarchicalLoops);
         List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
         this.doLoopParsing(loops, asnTx);
-        
+
         //
         // CTT (optional)
         //
@@ -107,13 +109,13 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             this.parseTransactionTotals(currentSegment, asnTx);
             currentSegment = transactionSegments.get(segmentCount - 1);
         }
-        
+
         //
         // SE
         //
         this.parseTransactionSetTrailer(currentSegment, asnTx);
     }
-    
+
     private int findSegmentAfterHierarchicalLoops(List<X12Segment> transactionSegments) {
         int segmentCount = transactionSegments.size();
         int secondToLastSegmentIndex = segmentCount - 2;
@@ -127,15 +129,16 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             return segmentCount - 1;
         }
     }
-    
+
     /**
      * parse the BSN segment
+     * 
      * @param segment
      * @param asnTx
      */
     private void parseBeginningSegmentForShipNotice(X12Segment segment, AsnTransactionSet asnTx) {
         LOGGER.debug(segment.getIdentifier());
-        
+
         String segmentIdentifier = segment.getIdentifier();
         if (ASN_TRANSACTION_HEADER.equals(segmentIdentifier)) {
             asnTx.setPurposeCode(segment.getElement(1));
@@ -150,6 +153,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
     /**
      * parse the CTT segment
+     * 
      * @param segment
      * @param asnTx
      */
@@ -163,11 +167,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             throw X12ParsingUtil.handleUnexpectedSegment(ASN_TRANSACTION_TOTALS, segmentIdentifier);
         }
     }
-    
 
     /**
-     * currently enforcing only 1 top level HL in the transaction set
-     * (ie) only one Shipment HL
+     * currently enforcing only 1 top level HL in the transaction set (ie) only one
+     * Shipment HL
      * 
      * @param loops
      * @param asnTx
@@ -176,45 +179,226 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     protected void doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
         if (!CollectionUtils.isEmpty(loops) && loops.size() == 1) {
             X12Loop firstLoop = loops.get(0);
-            if (Shipment.isShipmentLoop(firstLoop)) {
-                this.parseShipmentLoop(firstLoop, asnTx);
-            } else {
-                throw new X12ParserException(new X12ErrorDetail("HL", "HL03", "first HL is not a shipment"));
-            }
+            this.parseShipmentLoop(firstLoop, asnTx);
         } else {
             throw new X12ParserException(new X12ErrorDetail("HL", "HL00", "expected one top level HL"));
         }
     }
+
+    /**
+     * parse a Shipment Loop
+     * 
+     */
+    private void parseShipmentLoop(X12Loop loop, AsnTransactionSet asnTx) {
+        //
+        // should be a Shipment
+        //
+        LOGGER.debug(loop.getCode());
+        if (Shipment.isShipmentLoop(loop)) {
+            Shipment shipment = new Shipment();
+            asnTx.setShipment(shipment);
+
+            //
+            // handle the segments that are associated w/ the Shipment Loop
+            //
+            this.handleLoopSegments(loop, shipment, this::doShipmentSegments);
+
+            //
+            // handle the children loops
+            //
+            List<X12Loop> shipmentChildLoops = loop.getChildLoops();
+            if (!CollectionUtils.isEmpty(shipmentChildLoops)) {
+                shipmentChildLoops.forEach(childLoop -> {
+                    this.parseOrderLoop(childLoop, shipment);
+                });
+            }
+        } else {
+            throw new X12ParserException(new X12ErrorDetail("HL", "HL03", "first HL is not a shipment"));
+        }
+    }
+
+    /**
+     * we always expect the children of a shipment to be an order
+     * 
+     * @param loop
+     * @param shipment
+     */
+    private void parseOrderLoop(X12Loop loop, Shipment shipment) {
+        //
+        // should be an Order
+        //
+        LOGGER.debug(loop.getCode());
+        if (Order.isOrderLoop(loop)) {
+            Order order = new Order();
+            shipment.addOrder(order);
+
+            //
+            // handle the segments that are associated w/ the Order Loop
+            //
+            this.handleLoopSegments(loop, order, this::doOrderSegments);
+
+            //
+            // handle the children loops
+            // these loops can appear in a variety of orders
+            //
+            List<X12Loop> orderChildLoops = loop.getChildLoops();
+            if (!CollectionUtils.isEmpty(orderChildLoops)) {
+                orderChildLoops.forEach(childLoop -> {
+                    this.parseOrderChildLoop(childLoop, order);
+                });
+            }
+
+        } else {
+            throw new X12ParserException(
+                new X12ErrorDetail("HL", "HL03", "expected Order HL but got " + loop.getCode()));
+        }
+    }
     
-    private void parseShipmentLoop(X12Loop shipmentLoop, AsnTransactionSet asnTx) {
-        Shipment shipment = new Shipment();
-        
-        List<X12Segment> shipmentSegments = shipmentLoop.getSegments();
+    private void parseTareLoop(X12Loop loop) {
+        //
+        // should be a Tare
+        //
+        LOGGER.debug(loop.getCode());
+        if (Tare.isTareLoop(loop)) {
+            Tare tare = new Tare();
+            // TODO: how to attach to prev loop
+            //preLoop.addTare(tares);
+
+            //
+            // handle the segments that are associated w/ the Order Loop
+            //
+            this.handleLoopSegments(loop, null, this::doTaresSegments);
+
+            //
+            // handle the children loops
+            // these loops can appear in a variety of orders
+            //
+            List<X12Loop> tareChildLoops = loop.getChildLoops();
+            if (!CollectionUtils.isEmpty(tareChildLoops)) {
+                tareChildLoops.forEach(childLoop -> {
+                    
+                    // TODO
+                    
+                });
+            }
+        }        
+    }
+    
+    private void parseOrderChildLoop(X12Loop loop, Order order) {
+        // loops in an order can be in different sequencing 
+        switch (loop.getCode()) {
+            case Tare.TARE_LOOP_CODE:
+                this.parseTareLoop(loop);
+                break;
+            case Pack.PACK_LOOP_CODE:
+                break;
+            case Item.ITEM__LOOP_CODE:
+                break;                 
+            default:
+                break;
+        }
+    }
+
+    /**
+     * template for processing segments associated with a loop 
+     * 
+     * @param loop
+     * @param loopObject
+     * @param function
+     */
+    private <T> void handleLoopSegments(X12Loop loop, T loopObject, TriConsumer<X12Segment, SegmentIterator, T> function) {
+        List<X12Segment> shipmentSegments = loop.getSegments();
         if (!CollectionUtils.isEmpty(shipmentSegments)) {
             SegmentIterator segmentIterator = new SegmentIterator(shipmentSegments);
             while (segmentIterator.hasNext()) {
                 X12Segment segment = segmentIterator.next();
-                
-                // TODO: need to keep working on this and add tests
-                switch (segment.getIdentifier()) {
-                    case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                        shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
-                        break;
-                    case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                        shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
-                        break;                     
-                    case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
-                        shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
-                        break;
-                    case N1PartyIdentification.PARTY_IDENTIFICATION_IDENTIFIER:
-                        N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
-                        shipment.addN1PartyIdentification(n1);
-                        break;
-                    default:
-                        // TODO: what do we do w/ an unidentified segment
-                        break;
-                }
+                LOGGER.debug(segment.getIdentifier());
+
+                function.accept(segment, segmentIterator, loopObject);
             }
+        }  
+    }
+    
+
+
+    /**
+     * handle the segment lines that are part of the Order (appearing before the next
+     * HL loop)
+     * 
+     * @param segment
+     * @param segmentIterator
+     * @param shipment
+     */
+    private void doShipmentSegments(X12Segment segment, SegmentIterator segmentIterator, Shipment shipment) {
+        // TODO: need to keep working on this and add tests
+        switch (segment.getIdentifier()) {
+            case TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                shipment.setTd1(TD1CarrierDetailsParser.parse(segment));
+                break;
+            case TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                shipment.setTd3(TD3CarrierDetailsParser.parse(segment));
+                break;
+            case TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER:
+                shipment.setTd5(TD5CarrierDetailsParser.parse(segment));
+                break;
+            case N1PartyIdentification.PARTY_IDENTIFICATION_IDENTIFIER:
+                N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
+                shipment.addN1PartyIdentification(n1);
+                break;
+            default:
+                // TODO: what do we do w/ an unidentified segment
+                break;
         }
+    }
+    
+    /**
+     * handle the segment lines that are part of the Order (appearing before the next
+     * HL loop)
+     * 
+     * @param segment
+     * @param segmentIterator
+     * @param order
+     */
+    private void doOrderSegments(X12Segment segment, SegmentIterator segmentIterator, Order order) {
+        // TODO: need to keep working on this and add tests
+        switch (segment.getIdentifier()) {
+            default:
+                // TODO: what do we do w/ an unidentified segment
+                break;
+        }
+    }
+    
+    /**
+     * handle the segment lines that are part of the Tare (appearing before the next
+     * HL loop)
+     * 
+     * @param segment
+     * @param segmentIterator
+     * @param tare
+     */
+    private void doTaresSegments(X12Segment segment, SegmentIterator segmentIterator, Tare tare) {
+    }
+
+
+    /**
+     * handle the segment lines that are part of the Pack (appearing before the next
+     * HL loop)
+     * 
+     * @param segment
+     * @param segmentIterator
+     * @param pack
+     */
+    private void doPackSegments(X12Segment segment, SegmentIterator segmentIterator, Pack item) {
+    }
+
+    /**
+     * handle the segment lines that are part of the Item (appearing before the next
+     * HL loop)
+     * 
+     * @param segment
+     * @param segmentIterator
+     * @param items
+     */
+    private void doItemSegments(X12Segment segment, SegmentIterator segmentIterator, Item item) {
     }
 }

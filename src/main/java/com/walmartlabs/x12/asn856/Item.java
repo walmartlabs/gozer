@@ -20,7 +20,17 @@ import com.walmartlabs.x12.standard.X12Loop;
 
 import java.util.List;
 
+/**
+ * Represents the Item level of information
+ * 
+ */
 public class Item extends X12Loop {
-
+    
+    public static final String ITEM__LOOP_CODE = "I";
+    
     private List<X12Loop> loops;
+    
+    public static boolean isItemLoop(X12Loop loop) {
+        return X12Loop.isLoopWithCode(loop, ITEM__LOOP_CODE);
+    }
 }

@@ -26,6 +26,10 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the Shipment level of information
+ * 
+ */
 public class Shipment extends X12Loop {
 
     public static final String SHIPMENT_LOOP_CODE = "S";
@@ -46,6 +50,11 @@ public class Shipment extends X12Loop {
      * N1: Party Identifiers
      */
     private List<N1PartyIdentification> n1PartyIdenfiers;
+    
+    /*
+     * the HL Order loops
+     */
+    private List<Order> orders;
 
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
@@ -60,6 +69,17 @@ public class Shipment extends X12Loop {
             n1PartyIdenfiers = new ArrayList<>();
         }
         n1PartyIdenfiers.add(n1);
+    }
+    
+    /**
+     * helper method to add Order to list
+     * @param n1
+     */
+    public void addOrder(Order order) {
+        if (CollectionUtils.isEmpty(orders)) {
+            orders = new ArrayList<>();
+        }
+        orders.add(order);
     }
 
     public TD1CarrierDetails getTd1() {
@@ -92,6 +112,14 @@ public class Shipment extends X12Loop {
 
     public void setN1PartyIdenfiers(List<N1PartyIdentification> n1PartyIdenfiers) {
         this.n1PartyIdenfiers = n1PartyIdenfiers;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
 }
