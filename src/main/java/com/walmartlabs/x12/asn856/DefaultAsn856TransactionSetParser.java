@@ -21,10 +21,12 @@ import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
+import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
 import com.walmartlabs.x12.common.segment.parser.N1PartyIdentificationParser;
+import com.walmartlabs.x12.common.segment.parser.PIDPartyIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.TD1CarrierDetailsParser;
 import com.walmartlabs.x12.common.segment.parser.TD3CarrierDetailsParser;
 import com.walmartlabs.x12.common.segment.parser.TD5CarrierDetailsParser;
@@ -32,6 +34,7 @@ import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
+import com.walmartlabs.x12.standard.X12ParsedLoop;
 import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.TriConsumer;
@@ -188,24 +191,26 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * parse a Shipment Loop
      * 
      */
-    private void parseShipmentLoop(X12Loop loop, AsnTransactionSet asnTx) {
+    private void parseShipmentLoop(X12Loop unparsedLoop, AsnTransactionSet asnTx) {
         //
         // should be a Shipment
         //
-        LOGGER.debug(loop.getCode());
-        if (Shipment.isShipmentLoop(loop)) {
+        LOGGER.debug(unparsedLoop.getCode());
+        if (Shipment.isShipmentLoop(unparsedLoop)) {
+            // TODO: copy info from loop to Shipment
             Shipment shipment = new Shipment();
+            shipment.copyAttributes(unparsedLoop);
             asnTx.setShipment(shipment);
 
             //
             // handle the segments that are associated w/ the Shipment Loop
             //
-            this.handleLoopSegments(loop, shipment, this::doShipmentSegments);
+            this.handleLoopSegments(unparsedLoop, shipment, this::doShipmentSegments);
 
             //
             // handle the children loops
             //
-            List<X12Loop> shipmentChildLoops = loop.getChildLoops();
+            List<X12Loop> shipmentChildLoops = unparsedLoop.getChildLoops();
             if (!CollectionUtils.isEmpty(shipmentChildLoops)) {
                 shipmentChildLoops.forEach(childLoop -> {
                     this.parseOrderLoop(childLoop, shipment);
@@ -219,85 +224,84 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     /**
      * we always expect the children of a shipment to be an order
      * 
-     * @param loop
+     * @param unparsedLoop
      * @param shipment
      */
-    private void parseOrderLoop(X12Loop loop, Shipment shipment) {
+    private void parseOrderLoop(X12Loop unparsedLoop, Shipment shipment) {
         //
         // should be an Order
         //
-        LOGGER.debug(loop.getCode());
-        if (Order.isOrderLoop(loop)) {
+        LOGGER.debug(unparsedLoop.getCode());
+        if (Order.isOrderLoop(unparsedLoop)) {
             Order order = new Order();
-            shipment.addOrder(order);
+            order.copyAttributes(unparsedLoop);
+            shipment.addParsedChildLoop(order);
 
             //
             // handle the segments that are associated w/ the Order Loop
             //
-            this.handleLoopSegments(loop, order, this::doOrderSegments);
+            this.handleLoopSegments(unparsedLoop, order, this::doOrderSegments);
 
             //
             // handle the children loops
             // these loops can appear in a variety of orders
             //
-            List<X12Loop> orderChildLoops = loop.getChildLoops();
+            List<X12Loop> orderChildLoops = unparsedLoop.getChildLoops();
             if (!CollectionUtils.isEmpty(orderChildLoops)) {
                 orderChildLoops.forEach(childLoop -> {
-                    this.parseOrderChildLoop(childLoop, order);
+                    this.parseChildrenLoop(childLoop, order);
                 });
             }
 
         } else {
             throw new X12ParserException(
-                new X12ErrorDetail("HL", "HL03", "expected Order HL but got " + loop.getCode()));
+                new X12ErrorDetail("HL", "HL03", "expected Order HL but got " + unparsedLoop.getCode()));
         }
     }
     
-    private void parseTareLoop(X12Loop loop) {
-        //
-        // should be a Tare
-        //
-        LOGGER.debug(loop.getCode());
-        if (Tare.isTareLoop(loop)) {
-            Tare tare = new Tare();
-            // TODO: how to attach to prev loop
-            //preLoop.addTare(tares);
-
-            //
-            // handle the segments that are associated w/ the Order Loop
-            //
-            this.handleLoopSegments(loop, null, this::doTaresSegments);
-
-            //
-            // handle the children loops
-            // these loops can appear in a variety of orders
-            //
-            List<X12Loop> tareChildLoops = loop.getChildLoops();
-            if (!CollectionUtils.isEmpty(tareChildLoops)) {
-                tareChildLoops.forEach(childLoop -> {
-                    
-                    // TODO
-                    
-                });
-            }
-        }        
-    }
-    
-    private void parseOrderChildLoop(X12Loop loop, Order order) {
+    private void parseChildrenLoop(X12Loop unparsedLoop, X12ParsedLoop parentLoop) {
         // loops in an order can be in different sequencing 
-        switch (loop.getCode()) {
+        switch (unparsedLoop.getCode()) {
             case Tare.TARE_LOOP_CODE:
-                this.parseTareLoop(loop);
                 break;
             case Pack.PACK_LOOP_CODE:
                 break;
             case Item.ITEM__LOOP_CODE:
+                this.parseItemLoop(unparsedLoop, parentLoop);
                 break;                 
             default:
                 break;
         }
     }
+    
+    private void parseItemLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
+        //
+        // should be an Item
+        //
+        LOGGER.debug(unparsedLoop.getCode());
+        if (Item.isItemLoop(unparsedLoop)) {
+            Item item = new Item();
+            item.copyAttributes(unparsedLoop);
+            parentLoop.addParsedChildLoop(item);
+            
+            //
+            // handle the segments that are associated w/ the Order Loop
+            //
+            this.handleLoopSegments(unparsedLoop, item, this::doItemSegments);
 
+            //
+            // handle the children loops
+            // these loops can appear in a variety of orders
+            //
+            List<X12Loop> itemChildLoops = unparsedLoop.getChildLoops();
+            if (!CollectionUtils.isEmpty(itemChildLoops)) {
+                itemChildLoops.forEach(childLoop -> {
+                    this.parseChildrenLoop(childLoop, item);                    
+                });
+            }
+        }        
+    }
+    
     /**
      * template for processing segments associated with a loop 
      * 
@@ -376,6 +380,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param tare
      */
     private void doTaresSegments(X12Segment segment, SegmentIterator segmentIterator, Tare tare) {
+        // TODO: need to keep working on this and add tests
+        switch (segment.getIdentifier()) {
+            default:
+                // TODO: what do we do w/ an unidentified segment
+                break;
+        }    
     }
 
 
@@ -388,6 +398,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param pack
      */
     private void doPackSegments(X12Segment segment, SegmentIterator segmentIterator, Pack item) {
+        // TODO: need to keep working on this and add tests
+        switch (segment.getIdentifier()) {
+            default:
+                // TODO: what do we do w/ an unidentified segment
+                break;
+        }    
     }
 
     /**
@@ -399,5 +415,14 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param items
      */
     private void doItemSegments(X12Segment segment, SegmentIterator segmentIterator, Item item) {
+        // TODO: need to keep working on this and add tests
+        switch (segment.getIdentifier()) {
+        case PIDProductIdentification.PRODUCT_ID_IDENTIFIER:
+            item.setPid(PIDPartyIdentificationParser.parse(segment));
+            break;
+        default:
+            // TODO: what do we do w/ an unidentified segment
+            break;
+    }    
     }
 }

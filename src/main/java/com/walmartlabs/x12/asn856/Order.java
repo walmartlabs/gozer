@@ -17,20 +17,18 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.standard.X12Loop;
-
-import java.util.List;
+import com.walmartlabs.x12.standard.X12ParsedLoop;
 
 /**
  * Represents the Order level of information
  * 
  */
-public class Order extends X12Loop {
+public class Order extends X12ParsedLoop {
 
     public static final String ORDER_LOOP_CODE = "O";
-    
-    private List<X12Loop> loops;
     
     public static boolean isOrderLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ORDER_LOOP_CODE);
     }
+    
 }

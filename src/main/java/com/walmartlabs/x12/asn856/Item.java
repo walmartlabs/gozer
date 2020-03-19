@@ -16,21 +16,34 @@ limitations under the License.
 
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.standard.X12Loop;
-
-import java.util.List;
+import com.walmartlabs.x12.standard.X12ParsedLoop;
 
 /**
  * Represents the Item level of information
  * 
  */
-public class Item extends X12Loop {
+public class Item extends X12ParsedLoop {
     
     public static final String ITEM__LOOP_CODE = "I";
     
-    private List<X12Loop> loops;
+    /*
+     * PID: Product Idenfication
+     */
+    private PIDProductIdentification pid;
     
     public static boolean isItemLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ITEM__LOOP_CODE);
     }
+
+    public PIDProductIdentification getPid() {
+        return pid;
+    }
+
+    public void setPid(PIDProductIdentification pid) {
+        this.pid = pid;
+    }
+    
+    
 }

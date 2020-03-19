@@ -21,6 +21,7 @@ import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
 import com.walmartlabs.x12.standard.X12Loop;
+import com.walmartlabs.x12.standard.X12ParsedLoop;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import java.util.List;
  * Represents the Shipment level of information
  * 
  */
-public class Shipment extends X12Loop {
+public class Shipment extends X12ParsedLoop {
 
     public static final String SHIPMENT_LOOP_CODE = "S";
 
@@ -51,11 +52,6 @@ public class Shipment extends X12Loop {
      */
     private List<N1PartyIdentification> n1PartyIdentifications;
     
-    /*
-     * the HL Order loops
-     */
-    private List<Order> orders;
-
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
     }
@@ -71,17 +67,6 @@ public class Shipment extends X12Loop {
         n1PartyIdentifications.add(n1);
     }
     
-    /**
-     * helper method to add Order to list
-     * @param n1
-     */
-    public void addOrder(Order order) {
-        if (CollectionUtils.isEmpty(orders)) {
-            orders = new ArrayList<>();
-        }
-        orders.add(order);
-    }
-
     public TD1CarrierDetails getTd1() {
         return td1;
     }
@@ -112,14 +97,6 @@ public class Shipment extends X12Loop {
 
     public void setN1PartIdentifications(List<N1PartyIdentification> n1PartyIdenfiers) {
         this.n1PartyIdentifications = n1PartyIdenfiers;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
     }
 
 }

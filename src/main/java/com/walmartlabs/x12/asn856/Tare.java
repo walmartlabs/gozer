@@ -17,18 +17,15 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.standard.X12Loop;
-
-import java.util.List;
+import com.walmartlabs.x12.standard.X12ParsedLoop;
 
 /**
  * Represents the Tare (Pallet) level of information
  * 
  */
-public class Tare extends X12Loop {
+public class Tare extends X12ParsedLoop {
 
     public static final String TARE_LOOP_CODE = "T";
-    
-    private List<X12Loop> loops;
     
     public static boolean isTareLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, TARE_LOOP_CODE);

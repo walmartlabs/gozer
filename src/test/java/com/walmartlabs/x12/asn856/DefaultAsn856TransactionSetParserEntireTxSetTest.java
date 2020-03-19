@@ -21,17 +21,16 @@ import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
 import com.walmartlabs.x12.common.segment.N4GeographicLocation;
+import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
-import com.walmartlabs.x12.common.segment.parser.N3PartyLocationParser;
-import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.standard.X12Loop;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -58,6 +57,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         
         Shipment shipment = asnTx.getShipment();
         assertNotNull(shipment);
+        assertEquals("S", shipment.getCode());
         
         TD1CarrierDetails td1 = shipment.getTd1();
         assertNotNull(td1);
@@ -96,9 +96,32 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(n4);
         assertEquals("BEAVERTON", n4.getCityName());
         
-        List<Order> orderList = shipment.getOrders();
-        assertNotNull(orderList);
-        assertEquals(1, orderList.size());
+        List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
+        assertNotNull(shipmentChildLoops);
+        assertEquals(1, shipmentChildLoops.size());
+        
+        X12Loop shipmentChildLoop = shipmentChildLoops.get(0);
+        assertNotNull(shipmentChildLoop);
+        assertTrue(shipmentChildLoop instanceof Order);
+        
+        Order order = (Order) shipmentChildLoop;
+        assertNotNull(order);
+        assertEquals("O", order.getCode());
+        
+        List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
+        assertNotNull(orderChildLoops);
+        assertEquals(1, orderChildLoops.size());
+        
+        X12Loop orderChildLoop = orderChildLoops.get(0);
+        assertNotNull(orderChildLoop);
+        assertTrue(orderChildLoop instanceof Item);
+        
+        Item item = (Item) orderChildLoop;
+        assertEquals("I", item.getCode());
+        
+        PIDProductIdentification pid = item.getPid();
+        assertNotNull(pid);
+        assertEquals("POTATO RED SKIN WALMART 6/4#", pid.getDescription());
         
     }
     
@@ -127,6 +150,9 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         txSegments.add(new X12Segment("REF*IA*579284804"));
         
         txSegments.add(new X12Segment("HL*3*2*I"));
+        txSegments.add(new X12Segment("LIN**IN*008021683*UP*008113191693"));
+        txSegments.add(new X12Segment("SN1**24*CA"));
+        txSegments.add(new X12Segment("PID*F*08***POTATO RED SKIN WALMART 6/4#"));
         
         txSegments.add(new X12Segment("HL*4*3*P"));
         txSegments.add(new X12Segment("MAN*UC*10081131916931"));
@@ -135,15 +161,4 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         
         return txSegments;
     }
-    /*
-
-
-HL*3*2*I
-LIN**IN*008021683*UP*008113191693
-SN1**24*CA
-PID*F*08***POTATO RED SKIN WALMART 6/4#
-
-HL*4*3*P
-MAN*UC*10081131916931
-     */
 }
