@@ -16,6 +16,9 @@ limitations under the License.
 
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
+import com.walmartlabs.x12.asn856.segment.PALPalletType;
+import com.walmartlabs.x12.common.segment.PKGPackaging;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 
@@ -26,8 +29,46 @@ import com.walmartlabs.x12.standard.X12ParsedLoop;
 public class Tare extends X12ParsedLoop {
 
     public static final String TARE_LOOP_CODE = "T";
-    
+
+    /*
+     * PAL: Pallet Type
+     */
+    private PALPalletType pal;
+    /*
+     * PKG: Packaging
+     */
+    private PKGPackaging pkg;
+    /*
+     * MAN: Marking
+     */
+    private MANMarkNumber man;
+
     public static boolean isTareLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, TARE_LOOP_CODE);
     }
+
+    public PALPalletType getPal() {
+        return pal;
+    }
+
+    public void setPal(PALPalletType pal) {
+        this.pal = pal;
+    }
+
+    public PKGPackaging getPkg() {
+        return pkg;
+    }
+
+    public void setPkg(PKGPackaging pkg) {
+        this.pkg = pkg;
+    }
+
+    public MANMarkNumber getMan() {
+        return man;
+    }
+
+    public void setMan(MANMarkNumber man) {
+        this.man = man;
+    }
+
 }

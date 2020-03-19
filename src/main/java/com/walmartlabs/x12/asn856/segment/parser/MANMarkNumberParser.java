@@ -14,33 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12.common.segment.parser;
+package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.PIDProductIdentification;
+import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
 
-public final class PIDPartyIdentificationParser {
+public final class MANMarkNumberParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static PIDProductIdentification parse(X12Segment segment) {
-        PIDProductIdentification pid = null;
+    public static MANMarkNumber parse(X12Segment segment) {
+        MANMarkNumber man = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (PIDProductIdentification.IDENTIFIER.equals(segmentIdentifier)) {
-                pid = new PIDProductIdentification();
-                pid.setItemDescriptionType(segment.getElement(1));
-                pid.setDescription(segment.getElement(5));
+            if (MANMarkNumber.IDENTIFIER.equals(segmentIdentifier)) {
+                man = new MANMarkNumber();
+                man.setQualifier(segment.getElement(1));
+                man.setNumber(segment.getElement(2));
             }
         }
-        return pid;
+        return man;
     }
 
-    private PIDPartyIdentificationParser() {
+    private MANMarkNumberParser() {
         // you can't make me
     }
 }

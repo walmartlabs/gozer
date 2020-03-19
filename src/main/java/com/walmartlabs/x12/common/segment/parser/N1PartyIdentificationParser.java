@@ -34,7 +34,7 @@ public final class N1PartyIdentificationParser {
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (N1PartyIdentification.PARTY_IDENTIFICATION_IDENTIFIER.equals(segmentIdentifier)) {
+            if (N1PartyIdentification.IDENTIFIER.equals(segmentIdentifier)) {
                 n1 = new N1PartyIdentification();
                 n1.setEntityIdentifierCode(segment.getElement(1));
                 n1.setName(segment.getElement(2));
@@ -58,10 +58,10 @@ public final class N1PartyIdentificationParser {
         while (n1 != null && keepLooping && segmentIterator.hasNext()) {
             X12Segment nextSegment = segmentIterator.next();
             switch (nextSegment.getIdentifier()) {
-                case N3PartyLocation.PARTY_LOCATION_IDENTIFIER:
+                case N3PartyLocation.IDENTIFIER:
                     n1.setN3(N3PartyLocationParser.parse(nextSegment));
                     break;
-                case N4GeographicLocation.PARTY_GEOGRAPHIC_IDENTIFIER:
+                case N4GeographicLocation.IDENTIFIER:
                     n1.setN4(N4GeographicLocationParser.parse(nextSegment));
                     break;
                 default:

@@ -17,25 +17,25 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.ConversionUtil;
 import org.springframework.util.StringUtils;
 
-public final class TD1CarrierDetailsParser {
+public final class TD1CarrierDetailParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static TD1CarrierDetails parse(X12Segment segment) {
-        TD1CarrierDetails td1 = null;
+    public static TD1CarrierDetail parse(X12Segment segment) {
+        TD1CarrierDetail td1 = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (TD1CarrierDetails.CARRIER_DETAILS_IDENTIFIER.equals(segmentIdentifier)) {
-                td1 = new TD1CarrierDetails();
+            if (TD1CarrierDetail.IDENTIFIER.equals(segmentIdentifier)) {
+                td1 = new TD1CarrierDetail();
                 String packagingCode = segment.getElement(1);
                 td1.setRawPackagingCode(packagingCode);
                 if (!StringUtils.isEmpty(packagingCode)) {
@@ -53,7 +53,7 @@ public final class TD1CarrierDetailsParser {
         return td1;
     }
 
-    private TD1CarrierDetailsParser() {
+    private TD1CarrierDetailParser() {
         // you can't make me
     }
 }

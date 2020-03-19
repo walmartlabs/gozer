@@ -22,7 +22,7 @@ package com.walmartlabs.x12.common.segment;
  */
 public class N3PartyLocation {
 
-    public static final String PARTY_LOCATION_IDENTIFIER = "N3";
+    public static final String IDENTIFIER = "N3";
 
     // N301
     private String addressInfoOne;

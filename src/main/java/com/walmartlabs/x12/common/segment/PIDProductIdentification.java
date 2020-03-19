@@ -7,7 +7,7 @@ package com.walmartlabs.x12.common.segment;
  */
 public class PIDProductIdentification {
 
-    public static final String PRODUCT_ID_IDENTIFIER = "PID";
+    public static final String IDENTIFIER = "PID";
 
     // PID01
     private String itemDescriptionType;

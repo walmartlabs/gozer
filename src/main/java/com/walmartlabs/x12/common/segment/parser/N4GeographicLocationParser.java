@@ -31,7 +31,7 @@ public final class N4GeographicLocationParser {
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (N4GeographicLocation.PARTY_GEOGRAPHIC_IDENTIFIER.equals(segmentIdentifier)) {
+            if (N4GeographicLocation.IDENTIFIER.equals(segmentIdentifier)) {
                 n4 = new N4GeographicLocation();
                 n4.setCityName(segment.getElement(1));
                 n4.setStateOrProvinceCode(segment.getElement(2));

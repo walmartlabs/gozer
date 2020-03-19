@@ -17,9 +17,9 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
-import com.walmartlabs.x12.common.segment.TD1CarrierDetails;
-import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
-import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
+import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
+import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import org.springframework.util.CollectionUtils;
@@ -38,15 +38,15 @@ public class Shipment extends X12ParsedLoop {
     /*
      * TD1: Carrier Details
      */
-    private TD1CarrierDetails td1;
+    private TD1CarrierDetail td1;
     /*
      * TD3: Carrier Details
      */
-    private TD3CarrierDetails td3;
+    private TD3CarrierDetail td3;
     /*
      * TD5: Carrier Details
      */
-    private TD5CarrierDetails td5;
+    private TD5CarrierDetail td5;
     /*
      * N1: Party Identifiers
      */
@@ -67,27 +67,27 @@ public class Shipment extends X12ParsedLoop {
         n1PartyIdentifications.add(n1);
     }
     
-    public TD1CarrierDetails getTd1() {
+    public TD1CarrierDetail getTd1() {
         return td1;
     }
 
-    public void setTd1(TD1CarrierDetails td1) {
+    public void setTd1(TD1CarrierDetail td1) {
         this.td1 = td1;
     }
 
-    public TD3CarrierDetails getTd3() {
+    public TD3CarrierDetail getTd3() {
         return td3;
     }
 
-    public void setTd3(TD3CarrierDetails td3) {
+    public void setTd3(TD3CarrierDetail td3) {
         this.td3 = td3;
     }
 
-    public TD5CarrierDetails getTd5() {
+    public TD5CarrierDetail getTd5() {
         return td5;
     }
 
-    public void setTd5(TD5CarrierDetails td5) {
+    public void setTd5(TD5CarrierDetail td5) {
         this.td5 = td5;
     }
 

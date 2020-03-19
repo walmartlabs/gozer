@@ -17,33 +17,30 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
+import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 
-public final class TD5CarrierDetailsParser {
+public final class REFReferenceInformationParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static TD5CarrierDetails parse(X12Segment segment) {
-        TD5CarrierDetails td5 = null;
+    public static REFReferenceInformation parse(X12Segment segment) {
+        REFReferenceInformation ref = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (TD5CarrierDetails.CARRIER_DETAILS_IDENTIFIER.equals(segmentIdentifier)) {
-                td5 = new TD5CarrierDetails();
-                td5.setRoutingSequenceCode(segment.getElement(1));
-                td5.setIdentificationCodeQualifier(segment.getElement(2));
-                td5.setIdentificationCode(segment.getElement(3));
-                td5.setTransportationMethodTypeCode(segment.getElement(4));
-                td5.setRoutingDescription(segment.getElement(5));
+            if (REFReferenceInformation.IDENTIFIER.equals(segmentIdentifier)) {
+                ref = new REFReferenceInformation();
+                ref.setReferenceIdentificationQualifier(segment.getElement(1));
+                ref.setReferenceIdentification(segment.getElement(2));
             }
         }
-        return td5;
+        return ref;
     }
 
-    private TD5CarrierDetailsParser() {
+    private REFReferenceInformationParser() {
         // you can't make me
     }
 }

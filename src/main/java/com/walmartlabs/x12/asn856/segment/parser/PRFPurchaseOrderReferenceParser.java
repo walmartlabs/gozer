@@ -14,33 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12.common.segment.parser;
+package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.PIDProductIdentification;
+import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
 
-public final class PIDPartyIdentificationParser {
+public final class PRFPurchaseOrderReferenceParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static PIDProductIdentification parse(X12Segment segment) {
-        PIDProductIdentification pid = null;
+    public static PRFPurchaseOrderReference parse(X12Segment segment) {
+        PRFPurchaseOrderReference prf = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (PIDProductIdentification.IDENTIFIER.equals(segmentIdentifier)) {
-                pid = new PIDProductIdentification();
-                pid.setItemDescriptionType(segment.getElement(1));
-                pid.setDescription(segment.getElement(5));
+            if (PRFPurchaseOrderReference.IDENTIFIER.equals(segmentIdentifier)) {
+                prf = new PRFPurchaseOrderReference();
+                prf.setPurchaseOrderNumber(segment.getElement(1));
+                prf.setDate(segment.getElement(4));
             }
         }
-        return pid;
+        return prf;
     }
 
-    private PIDPartyIdentificationParser() {
+    private PRFPurchaseOrderReferenceParser() {
         // you can't make me
     }
 }

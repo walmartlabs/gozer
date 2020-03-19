@@ -17,32 +17,32 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.TD3CarrierDetails;
+import com.walmartlabs.x12.common.segment.PKGPackaging;
 
-public final class TD3CarrierDetailsParser {
+public final class PKGPackagingParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static TD3CarrierDetails parse(X12Segment segment) {
-        TD3CarrierDetails td3 = null;
+    public static PKGPackaging parse(X12Segment segment) {
+        PKGPackaging pkg = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (TD3CarrierDetails.CARRIER_DETAILS_IDENTIFIER.equals(segmentIdentifier)) {
-                td3 = new TD3CarrierDetails();
-                td3.setEquipmentDescriptionCode(segment.getElement(1));
-                td3.setEquipmentInitial(segment.getElement(2));
-                td3.setEquipmentNumber(segment.getElement(3));
-                td3.setSealNumber(segment.getElement(9));
+            if (PKGPackaging.IDENTIFIER.equals(segmentIdentifier)) {
+                pkg = new PKGPackaging();
+                pkg.setItemDescriptionType(segment.getElement(1));
+                pkg.setPackagingCharacteristicCode(segment.getElement(2));
+                pkg.setAgencyQualifierCode(segment.getElement(3));
+                pkg.setPackagingDescriptionCode(segment.getElement(4));
             }
         }
-        return td3;
+        return pkg;
     }
 
-    private TD3CarrierDetailsParser() {
+    private PKGPackagingParser() {
         // you can't make me
     }
 }

@@ -17,30 +17,33 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.PIDProductIdentification;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 
-public final class PIDPartyIdentificationParser {
+public final class TD5CarrierDetailParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static PIDProductIdentification parse(X12Segment segment) {
-        PIDProductIdentification pid = null;
+    public static TD5CarrierDetail parse(X12Segment segment) {
+        TD5CarrierDetail td5 = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (PIDProductIdentification.IDENTIFIER.equals(segmentIdentifier)) {
-                pid = new PIDProductIdentification();
-                pid.setItemDescriptionType(segment.getElement(1));
-                pid.setDescription(segment.getElement(5));
+            if (TD5CarrierDetail.IDENTIFIER.equals(segmentIdentifier)) {
+                td5 = new TD5CarrierDetail();
+                td5.setRoutingSequenceCode(segment.getElement(1));
+                td5.setIdentificationCodeQualifier(segment.getElement(2));
+                td5.setIdentificationCode(segment.getElement(3));
+                td5.setTransportationMethodTypeCode(segment.getElement(4));
+                td5.setRoutingDescription(segment.getElement(5));
             }
         }
-        return pid;
+        return td5;
     }
 
-    private PIDPartyIdentificationParser() {
+    private TD5CarrierDetailParser() {
         // you can't make me
     }
 }
