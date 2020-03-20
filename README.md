@@ -13,7 +13,7 @@ This open source library, available through @WalmartLabs, provides Java based cl
 | X12     	| Name                             	  | Description 	  | X12 Version(s) |
 |---------	|-----------------------------------   |-------------	  |--------------  |
 | DEX 894 	| Delivery/Return Base Record 	      | DSD deliveries | 4010,5010      |
-| ASN 856   	| Ship Notice/Manifest Transaction Set | Advance Ship Notice | WIP |
+| ASN 856   	| Ship Notice/Manifest Transaction Set | Advance Ship Notice | 5010 |
 | PO 850   	| Purchase Order Transaction Set | Purchase Order | WIP |
 
 
@@ -23,15 +23,14 @@ The Agile development team at @WalmartLabs that is responsible for the design an
 
 ## Basic Design Approach
 
-Gozer seeks to provide more than a generic X12 parsing capability that turns an EDI X12 message into a list of segments and elements. Gozer hopes to provide a library of easy to use classes, that can transform the parsed message into a POJO that corresponds with a specific X12 format. Attributes are labeled with their business names rather than the more cryptic segment identifiers. It further provides basic validation capabilities as defined in the EDI X12 manuals for each format. 
+Gozer seeks to provide more than a generic X12 parsing capability that turns an EDI X12 message into a list of segments and elements. Gozer hopes to provide a library of easy to use classes, that can transform the parsed message into a set of POJOs that corresponds with a specific X12 format. Attributes are labeled with their business names rather than the more cryptic segment identifiers. It further provides basic validation capabilities as defined in the EDI X12 manuals for each format. 
 
 In addition, interfaces and various extension points allow users to customize some of the parsing and validation that is offered in Gozer. 
 
 ### Practical Approach to Parsing
-Each X12 format that is supported will have a Java implementation for both the `X12Parser` and `X12Validator`. The parser will be responsible for parsing the message in the given format to the representative Java object model (POJO). The validator will be responsible for providing validations applying them to the values stored in the POJO that the parser creates.
+Each X12 format that is supported will have a Java implementation for both the `X12Parser` and `X12Validator`. The parser will be responsible for parsing the message in the given format to the representative Java object model (POJO). The validator will be responsible for applying various checks against the values stored in the POJO that the parser creates.
 
 The Gozer parsers, that implement `X12Parser`, are designed to parse the EDI X12 message. Successfully parsing a document would require the message to be well-formed. The segments must have the correct segment identifiers, which must be nested correctly and appear in the proper order.
-
 
 If the X12 message is invalid and can't be parsed the parser will throw an `X12ParserException`. The parser, however, does not attempt to validate the values within the segment elements (other than segment identifiers). Rather it will be as loose as possible regarding validation during the parsing of different versions of the EDI X12 message. 
 
@@ -40,7 +39,19 @@ After parsing, it is considered the responsibility of the consumer to perform an
 In Gozer, the validator will not throw an exception under normal circumstances. Instead any validation errors will be returned in a `Set` of `X12ErrorDetail` objects.
 
 ## Getting Started: The X12Document in Gozer
-Most EDI/X12 messages adhere to a common format. These can be parsed using the `StandardX12Parser`. This will return a `StandardX12Document`. 
+Most EDI/X12 messages adhere to a common format. Each message will have an envelope that contains a set  of groups. Each group will contain a set of transaction sets. 
+
+```
+ISA*...
+	GS*...*12345*X*005010
+		ST*856*00001
+			...
+		SE*100*00001
+	GE*1*12345
+ISE*...
+```
+
+These types of messages can be parsed using the `StandardX12Parser`. This will return a `StandardX12Document`. 
 
 Valid, well-formed messages will be wrapped in an interchange control envelope. This envelope will require the first segment to start with `ISA` and the last segment to end with an `ISE`. 
 
@@ -85,12 +96,16 @@ ISA*...
 	GS*...*12345*X*005010
 		ST*856*00001
 			BSN*00*001*20190823*2112*0001
-			BSN*00*002*20190823*2112*0001
 		SE*100*00001
 		ST*856*00002
-			BSN*00*003*20190823*2112*0001
+			BSN*00*002*20190823*2112*0001
 		SE*100*00002
 	GE*1*12345
+	GS*...*12346*X*005010
+		ST*856*00003
+			BSN*00*003*20190823*2112*0001
+		SE*100*00003
+	GE*2*12346	
 ISE*...
 ```
 
@@ -101,9 +116,12 @@ would be stored in a `StandardX12Document` as follows:
 * the second `X12Group` would have a list with 1  `X12TransactionSet`
 	
 
-## Getting Started: Using the StandardX12Parser
+### Handling Transaction Sets
+Each transaction set represents a different document type that can be sent. For example the ASN (856) or a Purchase Order (850). Each of these transaction sets is comprised of a variety of different segments, therefore each requires its own parser that extends the `AbstractTransactionSetParserChainable`. 
 
-basics
+The implementation will be passed all of the segment lines for the transaction set and is expected to return a POJO that extends `AbstractX12TransactionSet` and represents the document.
+
+The transaction set parser must be registered with the parser. 
 
 ```java
 
@@ -114,24 +132,80 @@ x12Parser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
 StandardX12Document x12Doc = x12Parser.parse(x12Message);
 ```
 
-what is a transaction set parser
-various ways to register a transaction set parser
-what happens to transaction sets that have no parser
-
-## Getting Started: Using the DEX Parsers and Validators
-The DEX EDI/X12 message format does not follow the standard message format. It has a separate parser, however it still implements the `X12Parser` interface. This allows it to be used in any product with the standard Gozer parser without any special considerations. 
+By default, any transaction set that does not have a registered parser will be ignored. 
+When it is important to process a transaction set that has no parser a custom class that implements
+`UnhandledTransactionSet` can be registered. 
 
 ```java
 
-String x12Message = ...
-X12Parser x12Parser = new DefaultDex894Parser();
-X12Validator x12Validator = new DefaultDex894Validator();
 
-X12Document x12 = x12Parser.parse(x12Message);
-Set<X12ErrorDetail> errorSet = x12Validator.validate(x12);
-
+StandardX12Parser x12Parser = new StandardX12Parser();
+x12Parser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
+x12Parser.registerUnhandledTransactionSet(new DefaultUnhandledTransactionSet());
 ```
 
+Look at the [Sample](https://github.com/walmartlabs/gozer/tree/master/src/test/java/sample) to see a  very simplified approach see how  to register a transaction set parser and using them within the `StandardX12Parser`
+
+### Working with an X12Document after parsing
+After parsing and validating an X12 formatted message, an application can start to use the information stored in the POJOs. Due to the flexibility of the transaction sets and the variability of loop sequencing, it can still be difficult to access some values. 
+
+How  to find the transaction set in the document:
+
+```java
+StandardX12Parser x12Parser = new StandardX12Parser();
+x12Parser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
+
+StandardX12Document x12Doc = x12Parser.parse(x12Message);
+X12Group group1 = x12Doc.getGroups().get(0);
+List<X12TransactionSet> group1TxList = group1.getTransactions();
+X12TransactionSet tx1 = group1TxList.get(0);
+if ("856".equals(tx1.getTransactionSetIdentifierCode())) {
+   AsnTransactionSet asnTx = (AsnTransactionSet)tx1;
+   ...
+}
+```
+
+How to access loop data within a transaction set:
+
+```java
+
+AsnTransactionSet asnTx = (AsnTransactionSet)tx1;
+Shipment shipment = asnTx.getShipment();
+// the Shipment has one or more Order loops
+List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
+
+X12Loop shipmentChildLoop = shipmentChildLoops.get(0);
+if ("O".equals(shipmentChildLoop.getCode())) {
+   // found the order
+   Order order = (Order) shipmentChildLoop;
+   order.getPrf().getPurchaseOrderNumber();
+   
+   List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
+   X12Loop orderChildLoop = orderChildLoops.get(0);
+   switch (orderChildLoop.getCode()) {
+     case "T" :
+         // found a tare
+         processTare((Tare)orderChildLoop);
+         break;
+      case "P" :
+         // found a pack
+         processPack((Pack)orderChildLoop);
+         break;
+      case  "I" :
+         // found an item
+         processItem((Item)orderChildLoop);
+         break;
+      default:
+         break;
+   }
+
+   
+```
+
+
+Look at the [DefaultAsn856TransactionSetParserEntireTxSetTest](https://github.com/walmartlabs/gozer/blob/master/src/test/java/com/walmartlabs/x12/asn856/DefaultAsn856TransactionSetParserEntireTxSetTest.java) to see how to access various parts of the parsed document. 
+
+### Using utilities after parsing
 After parsing and validating an X12 formatted message, various utilities can be used for post-processing the data. 
 For example:
 
@@ -147,6 +221,22 @@ Dex894Item dexItem = dex.getItems().get(0);
 String itf14 = util.convertRetailNumberToItf14(dexItem.getUpc());
 
 ```
+
+## Getting Started: Using the DEX Parsers and Validators
+The DEX EDI/X12 message format does not follow the standard message format. It has a separate parser, however it still implements the `X12Parser` interface. This allows it to be used in any product with the standard Gozer parser without any special considerations. 
+
+```java
+
+String x12Message = ...
+X12Parser x12Parser = new DefaultDex894Parser();
+X12Validator x12Validator = new DefaultDex894Validator();
+
+X12Document x12 = x12Parser.parse(x12Message);
+Set<X12ErrorDetail> errorSet = x12Validator.validate(x12);
+
+```
+
+
 ## Getting Started: Writing a Parser and Validator
 [Guide for writing EDI parsers](AddingParsers.md)
 

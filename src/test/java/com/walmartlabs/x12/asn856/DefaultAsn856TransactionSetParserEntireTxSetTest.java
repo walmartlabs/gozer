@@ -51,6 +51,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<X12Segment> segments = this.getTransactionSetSegments();
         X12TransactionSet txSet = txParser.doParse(segments, x12Group);
         assertNotNull(txSet);
+        assertEquals("856", txSet.getTransactionSetIdentifierCode());
         assertTrue(txSet instanceof AsnTransactionSet);
         
         AsnTransactionSet asnTx = (AsnTransactionSet)txSet;
