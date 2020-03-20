@@ -16,25 +16,51 @@ limitations under the License.
 
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
+import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the Item level of information
  * 
  */
 public class Item extends X12ParsedLoop {
-    
+
     public static final String ITEM__LOOP_CODE = "I";
-    
+
     /*
-     * PID: Product Idenfication
+     * PID: Product Identification
      */
     private PIDProductIdentification pid;
-    
+    /*
+     * SN1: Item Detail
+     */
+    private SN1ItemDetail sn1;
+    /*
+     * LIN: Item Identification
+     */
+    private List<LINItemIdentification> itemIdentifications;
+
     public static boolean isItemLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ITEM__LOOP_CODE);
+    }
+
+    /**
+     * helper method to add LIN to list
+     * 
+     * @param lin
+     */
+    public void addLINItemIdentification(LINItemIdentification lin) {
+        if (CollectionUtils.isEmpty(itemIdentifications)) {
+            itemIdentifications = new ArrayList<>();
+        }
+        itemIdentifications.add(lin);
     }
 
     public PIDProductIdentification getPid() {
@@ -44,6 +70,21 @@ public class Item extends X12ParsedLoop {
     public void setPid(PIDProductIdentification pid) {
         this.pid = pid;
     }
-    
-    
+
+    public List<LINItemIdentification> getItemIdentifications() {
+        return itemIdentifications;
+    }
+
+    public void setItemIdentifications(List<LINItemIdentification> itemIdentifications) {
+        this.itemIdentifications = itemIdentifications;
+    }
+
+    public SN1ItemDetail getSn1() {
+        return sn1;
+    }
+
+    public void setSn1(SN1ItemDetail sn1) {
+        this.sn1 = sn1;
+    }
+
 }

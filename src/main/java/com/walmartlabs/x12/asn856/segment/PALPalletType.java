@@ -8,4 +8,6 @@ package com.walmartlabs.x12.asn856.segment;
 public class PALPalletType {
 
     public static final String IDENTIFIER = "PAL";
+
+    // TODO: implement
 }

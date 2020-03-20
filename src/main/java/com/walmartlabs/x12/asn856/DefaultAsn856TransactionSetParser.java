@@ -24,8 +24,11 @@ import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.asn856.segment.PALPalletType;
 import com.walmartlabs.x12.asn856.segment.PO4ItemPhysicalDetail;
 import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
+import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
 import com.walmartlabs.x12.asn856.segment.parser.MANMarkNumberParser;
 import com.walmartlabs.x12.asn856.segment.parser.PRFPurchaseOrderReferenceParser;
+import com.walmartlabs.x12.asn856.segment.parser.SN1ItemDetailParser;
+import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.common.segment.PKGPackaging;
@@ -33,6 +36,7 @@ import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
+import com.walmartlabs.x12.common.segment.parser.LINItemIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.N1PartyIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.PIDPartyIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.REFReferenceInformationParser;
@@ -496,6 +500,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             case PIDProductIdentification.IDENTIFIER:
                 item.setPid(PIDPartyIdentificationParser.parse(segment));
                 break;
+            case LINItemIdentification.IDENTIFIER:
+                item.setItemIdentifications(LINItemIdentificationParser.parse(segment));
+                break;
+            case SN1ItemDetail.IDENTIFIER:
+                item.setSn1(SN1ItemDetailParser.parse(segment));
+                break;                 
             default:
                 // TODO: what do we do w/ an unidentified segment
                 break;

@@ -8,4 +8,6 @@ package com.walmartlabs.x12.asn856.segment;
 public class PO4ItemPhysicalDetail {
 
     public static final String IDENTIFIER = "PO4";
+    
+    // TODO: implement
 }

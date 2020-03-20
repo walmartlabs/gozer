@@ -20,6 +20,8 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
+import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
+import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
 import com.walmartlabs.x12.common.segment.N4GeographicLocation;
@@ -65,6 +67,12 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("171543", asnTx.getShipmentTime());
         assertEquals("0002", asnTx.getHierarchicalStructureCode());
 
+        this.verifyTheShipment(asnTx);
+        this.verifyTheFirstOrder(asnTx.getShipment());
+        this.verifyTheSecondOrder(asnTx.getShipment());
+    }
+
+    private void verifyTheShipment(AsnTransactionSet asnTx) {
         //
         // shipment
         //
@@ -87,7 +95,9 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
 
+        //
         // shipping to
+        //
         N1PartyIdentification n1One = n1List.get(0);
         assertNotNull(n1One);
         assertEquals("ST", n1One.getEntityIdentifierCode());
@@ -101,7 +111,9 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(n4);
         assertEquals("CASA GRANDE", n4.getCityName());
 
+        //
         // shipping from
+        //
         N1PartyIdentification n1Two = n1List.get(1);
         assertNotNull(n1Two);
         assertEquals("SF", n1Two.getEntityIdentifierCode());
@@ -115,18 +127,23 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(n4);
         assertEquals("BEAVERTON", n4.getCityName());
 
-        //
-        // Order 1
-        //
+        // has 2 Orders
         List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
         assertNotNull(shipmentChildLoops);
-        assertEquals(1, shipmentChildLoops.size());
+        assertEquals(2, shipmentChildLoops.size());
+    }
+
+    private void verifyTheFirstOrder(Shipment shipment) {
+        List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
 
         X12Loop shipmentChildLoop = shipmentChildLoops.get(0);
         assertNotNull(shipmentChildLoop);
         assertTrue(shipmentChildLoop instanceof Order);
         assertEquals("O", shipmentChildLoop.getCode());
 
+        //
+        // order
+        //
         Order order = (Order) shipmentChildLoop;
         assertNotNull(order);
 
@@ -147,50 +164,263 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(orderChildLoops);
         assertEquals(1, orderChildLoops.size());
 
+        //
+        // item
+        //
         X12Loop orderChildLoop = orderChildLoops.get(0);
         assertNotNull(orderChildLoop);
         assertTrue(orderChildLoop instanceof Item);
         assertEquals("I", orderChildLoop.getCode());
 
-        // Item
         Item item = (Item) orderChildLoop;
 
         PIDProductIdentification pid = item.getPid();
         assertNotNull(pid);
         assertEquals("POTATO RED SKIN WALMART 6/4#", pid.getDescription());
 
+        SN1ItemDetail sn1 = item.getSn1();
+        assertNotNull(sn1);
+        assertEquals("2.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("CA", sn1.getUnitOfMeasurement());
+
+        List<LINItemIdentification> itemIdList = item.getItemIdentifications();
+        assertNotNull(itemIdList);
+        assertEquals(2, itemIdList.size());
+
+        LINItemIdentification lin = itemIdList.get(0);
+        assertNotNull(lin);
+        assertEquals("IN", lin.getProductIdQualifier());
+        assertEquals("008021683", lin.getProductId());
+
+        lin = itemIdList.get(1);
+        assertNotNull(lin);
+        assertEquals("UP", lin.getProductIdQualifier());
+        assertEquals("008113191693", lin.getProductId());
+
         List<X12Loop> itemChildLoops = item.getParsedChildrenLoops();
         assertNotNull(itemChildLoops);
         assertEquals(2, itemChildLoops.size());
 
+        //
         // Pack 1
+        //
         X12Loop itemChildLoop = itemChildLoops.get(0);
         assertNotNull(itemChildLoop);
         assertTrue(itemChildLoop instanceof Pack);
         assertEquals("P", itemChildLoop.getCode());
-        
+
         Pack pack = (Pack) itemChildLoop;
-        MANMarkNumber man =  pack.getMan();
+        MANMarkNumber man = pack.getMan();
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916931", man.getNumber());
-        
+
+        //
         // Pack 2
+        //
         itemChildLoop = itemChildLoops.get(1);
         assertNotNull(itemChildLoop);
         assertTrue(itemChildLoop instanceof Pack);
         assertEquals("P", itemChildLoop.getCode());
-        
+
         pack = (Pack) itemChildLoop;
-        man =  pack.getMan();
+        man = pack.getMan();
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916932", man.getNumber());
+    }
+
+    private void verifyTheSecondOrder(Shipment shipment) {
+        List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
 
         //
-        // Order 2
+        // order
         //
+        X12Loop shipmentChildLoop = shipmentChildLoops.get(1);
+        assertNotNull(shipmentChildLoop);
+        assertTrue(shipmentChildLoop instanceof Order);
+        assertEquals("O", shipmentChildLoop.getCode());
 
+        Order order = (Order) shipmentChildLoop;
+        assertNotNull(order);
+
+        PRFPurchaseOrderReference prf = order.getPrf();
+        assertNotNull(prf);
+        assertEquals("0210431612", prf.getPurchaseOrderNumber());
+        assertEquals("20190520", prf.getDate());
+
+        List<REFReferenceInformation> refs = order.getRefList();
+        assertNotNull(refs);
+        assertEquals(3, refs.size());
+
+        REFReferenceInformation ref = refs.get(0);
+        assertNotNull(ref);
+        assertEquals("IA", ref.getReferenceIdentificationQualifier());
+        assertEquals("480509093", ref.getReferenceIdentification());
+
+        ref = refs.get(1);
+        assertNotNull(ref);
+        assertEquals("DP", ref.getReferenceIdentificationQualifier());
+        assertEquals("00009", ref.getReferenceIdentification());
+
+        ref = refs.get(2);
+        assertNotNull(ref);
+        assertEquals("MR", ref.getReferenceIdentificationQualifier());
+        assertEquals("0073", ref.getReferenceIdentification());
+
+        List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
+        assertNotNull(orderChildLoops);
+        assertEquals(1, orderChildLoops.size());
+
+        //
+        // tare
+        //
+        X12Loop orderChildLoop = orderChildLoops.get(0);
+        assertNotNull(orderChildLoop);
+        assertTrue(orderChildLoop instanceof Tare);
+        assertEquals("T", orderChildLoop.getCode());
+
+        Tare tare = (Tare) orderChildLoop;
+        MANMarkNumber man = tare.getMan();
+        assertNotNull(man);
+        assertEquals("GM", man.getQualifier());
+        assertEquals("00100700302232310393", man.getNumber());
+
+        List<X12Loop> tareChildLoops = tare.getParsedChildrenLoops();
+        assertNotNull(tareChildLoops);
+        assertEquals(2, tareChildLoops.size());
+
+        //
+        // Pack 3
+        //
+        X12Loop tareChildLoop = tareChildLoops.get(0);
+        assertNotNull(tareChildLoop);
+        assertTrue(tareChildLoop instanceof Pack);
+        assertEquals("P", tareChildLoop.getCode());
+
+        Pack pack = (Pack) tareChildLoop;
+        man = pack.getMan();
+        assertNotNull(man);
+        assertEquals("UC", man.getQualifier());
+        assertEquals("10081131916933", man.getNumber());
+
+        List<X12Loop> packChildLoops = pack.getParsedChildrenLoops();
+        assertNotNull(packChildLoops);
+        assertEquals(2, packChildLoops.size());
+
+        //
+        // item
+        //
+        X12Loop packChildLoop = packChildLoops.get(0);
+        assertNotNull(packChildLoop);
+        assertTrue(packChildLoop instanceof Item);
+        assertEquals("I", packChildLoop.getCode());
+
+        Item item = (Item) packChildLoop;
+
+        PIDProductIdentification pid = item.getPid();
+        assertNull(pid);
+
+        SN1ItemDetail sn1 = item.getSn1();
+        assertNotNull(sn1);
+        assertEquals("18.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("EA", sn1.getUnitOfMeasurement());
+
+        List<LINItemIdentification> itemIdList = item.getItemIdentifications();
+        assertNotNull(itemIdList);
+        assertEquals(4, itemIdList.size());
+
+        LINItemIdentification lin = itemIdList.get(0);
+        assertNotNull(lin);
+        assertEquals("UP", lin.getProductIdQualifier());
+        assertEquals("039364170623", lin.getProductId());
+
+        lin = itemIdList.get(1);
+        assertNotNull(lin);
+        assertEquals("IN", lin.getProductIdQualifier());
+        assertEquals("005179004", lin.getProductId());
+
+        lin = itemIdList.get(2);
+        assertNotNull(lin);
+        assertEquals("VN", lin.getProductIdQualifier());
+        assertEquals("DBT-12", lin.getProductId());
+
+        lin = itemIdList.get(3);
+        assertNotNull(lin);
+        assertEquals("UK", lin.getProductIdQualifier());
+        assertEquals("00039364170623", lin.getProductId());
+
+        //
+        // item
+        //
+        packChildLoop = packChildLoops.get(1);
+        assertNotNull(packChildLoop);
+        assertTrue(packChildLoop instanceof Item);
+        assertEquals("I", packChildLoop.getCode());
+
+        item = (Item) packChildLoop;
+
+        pid = item.getPid();
+        assertNull(pid);
+
+        sn1 = item.getSn1();
+        assertNotNull(sn1);
+        assertEquals("3.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("EA", sn1.getUnitOfMeasurement());
+
+        itemIdList = item.getItemIdentifications();
+        assertNotNull(itemIdList);
+        assertEquals(1, itemIdList.size());
+
+        lin = itemIdList.get(0);
+        assertNotNull(lin);
+        assertEquals("UP", lin.getProductIdQualifier());
+        assertEquals("013921530419", lin.getProductId());
+
+        //
+        // Pack 4
+        //
+        tareChildLoop = tareChildLoops.get(1);
+        assertNotNull(tareChildLoop);
+        assertTrue(tareChildLoop instanceof Pack);
+        assertEquals("P", tareChildLoop.getCode());
+
+        pack = (Pack) tareChildLoop;
+        man = pack.getMan();
+        assertNotNull(man);
+        assertEquals("UC", man.getQualifier());
+        assertEquals("10081131916934", man.getNumber());
+
+        packChildLoops = pack.getParsedChildrenLoops();
+        assertNotNull(packChildLoops);
+        assertEquals(1, packChildLoops.size());
+
+        //
+        // item
+        //
+        packChildLoop = packChildLoops.get(0);
+        assertNotNull(packChildLoop);
+        assertTrue(packChildLoop instanceof Item);
+        assertEquals("I", packChildLoop.getCode());
+
+        item = (Item) packChildLoop;
+
+        pid = item.getPid();
+        assertNull(pid);
+
+        sn1 = item.getSn1();
+        assertNotNull(sn1);
+        assertEquals("2.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("EA", sn1.getUnitOfMeasurement());
+
+        itemIdList = item.getItemIdentifications();
+        assertNotNull(itemIdList);
+        assertEquals(1, itemIdList.size());
+
+        lin = itemIdList.get(0);
+        assertNotNull(lin);
+        assertEquals("UP", lin.getProductIdQualifier());
+        assertEquals("039364133147", lin.getProductId());
     }
 
     private List<X12Segment> getTransactionSetSegments() {
@@ -231,7 +461,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         // Item on both packs 1 and 2
         txSegments.add(new X12Segment("HL*3*2*I"));
         txSegments.add(new X12Segment("LIN**IN*008021683*UP*008113191693"));
-        txSegments.add(new X12Segment("SN1**24*CA"));
+        txSegments.add(new X12Segment("SN1**2*CA"));
         txSegments.add(new X12Segment("PID*F*08***POTATO RED SKIN WALMART 6/4#"));
 
         // Pack 1 on Order 1
@@ -242,34 +472,42 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         txSegments.add(new X12Segment("HL*5*3*P"));
         txSegments.add(new X12Segment("MAN*UC*10081131916932"));
 
-        // TODO - update data
         //
         // order 2
         //
-        //        // T,P,I
-        //        txSegments.add(new X12Segment("HL*6*1*O"));
-        //        txSegments.add(new X12Segment("PRF*0391494868"));
-        //        txSegments.add(new X12Segment("REF*IA*579284804"));
-        //
-        //        // Tare on Order 2
-        //        txSegments.add(new X12Segment("HL*7*6*T"));
-        //        txSegments.add(new X12Segment("MAN*GM*00100700302232310393"));
-        //
-        //        // Pack 3 on Tare 
-        //        txSegments.add(new X12Segment("HL*8*7*P"));
-        //        txSegments.add(new X12Segment("MAN*UC*10081131916931"));
-        //        
-        //        // Item on Pack 3
-        //        txSegments.add(new X12Segment("HL*9*8*I"));
-        //        txSegments.add(new X12Segment("LIN**IN*008021683*UP*008113191693"));
-        //        txSegments.add(new X12Segment("SN1**24*CA"));
-        //        txSegments.add(new X12Segment("PID*F*08***POTATO RED SKIN WALMART 6/4#"));
-        //
-        //        // Item on Pack 3
-        //        txSegments.add(new X12Segment("HL*10*8*I"));
-        //        txSegments.add(new X12Segment("LIN**IN*008021683*UP*008113191693"));
-        //        txSegments.add(new X12Segment("SN1**24*CA"));
-        //        txSegments.add(new X12Segment("PID*F*08***POTATO RED SKIN WALMART 6/4#"));
+        // T,P,I
+        txSegments.add(new X12Segment("HL*6*1*O"));
+        txSegments.add(new X12Segment("PRF*0210431612***20190520"));
+        txSegments.add(new X12Segment("REF*IA*480509093"));
+        txSegments.add(new X12Segment("REF*DP*00009"));
+        txSegments.add(new X12Segment("REF*MR*0073"));
+
+        // Tare on Order 2
+        txSegments.add(new X12Segment("HL*7*6*T"));
+        txSegments.add(new X12Segment("MAN*GM*00100700302232310393"));
+
+        // Pack 3 on Tare
+        txSegments.add(new X12Segment("HL*8*7*P"));
+        txSegments.add(new X12Segment("MAN*UC*10081131916933"));
+
+        // Item on Pack 3
+        txSegments.add(new X12Segment("HL*9*8*I"));
+        txSegments.add(new X12Segment("LIN**UP*039364170623*IN*005179004*VN*DBT-12*UK*00039364170623"));
+        txSegments.add(new X12Segment("SN1**18*EA"));
+
+        // Item on Pack 3
+        txSegments.add(new X12Segment("HL*10*8*I"));
+        txSegments.add(new X12Segment("LIN**UP*013921530419"));
+        txSegments.add(new X12Segment("SN1**3*EA"));
+
+        // Pack 4 on Tare
+        txSegments.add(new X12Segment("HL*11*7*P"));
+        txSegments.add(new X12Segment("MAN*UC*10081131916934"));
+
+        // Item on Pack 4
+        txSegments.add(new X12Segment("HL*12*11*I"));
+        txSegments.add(new X12Segment("LIN**UP*039364133147"));
+        txSegments.add(new X12Segment("SN1**2*EA"));
 
         txSegments.add(new X12Segment("SE*296*368090001"));
 
