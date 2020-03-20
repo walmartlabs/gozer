@@ -13,19 +13,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package sample.parser;
 
 import com.walmartlabs.x12.X12Document;
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Validator;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
+import java.util.regex.PatternSyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class X12SampleTest {
 
@@ -40,7 +46,7 @@ public class X12SampleTest {
 
     @Test
     public void test_parse_and_validate() {
-        X12Document x12 = defaultParser.parse("MOCK*123");
+        X12Document x12 = defaultParser.parse("YYZ*123");
         assertNotNull(x12);
 
         Set<X12ErrorDetail> errors = defaultValidator.validate(x12);
@@ -52,7 +58,7 @@ public class X12SampleTest {
 
     @Test
     public void test_parse_and_validate_failed() {
-        X12Document x12 = defaultParser.parse("MOCK");
+        X12Document x12 = defaultParser.parse("YYZ");
         assertNotNull(x12);
 
         Set<X12ErrorDetail> errors = defaultValidator.validate(x12);
@@ -61,4 +67,21 @@ public class X12SampleTest {
 
         assertEquals(null, ((SampleX12Document) x12).getFunctionalId());
     }
+    
+    @Test
+    public void test_parse_and_validate_failed_bad_delimiter() {
+        try {
+            defaultParser.parse("BOO*123");
+            fail("expected exception!");
+        } catch (X12ParserException e) {
+            Throwable cause = e.getCause();
+            assertNull(cause);
+            assertEquals("invalid identifier", e.getMessage());
+            X12ErrorDetail x12Error = e.getErrorDetail();
+            assertNotNull(x12Error);
+            assertEquals("YYZ", x12Error.getSegmentId());
+            assertEquals("YYZ00", x12Error.getElementId());
+        }
+    }
+    
 }

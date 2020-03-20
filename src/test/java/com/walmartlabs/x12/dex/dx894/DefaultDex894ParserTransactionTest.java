@@ -13,10 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.types.InvoiceType;
+import com.walmartlabs.x12.types.UnitMeasure;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -145,16 +148,16 @@ public class DefaultDex894ParserTransactionTest {
     @Test
     public void testParseG83SimpleItem() {
         Dex894Item dexItem = new Dex894Item();
-        X12Segment segment = new X12Segment("G83*1*48*EA*001410008547****1.83");
+        X12Segment segment = new X12Segment("G83*1*48.123*EA*001410008547****1.8345");
         dexParser.parseG83(segment, dexItem);
         assertEquals("1", dexItem.getItemSequenceNumber());
-        assertEquals("48.000", dexItem.getQuantity().toString());
+        assertEquals("48.123", dexItem.getQuantity().toString());
         assertEquals(UnitMeasure.EA, dexItem.getUom());
         assertEquals("001410008547", dexItem.getUpc());
         assertEquals(null, dexItem.getConsumerProductQualifier());
         assertEquals(null, dexItem.getConsumerProductId());
         assertEquals(null, dexItem.getCaseUpc());
-        assertEquals("1.83", dexItem.getItemListCost().toString());
+        assertEquals("1.8345", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals(null, dexItem.getItemDescription());
         assertEquals(null, dexItem.getCaseProductQualifier());
@@ -174,7 +177,7 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(null, dexItem.getConsumerProductQualifier());
         assertEquals(null, dexItem.getConsumerProductId());
         assertEquals("007800001181", dexItem.getCaseUpc());
-        assertEquals("14.00", dexItem.getItemListCost().toString());
+        assertEquals("14.0000", dexItem.getItemListCost().toString());
         assertEquals("2", dexItem.getPackCount().toString());
         assertEquals("12z12P Dt 7Up", dexItem.getItemDescription());
         assertEquals(null, dexItem.getCaseProductQualifier());
@@ -194,7 +197,7 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(null, dexItem.getConsumerProductQualifier());
         assertEquals(null, dexItem.getConsumerProductId());
         assertEquals(null, dexItem.getCaseUpc());
-        assertEquals("1.83", dexItem.getItemListCost().toString());
+        assertEquals("1.8300", dexItem.getItemListCost().toString());
         assertEquals(null, dexItem.getPackCount());
         assertEquals("DESCRIPTION", dexItem.getItemDescription());
         assertEquals(null, dexItem.getCaseProductQualifier());

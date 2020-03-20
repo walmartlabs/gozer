@@ -13,15 +13,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package sample.parser;
 
 import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * 
+ * Sample parser 
+ * First Segment expected to have identifier YYZ
+ *
+ */
 public class SampleX12Parser implements X12Parser<SampleX12Document> {
 
     @Override
@@ -33,11 +41,22 @@ public class SampleX12Parser implements X12Parser<SampleX12Document> {
                 mockX12 = new SampleX12Document();
                 List<X12Segment> segments = this.splitSourceDataIntoSegments(sourceData);
                 if (!segments.isEmpty()) {
-                    mockX12.setFunctionalId(segments.get(0).getSegmentElement(1));
+                    // parse the first segment
+                    X12Segment firstSegment = segments.get(0);
+                    if ("YYZ".equals(firstSegment.getIdentifier())) {
+                        mockX12.setFunctionalId(firstSegment.getElement(1));
+                    } else {
+                        X12ErrorDetail error = new X12ErrorDetail("YYZ", "YYZ00", "invalid identifier");
+                        throw new X12ParserException(error);
+                    }
                 }
             }
         } catch (Exception e) {
-            throw new X12ParserException(e);
+            if (e instanceof X12ParserException) {
+                throw e;
+            } else {
+                throw new X12ParserException(e);
+            }
         }
         return mockX12;
     }

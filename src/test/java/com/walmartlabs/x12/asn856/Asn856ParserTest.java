@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Document;
@@ -35,11 +36,11 @@ import static org.junit.Assert.assertNull;
 
 public class Asn856ParserTest {
 
-    private StandardX12Parser<StandardX12Document> asnParser;
+    private StandardX12Parser asnParser;
 
     @Before
     public void init() {
-        asnParser = new StandardX12Parser<>();
+        asnParser = new StandardX12Parser();
         asnParser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
     }
 
@@ -72,7 +73,7 @@ public class Asn856ParserTest {
         assertEquals("0000000000", isa.getSecurityInformation());
         assertEquals("ZZ", isa.getInterchangeIdQualifier());
         assertEquals("ABCDEFGHIJKLMNO", isa.getInterchangeSenderId());
-        assertEquals("ZZ", isa.getInterchangeIdQualifier_2());
+        assertEquals("ZZ", isa.getInterchangeIdQualifierTwo());
         assertEquals("123456789012345", isa.getInterchangeReceiverId());
         assertEquals("101127", isa.getInterchangeDate());
         assertEquals("1719", isa.getInterchangeTime());
@@ -82,21 +83,35 @@ public class Asn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-        // ISA segment
+        
+        // Groups
         assertEquals(new Integer(1), isa.getNumberOfGroups());
         assertEquals("000000049", isa.getTrailerInterchangeControlNumber());
 
-        // TODO: quick test
         List<X12Group> groups = x12.getGroups();
         assertNotNull(groups);
         assertEquals(1, groups.size());
 
+        // Transaction Sets
         List<X12TransactionSet> txForGroupOne = x12.getGroups().get(0).getTransactions();
         assertNotNull(txForGroupOne);
         assertEquals(1, txForGroupOne.size());
 
+        // ST
         AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
-        assertEquals("TEST", asnTx.getSampleAsnOnly());
+        assertEquals("856", asnTx.getTransactionSetIdentifierCode());
+        assertEquals("0008", asnTx.getHeaderControlNumber());
+        
+        // BSN
+        assertEquals("14", asnTx.getPurposeCode());
+        assertEquals("829716", asnTx.getShipmentIdentification());
+        assertEquals("20111206", asnTx.getShipmentDate());
+        assertEquals("142428", asnTx.getShipmentTime());
+        assertEquals("0002", asnTx.getHierarchicalStructureCode());
+        
+        // SE
+        assertEquals(Integer.valueOf(31), asnTx.getExpectedNumberOfSegments());
+        assertEquals("0008", asnTx.getTrailerControlNumber());
     }
 
 }

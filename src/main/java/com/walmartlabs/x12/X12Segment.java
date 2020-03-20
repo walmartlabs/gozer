@@ -13,20 +13,45 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12;
 
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ *  Each line in an X12 document is called a segment
+ *  Each segment contains one or more elements
+ *  The first element identifies the type of segment
+ *  
+ *  This class will parse a segment into the individual elements
+ */
 public class X12Segment {
+    
     private String segmentValue;
     private List<String> segmentElements;
 
+    /**
+     * create the {@link X12Segment} using the default delimiter
+     * @param segment
+     * @return {@link X12Segment}
+     */
     public X12Segment(String segment) {
+        this(segment, X12Parser.DEFAULT_DATA_ELEMENT_SEPARATOR);
+    }
+    
+    /**
+     * create the {@link X12Segment} using the delimiter provided
+     * @param segment
+     * @return {@link X12Segment}
+     * @throws PatternSyntaxException if the delimiter results in invalid regular expression
+     */
+    public X12Segment(String segment, Character dataElementDelimiter) {
         segmentValue = segment;
-        segmentElements = this.splitSegmentIntoDataElements(segment);
+        segmentElements = this.splitSegmentIntoDataElements(segment, dataElementDelimiter);
     }
 
     /**
@@ -41,7 +66,7 @@ public class X12Segment {
      * extracts the first data element in a segment which is the segment identifier
      * otherwise return an empty String
      */
-    public String getSegmentIdentifier() {
+    public String getIdentifier() {
         if (segmentElements != null && !segmentElements.isEmpty()) {
             return segmentElements.get(0);
         } else {
@@ -52,7 +77,7 @@ public class X12Segment {
     /**
      * retrieve the element at a particular index in the segment
      */
-    public String getSegmentElement(int index) {
+    public String getElement(int index) {
         if (segmentElements.size() > index) {
             String value = segmentElements.get(index);
             return StringUtils.isEmpty(value) ? null : value;
@@ -69,11 +94,24 @@ public class X12Segment {
      * parses the segment into a list of data elements
      * each date element is separated by an asterisk (*)
      */
-    private List<String> splitSegmentIntoDataElements(String segment) {
+    private List<String> splitSegmentIntoDataElements(String segment, Character dataElementDelimiter) {
         if (StringUtils.isEmpty(segment)) {
-            return Arrays.asList();
+            return Collections.emptyList();
         } else {
-            return Arrays.asList(segment.split("\\*"));
+            String splitRegEx = this.convertDataElementDelimiterToRegEx(dataElementDelimiter);
+            return Arrays.asList(segment.split(splitRegEx));
+        }
+    }
+    
+    private String convertDataElementDelimiterToRegEx(Character dataElementDelimiter) {
+        if (dataElementDelimiter != null) {
+            if (Character.isLetterOrDigit(dataElementDelimiter.charValue())) {
+                return dataElementDelimiter.toString();
+            } else {
+                return "\\" + dataElementDelimiter;
+            }
+        } else {
+            return String.valueOf(Character.MIN_VALUE);
         }
     }
 }

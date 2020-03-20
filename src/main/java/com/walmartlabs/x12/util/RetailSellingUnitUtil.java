@@ -13,10 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.util;
 
-import com.walmartlabs.x12.checksum.BarCodeMod10Checksum;
-import com.walmartlabs.x12.checksum.Checksum;
+import com.walmartlabs.x12.util.checksum.BarCodeMod10Checksum;
+import com.walmartlabs.x12.util.checksum.Checksum;
 
 public class RetailSellingUnitUtil {
 

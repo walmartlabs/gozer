@@ -13,12 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Validator;
-import com.walmartlabs.x12.crc.CyclicRedundancyCheck;
-import com.walmartlabs.x12.crc.DefaultCrc16;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import com.walmartlabs.x12.types.UnitMeasure;
+import com.walmartlabs.x12.util.crc.CyclicRedundancyCheck;
+import com.walmartlabs.x12.util.crc.DefaultCrc16;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
@@ -66,12 +68,12 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
         X12ErrorDetail detail = null;
         int actualTransactionCount = (dex.getTransactions() != null ? dex.getTransactions().size() : 0);
         if (dex.getNumberOfTransactions() == null) {
-            detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "DXE02", "Transaction count is missing");
+            detail = new X12ErrorDetail(DefaultDex894Parser.DEX_TRAILER_ID, "DXE02", "Transaction count is missing");
         } else if (dex.getNumberOfTransactions() != actualTransactionCount) {
             StringBuilder sb = new StringBuilder();
             sb.append("Expected ").append(dex.getNumberOfTransactions()).append(" transactions");
             sb.append(" but got ").append(actualTransactionCount).append(" transactions");
-            detail = new X12ErrorDetail(DefaultDex894Parser.APPLICATION_TRAILER_ID, "", sb.toString());
+            detail = new X12ErrorDetail(DefaultDex894Parser.DEX_TRAILER_ID, "", sb.toString());
         }
         return detail;
     }
@@ -219,9 +221,9 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
     protected X12ErrorDetail checkAllowanceAmount(Integer dexVersion, Dex894Allowance dexAllowance) {
         X12ErrorDetail detail = null;
 
-        if (dexAllowance.getAllowanceAmount() == null &&
-                dexAllowance.getAllowancePercent() == null &&
-                dexAllowance.getAllowanceRate() == null) {
+        if (dexAllowance.getAllowanceAmount() == null 
+            && dexAllowance.getAllowancePercent() == null 
+            && dexAllowance.getAllowanceRate() == null) {
 
             detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7205", "Must have allowance rate, percent, or amount");
 

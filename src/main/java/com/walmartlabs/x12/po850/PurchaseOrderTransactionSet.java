@@ -13,9 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 package com.walmartlabs.x12.po850;
 
-import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.AbstractX12TransactionSet;
 
 /**
  * 
@@ -23,6 +24,7 @@ import com.walmartlabs.x12.X12TransactionSet;
  * a parsed PO 850 transaction set
  *
  */
-public class PurchaseOrderTransactionSet implements X12TransactionSet {
+public class PurchaseOrderTransactionSet extends AbstractX12TransactionSet {
+
 
 }
