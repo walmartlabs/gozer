@@ -383,12 +383,14 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             X12TransactionSet txSet = transactionParser.parseTransactionSet(transactionSegments, x12Group);
             if (txSet != null) {
                 x12Group.addTransactionSet(txSet);
+            } else {
+                // no transaction set parser for that type
+                if (unhandledTransactionSet != null) {
+                    unhandledTransactionSet.unhandledTransactionSet(transactionSegments, x12Group);
+                }
             }
         } else {
             LOGGER.warn("No TransactionSetParser has been registered!");
-            if (unhandledTransactionSet != null) {
-                unhandledTransactionSet.unhandledTransactionSet(transactionSegments, x12Group);
-            }
         }
     }
     
