@@ -17,32 +17,33 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.N4GeographicLocation;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 
-public final class N4GeographicLocationParser {
+public final class TD5CarrierDetailParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static N4GeographicLocation parse(X12Segment segment) {
-        N4GeographicLocation n4 = null;
+    public static TD5CarrierDetail parse(X12Segment segment) {
+        TD5CarrierDetail td5 = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (N4GeographicLocation.IDENTIFIER.equals(segmentIdentifier)) {
-                n4 = new N4GeographicLocation();
-                n4.setCityName(segment.getElement(1));
-                n4.setStateOrProvinceCode(segment.getElement(2));
-                n4.setPostalCode(segment.getElement(3));
-                n4.setCountryCode(segment.getElement(4));
+            if (TD5CarrierDetail.IDENTIFIER.equals(segmentIdentifier)) {
+                td5 = new TD5CarrierDetail();
+                td5.setRoutingSequenceCode(segment.getElement(1));
+                td5.setIdentificationCodeQualifier(segment.getElement(2));
+                td5.setIdentificationCode(segment.getElement(3));
+                td5.setTransportationMethodTypeCode(segment.getElement(4));
+                td5.setRoutingDescription(segment.getElement(5));
             }
         }
-        return n4;
+        return td5;
     }
 
-    private N4GeographicLocationParser() {
+    private TD5CarrierDetailParser() {
         // you can't make me
     }
 }

@@ -26,9 +26,9 @@ import java.math.BigDecimal;
  * and quantityElement
  *
  */
-public class TD1CarrierDetails {
+public class TD1CarrierDetail {
 
-    public static final String CARRIER_DETAILS_IDENTIFIER = "TD1";
+    public static final String IDENTIFIER = "TD1";
 
     // TD101
     private String rawPackagingCode;

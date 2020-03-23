@@ -17,34 +17,34 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.TD5CarrierDetails;
-import com.walmartlabs.x12.common.segment.parser.TD5CarrierDetailsParser;
+import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
+import com.walmartlabs.x12.common.segment.parser.TD5CarrierDetailParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class TD5CarrierDetailsParserTest {
+public class TD5CarrierDetailParserTest {
 
     @Test
     public void test_parse_null_segment() {
         X12Segment segment = null;
-        TD5CarrierDetails td5 = TD5CarrierDetailsParser.parse(segment);
+        TD5CarrierDetail td5 = TD5CarrierDetailParser.parse(segment);
         assertNull(td5);
     }
 
     @Test
     public void test_parse_empty_segment() {
         X12Segment segment = new X12Segment("");
-        TD5CarrierDetails td5 = TD5CarrierDetailsParser.parse(segment);
+        TD5CarrierDetail td5 = TD5CarrierDetailParser.parse(segment);
         assertNull(td5);
     }
 
     @Test
     public void test_parse_segment() {
         X12Segment segment = new X12Segment("TD5*B*2*UPSG*U*UPS GROUND");
-        TD5CarrierDetails td5 = TD5CarrierDetailsParser.parse(segment);
+        TD5CarrierDetail td5 = TD5CarrierDetailParser.parse(segment);
         assertNotNull(td5);
         assertEquals("B", td5.getRoutingSequenceCode());
         assertEquals("2", td5.getIdentificationCodeQualifier());

@@ -31,7 +31,7 @@ public final class N3PartyLocationParser {
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (N3PartyLocation.PARTY_LOCATION_IDENTIFIER.equals(segmentIdentifier)) {
+            if (N3PartyLocation.IDENTIFIER.equals(segmentIdentifier)) {
                 n3 = new N3PartyLocation();
                 n3.setAddressInfoOne(segment.getElement(1));
                 n3.setAddressInfoTwo(segment.getElement(2));

@@ -16,21 +16,63 @@ limitations under the License.
 
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
+import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.standard.X12Loop;
+import com.walmartlabs.x12.standard.X12ParsedLoop;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents the Order level of information
  * 
  */
-public class Order extends X12Loop {
+public class Order extends X12ParsedLoop {
 
     public static final String ORDER_LOOP_CODE = "O";
-    
-    private List<X12Loop> loops;
-    
+
+    /*
+     * PRF: Purchase Order Ref
+     */
+    private PRFPurchaseOrderReference prf;
+
+    /*
+     * REF
+     */
+    private List<REFReferenceInformation> refList;
+
     public static boolean isOrderLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ORDER_LOOP_CODE);
     }
+
+    /**
+     * helper method to add REF
+     * 
+     * @param ref
+     */
+    public void addReferenceInformation(REFReferenceInformation ref) {
+        if (CollectionUtils.isEmpty(refList)) {
+            refList = new ArrayList<>();
+        }
+        refList.add(ref);
+    }
+
+    public PRFPurchaseOrderReference getPrf() {
+        return prf;
+    }
+
+    public void setPrf(PRFPurchaseOrderReference prf) {
+        this.prf = prf;
+    }
+
+    public List<REFReferenceInformation> getRefList() {
+        return refList;
+    }
+
+    public void setRefList(List<REFReferenceInformation> refList) {
+        this.refList = refList;
+    }
+
 }

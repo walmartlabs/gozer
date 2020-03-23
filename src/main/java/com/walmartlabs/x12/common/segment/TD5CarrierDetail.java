@@ -22,9 +22,9 @@ package com.walmartlabs.x12.common.segment;
  * time information
  *
  */
-public class TD5CarrierDetails {
+public class TD5CarrierDetail {
 
-    public static final String CARRIER_DETAILS_IDENTIFIER = "TD5";
+    public static final String IDENTIFIER = "TD5";
 
     // TD501
     private String routingSequenceCode;

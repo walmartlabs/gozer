@@ -23,7 +23,7 @@ package com.walmartlabs.x12.common.segment;
  */
 public class N1PartyIdentification {
 
-    public static final String PARTY_IDENTIFICATION_IDENTIFIER = "N1";
+    public static final String IDENTIFIER = "N1";
 
     // N101
     private String entityIdentifierCode;
@@ -34,11 +34,15 @@ public class N1PartyIdentification {
     // N104
     private String identificationCode;
 
-    // N3 Party Identification
-    N3PartyLocation n3;
+    /*
+     * N3 Party Identification
+     */
+    private N3PartyLocation n3;
 
-    // N4 Party Geographic Identification
-    N4GeographicLocation n4;
+    /*
+     * N4 Party Geographic Identification
+     */
+    private N4GeographicLocation n4;
 
     public String getEntityIdentifierCode() {
         return entityIdentifierCode;

@@ -17,32 +17,32 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.N4GeographicLocation;
+import com.walmartlabs.x12.common.segment.PKGPackaging;
 
-public final class N4GeographicLocationParser {
+public final class PKGPackagingParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static N4GeographicLocation parse(X12Segment segment) {
-        N4GeographicLocation n4 = null;
+    public static PKGPackaging parse(X12Segment segment) {
+        PKGPackaging pkg = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (N4GeographicLocation.IDENTIFIER.equals(segmentIdentifier)) {
-                n4 = new N4GeographicLocation();
-                n4.setCityName(segment.getElement(1));
-                n4.setStateOrProvinceCode(segment.getElement(2));
-                n4.setPostalCode(segment.getElement(3));
-                n4.setCountryCode(segment.getElement(4));
+            if (PKGPackaging.IDENTIFIER.equals(segmentIdentifier)) {
+                pkg = new PKGPackaging();
+                pkg.setItemDescriptionType(segment.getElement(1));
+                pkg.setPackagingCharacteristicCode(segment.getElement(2));
+                pkg.setAgencyQualifierCode(segment.getElement(3));
+                pkg.setPackagingDescriptionCode(segment.getElement(4));
             }
         }
-        return n4;
+        return pkg;
     }
 
-    private N4GeographicLocationParser() {
+    private PKGPackagingParser() {
         // you can't make me
     }
 }

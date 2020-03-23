@@ -17,32 +17,32 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.N4GeographicLocation;
+import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 
-public final class N4GeographicLocationParser {
+public final class TD3CarrierDetailParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static N4GeographicLocation parse(X12Segment segment) {
-        N4GeographicLocation n4 = null;
+    public static TD3CarrierDetail parse(X12Segment segment) {
+        TD3CarrierDetail td3 = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (N4GeographicLocation.IDENTIFIER.equals(segmentIdentifier)) {
-                n4 = new N4GeographicLocation();
-                n4.setCityName(segment.getElement(1));
-                n4.setStateOrProvinceCode(segment.getElement(2));
-                n4.setPostalCode(segment.getElement(3));
-                n4.setCountryCode(segment.getElement(4));
+            if (TD3CarrierDetail.IDENTIFIER.equals(segmentIdentifier)) {
+                td3 = new TD3CarrierDetail();
+                td3.setEquipmentDescriptionCode(segment.getElement(1));
+                td3.setEquipmentInitial(segment.getElement(2));
+                td3.setEquipmentNumber(segment.getElement(3));
+                td3.setSealNumber(segment.getElement(9));
             }
         }
-        return n4;
+        return td3;
     }
 
-    private N4GeographicLocationParser() {
+    private TD3CarrierDetailParser() {
         // you can't make me
     }
 }

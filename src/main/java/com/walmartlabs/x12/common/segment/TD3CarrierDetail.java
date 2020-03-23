@@ -22,9 +22,9 @@ package com.walmartlabs.x12.common.segment;
  * the carrierLoop
  *
  */
-public class TD3CarrierDetails {
+public class TD3CarrierDetail {
 
-    public static final String CARRIER_DETAILS_IDENTIFIER = "TD3";
+    public static final String IDENTIFIER = "TD3";
 
     // TD301
     private String equipmentDescriptionCode;

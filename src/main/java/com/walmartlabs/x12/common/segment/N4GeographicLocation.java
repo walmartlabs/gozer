@@ -22,7 +22,7 @@ package com.walmartlabs.x12.common.segment;
  */
 public class N4GeographicLocation {
 
-    public static final String PARTY_GEOGRAPHIC_IDENTIFIER = "N4";
+    public static final String IDENTIFIER = "N4";
 
     // N401
     private String cityName;
