@@ -20,9 +20,9 @@
     <checkstyle.fail.on.violation>true</checkstyle.fail.on.violation>
     <checkstyle.fail.on.error>false</checkstyle.fail.on.error>
     <junit.version>4.13.1</junit.version>
-    <slf4j.version>1.7.21</slf4j.version>
-    <logback.version>1.1.7</logback.version>
-    <spring.version>4.3.19.RELEASE</spring.version>
+    <slf4j.version>1.7.30</slf4j.version>
+    <logback.version>1.2.3</logback.version>
+    <spring.version>4.3.26.RELEASE</spring.version>
     <maven.compiler.source>${takari.javaSourceVersion}</maven.compiler.source>
     <maven.compiler.verbose>true</maven.compiler.verbose>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
