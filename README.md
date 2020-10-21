@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/walmartlabs/gozer/workflows/Java CI with Maven/badge.svg)](https://github.com/walmartlabs/gozer/actions)
+[![Build Status](https://github.com/walmartlabs/gozer/workflows/Gozer-CI/badge.svg)](https://github.com/walmartlabs/gozer/actions)
 
 [![Build Status](https://travis-ci.org/walmartlabs/gozer.svg?branch=master)](https://travis-ci.org/walmartlabs/gozer)
 
