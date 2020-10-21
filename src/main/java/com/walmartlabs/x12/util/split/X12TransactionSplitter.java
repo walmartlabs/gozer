@@ -27,6 +27,7 @@ import java.util.List;
  * - the GE trailer it is part of
  * - the ISE trailer
  *
+ * TODO: plugin to verify document numbers are unique
  */
 public class X12TransactionSplitter {
     
