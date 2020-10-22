@@ -28,6 +28,7 @@ import java.util.List;
  * - the ISE trailer
  *
  * TODO: plugin to verify document numbers are unique
+ * 
  */
 public class X12TransactionSplitter {
     
