@@ -20,7 +20,7 @@ import java.util.List;
  * 
  * This has bare-bones validation
  * 
- * Each transaction will have the following
+ * Each transaction will have the following:
  * - the ISA header
  * - the GS header it is part of
  * - the ST/SE transaction
