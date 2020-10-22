@@ -27,7 +27,6 @@ import java.util.List;
  * - the GE trailer it is part of
  * - the ISE trailer
  *
- *
  */
 public class X12TransactionSplitter {
     
