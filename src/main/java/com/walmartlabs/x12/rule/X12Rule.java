@@ -7,5 +7,5 @@ import java.util.List;
 public interface X12Rule {
 
     void verify(List<X12Segment> segmentList);
-    
+
 }

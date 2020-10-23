@@ -1,0 +1,58 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+#
+# More info here as well
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+# 
+# Publishing JAR
+# https://github.com/sonatype-nexus-community/nexus-repo-github-action
+#
+# GitHub secrets
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
+# 
+
+name: Gozer-CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checking out code...
+      uses: actions/checkout@v2
+      
+    - name: setting up JDK...
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+
+    - name: compiling...
+      run: mvn compile
+      
+    - name: running unit tests...
+      run: mvn test
+            
+    - name: buiding jar file...
+      run: mvn -B package --file pom.xml -Dmaven.test.skip=true
+      
+    - name: Upload Code Coverage Report
+      if: success()
+      run: |
+        curl -s https://codecov.io/bash | bash
+        
+#    - name: publish jar file...
+#      uses: sonatype-nexus-community/nexus-repo-github-action@master
+#      with:
+#        serverUrl: oss.sonatype.org
+#        username: codesmell
+#        password: ${{ secrets.password }}
+#        format: maven2
+#        repository: maven-snapshots
+#        coordinates: groupId=com.walmartlabs.x12 artifactId=gozer version=1.0.0
+#        assets: extension=jar
+#        filename: ./target/gozer-1.0.0-SNAPSHOT.jar

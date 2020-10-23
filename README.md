@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/walmartlabs/gozer.svg?branch=master)](https://travis-ci.org/walmartlabs/gozer)
+[![Build Status](https://github.com/walmartlabs/gozer/workflows/Gozer-CI/badge.svg)](https://github.com/walmartlabs/gozer/actions)
 
 [![codecov](https://codecov.io/gh/walmartlabs/gozer/branch/master/graph/badge.svg)](https://codecov.io/gh/walmartlabs/gozer)
 
