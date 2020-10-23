@@ -10,7 +10,7 @@ import com.walmartlabs.x12.util.ConversionUtil;
 
 import java.util.List;
 
-public class TrailerSegmentCountX12Rule {
+public class TrailerSegmentCountX12Rule implements X12Rule {
 
     /**
      * check each trailer record and verify 
@@ -19,6 +19,7 @@ public class TrailerSegmentCountX12Rule {
      * 
      * @param segmentList
      */
+    @Override
     public void verify(List<X12Segment> segmentList) {
         
         SegmentIterator segments = new SegmentIterator(segmentList);
