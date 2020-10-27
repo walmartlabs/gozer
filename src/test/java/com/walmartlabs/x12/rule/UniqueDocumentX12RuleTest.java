@@ -152,5 +152,133 @@ public class UniqueDocumentX12RuleTest {
         rule = new UniqueDocumentX12Rule("BEG", 3, 4);
         rule.verify(segmentList);
     }
+    
+    @Test
+    public void test_no_duplicates_no_document_number_or_date() {
+        String sourceData = new StringBuilder()
+            .append("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>")
+            .append("\r\n")
+            .append("GS*SH*4405197800*999999999*20111206*1045*99*X*004060")
+            .append("\r\n")
+            // ASN #1
+            .append("ST*856*0001")
+            .append("\r\n")
+            .append("BSN*00*804190*20201022")
+            .append("\r\n")
+            .append("SE*1*0001")
+            .append("\r\n")
+            // ASN #2
+            .append("ST*856*0002")
+            .append("\r\n")
+            .append("BSN*00**")
+            .append("\r\n")
+            .append("SE*1*0002")
+            .append("\r\n")
+            .append("GE*1*99")
+            .append("\r\n")
+            .append("IEA*1*000000049")
+            .toString();
+        
+        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        
+        rule = new UniqueDocumentX12Rule("BSN", 2, 3);
+        rule.verify(segmentList);
+    }
+    
+    @Test(expected = X12ParserException.class)
+    public void test_duplicates_no_document_number() {
+        String sourceData = new StringBuilder()
+            .append("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>")
+            .append("\r\n")
+            .append("GS*SH*4405197800*999999999*20111206*1045*99*X*004060")
+            .append("\r\n")
+            // ASN #1
+            .append("ST*856*0001")
+            .append("\r\n")
+            .append("BSN*00**20201022")
+            .append("\r\n")
+            .append("SE*1*0001")
+            .append("\r\n")
+            // ASN #2
+            .append("ST*856*0002")
+            .append("\r\n")
+            .append("BSN*00**20201022")
+            .append("\r\n")
+            .append("SE*1*0002")
+            .append("\r\n")
+            .append("GE*1*99")
+            .append("\r\n")
+            .append("IEA*1*000000049")
+            .toString();
+        
+        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        
+        rule = new UniqueDocumentX12Rule("BSN", 2, 3);
+        rule.verify(segmentList);
+    }
+    
+    @Test
+    public void test_no_duplicates_no_document_date() {
+        String sourceData = new StringBuilder()
+            .append("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>")
+            .append("\r\n")
+            .append("GS*SH*4405197800*999999999*20111206*1045*99*X*004060")
+            .append("\r\n")
+            // ASN #1
+            .append("ST*856*0001")
+            .append("\r\n")
+            .append("BSN*00*804190*")
+            .append("\r\n")
+            .append("SE*1*0001")
+            .append("\r\n")
+            // ASN #2
+            .append("ST*856*0002")
+            .append("\r\n")
+            .append("BSN*00*804191*")
+            .append("\r\n")
+            .append("SE*1*0002")
+            .append("\r\n")
+            .append("GE*1*99")
+            .append("\r\n")
+            .append("IEA*1*000000049")
+            .toString();
+        
+        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        
+        rule = new UniqueDocumentX12Rule("BSN", 2, 3);
+        rule.verify(segmentList);
+    }
+    
+    @Test(expected = X12ParserException.class)
+    public void test_duplicates_no_document_date() {
+        String sourceData = new StringBuilder()
+            .append("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>")
+            .append("\r\n")
+            .append("GS*SH*4405197800*999999999*20111206*1045*99*X*004060")
+            .append("\r\n")
+            // ASN #1
+            .append("ST*856*0001")
+            .append("\r\n")
+            .append("BSN*00*804190*")
+            .append("\r\n")
+            .append("SE*1*0001")
+            .append("\r\n")
+            // ASN #2
+            .append("ST*856*0002")
+            .append("\r\n")
+            .append("BSN*00*804190*")
+            .append("\r\n")
+            .append("SE*1*0002")
+            .append("\r\n")
+            .append("GE*1*99")
+            .append("\r\n")
+            .append("IEA*1*000000049")
+            .toString();
+        
+        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        
+        rule = new UniqueDocumentX12Rule("BSN", 2, 3);
+        rule.verify(segmentList);
+    }
 
 }
