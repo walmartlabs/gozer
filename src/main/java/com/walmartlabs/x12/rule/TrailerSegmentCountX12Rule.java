@@ -9,6 +9,7 @@ import com.walmartlabs.x12.standard.StandardX12Parser;
 import com.walmartlabs.x12.util.ConversionUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TrailerSegmentCountX12Rule implements X12Rule {
 
@@ -63,12 +64,14 @@ public class TrailerSegmentCountX12Rule implements X12Rule {
         int segmentCount = segmentList.size();
         
         X12Segment ieaTrailer = segmentList.get(segmentCount - 1);
-        if (StandardX12Parser.ISA_TRAILER_ID.equals(ieaTrailer.getIdentifier())) {
-            groupCountOnIeaTrailer = ConversionUtil.convertStringToInteger(ieaTrailer.getElement(1));
+        if (ieaTrailer != null && StandardX12Parser.ISA_TRAILER_ID.equals(ieaTrailer.getIdentifier())) {
+            groupCountOnIeaTrailer = Optional
+                .ofNullable(ConversionUtil.convertStringToInteger(ieaTrailer.getElement(1)))
+                .orElse(-1);
         } else {
             // error
             throw new X12ParserException(
-                new X12ErrorDetail("IEA", "", "missing IEA segment"));
+                new X12ErrorDetail(StandardX12Parser.ISA_TRAILER_ID, "", "missing IEA segment"));
         }
         
         return groupCountOnIeaTrailer;
@@ -84,25 +87,27 @@ public class TrailerSegmentCountX12Rule implements X12Rule {
         } else {
             // error
             throw new X12ParserException(
-                new X12ErrorDetail("IEA", "IEA02", "incorrect number of groups on IEA trailer"));
+                new X12ErrorDetail(StandardX12Parser.ISA_TRAILER_ID, "IEA02", "incorrect number of groups on IEA trailer"));
         }
     }
     
     private void verifyTransactionsOnGroupTrailer(String currentGroupControlNumber, int transactionCount, X12Segment currentSegment) {
         if (currentGroupControlNumber != null && currentGroupControlNumber.equals(currentSegment.getElement(2))) {
-            int transactionCountOnGroupTrailer = ConversionUtil.convertStringToInteger(currentSegment.getElement(1));
-            
+            int transactionCountOnGroupTrailer = Optional
+                .ofNullable(ConversionUtil.convertStringToInteger(currentSegment.getElement(1)))
+                .orElse(-1);
+
             if (transactionCountOnGroupTrailer == transactionCount) {
                 // ok
             } else {
                 // error
                 throw new X12ParserException(
-                    new X12ErrorDetail("GE", "GE02", "incorrect number of transactions on group"));
+                    new X12ErrorDetail(StandardX12Parser.GROUP_TRAILER_ID, "GE02", "incorrect number of transactions on group"));
             }
         } else {
             // error
             throw new X12ParserException(
-                new X12ErrorDetail("GE", "GE02", "groups seem to be misaligned"));
+                new X12ErrorDetail(StandardX12Parser.GROUP_TRAILER_ID, "GE02", "groups seem to be misaligned"));
         }
     }
 }
