@@ -88,7 +88,7 @@ public class X12TransactionSplitter {
             isaHeader = currentSegment;
         } else {
             // error - should be start of ISA envelope
-            this.throwParserException("ISA", currentSegmentId);
+            this.throwParserException(StandardX12Parser.ISA_HEADER_ID, currentSegmentId);
         }
         
         //
@@ -99,7 +99,7 @@ public class X12TransactionSplitter {
             iseTrailer = lastSegment;
         } else {
             // error - should be start of ISA envelope
-            this.throwParserException("ISE", currentSegmentId);
+            this.throwParserException(StandardX12Parser.ISA_TRAILER_ID, currentSegmentId);
         }
         
         while (segments.hasNext()) {
@@ -156,11 +156,13 @@ public class X12TransactionSplitter {
             
             // loop until we find the GE (end of group)
             while (segments.hasNext()) {
+                // handle the start of the transaction
                 TransactionHolder transactionHolder = this.doTransaction(segments);
                 transactionHolder.setGsHeader(groupHeader);
                 transactionsInGroup.add(transactionHolder);
                 
-                // what's next
+                // what's next?
+                // after a transaction it
                 // could be an ST or GE
                 if (segments.hasNext()) {
                     currentSegment = segments.next();
@@ -183,6 +185,8 @@ public class X12TransactionSplitter {
                         segments.previous();
                     }
                 } else {
+                    // if we didn't get an ST or GE
+                    // we have a bad EDI file
                     this.throwParserExceptionUnexpectedEnd(currentSegmentId);
                 }
             }
@@ -200,7 +204,7 @@ public class X12TransactionSplitter {
         TransactionHolder transactionHolder = new TransactionHolder();
         
         // start collecting transaction 
-        // segments until we hit the GE (end of group)
+        // segments until we hit the SE (end of transaction)
         // or run out of segments
         X12Segment currentSegment = segments.next();
         String currentSegmentId = currentSegment.getIdentifier();
@@ -210,18 +214,18 @@ public class X12TransactionSplitter {
         //
         if (X12TransactionSet.TRANSACTION_SET_HEADER.equals(currentSegmentId)) {
             // add the header
-            transactionHolder.addSegmentTransaction(currentSegment);
+            transactionHolder.addSegmentToTransaction(currentSegment);
             
             // loop until we find the SE (end of transaction)
             while (segments.hasNext() && ! X12TransactionSet.TRANSACTION_SET_TRAILER.equals(currentSegmentId)) {
                 currentSegment = segments.next();
                 currentSegmentId = currentSegment.getIdentifier();
-                transactionHolder.addSegmentTransaction(currentSegment);
+                transactionHolder.addSegmentToTransaction(currentSegment);
             }
             
         } else {
             // error
-            this.throwParserException("ST", currentSegmentId);
+            this.throwParserException(X12TransactionSet.TRANSACTION_SET_HEADER, currentSegmentId);
         }
         
         //
@@ -230,7 +234,7 @@ public class X12TransactionSplitter {
         //
         if (!X12TransactionSet.TRANSACTION_SET_TRAILER.equals(currentSegmentId)) {
             // error
-            this.throwParserException("SE", currentSegmentId);
+            this.throwParserException(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegmentId);
         }
     
         return transactionHolder;
@@ -283,7 +287,7 @@ public class X12TransactionSplitter {
         private X12Segment gsHeader;
         private X12Segment geTrailer;
         
-        private List<X12Segment> transaction;
+        private List<X12Segment> transactionSegmentList;
 
         public X12Segment getIsaHeader() {
             return isaHeader;
@@ -318,20 +322,20 @@ public class X12TransactionSplitter {
         }
 
         public List<X12Segment> getTransaction() {
-            return transaction;
+            return transactionSegmentList;
         }
 
         public void setTransaction(List<X12Segment> transaction) {
-            this.transaction = transaction;
+            this.transactionSegmentList = transaction;
         }
         
         /**
          */
-        public void addSegmentTransaction(X12Segment segment) {
-            if (transaction == null) {
-                transaction = new ArrayList<>();
+        public void addSegmentToTransaction(X12Segment segment) {
+            if (transactionSegmentList == null) {
+                transactionSegmentList = new ArrayList<>();
             }
-            transaction.add(segment);
+            transactionSegmentList.add(segment);
         }
         
     }
