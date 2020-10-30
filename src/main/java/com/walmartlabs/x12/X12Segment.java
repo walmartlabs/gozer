@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.walmartlabs.x12;
 
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public class X12Segment {
      * @return {@link X12Segment}
      */
     public X12Segment(String segment) {
-        this(segment, X12Parser.DEFAULT_DATA_ELEMENT_SEPARATOR);
+        this(segment, SourceToSegmentUtil.DEFAULT_DATA_ELEMENT_SEPARATOR);
     }
     
     /**

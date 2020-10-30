@@ -26,6 +26,7 @@ import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.standard.txset.TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.UnhandledTransactionSet;
 import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -57,8 +58,8 @@ import java.util.Objects;
 public final class StandardX12Parser implements X12Parser<StandardX12Document> {
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardX12Parser.class);
 
-    public static final String ISA_HEADER_ID = "ISA";
-    public static final String ISA_TRAILER_ID = "IEA";
+    public static final String ENVELOPE_HEADER_ID = "ISA";
+    public static final String ENVELOPE_TRAILER_ID = "IEA";
 
     public static final String GROUP_HEADER_ID = "GS";
     public static final String GROUP_TRAILER_ID = "GE";
@@ -84,8 +85,8 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                 // remove any excess white space
                 // and
                 // break document up into segment lines
-                List<X12Segment> segmentList = this.splitSourceDataIntoSegments(sourceData.trim());
-                if (X12ParsingUtil.isValidEnvelope(segmentList, ISA_HEADER_ID, ISA_TRAILER_ID)) {
+                List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
+                if (X12ParsingUtil.isValidEnvelope(segmentList, ENVELOPE_HEADER_ID, ENVELOPE_TRAILER_ID)) {
                     // standard parsing of segment lines
                     SegmentIterator segments = new SegmentIterator(segmentList);
                     this.standardParsingTemplate(segments, x12Doc);
@@ -263,7 +264,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             // check for end of message
             if (segments.hasNext()) {
                 currentSegment = segments.next();
-                if (ISA_TRAILER_ID.equals(currentSegment.getIdentifier())) {
+                if (ENVELOPE_TRAILER_ID.equals(currentSegment.getIdentifier())) {
                     this.parseInterchangeControlTrailer(currentSegment, x12Doc);
                 } else {
                     // move back one
@@ -285,7 +286,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
         LOGGER.debug(segment.getIdentifier());
 
         String segmentIdentifier = segment.getIdentifier();
-        if (ISA_HEADER_ID.equals(segmentIdentifier)) {
+        if (ENVELOPE_HEADER_ID.equals(segmentIdentifier)) {
             InterchangeControlEnvelope isa = new InterchangeControlEnvelope();
             isa.setAuthorizationInformationQualifier(segment.getElement(1));
             isa.setAuthorizationInformation(segment.getElement(2));
@@ -306,7 +307,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
             x12Doc.setInterchangeControlEnvelope(isa);
         } else {
-            handleUnexpectedSegment(ISA_HEADER_ID, segmentIdentifier);
+            handleUnexpectedSegment(ENVELOPE_HEADER_ID, segmentIdentifier);
         }
     }
 
@@ -320,12 +321,12 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
         LOGGER.debug(segment.getIdentifier());
 
         String segmentIdentifier = segment.getIdentifier();
-        if (ISA_TRAILER_ID.equals(segmentIdentifier)) {
+        if (ENVELOPE_TRAILER_ID.equals(segmentIdentifier)) {
             InterchangeControlEnvelope isa = x12Doc.getInterchangeControlEnvelope();
             isa.setNumberOfGroups(ConversionUtil.convertStringToInteger(segment.getElement(1)));
             isa.setTrailerInterchangeControlNumber(segment.getElement(2));
         } else {
-            handleUnexpectedSegment(ISA_TRAILER_ID, segmentIdentifier);
+            handleUnexpectedSegment(ENVELOPE_TRAILER_ID, segmentIdentifier);
         }
     }
 

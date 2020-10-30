@@ -7,6 +7,7 @@ import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.rule.X12Rule;
 import com.walmartlabs.x12.standard.StandardX12Parser;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -49,7 +50,7 @@ public class X12TransactionSplitter {
         if (StringUtils.isEmpty(sourceData)) {
             return Collections.emptyList();
         } else {
-            List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+            List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
             return this.split(segmentList);
         }
     }
@@ -113,22 +114,22 @@ public class X12TransactionSplitter {
         //
         // first segment better be ISA
         //
-        if (StandardX12Parser.ISA_HEADER_ID.equals(currentSegmentId)) {
+        if (StandardX12Parser.ENVELOPE_HEADER_ID.equals(currentSegmentId)) {
             isaHeader = currentSegment;
         } else {
             // error - should be start of ISA envelope
-            this.throwParserException(StandardX12Parser.ISA_HEADER_ID, currentSegmentId);
+            this.throwParserException(StandardX12Parser.ENVELOPE_HEADER_ID, currentSegmentId);
         }
         
         //
         // last segment better be ISE
         //
         X12Segment lastSegment = segmentList.get(segmentList.size() - 1);
-        if (StandardX12Parser.ISA_TRAILER_ID.equals(lastSegment.getIdentifier())) {
+        if (StandardX12Parser.ENVELOPE_TRAILER_ID.equals(lastSegment.getIdentifier())) {
             iseTrailer = lastSegment;
         } else {
             // error - should be start of ISA envelope
-            this.throwParserException(StandardX12Parser.ISA_TRAILER_ID, currentSegmentId);
+            this.throwParserException(StandardX12Parser.ENVELOPE_TRAILER_ID, currentSegmentId);
         }
         
         while (segments.hasNext()) {
@@ -141,7 +142,7 @@ public class X12TransactionSplitter {
             if (segments.hasNext()) {
                 currentSegment = segments.next();
                 currentSegmentId = currentSegment.getIdentifier();
-                if (StandardX12Parser.ISA_TRAILER_ID.equals(currentSegmentId)) {
+                if (StandardX12Parser.ENVELOPE_TRAILER_ID.equals(currentSegmentId)) {
                     // end of the envelope
                     break;
                 } else {

@@ -2,7 +2,7 @@ package com.walmartlabs.x12.rule;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import com.walmartlabs.x12.standard.StandardX12Parser;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class TrailerSegmentCountX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
 
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -102,7 +102,7 @@ public class TrailerSegmentCountX12RuleTest {
             .append("IEA*2*000000049")
             .toString();
 
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -140,7 +140,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("incorrect number of groups on IEA trailer");
 
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -178,7 +178,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("Invalid numeric value");
 
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -223,7 +223,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("groups seem to be misaligned");
 
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -262,7 +262,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("incorrect number of groups on IEA trailer");
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -300,7 +300,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("missing IEA segment");
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -336,7 +336,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("missing IEA segment");
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -374,7 +374,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("groups seem to be misaligned");
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -410,7 +410,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("incorrect number of groups on IEA trailer");
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -449,7 +449,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("Invalid numeric value");
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
     
@@ -487,7 +487,7 @@ public class TrailerSegmentCountX12RuleTest {
         exception.expect(X12ParserException.class);
         exception.expectMessage("incorrect number of transactions on group");
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         rule.verify(segmentList);
     }
 

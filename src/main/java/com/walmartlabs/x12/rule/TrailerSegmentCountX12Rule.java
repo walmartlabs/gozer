@@ -64,14 +64,14 @@ public class TrailerSegmentCountX12Rule implements X12Rule {
         int segmentCount = segmentList.size();
         
         X12Segment ieaTrailer = segmentList.get(segmentCount - 1);
-        if (ieaTrailer != null && StandardX12Parser.ISA_TRAILER_ID.equals(ieaTrailer.getIdentifier())) {
+        if (ieaTrailer != null && StandardX12Parser.ENVELOPE_TRAILER_ID.equals(ieaTrailer.getIdentifier())) {
             groupCountOnIeaTrailer = Optional
                 .ofNullable(ConversionUtil.convertStringToInteger(ieaTrailer.getElement(1)))
                 .orElse(-1);
         } else {
             // error
             throw new X12ParserException(
-                new X12ErrorDetail(StandardX12Parser.ISA_TRAILER_ID, "", "missing IEA segment"));
+                new X12ErrorDetail(StandardX12Parser.ENVELOPE_TRAILER_ID, "", "missing IEA segment"));
         }
         
         return groupCountOnIeaTrailer;
@@ -87,7 +87,7 @@ public class TrailerSegmentCountX12Rule implements X12Rule {
         } else {
             // error
             throw new X12ParserException(
-                new X12ErrorDetail(StandardX12Parser.ISA_TRAILER_ID, "IEA02", "incorrect number of groups on IEA trailer"));
+                new X12ErrorDetail(StandardX12Parser.ENVELOPE_TRAILER_ID, "IEA02", "incorrect number of groups on IEA trailer"));
         }
     }
     
