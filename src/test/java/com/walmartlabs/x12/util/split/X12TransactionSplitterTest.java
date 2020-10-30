@@ -363,7 +363,7 @@ public class X12TransactionSplitterTest {
         splitter.split(sourceData);
     }
     
-    @Test(expected = X12ParserException.class)
+    @Test
     public void test_split_sourceData_one_group_two_documents_rules_multi_ok() throws IOException {
         String sourceData = new StringBuilder()
             .append("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>")
@@ -375,7 +375,8 @@ public class X12TransactionSplitterTest {
             .append("TEST*1")
             .append("\r\n")
             .append("SE*1*0001")
-            .append("ST*AAA*0002")
+            .append("\r\n")
+            .append("ST*BBB*0002")
             .append("\r\n")
             .append("TEST*2")
             .append("\r\n")
