@@ -5,6 +5,7 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.rule.X12Rule;
 import com.walmartlabs.x12.standard.StandardX12Parser;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,8 @@ import java.util.List;
 public class X12TransactionSplitter {
     
     private static final String EOL = "\r\n";
+    
+    private List<X12Rule> rules;
     
     /**
      * split the EDI message (raw file)
@@ -65,9 +68,35 @@ public class X12TransactionSplitter {
         if (CollectionUtils.isEmpty(segmentList)) {
             return Collections.emptyList();
         } else {
+            // do some basic validation
+            // on the entire EDI message
+            // using X12Rule set provided
+            this.runRules(segmentList);
+            
+            // parse and split
+            // the EDI message
             List<TransactionHolder> transactionHolders = this.doParse(segmentList);
             return this.doSplit(transactionHolders);
         }
+    }
+    
+    /**
+     * add an {@link X12Rule} to the splitter
+     * @param rule
+     */
+    public void registerX12Rule(X12Rule rule) {
+        if (this.rules == null) {
+            this.rules = new ArrayList<>();
+        }
+        
+        this.rules.add(rule);
+    }
+    
+    /**
+     * remove all of the rules
+     */
+    public void resetX12Rules() {
+        rules = null;
     }
     
     private List<TransactionHolder> doParse(List<X12Segment> segmentList) {
@@ -265,6 +294,16 @@ public class X12TransactionSplitter {
         return transactions;
     }
     
+    private void runRules(List<X12Segment> segmentList) {
+        if (rules != null) {
+            rules.forEach(rule -> {
+                if (rule != null) {
+                    rule.verify(segmentList);
+                }
+            });
+        }
+    }
+    
     private void throwParserException(String expectedSegmentId, String actualSegmentId) {
         StringBuilder sb = new StringBuilder();
         sb.append("expected ").append(expectedSegmentId);
@@ -276,6 +315,19 @@ public class X12TransactionSplitter {
         StringBuilder sb = new StringBuilder();
         sb.append("unexpectedly ran out of segments - last segment id (").append(actualSegmentId).append(")");
         throw new X12ParserException(new X12ErrorDetail("", "", sb.toString()));
+    }
+    
+    /**
+     * allow construction w/o rules
+     */
+    public X12TransactionSplitter() {
+    }
+    
+    /**
+     * allow construction w/ rules
+     */
+    public X12TransactionSplitter(List<X12Rule> rules) {
+        this.rules = rules;
     }
 
     
