@@ -3,12 +3,11 @@ package com.walmartlabs.x12.util.split;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.rule.X12Rule;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,13 +21,16 @@ import static org.junit.Assert.fail;
 
 public class X12TransactionSplitterTest {
     
+    @Rule 
+    public ExpectedException exception = ExpectedException.none();
+    
     private X12TransactionSplitter splitter;
     
     @Before
     public void init() {
         splitter = new X12TransactionSplitter();
     }
-    
+
     @Test
     public void test_split_sourceData_null() {
         String sourceData = null;
@@ -62,9 +64,34 @@ public class X12TransactionSplitterTest {
     }
     
     @Test
-    public void test_split_sourceData_missing_SE() throws IOException {
+    public void test_split_sourceData_missing_ISA() throws IOException {
         String sourceData = new StringBuilder()
-            .append("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>")
+            // Note - the lack of an ISA header means
+            // that the data element delimiter is not able 
+            // to be determined causing odd behavior
+            .append("GS*SH*4405197800*999999999*20111206*1045*00*X*004060")
+            .append("\r\n")
+            .append("ST*AAA*0001")
+            .append("\r\n")
+            .append("TEST*1")
+            .append("\r\n")
+            .append("SE*1*0001")
+            .append("\r\n")
+            .append("GE*1*00")
+            .append("\r\n")
+            .append("IEA*2*000000049")
+            .toString();
+        
+        exception.expect(X12ParserException.class);
+        exception.expectMessage("expected ISA segment but got G");
+        
+        splitter.split(sourceData);
+    }
+    
+    @Test
+    public void test_split_sourceData_missing_IEA() throws IOException {
+        String sourceData = new StringBuilder()
+            .append("ISA*01*0000000000*01*0000000000*ZZ")
             .append("\r\n")
             .append("GS*SH*4405197800*999999999*20111206*1045*00*X*004060")
             .append("\r\n")
@@ -72,24 +99,45 @@ public class X12TransactionSplitterTest {
             .append("\r\n")
             .append("TEST*1")
             .append("\r\n")
-            // missing SE
+            .append("SE*1*0001")
+            .append("\r\n")
+            .append("GE*1*00")
+            // missing IEA
+            .toString();
+        
+        exception.expect(X12ParserException.class);
+        exception.expectMessage("expected IEA segment but got ISA");
+        
+        splitter.split(sourceData);
+    }
+    
+    @Test
+    public void test_split_sourceData_missing_GS() throws IOException {
+        String sourceData = new StringBuilder()
+            .append("ISA*01*0000000000*01*0000000000*ZZ")
+            .append("\r\n")
+            // missing GS
+            .append("ST*AAA*0001")
+            .append("\r\n")
+            .append("TEST*1")
+            .append("\r\n")
+            .append("SE*1*0001")
+            .append("\r\n")
             .append("GE*1*00")
             .append("\r\n")
             .append("IEA*2*000000049")
             .toString();
         
-        try {
-            splitter.split(sourceData);
-            fail("expected X12ParserException");
-        } catch (X12ParserException e) {
-            assertEquals("expected SE segment but got IEA", e.getMessage());
-        }
+        exception.expect(X12ParserException.class);
+        exception.expectMessage("expected GS segment but got ST");
+        
+        splitter.split(sourceData);
     }
     
     @Test
     public void test_split_sourceData_missing_GE() throws IOException {
         String sourceData = new StringBuilder()
-            .append("ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>")
+            .append("ISA*01*0000000000*01*0000000000*ZZ")
             .append("\r\n")
             .append("GS*SH*4405197800*999999999*20111206*1045*00*X*004060")
             .append("\r\n")
@@ -103,12 +151,10 @@ public class X12TransactionSplitterTest {
             .append("IEA*2*000000049")
             .toString();
         
-        try {
-            splitter.split(sourceData);
-            fail("expected X12ParserException");
-        } catch (X12ParserException e) {
-            assertEquals("expected ST segment but got IEA", e.getMessage());
-        }
+        exception.expect(X12ParserException.class);
+        exception.expectMessage("expected ST segment but got IEA");
+        
+        splitter.split(sourceData);
     }
     
     @Test
@@ -122,18 +168,40 @@ public class X12TransactionSplitterTest {
             .append("TEST*1")
             .append("\r\n")
             .append("SE*1*0001")
+            .append("\r\n")
             .append("GE*1*00")
             .append("\r\n")
             .append("IEA*2*000000049")
             .toString();
         
-        try {
-            splitter.split(sourceData);
-            fail("expected X12ParserException");
-        } catch (X12ParserException e) {
-            assertEquals("expected ST segment but got TEST", e.getMessage());
-        }
+        exception.expect(X12ParserException.class);
+        exception.expectMessage("expected ST segment but got TEST");
+        
+        splitter.split(sourceData);
     }
+    
+    @Test
+    public void test_split_sourceData_missing_SE() throws IOException {
+        String sourceData = new StringBuilder()
+            .append("ISA*01*0000000000*01*0000000000*ZZ")
+            .append("\r\n")
+            .append("GS*SH*4405197800*999999999*20111206*1045*00*X*004060")
+            .append("\r\n")
+            .append("ST*AAA*0001")
+            .append("\r\n")
+            .append("TEST*1")
+            .append("\r\n")
+            // missing SE
+            .append("GE*1*00")
+            .append("\r\n")
+            .append("IEA*2*000000049")
+            .toString();
+
+        exception.expect(X12ParserException.class);
+        exception.expectMessage("expected SE segment but got IEA");
+
+        splitter.split(sourceData);
+    }    
     
     @Test
     public void test_split_sourceData_two_documents_missing_SE_blend() throws IOException {
@@ -422,5 +490,4 @@ public class X12TransactionSplitterTest {
         Mockito.verify(mockRuleBoom, Mockito.times(1)).verify(Mockito.anyList());
         Mockito.verify(mockRuleThree, Mockito.times(0)).verify(Mockito.anyList());
     }
-
 }
