@@ -20,6 +20,7 @@ import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class SampleX12Parser implements X12Parser<SampleX12Document> {
         try {
             if (!StringUtils.isEmpty(sourceData)) {
                 mockX12 = new SampleX12Document();
-                List<X12Segment> segments = this.splitSourceDataIntoSegments(sourceData);
+                List<X12Segment> segments = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
                 if (!segments.isEmpty()) {
                     // parse the first segment
                     X12Segment firstSegment = segments.get(0);

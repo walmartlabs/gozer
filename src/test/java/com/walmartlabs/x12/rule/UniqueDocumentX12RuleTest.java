@@ -2,7 +2,7 @@ package com.walmartlabs.x12.rule;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import com.walmartlabs.x12.standard.StandardX12Parser;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class UniqueDocumentX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
@@ -108,7 +108,7 @@ public class UniqueDocumentX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
@@ -147,7 +147,7 @@ public class UniqueDocumentX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         
         rule = new UniqueDocumentX12Rule("BEG", 3, 4);
         rule.verify(segmentList);
@@ -179,7 +179,7 @@ public class UniqueDocumentX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
@@ -211,7 +211,7 @@ public class UniqueDocumentX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
@@ -243,7 +243,7 @@ public class UniqueDocumentX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
@@ -275,7 +275,7 @@ public class UniqueDocumentX12RuleTest {
             .append("IEA*1*000000049")
             .toString();
         
-        List<X12Segment> segmentList = new StandardX12Parser().splitSourceDataIntoSegments(sourceData.trim());
+        List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
         
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);

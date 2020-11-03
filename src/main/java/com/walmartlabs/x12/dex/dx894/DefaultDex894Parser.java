@@ -24,6 +24,7 @@ import com.walmartlabs.x12.types.InvoiceType;
 import com.walmartlabs.x12.types.ProductQualifier;
 import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -89,7 +90,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
 
         if (!StringUtils.isEmpty(sourceData)) {
             dex = new Dex894();
-            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
+            List<X12Segment> segmentLines = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
 
             if (!this.isValidEnvelope(segmentLines)) {
                 throw new X12ParserException("invalid envelope");
