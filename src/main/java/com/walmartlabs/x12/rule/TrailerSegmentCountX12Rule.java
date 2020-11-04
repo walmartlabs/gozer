@@ -18,6 +18,9 @@ public class TrailerSegmentCountX12Rule implements X12Rule {
      * that the total segments match what 
      * is reported in the trailer count
      * 
+     * it is designed to work before 
+     * any EDI message is split
+     * 
      * @param segmentList
      */
     @Override

@@ -132,6 +132,16 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
         assertNotNull(shipmentChildLoops);
         assertEquals(2, shipmentChildLoops.size());
+        
+        // always have access to 
+        // segments even though 
+        // it is easier to use the
+        // X12Loop instance 
+        List<X12Segment> shipmentSegments = shipment.getSegments();
+        assertNotNull(shipmentSegments);
+        assertEquals(12, shipmentSegments.size());
+        assertEquals("TD1*PLT94*1****G*31302*LB", shipmentSegments.get(0).toString());
+        assertEquals("N4*BEAVERTON*OR*97006", shipmentSegments.get(11).toString());
     }
 
     private void verifyTheFirstOrder(Shipment shipment) {
@@ -139,6 +149,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         X12Loop shipmentChildLoop = shipmentChildLoops.get(0);
         assertNotNull(shipmentChildLoop);
+        // 2 ways to determine what the HL is
         assertTrue(shipmentChildLoop instanceof Order);
         assertEquals("O", shipmentChildLoop.getCode());
 
@@ -164,6 +175,17 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
         assertNotNull(orderChildLoops);
         assertEquals(1, orderChildLoops.size());
+        
+        // always have access to 
+        // segments even though 
+        // it is easier to use the
+        // X12Loop instance 
+        List<X12Segment> firtOrderSegments = order.getSegments();
+        assertNotNull(firtOrderSegments);
+        assertEquals(2, firtOrderSegments.size());
+        assertEquals("PRF*0391494868", firtOrderSegments.get(0).toString());
+        assertEquals("REF*IA*579284804", firtOrderSegments.get(1).toString());
+        
 
         //
         // item

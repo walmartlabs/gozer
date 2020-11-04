@@ -29,6 +29,12 @@ import java.util.List;
  * - the GE trailer it is part of
  * - the ISE trailer
  *
+ * Note: no modifications will be made to any of the segments
+ * after it is split. This could impact some validations.
+ * 
+ * Anything that needs to be verified on the entire EDI
+ * message should be registered as an {@link X12Rule} in the splitter.
+ * 
  */
 public class X12TransactionSplitter {
     
@@ -164,6 +170,8 @@ public class X12TransactionSplitter {
     private void populateIsaEnvelope(X12Segment isaHeader, X12Segment iseTrailer,
         List<TransactionHolder> transactionHolders) {
 
+        this.alterEnvelopeTrailerBasedOnSplit(iseTrailer);
+        
         transactionHolders.forEach(txHolder -> {
             txHolder.setIsaHeader(isaHeader);
             txHolder.setIseTrailer(iseTrailer);
@@ -202,6 +210,9 @@ public class X12TransactionSplitter {
                         
                         X12Segment groupTrailer = currentSegment;
                         
+                        // extension point
+                        this.alterGroupTrailerBasedOnSplit(groupTrailer);
+                        
                         // add group trailer to all transactions
                         transactionsInGroup.forEach(txHolder -> {
                             txHolder.setGeTrailer(groupTrailer);
@@ -227,6 +238,33 @@ public class X12TransactionSplitter {
         }
         
         return transactionsInGroup;
+    }
+    
+    /**
+     * an extension point for consumers that 
+     * may want to alter the Group Trailer segment 
+     * based on the splitting that occurred
+     * 
+     * @param groupTrailer
+     * @param transactionsInGroup
+     */
+    protected void alterGroupTrailerBasedOnSplit(X12Segment groupTrailer) {
+        // a consumer could decide to replace the transaction count
+        // presumably by overwriting the document value w/ a one 
+        // since the splitting will be done on the ST/SE boundary
+    }
+    
+    /**
+     * an extension point for consumers that 
+     * may want to alter the Envelope Trailer segment 
+     * based on the splitting that occurred
+     * 
+     * @param envelopeTrailer
+     */
+    protected void alterEnvelopeTrailerBasedOnSplit(X12Segment envelopeTrailer) {
+        // a consumer could decide to replace the group count
+        // presumably by overwriting the document value w/ a one 
+        // since the splitting will be done on the ST/SE boundary
     }
     
     private TransactionHolder doTransaction(SegmentIterator segments) {
