@@ -259,7 +259,7 @@ Set<X12ErrorDetail> errorSet = x12Validator.validate(x12);
 ## Build and Release
 
 ```
-mvn clean install
+./mvnw clean install
 ```
 
 See [walmartlabs-pom for more information](https://github.com/walmartlabs/walmartlabs-pom)
