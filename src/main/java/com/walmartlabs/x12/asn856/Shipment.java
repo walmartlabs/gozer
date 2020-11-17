@@ -51,6 +51,10 @@ public class Shipment extends X12ParsedLoop {
      * N1: Party Identifiers
      */
     private List<N1PartyIdentification> n1PartyIdentifications;
+    /*
+     * REF: references
+     */
+    // TODO: add list REF
     
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);

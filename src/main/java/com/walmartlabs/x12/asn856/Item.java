@@ -37,7 +37,7 @@ public class Item extends X12ParsedLoop {
     /*
      * PID: Product Identification
      */
-    private PIDProductIdentification pid;
+    private List<PIDProductIdentification> productIdentifications;
     /*
      * SN1: Item Detail
      */
@@ -62,21 +62,17 @@ public class Item extends X12ParsedLoop {
         }
         itemIdentifications.add(lin);
     }
-
-    public PIDProductIdentification getPid() {
-        return pid;
-    }
-
-    public void setPid(PIDProductIdentification pid) {
-        this.pid = pid;
-    }
-
-    public List<LINItemIdentification> getItemIdentifications() {
-        return itemIdentifications;
-    }
-
-    public void setItemIdentifications(List<LINItemIdentification> itemIdentifications) {
-        this.itemIdentifications = itemIdentifications;
+    
+    /**
+     * helper method to add PID to list
+     * 
+     * @param pid
+     */
+    public void addPIDProductIdentification(PIDProductIdentification pid) {
+        if (CollectionUtils.isEmpty(productIdentifications)) {
+            productIdentifications = new ArrayList<>();
+        }
+        productIdentifications.add(pid);
     }
 
     public SN1ItemDetail getSn1() {
@@ -87,4 +83,20 @@ public class Item extends X12ParsedLoop {
         this.sn1 = sn1;
     }
 
+    public List<LINItemIdentification> getItemIdentifications() {
+        return itemIdentifications;
+    }
+
+    public void setItemIdentifications(List<LINItemIdentification> itemIdentifications) {
+        this.itemIdentifications = itemIdentifications;
+    }
+
+    public List<PIDProductIdentification> getProductIdentifications() {
+        return productIdentifications;
+    }
+
+    public void setProductIdentifications(List<PIDProductIdentification> productIdentifications) {
+        this.productIdentifications = productIdentifications;
+    }
+    
 }

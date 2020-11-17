@@ -197,7 +197,10 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         Item item = (Item) orderChildLoop;
 
-        PIDProductIdentification pid = item.getPid();
+        List<PIDProductIdentification> pids = item.getProductIdentifications();
+        assertNotNull(pids);
+        assertEquals(1, pids.size());
+        PIDProductIdentification pid = pids.get(0);
         assertNotNull(pid);
         assertEquals("POTATO RED SKIN WALMART 6/4#", pid.getDescription());
 
@@ -341,8 +344,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         Item item = (Item) packChildLoop;
 
-        PIDProductIdentification pid = item.getPid();
-        assertNull(pid);
+        List<PIDProductIdentification> pids = item.getProductIdentifications();
+        assertNull(pids);
 
         SN1ItemDetail sn1 = item.getSn1();
         assertNotNull(sn1);
@@ -383,8 +386,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         item = (Item) packChildLoop;
 
-        pid = item.getPid();
-        assertNull(pid);
+        pids = item.getProductIdentifications();
+        assertNull(pids);
 
         sn1 = item.getSn1();
         assertNotNull(sn1);
@@ -428,8 +431,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         item = (Item) packChildLoop;
 
-        pid = item.getPid();
-        assertNull(pid);
+        pids = item.getProductIdentifications();
+        assertNull(pids);
 
         sn1 = item.getSn1();
         assertNotNull(sn1);

@@ -445,7 +445,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param tare
      */
     private void doTareSegments(X12Segment segment, SegmentIterator segmentIterator, Tare tare) {
-        // TODO: need to keep working on this and add tests
         switch (segment.getIdentifier()) {
             case PKGPackaging.IDENTIFIER:
                 // TODO: add this
@@ -472,14 +471,22 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param pack
      */
     private void doPackSegments(X12Segment segment, SegmentIterator segmentIterator, Pack pack) {
-        // TODO: need to keep working on this and add tests
         switch (segment.getIdentifier()) {
+            case MANMarkNumber.IDENTIFIER:
+                pack.setMan(MANMarkNumberParser.parse(segment));
+                break; 
             case PO4ItemPhysicalDetail.IDENTIFIER:
                 // TODO: add this
                 break;
-            case MANMarkNumber.IDENTIFIER:
-                pack.setMan(MANMarkNumberParser.parse(segment));
-                break;                
+            case PIDProductIdentification.IDENTIFIER:
+                pack.addPIDProductIdentification(PIDPartyIdentificationParser.parse(segment));
+                break;
+            case LINItemIdentification.IDENTIFIER:
+                pack.setItemIdentifications(LINItemIdentificationParser.parse(segment));
+                break;
+            case SN1ItemDetail.IDENTIFIER:
+                pack.setSn1(SN1ItemDetailParser.parse(segment));
+                break;                 
             default:
                 // TODO: what do we do w/ an unidentified segment
                 break;
@@ -495,10 +502,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param items
      */
     private void doItemSegments(X12Segment segment, SegmentIterator segmentIterator, Item item) {
-        // TODO: need to keep working on this and add tests
         switch (segment.getIdentifier()) {
             case PIDProductIdentification.IDENTIFIER:
-                item.setPid(PIDPartyIdentificationParser.parse(segment));
+                item.addPIDProductIdentification(PIDPartyIdentificationParser.parse(segment));
                 break;
             case LINItemIdentification.IDENTIFIER:
                 item.setItemIdentifications(LINItemIdentificationParser.parse(segment));
