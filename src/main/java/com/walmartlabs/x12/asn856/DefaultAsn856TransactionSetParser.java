@@ -336,6 +336,31 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     }
     
     
+    private void parseBatchLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
+        //
+        // should be a Batch
+        //
+        LOGGER.debug(unparsedLoop.getCode());
+        if (Batch.isBatchLoop(unparsedLoop)) {
+            Batch batch = new Batch();
+            batch.copyAttributes(unparsedLoop);
+            parentLoop.addParsedChildLoop(batch);
+            
+            //
+            // handle the segments that are associated w/ the Batch Loop
+            //
+            this.handleLoopSegments(unparsedLoop, batch, this::doBatchSegments);
+
+            //
+            // handle the children loops
+            // these loops can appear in a variety of sequences
+            //
+            this.parseEachChildrenLoop(unparsedLoop, batch);
+        }        
+    }
+    
+    
+    
     private void parseEachChildrenLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
         List<X12Loop> unparsedLoopChildren = unparsedLoop.getChildLoops();
         if (!CollectionUtils.isEmpty(unparsedLoopChildren)) {
@@ -356,7 +381,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case Item.ITEM__LOOP_CODE:
                 this.parseItemLoop(unparsedLoop, parentLoop);
-                break;                 
+                break;
+            case Batch.BATCH_LOOP_CODE:
+                this.parseBatchLoop(unparsedLoop, parentLoop);
+                break;                
             default:
                 // TODO: what to do w/ unknown loop
                 break;
@@ -512,6 +540,35 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             case SN1ItemDetail.IDENTIFIER:
                 item.setSn1(SN1ItemDetailParser.parse(segment));
                 break;                 
+            default:
+                // TODO: what do we do w/ an unidentified segment
+                break;
+        }    
+    }
+    
+    /**
+     * handle the segment lines that are part of the Batch (appearing before the next
+     * HL loop)
+     * 
+     * @param segment
+     * @param segmentIterator
+     * @param items
+     */
+    private void doBatchSegments(X12Segment segment, SegmentIterator segmentIterator, Batch batch) {
+        switch (segment.getIdentifier()) {
+            case PIDProductIdentification.IDENTIFIER:
+                batch.addPIDProductIdentification(PIDPartyIdentificationParser.parse(segment));
+                break;
+            case LINItemIdentification.IDENTIFIER:
+                batch.setItemIdentifications(LINItemIdentificationParser.parse(segment));
+                break;
+            case SN1ItemDetail.IDENTIFIER:
+                batch.setSn1(SN1ItemDetailParser.parse(segment));
+                break;
+            case N1PartyIdentification.IDENTIFIER:
+                N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
+                batch.addN1PartyIdentification(n1);
+                break;                
             default:
                 // TODO: what do we do w/ an unidentified segment
                 break;

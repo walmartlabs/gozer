@@ -224,9 +224,9 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertTrue(tareChildLoop instanceof Pack);
         assertEquals("P", tareChildLoop.getCode());
 
-        Pack pack = (Pack) tareChildLoop;
+        Pack packOne = (Pack) tareChildLoop;
 
-        List<PIDProductIdentification> pids = pack.getProductIdentifications();
+        List<PIDProductIdentification> pids = packOne.getProductIdentifications();
         assertNotNull(pids);
         assertEquals(2, pids.size());
         PIDProductIdentification pid = pids.get(0);
@@ -238,12 +238,12 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("PRODUCT OF USA-CALIFORNIA", pid.getDescription());
         
-        SN1ItemDetail sn1 = pack.getSn1();
+        SN1ItemDetail sn1 = packOne.getSn1();
         assertNotNull(sn1);
         assertEquals("5.000000", sn1.getNumberOfUnits().toString());
         assertEquals("CA", sn1.getUnitOfMeasurement());
 
-        List<LINItemIdentification> itemIdList = pack.getItemIdentifications();
+        List<LINItemIdentification> itemIdList = packOne.getItemIdentifications();
         assertNotNull(itemIdList);
         assertEquals(4, itemIdList.size());
 
@@ -267,8 +267,49 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("CH", lin.getProductIdQualifier());
         assertEquals("US-CA", lin.getProductId());
 
-        List<X12Loop> itemChildLoops = pack.getParsedChildrenLoops();
-        assertNull(itemChildLoops);
+        List<X12Loop> packChildLoops = packOne.getParsedChildrenLoops();
+        assertNotNull(packChildLoops);
+        assertEquals(1, packChildLoops.size());
+        
+        //
+        // batch on pack 1
+        //
+        X12Loop batchChildLoopOne = packChildLoops.get(0);
+        assertNotNull(batchChildLoopOne);
+        assertTrue(batchChildLoopOne instanceof Batch);
+        assertEquals("ZZ", batchChildLoopOne.getCode());
+
+        Batch batchOne = (Batch) batchChildLoopOne;
+        
+        List<LINItemIdentification> batchItemIdList = batchOne.getItemIdentifications();
+        assertNotNull(batchItemIdList);
+        assertEquals(1, batchItemIdList.size());
+
+        lin = batchItemIdList.get(0);
+        assertNotNull(lin);
+        assertEquals("LT", lin.getProductIdQualifier());
+        assertEquals("1-1356484", lin.getProductId());
+        
+        sn1 = batchOne.getSn1();
+        assertNotNull(sn1);
+        assertEquals("5.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("CA", sn1.getUnitOfMeasurement());
+        
+        List<N1PartyIdentification> n1List = batchOne.getN1PartyIdentifications();
+        assertNotNull(n1List);
+        assertEquals(1, n1List.size());
+        N1PartyIdentification n1 = n1List.get(0);
+        assertNotNull(n1);
+        assertEquals("ZW", n1.getEntityIdentifierCode());
+        assertEquals("2901 LETTUCE FIELD SW", n1.getName());
+        N3PartyLocation n3 = n1.getN3();
+        assertNotNull(n3);
+        assertEquals("208 APPLE ST", n3.getAddressInfoOne());
+        N4GeographicLocation n4 = n1.getN4();
+        assertNotNull(n4);
+        assertEquals("COOLTOWN", n4.getCityName());
+        assertEquals("CA", n4.getStateOrProvinceCode());
+        assertEquals("90839", n4.getPostalCode());
 
         //
         // pack 2
@@ -321,8 +362,49 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("CH", lin.getProductIdQualifier());
         assertEquals("US-CA", lin.getProductId());
 
-        itemChildLoops = packTwo.getParsedChildrenLoops();
-        assertNull(itemChildLoops);
+        packChildLoops = packTwo.getParsedChildrenLoops();
+        assertNotNull(packChildLoops);
+        assertEquals(1, packChildLoops.size());
+        
+        //
+        // batch on pack 2
+        //
+        X12Loop batchChildLoopTwo = packChildLoops.get(0);
+        assertNotNull(batchChildLoopTwo);
+        assertTrue(batchChildLoopTwo instanceof Batch);
+        assertEquals("ZZ", batchChildLoopTwo.getCode());
+        
+        Batch batchTwo = (Batch) batchChildLoopTwo;
+        
+        batchItemIdList = batchTwo.getItemIdentifications();
+        assertNotNull(batchItemIdList);
+        assertEquals(1, batchItemIdList.size());
+
+        lin = batchItemIdList.get(0);
+        assertNotNull(lin);
+        assertEquals("LT", lin.getProductIdQualifier());
+        assertEquals("1-1354687", lin.getProductId());
+        
+        sn1 = batchTwo.getSn1();
+        assertNotNull(sn1);
+        assertEquals("45.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("CA", sn1.getUnitOfMeasurement());
+        
+        n1List = batchTwo.getN1PartyIdentifications();
+        assertNotNull(n1List);
+        assertEquals(1, n1List.size());
+        n1 = n1List.get(0);
+        assertNotNull(n1);
+        assertEquals("ZW", n1.getEntityIdentifierCode());
+        assertEquals("2901 LETTUCE FIELD SW", n1.getName());
+        n3 = n1.getN3();
+        assertNotNull(n3);
+        assertEquals("208 APPLE ST", n3.getAddressInfoOne());
+        n4 = n1.getN4();
+        assertNotNull(n4);
+        assertEquals("COOLTOWN", n4.getCityName());
+        assertEquals("CA", n4.getStateOrProvinceCode());
+        assertEquals("90839", n4.getPostalCode());
     }
 
     private List<X12Segment> getTransactionSetSegments() {
@@ -370,13 +452,31 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("PID*F****RADISH BUNCH OM"));
         txSegments.add(new X12Segment("PID*F*MSG***PRODUCT OF USA-CALIFORNIA"));
 
+        // Batch
+        txSegments.add(new X12Segment("HL*5*4*ZZ"));
+        txSegments.add(new X12Segment("LIN**LT*1-1356484"));
+        txSegments.add(new X12Segment("SN1**5*CA"));
+        txSegments.add(new X12Segment("DTM*510*20200521"));
+        txSegments.add(new X12Segment("N1*ZW*2901 LETTUCE FIELD SW"));
+        txSegments.add(new X12Segment("N3*208 APPLE ST"));
+        txSegments.add(new X12Segment("N4*COOLTOWN*CA*90839"));
+        
         // Pack 2 on Order 1
-        txSegments.add(new X12Segment("HL*5*3*P"));
+        txSegments.add(new X12Segment("HL*6*3*P"));
         txSegments.add(new X12Segment("LIN**IN*009495175*UK*10000651044436*UP*000000047623*CH*US-CA"));
         txSegments.add(new X12Segment("SN1**45*CA"));
         txSegments.add(new X12Segment("PO4****************RPC6413"));
         txSegments.add(new X12Segment("PID*F****ARTICHOKE LG CA OM"));
         txSegments.add(new X12Segment("PID*F*MSG***PRODUCT OF USA-CALIFORNIA"));
+        
+        // Batch
+        txSegments.add(new X12Segment("HL*7*6*ZZ"));
+        txSegments.add(new X12Segment("LIN**LT*1-1354687"));
+        txSegments.add(new X12Segment("SN1**45*CA"));
+        txSegments.add(new X12Segment("DTM*510*20200521"));
+        txSegments.add(new X12Segment("N1*ZW*2901 LETTUCE FIELD SW"));
+        txSegments.add(new X12Segment("N3*208 APPLE ST"));
+        txSegments.add(new X12Segment("N4*COOLTOWN*CA*90839"));
         
         // End of Transaction
         txSegments.add(new X12Segment("SE*296*368090001"));
