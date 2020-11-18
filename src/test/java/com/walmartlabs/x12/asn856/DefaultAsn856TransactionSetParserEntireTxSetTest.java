@@ -93,6 +93,15 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(td5);
         assertEquals("SQCA", td5.getIdentificationCode());
 
+        List<REFReferenceInformation> refs = shipment.getRefList();
+        assertNotNull(refs);
+        assertEquals(1, refs.size());
+
+        REFReferenceInformation ref = refs.get(0);
+        assertNotNull(ref);
+        assertEquals("UCB", ref.getReferenceIdentificationQualifier());
+        assertEquals("711170010491361", ref.getReferenceIdentification());
+        
         List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(2, dtmList.size());

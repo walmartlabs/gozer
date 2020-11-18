@@ -21,6 +21,7 @@ import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
+import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import org.springframework.util.CollectionUtils;
@@ -56,12 +57,28 @@ public class Batch extends X12ParsedLoop {
      * DTM: Date/Time Reference
      */
     List<DTMDateTimeReference> dtmReferences;
+    /*
+     * REF
+     */
+    private List<REFReferenceInformation> refList;
     
     
     public static boolean isBatchLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, BATCH_LOOP_CODE);
     }
 
+    /**
+     * helper method to add REF
+     * 
+     * @param ref
+     */
+    public void addReferenceInformation(REFReferenceInformation ref) {
+        if (CollectionUtils.isEmpty(refList)) {
+            refList = new ArrayList<>();
+        }
+        refList.add(ref);
+    }
+    
     /**
      * helper method to add LIN to list
      * 
@@ -140,6 +157,14 @@ public class Batch extends X12ParsedLoop {
         this.n1PartyIdentifications = n1PartyIdentifications;
     }
 
+    public List<REFReferenceInformation> getRefList() {
+        return refList;
+    }
+
+    public void setRefList(List<REFReferenceInformation> refList) {
+        this.refList = refList;
+    }
+    
     public List<DTMDateTimeReference> getDtmReferences() {
         return dtmReferences;
     }

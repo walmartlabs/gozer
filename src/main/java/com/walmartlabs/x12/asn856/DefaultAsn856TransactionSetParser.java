@@ -438,6 +438,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
                 shipment.addN1PartyIdentification(n1);
                 break;
+            case REFReferenceInformation.IDENTIFIER:
+                shipment.addReferenceInformation(REFReferenceInformationParser.parse(segment));
+                break;                 
             case DTMDateTimeReference.IDENTIFIER:
                 DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
                 shipment.addDTMDateTimeReference(dtm);
@@ -463,7 +466,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case REFReferenceInformation.IDENTIFIER:
                 order.addReferenceInformation(REFReferenceInformationParser.parse(segment));
-                break;                
+                break;            
             default:
                 // TODO: what do we do w/ an unidentified segment
                 break;
@@ -575,6 +578,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
                 batch.addN1PartyIdentification(n1);
                 break;
+            case REFReferenceInformation.IDENTIFIER:
+                batch.addReferenceInformation(REFReferenceInformationParser.parse(segment));
+                break;                
             case DTMDateTimeReference.IDENTIFIER:
                 DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
                 batch.addDTMDateTimeReference(dtm);
