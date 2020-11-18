@@ -21,6 +21,7 @@ import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
@@ -92,7 +93,23 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(td5);
         assertEquals("SQCA", td5.getIdentificationCode());
 
-        List<N1PartyIdentification> n1List = shipment.getN1PartyIdenfications();
+        List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
+        assertNotNull(dtmList);
+        assertEquals(2, dtmList.size());
+        
+        DTMDateTimeReference dtm = dtmList.get(0);
+        assertNotNull(dtm);
+        assertEquals("011", dtm.getDateTimeQualifier());
+        assertEquals("20190523", dtm.getDate());
+        assertNull(dtm.getTime());
+
+        dtm = dtmList.get(1);
+        assertNotNull(dtm);
+        assertEquals("067", dtm.getDateTimeQualifier());
+        assertEquals("201905233", dtm.getDate());
+        assertNull(dtm.getTime());
+        
+        List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
 

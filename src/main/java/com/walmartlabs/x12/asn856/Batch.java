@@ -17,6 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
@@ -54,7 +55,7 @@ public class Batch extends X12ParsedLoop {
     /*
      * DTM: Date/Time Reference
      */
-    // TODO: next PR will add
+    List<DTMDateTimeReference> dtmReferences;
     
     
     public static boolean isBatchLoop(X12Loop loop) {
@@ -95,6 +96,17 @@ public class Batch extends X12ParsedLoop {
         }
         n1PartyIdentifications.add(n1);
     }
+    
+    /**
+     * helper method to add DTM to list
+     * @param dtm
+     */
+    public void addDTMDateTimeReference(DTMDateTimeReference dtm) {
+        if (CollectionUtils.isEmpty(dtmReferences)) {
+            dtmReferences = new ArrayList<>();
+        }
+        dtmReferences.add(dtm);
+    }
 
     public List<PIDProductIdentification> getProductIdentifications() {
         return productIdentifications;
@@ -126,6 +138,14 @@ public class Batch extends X12ParsedLoop {
 
     public void setN1PartyIdentifications(List<N1PartyIdentification> n1PartyIdentifications) {
         this.n1PartyIdentifications = n1PartyIdentifications;
+    }
+
+    public List<DTMDateTimeReference> getDtmReferences() {
+        return dtmReferences;
+    }
+
+    public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
+        this.dtmReferences = dtmReferences;
     }
     
 }
