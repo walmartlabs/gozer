@@ -21,6 +21,7 @@ import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
@@ -111,7 +112,17 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("AO", ref.getReferenceIdentificationQualifier());
         assertEquals("22693594", ref.getReferenceIdentification());
         
-        List<N1PartyIdentification> n1List = shipment.getN1PartyIdenfications();
+        List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
+        assertNotNull(dtmList);
+        assertEquals(1, dtmList.size());
+        
+        DTMDateTimeReference dtm = dtmList.get(0);
+        assertNotNull(dtm);
+        assertEquals("011", dtm.getDateTimeQualifier());
+        assertEquals("20200523", dtm.getDate());
+        assertNull(dtm.getTime());
+        
+        List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
 
@@ -231,9 +242,22 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals(2, tareChildLoops.size());
         
         //
-        // pack 1 on tare 1
+        // pack 1
         //
         X12Loop tareChildLoop = tareChildLoops.get(0);
+        this.verifyTheFirstPackOnOrderOne(tareChildLoop);
+        
+        //
+        // pack 2
+        //
+        X12Loop tareChildLoopTwo = tareChildLoops.get(1);
+        this.verifyTheSecondPackOnOrderOne(tareChildLoopTwo);
+    }
+    
+    private void verifyTheFirstPackOnOrderOne(X12Loop tareChildLoop) {
+        //
+        // pack 1 on tare 1
+        //
         assertNotNull(tareChildLoop);
         assertTrue(tareChildLoop instanceof Pack);
         assertEquals("P", tareChildLoop.getCode());
@@ -324,21 +348,32 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("COOLTOWN", n4.getCityName());
         assertEquals("CA", n4.getStateOrProvinceCode());
         assertEquals("90839", n4.getPostalCode());
-
+        
+        List<DTMDateTimeReference> dtmList = batchOne.getDtmReferences();
+        assertNotNull(dtmList);
+        assertEquals(1, dtmList.size());
+        
+        DTMDateTimeReference dtm = dtmList.get(0);
+        assertNotNull(dtm);
+        assertEquals("510", dtm.getDateTimeQualifier());
+        assertEquals("20200521", dtm.getDate());
+        assertNull(dtm.getTime());
+    }
+    
+    private void verifyTheSecondPackOnOrderOne(X12Loop tareChildLoopTwo) {
         //
-        // pack 2
+        // pack 2 on tare 1
         //
-        X12Loop tareChildLoopTwo = tareChildLoops.get(1);
         assertNotNull(tareChildLoopTwo);
         assertTrue(tareChildLoopTwo instanceof Pack);
         assertEquals("P", tareChildLoopTwo.getCode());
 
         Pack packTwo = (Pack) tareChildLoopTwo;
 
-        pids = packTwo.getProductIdentifications();
+        List<PIDProductIdentification> pids = packTwo.getProductIdentifications();
         assertNotNull(pids);
         assertEquals(2, pids.size());
-        pid = pids.get(0);
+        PIDProductIdentification pid = pids.get(0);
         assertNotNull(pid);
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("ARTICHOKE LG CA OM", pid.getDescription());
@@ -347,16 +382,16 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("PRODUCT OF USA-CALIFORNIA", pid.getDescription());
 
-        sn1 = packTwo.getSn1();
+        SN1ItemDetail sn1 = packTwo.getSn1();
         assertNotNull(sn1);
         assertEquals("45.000000", sn1.getNumberOfUnits().toString());
         assertEquals("CA", sn1.getUnitOfMeasurement());
 
-        itemIdList = packTwo.getItemIdentifications();
+        List<LINItemIdentification> itemIdList = packTwo.getItemIdentifications();
         assertNotNull(itemIdList);
         assertEquals(4, itemIdList.size());
 
-        lin = itemIdList.get(0);
+        LINItemIdentification lin = itemIdList.get(0);
         assertNotNull(lin);
         assertEquals("IN", lin.getProductIdQualifier());
         assertEquals("009495175", lin.getProductId());
@@ -376,7 +411,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("CH", lin.getProductIdQualifier());
         assertEquals("US-CA", lin.getProductId());
 
-        packChildLoops = packTwo.getParsedChildrenLoops();
+        List<X12Loop> packChildLoops = packTwo.getParsedChildrenLoops();
         assertNotNull(packChildLoops);
         assertEquals(1, packChildLoops.size());
         
@@ -390,7 +425,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         
         Batch batchTwo = (Batch) batchChildLoopTwo;
         
-        batchItemIdList = batchTwo.getItemIdentifications();
+        List<LINItemIdentification> batchItemIdList = batchTwo.getItemIdentifications();
         assertNotNull(batchItemIdList);
         assertEquals(1, batchItemIdList.size());
 
@@ -404,21 +439,31 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("45.000000", sn1.getNumberOfUnits().toString());
         assertEquals("CA", sn1.getUnitOfMeasurement());
         
-        n1List = batchTwo.getN1PartyIdentifications();
+        List<N1PartyIdentification> n1List = batchTwo.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(1, n1List.size());
-        n1 = n1List.get(0);
+        N1PartyIdentification n1 = n1List.get(0);
         assertNotNull(n1);
         assertEquals("ZW", n1.getEntityIdentifierCode());
         assertEquals("2901 LETTUCE FIELD SW", n1.getName());
-        n3 = n1.getN3();
+        N3PartyLocation n3 = n1.getN3();
         assertNotNull(n3);
         assertEquals("208 APPLE ST", n3.getAddressInfoOne());
-        n4 = n1.getN4();
+        N4GeographicLocation n4 = n1.getN4();
         assertNotNull(n4);
         assertEquals("COOLTOWN", n4.getCityName());
         assertEquals("CA", n4.getStateOrProvinceCode());
         assertEquals("90839", n4.getPostalCode());
+        
+        List<DTMDateTimeReference> dtmList = batchTwo.getDtmReferences();
+        assertNotNull(dtmList);
+        assertEquals(1, dtmList.size());
+        
+        DTMDateTimeReference dtm = dtmList.get(0);
+        assertNotNull(dtm);
+        assertEquals("510", dtm.getDateTimeQualifier());
+        assertEquals("20200521", dtm.getDate());
+        assertNull(dtm.getTime());
     }
 
     private List<X12Segment> getTransactionSetSegments() {
