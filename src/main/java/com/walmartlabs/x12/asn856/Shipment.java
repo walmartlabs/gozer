@@ -17,6 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
+import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
@@ -54,12 +55,24 @@ public class Shipment extends X12ParsedLoop {
     /*
      * REF: references
      */
-    // TODO: add list REF
+    private List<REFReferenceInformation> refList;
     
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
     }
 
+    /**
+     * helper method to add REF
+     * 
+     * @param ref
+     */
+    public void addReferenceInformation(REFReferenceInformation ref) {
+        if (CollectionUtils.isEmpty(refList)) {
+            refList = new ArrayList<>();
+        }
+        refList.add(ref);
+    }
+    
     /**
      * helper method to add N1 to list
      * @param n1
@@ -101,6 +114,14 @@ public class Shipment extends X12ParsedLoop {
 
     public void setN1PartIdentifications(List<N1PartyIdentification> n1PartyIdenfiers) {
         this.n1PartyIdentifications = n1PartyIdenfiers;
+    }
+
+    public List<REFReferenceInformation> getRefList() {
+        return refList;
+    }
+
+    public void setRefList(List<REFReferenceInformation> refList) {
+        this.refList = refList;
     }
 
 }

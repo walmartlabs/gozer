@@ -97,6 +97,20 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("PRIJ", td5.getIdentificationCode());
         assertEquals("M", td5.getTransportationMethodTypeCode());
 
+        List<REFReferenceInformation> refs = shipment.getRefList();
+        assertNotNull(refs);
+        assertEquals(2, refs.size());
+        
+        REFReferenceInformation ref = refs.get(0);
+        assertNotNull(ref);
+        assertEquals("UCB", ref.getReferenceIdentificationQualifier());
+        assertEquals("10000650002269359", ref.getReferenceIdentification());
+
+        ref = refs.get(1);
+        assertNotNull(ref);
+        assertEquals("AO", ref.getReferenceIdentificationQualifier());
+        assertEquals("22693594", ref.getReferenceIdentification());
+        
         List<N1PartyIdentification> n1List = shipment.getN1PartyIdenfications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
