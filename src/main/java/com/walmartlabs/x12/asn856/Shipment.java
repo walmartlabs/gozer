@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.walmartlabs.x12.asn856;
 
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
@@ -55,6 +56,10 @@ public class Shipment extends X12ParsedLoop {
      * REF: references
      */
     // TODO: add list REF
+    /*
+     * DTM: Date/Time Reference
+     */
+    List<DTMDateTimeReference> dtmReferences;
     
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
@@ -69,6 +74,17 @@ public class Shipment extends X12ParsedLoop {
             n1PartyIdentifications = new ArrayList<>();
         }
         n1PartyIdentifications.add(n1);
+    }
+    
+    /**
+     * helper method to add DTM to list
+     * @param dtm
+     */
+    public void addDTMDateTimeReference(DTMDateTimeReference dtm) {
+        if (CollectionUtils.isEmpty(dtmReferences)) {
+            dtmReferences = new ArrayList<>();
+        }
+        dtmReferences.add(dtm);
     }
     
     public TD1CarrierDetail getTd1() {
@@ -95,12 +111,20 @@ public class Shipment extends X12ParsedLoop {
         this.td5 = td5;
     }
 
-    public List<N1PartyIdentification> getN1PartyIdenfications() {
+    public List<N1PartyIdentification> getN1PartyIdentifications() {
         return n1PartyIdentifications;
     }
 
-    public void setN1PartIdentifications(List<N1PartyIdentification> n1PartyIdenfiers) {
-        this.n1PartyIdentifications = n1PartyIdenfiers;
+    public void setN1PartyIdentifications(List<N1PartyIdentification> n1PartyIdentifications) {
+        this.n1PartyIdentifications = n1PartyIdentifications;
+    }
+
+    public List<DTMDateTimeReference> getDtmReferences() {
+        return dtmReferences;
+    }
+
+    public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
+        this.dtmReferences = dtmReferences;
     }
 
 }

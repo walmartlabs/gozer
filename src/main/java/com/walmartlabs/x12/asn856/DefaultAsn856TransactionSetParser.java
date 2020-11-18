@@ -28,6 +28,7 @@ import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
 import com.walmartlabs.x12.asn856.segment.parser.MANMarkNumberParser;
 import com.walmartlabs.x12.asn856.segment.parser.PRFPurchaseOrderReferenceParser;
 import com.walmartlabs.x12.asn856.segment.parser.SN1ItemDetailParser;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
@@ -36,6 +37,7 @@ import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
+import com.walmartlabs.x12.common.segment.parser.DTMDateTimeReferenceParser;
 import com.walmartlabs.x12.common.segment.parser.LINItemIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.N1PartyIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.PIDPartyIdentificationParser;
@@ -436,6 +438,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
                 shipment.addN1PartyIdentification(n1);
                 break;
+            case DTMDateTimeReference.IDENTIFIER:
+                DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
+                shipment.addDTMDateTimeReference(dtm);
+                break;                
             default:
                 // TODO: what do we do w/ an unidentified segment
                 break;
@@ -568,7 +574,11 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             case N1PartyIdentification.IDENTIFIER:
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
                 batch.addN1PartyIdentification(n1);
-                break;                
+                break;
+            case DTMDateTimeReference.IDENTIFIER:
+                DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
+                batch.addDTMDateTimeReference(dtm);
+                break;                  
             default:
                 // TODO: what do we do w/ an unidentified segment
                 break;
