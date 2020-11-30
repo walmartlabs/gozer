@@ -54,7 +54,7 @@ public class TD1CarrierDetailParserTest {
         assertEquals("1", td1.getLadingQuantity().toString());
         assertEquals("G", td1.getWeightQualifier());
         assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.LB, td1.getUnitOfMeasureCode());
+        assertEquals("LB", td1.getUnitOfMeasure());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class TD1CarrierDetailParserTest {
         assertEquals("1", td1.getLadingQuantity().toString());
         assertEquals("G", td1.getWeightQualifier());
         assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.UNKNOWN, td1.getUnitOfMeasureCode());
+        assertEquals("XX", td1.getUnitOfMeasure());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class TD1CarrierDetailParserTest {
         assertEquals("1", td1.getLadingQuantity().toString());
         assertEquals("G", td1.getWeightQualifier());
         assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.LB, td1.getUnitOfMeasureCode());
+        assertEquals("LB", td1.getUnitOfMeasure());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class TD1CarrierDetailParserTest {
         assertEquals("1", td1.getLadingQuantity().toString());
         assertEquals("G", td1.getWeightQualifier());
         assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.LB, td1.getUnitOfMeasureCode());
+        assertEquals("LB", td1.getUnitOfMeasure());
     }
 
     @Test(expected = X12ParserException.class)
