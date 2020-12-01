@@ -511,7 +511,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         switch (segment.getIdentifier()) {
             case MANMarkNumber.IDENTIFIER:
                 pack.setMan(MANMarkNumberParser.parse(segment));
-                break; 
+                break;
+            case TD1CarrierDetail.IDENTIFIER:
+                pack.setTd1(TD1CarrierDetailParser.parse(segment));
+                break;                
             case PO4ItemPhysicalDetail.IDENTIFIER:
                 // TODO: add this
                 break;

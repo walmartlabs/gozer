@@ -21,6 +21,7 @@ import com.walmartlabs.x12.asn856.segment.PO4ItemPhysicalDetail;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
+import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import org.springframework.util.CollectionUtils;
@@ -37,17 +38,21 @@ public class Pack extends X12ParsedLoop {
     public static final String PACK_LOOP_CODE = "P";
     
     /*
-     * PO4: Item Physical Details
-     */
-    private PO4ItemPhysicalDetail po4;
-    /*
      * MAN: Marking
      */
     private MANMarkNumber man;
     /*
+     * PO4: Item Physical Details
+     */
+    private PO4ItemPhysicalDetail po4;
+    /*
      * PID: Product Identification
      */
     private List<PIDProductIdentification> productIdentifications;
+    /*
+     * TD1: Carrier Details
+     */
+    private TD1CarrierDetail td1;
     /*
      * SN1: Item Detail
      */
@@ -124,6 +129,14 @@ public class Pack extends X12ParsedLoop {
 
     public void setItemIdentifications(List<LINItemIdentification> itemIdentifications) {
         this.itemIdentifications = itemIdentifications;
+    }
+
+    public TD1CarrierDetail getTd1() {
+        return td1;
+    }
+
+    public void setTd1(TD1CarrierDetail td1) {
+        this.td1 = td1;
     }
     
 }

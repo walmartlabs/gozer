@@ -16,8 +16,6 @@ limitations under the License.
 
 package com.walmartlabs.x12.common.segment;
 
-import com.walmartlabs.x12.types.UnitMeasure;
-
 import java.math.BigDecimal;
 
 /**
@@ -42,7 +40,7 @@ public class TD1CarrierDetail {
     // TD107
     private BigDecimal weight;
     // TD108
-    private UnitMeasure unitOfMeasureCode;
+    private String unitOfMeasure;
 
     public String getRawPackagingCode() {
         return rawPackagingCode;
@@ -92,12 +90,12 @@ public class TD1CarrierDetail {
         this.weight = weight;
     }
 
-    public UnitMeasure getUnitOfMeasureCode() {
-        return unitOfMeasureCode;
+    public String getUnitOfMeasure() {
+        return unitOfMeasure;
     }
 
-    public void setUnitOfMeasureCode(UnitMeasure unitOfMeasureCode) {
-        this.unitOfMeasureCode = unitOfMeasureCode;
+    public void setUnitOfMeasure(String unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 
 }

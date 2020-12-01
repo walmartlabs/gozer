@@ -33,14 +33,16 @@ import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
-import com.walmartlabs.x12.types.UnitMeasure;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class DefaultAsn856TransactionSetParserPerishableTest {
 
@@ -87,7 +89,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNull(td1.getRawPackagingCode());
         assertEquals("G", td1.getWeightQualifier());
         assertEquals("2490.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.LB, td1.getUnitOfMeasureCode());
+        assertEquals("LB", td1.getUnitOfMeasure());
 
         TD3CarrierDetail td3 = shipment.getTd3();
         assertNull(td3);
@@ -276,6 +278,12 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("PRODUCT OF USA-CALIFORNIA", pid.getDescription());
         
+        TD1CarrierDetail td1 = packOne.getTd1();
+        assertNotNull(td1);
+        assertEquals("G", td1.getWeightQualifier());
+        assertEquals("2490.0000", td1.getWeight().toString());
+        assertEquals("LB", td1.getUnitOfMeasure());
+        
         SN1ItemDetail sn1 = packOne.getSn1();
         assertNotNull(sn1);
         assertEquals("5.000000", sn1.getNumberOfUnits().toString());
@@ -382,6 +390,9 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("PRODUCT OF USA-CALIFORNIA", pid.getDescription());
 
+        TD1CarrierDetail td1 = packTwo.getTd1();
+        assertNull(td1);
+        
         SN1ItemDetail sn1 = packTwo.getSn1();
         assertNotNull(sn1);
         assertEquals("45.000000", sn1.getNumberOfUnits().toString());
@@ -510,7 +521,8 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("PO4****************RPC6413"));
         txSegments.add(new X12Segment("PID*F****RADISH BUNCH OM"));
         txSegments.add(new X12Segment("PID*F*MSG***PRODUCT OF USA-CALIFORNIA"));
-
+        txSegments.add(new X12Segment("TD1******G*2490*LB"));
+        
         // Batch
         txSegments.add(new X12Segment("HL*5*4*ZZ"));
         txSegments.add(new X12Segment("LIN**LT*1-1356484"));
