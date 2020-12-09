@@ -61,6 +61,10 @@ public class Shipment extends X12ParsedLoop {
      * DTM: Date/Time Reference
      */
     List<DTMDateTimeReference> dtmReferences;
+    /*
+     * FOB: payment related instructions
+     */
+    DTMDateTimeReference fob;
     
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
