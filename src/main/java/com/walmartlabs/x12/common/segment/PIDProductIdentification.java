@@ -12,6 +12,9 @@ public class PIDProductIdentification {
     // PID01
     private String itemDescriptionType;
 
+    // PID02
+    private String characteristicCode;
+    
     // PID05
     private String description;
 
@@ -29,6 +32,14 @@ public class PIDProductIdentification {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getCharacteristicCode() {
+        return characteristicCode;
+    }
+
+    public void setCharacteristicCode(String characteristicCode) {
+        this.characteristicCode = characteristicCode;
     }
 
 }
