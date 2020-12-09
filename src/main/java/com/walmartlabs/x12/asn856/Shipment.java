@@ -17,6 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
+import com.walmartlabs.x12.common.segment.FOBRelatedInstructions;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
@@ -64,7 +65,7 @@ public class Shipment extends X12ParsedLoop {
     /*
      * FOB: payment related instructions
      */
-    DTMDateTimeReference fob;
+    FOBRelatedInstructions fob;
     
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
@@ -150,6 +151,14 @@ public class Shipment extends X12ParsedLoop {
 
     public void setRefList(List<REFReferenceInformation> refList) {
         this.refList = refList;
+    }
+
+    public FOBRelatedInstructions getFob() {
+        return fob;
+    }
+
+    public void setFob(FOBRelatedInstructions fob) {
+        this.fob = fob;
     }
 
 }

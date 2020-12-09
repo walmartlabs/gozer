@@ -29,6 +29,7 @@ import com.walmartlabs.x12.asn856.segment.parser.MANMarkNumberParser;
 import com.walmartlabs.x12.asn856.segment.parser.PRFPurchaseOrderReferenceParser;
 import com.walmartlabs.x12.asn856.segment.parser.SN1ItemDetailParser;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
+import com.walmartlabs.x12.common.segment.FOBRelatedInstructions;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
@@ -38,6 +39,7 @@ import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 import com.walmartlabs.x12.common.segment.parser.DTMDateTimeReferenceParser;
+import com.walmartlabs.x12.common.segment.parser.FOBRelatedInstructionsParser;
 import com.walmartlabs.x12.common.segment.parser.LINItemIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.N1PartyIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.PIDPartyIdentificationParser;
@@ -444,7 +446,11 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             case DTMDateTimeReference.IDENTIFIER:
                 DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
                 shipment.addDTMDateTimeReference(dtm);
-                break;                
+                break;
+            case FOBRelatedInstructions.IDENTIFIER:
+                FOBRelatedInstructions fob = FOBRelatedInstructionsParser.parse(segment);
+                shipment.setFob(fob);
+                break;                 
             default:
                 // TODO: what do we do w/ an unidentified segment
                 break;
