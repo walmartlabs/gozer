@@ -22,6 +22,7 @@ import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
+import com.walmartlabs.x12.common.segment.FOBRelatedInstructions;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
@@ -123,6 +124,10 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("011", dtm.getDateTimeQualifier());
         assertEquals("20200523", dtm.getDate());
         assertNull(dtm.getTime());
+        
+        FOBRelatedInstructions fob = shipment.getFob();
+        assertNotNull(fob);
+        assertEquals("PP", fob.getPaymentCode());
         
         List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
         assertNotNull(n1List);
