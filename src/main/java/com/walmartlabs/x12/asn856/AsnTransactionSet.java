@@ -17,6 +17,11 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.AbstractX12TransactionSet;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AsnTransactionSet extends AbstractX12TransactionSet {
 
@@ -34,8 +39,12 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     // BSN 05
     private String hierarchicalStructureCode;
     
+    // DTM segments (can appear between BSN and HL*S
+    private List<DTMDateTimeReference> dtmReferences;
+    
     // HL (Shipment)
-    Shipment shipment;
+    // the first loop in the HL hierarchy
+    private Shipment shipment;
     
     //
     // CTT
@@ -44,6 +53,17 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     private Integer transactionLineItems;
 
     
+    
+    /**
+     * helper method to add DTM to list
+     * @param dtm
+     */
+    public void addDTMDateTimeReference(DTMDateTimeReference dtm) {
+        if (CollectionUtils.isEmpty(dtmReferences)) {
+            dtmReferences = new ArrayList<>();
+        }
+        dtmReferences.add(dtm);
+    }
     
     public String getPurposeCode() {
         return purposeCode;
@@ -99,6 +119,14 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
 
     public void setTransactionLineItems(Integer transactionLineItems) {
         this.transactionLineItems = transactionLineItems;
+    }
+
+    public List<DTMDateTimeReference> getDtmReferences() {
+        return dtmReferences;
+    }
+
+    public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
+        this.dtmReferences = dtmReferences;
     }
     
 }

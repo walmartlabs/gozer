@@ -63,7 +63,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
     public static final String GROUP_HEADER_ID = "GS";
     public static final String GROUP_TRAILER_ID = "GE";
-
+    
     private TransactionSetParser transactionParser;
     private UnhandledTransactionSet unhandledTransactionSet;
 
@@ -229,14 +229,14 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                     } else {
                         // we are not in a transaction
                         // so should not have gotten transaction trailer
-                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, currentSegment.getIdentifier());
+                        this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, currentSegment.getIdentifier());
                     }
                 } else if (GROUP_TRAILER_ID.equals(currentSegment.getIdentifier())) {
                     if (insideTransaction) {
                         // we are already in a transaction
                         // and have not encountered the end
                         // so we will stop parsing
-                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
+                        this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
                     } else {
                         insideGroup = false;
                     }
@@ -249,13 +249,13 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             // if we got here we should have cleanly
             // exited a transaction
             if (insideTransaction) {
-                handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
+                this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
             }
 
             // if we got here we should have cleanly
             // exited a group
             if (insideGroup) {
-                handleUnexpectedSegment(GROUP_TRAILER_ID, currentSegment.getIdentifier());
+                this.handleUnexpectedSegment(GROUP_TRAILER_ID, currentSegment.getIdentifier());
             }
 
             // parse group trailer

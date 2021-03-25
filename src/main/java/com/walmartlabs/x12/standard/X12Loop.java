@@ -27,7 +27,9 @@ import java.util.Optional;
  * models a basic HL loop with support for nesting
  */
 public class X12Loop {
-
+    
+    public static final String HIERARCHY_LOOP_ID = "HL";
+    
     /*
      * HL
      */
