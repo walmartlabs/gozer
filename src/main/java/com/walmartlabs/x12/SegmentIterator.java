@@ -114,5 +114,12 @@ public class SegmentIterator implements ListIterator<X12Segment> {
     public void set(X12Segment segment) {
         throw new UnsupportedOperationException();
     }
+    
+    /**
+     * non-standard iterator method to return the current index
+     */
+    public int currentIndex() {
+        return currentSegmentIdx;
+    }
 
 }

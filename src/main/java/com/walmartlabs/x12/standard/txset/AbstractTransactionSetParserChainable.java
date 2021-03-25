@@ -19,6 +19,7 @@ package com.walmartlabs.x12.standard.txset;
 import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.util.ConversionUtil;
 import org.slf4j.Logger;
@@ -106,6 +107,7 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
      * parse the ST segment (reusable from concrete class)
      * @param segment
      * @param transactionSet
+     * @throws X12ParserException if segment is not ST (unexpected)
      */
     protected void parseTransactionSetHeader(X12Segment segment, X12TransactionSet transactionSet) {
         LOGGER.debug(segment.getIdentifier());
@@ -123,6 +125,7 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
      * parse the SE segment (reusable from concrete class)
      * @param segment
      * @param transactionSet
+     * @throws X12ParserException if segment is not SE
      */
     protected void parseTransactionSetTrailer(X12Segment segment, X12TransactionSet transactionSet) {
         LOGGER.debug(segment.getIdentifier());

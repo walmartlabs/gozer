@@ -200,8 +200,8 @@ public final class X12ParsingUtil {
      * @param segment
      * @return true if HL otherwise false
      */
-    private static boolean isHierarchalLoopStart(X12Segment segment) {
-        return segment != null && "HL".equals(segment.getIdentifier());
+    public static boolean isHierarchalLoopStart(X12Segment segment) {
+        return segment != null && X12Loop.HIERARCHY_LOOP_ID.equals(segment.getIdentifier());
     }
     
     private static X12Loop buildHierarchalLoop(X12Segment x12Segment) {

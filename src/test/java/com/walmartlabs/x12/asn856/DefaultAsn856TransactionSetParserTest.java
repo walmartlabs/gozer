@@ -18,6 +18,7 @@ package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import org.junit.Before;
@@ -66,7 +67,7 @@ public class DefaultAsn856TransactionSetParserTest {
     @Test
     public void test_handlesTransactionSet_empty() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = Collections.EMPTY_LIST;
+        List<X12Segment> segments = Collections.emptyList();
         assertFalse(txParser.handlesTransactionSet(segments, x12Group));
     }
     
@@ -88,7 +89,7 @@ public class DefaultAsn856TransactionSetParserTest {
     @Test
     public void test_doParse_empty() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = Collections.EMPTY_LIST;
+        List<X12Segment> segments = Collections.emptyList();
         X12TransactionSet txSet = txParser.doParse(segments, x12Group);
         assertNull(txSet);
     }
@@ -113,7 +114,7 @@ public class DefaultAsn856TransactionSetParserTest {
             txParser.doParse(segments, x12Group);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
-            assertEquals("expected one top level HL", e.getMessage());
+            assertEquals("expected HL segment but found SE", e.getMessage());
         }
     }
     
@@ -128,6 +129,32 @@ public class DefaultAsn856TransactionSetParserTest {
             assertEquals("expected one top level HL", e.getMessage());
         }
     }
+    
+    @Test
+    public void test_doParse_UnexpectedSegmentBeforeHierarchicalLoops() {
+        try {
+            X12Group x12Group = new X12Group();
+            List<X12Segment> segments = this.getUnexpectedSegmentBeforeHierarchicalLoops();
+            txParser.doParse(segments, x12Group);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected HL segment but found REF", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test_doParse_DTM_BeforeFirstLoop() {
+        X12Group x12Group = new X12Group();
+        List<X12Segment> segments = this.getDTMBeforeFirstLoopSegments();
+        txParser.doParse(segments, x12Group);
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+        
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+        List<DTMDateTimeReference> dtms = asnTx.getDtmReferences();
+        assertEquals(2, dtms.size());
+    }
 
     @Test
     public void test_doParse() {
@@ -135,6 +162,11 @@ public class DefaultAsn856TransactionSetParserTest {
         List<X12Segment> segments = this.getTestSegments();
         X12TransactionSet txSet = txParser.doParse(segments, x12Group);
         assertNotNull(txSet);
+        
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+        List<DTMDateTimeReference> dtms = asnTx.getDtmReferences();
+        assertNull(dtms);
     }
     
     private List<X12Segment> getSegmentsOnlyEnvelope() {
@@ -163,6 +195,32 @@ public class DefaultAsn856TransactionSetParserTest {
         txSegments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
         txSegments.add(new X12Segment("HL*1**S"));
         txSegments.add(new X12Segment("HL*2**S"));
+        txSegments.add(new X12Segment("SE*296*368090001"));
+        
+        return txSegments;
+    }
+    
+    private List<X12Segment> getUnexpectedSegmentBeforeHierarchicalLoops() {
+        List<X12Segment> txSegments = new ArrayList<>();
+        
+        txSegments.add(new X12Segment("ST*856*368090001"));
+        txSegments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        txSegments.add(new X12Segment("DTM*067*20210323"));
+        txSegments.add(new X12Segment("REF*ZZ*420554090"));
+        txSegments.add(new X12Segment("HL*1**S"));
+        txSegments.add(new X12Segment("SE*296*368090001"));
+        
+        return txSegments;
+    }
+    
+    private List<X12Segment> getDTMBeforeFirstLoopSegments() {
+        List<X12Segment> txSegments = new ArrayList<>();
+        
+        txSegments.add(new X12Segment("ST*856*368090001"));
+        txSegments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        txSegments.add(new X12Segment("DTM*011*20210323"));
+        txSegments.add(new X12Segment("DTM*067*20210323"));
+        txSegments.add(new X12Segment("HL*1**S"));
         txSegments.add(new X12Segment("SE*296*368090001"));
         
         return txSegments;
