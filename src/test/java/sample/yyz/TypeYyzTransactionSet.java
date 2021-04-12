@@ -32,6 +32,7 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
     private String trailerControlNumber;
     private Integer numSegments;
     private String value;
+    private Integer transactionLineItems;
 
     @Override
     public String getTransactionSetIdentifierCode() {
@@ -81,5 +82,14 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
         this.value = value;
     }
 
-    
+    @Override
+    public Integer getTransactionLineItems() {
+        return transactionLineItems;
+    }
+
+    @Override
+    public void setTransactionLineItems(Integer transactionLineItems) {
+        this.transactionLineItems = transactionLineItems;
+    }
+
 }

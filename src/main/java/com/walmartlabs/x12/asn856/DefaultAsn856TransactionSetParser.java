@@ -53,7 +53,6 @@ import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
-import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,10 +96,13 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         return asnTx;
     }
 
+    /**
+     * the first segment in the list of {@link X12Segment} should be an ST
+     * the last segment in the list of {@link X12Segment} should be an SE
+     */
     protected void doParsing(List<X12Segment> transactionSegments, AsnTransactionSet asnTx) {
         
         SegmentIterator segments = new SegmentIterator(transactionSegments);
-        int segmentCount = transactionSegments.size();
         X12Segment currentSegment = null;
 
         //
@@ -122,46 +124,29 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         //
         // DTM segment (optional) can be added between the BSN and HL hierarchy 
         // 
-        this.parseSegmentsBeforeShipmentLoop(segments, asnTx);
-        int firstLoopSegmentIndex = segments.currentIndex();
+        this.parseSegmentsBeforeFirstLoop(segments, asnTx);
         
         //
         // Hierarchical Loops
         //
-        int indexToSegementAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(transactionSegments);
-        List<X12Segment> loopSegments = transactionSegments.subList(firstLoopSegmentIndex, indexToSegementAfterHierarchicalLoops);
-        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
-        this.doLoopParsing(loops, asnTx);
+        this.handleLooping(segments, asnTx);
 
         //
         // CTT (optional)
         //
-        currentSegment = transactionSegments.get(indexToSegementAfterHierarchicalLoops);
-        if (ASN_TRANSACTION_TOTALS.equals(currentSegment.getIdentifier())) {
-            this.parseTransactionTotals(currentSegment, asnTx);
-            currentSegment = transactionSegments.get(segmentCount - 1);
-        }
+        this.handleOptionalSegments(segments, asnTx);
 
         //
         // SE
         //
-        this.parseTransactionSetTrailer(currentSegment, asnTx);
-    }
-
-    private int findIndexForSegmentAfterHierarchicalLoops(List<X12Segment> transactionSegments) {
-        int segmentCount = transactionSegments.size();
-        int secondToLastSegmentIndex = segmentCount - 2;
-        X12Segment segment = transactionSegments.get(secondToLastSegmentIndex);
-        // 2nd to last line is CTT (optional) otherwise it is part of HL
-        if (ASN_TRANSACTION_TOTALS.equals(segment.getIdentifier())) {
-            // CTT segment
-            return secondToLastSegmentIndex;
+        if (segments.hasNext()) {
+            currentSegment = segments.next();
+            this.parseTransactionSetTrailer(currentSegment, asnTx);
         } else {
-            // SE segment
-            return segmentCount - 1;
+            throw X12ParsingUtil.handleUnexpectedSegment("SE", "nothing");
         }
     }
-
+    
     /**
      * parse the BSN segment
      * 
@@ -184,70 +169,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         }
     }
     
-    /**
-     * parse the optional DTM segments
-     * and move segment iterator to first loop
-     * 
-     * @param segments
-     * @param asnTx
-     * @throws X12ParserException if no HL loop is found
-     */
-    private void parseSegmentsBeforeShipmentLoop(SegmentIterator segments, AsnTransactionSet asnTx) {
-        
-        while (segments.hasNext()) {
-            X12Segment currentSegment = segments.next();
-            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)) {
-                // we should back up so 
-                // the parser starts w/ this segment
-                segments.previous();
-                break;
-            } else {
-                // add DTM segments to the transaction set
-                // ignore other segments until we find the first loop
-                String segmentId = currentSegment.getIdentifier();
-                if (DTMDateTimeReference.IDENTIFIER.equals(segmentId)) {
-                    asnTx.addDTMDateTimeReference(DTMDateTimeReferenceParser.parse(currentSegment));
-                } else {
-                    throw X12ParsingUtil.handleUnexpectedSegment(X12Loop.HIERARCHY_LOOP_ID, segmentId);
-                }
-            }
-        }
-    }
-
-    /**
-     * parse the CTT segment
-     * 
-     * @param segment
-     * @param asnTx
-     */
-    private void parseTransactionTotals(X12Segment segment, AsnTransactionSet asnTx) {
-        LOGGER.debug(segment.getIdentifier());
-
-        String segmentIdentifier = segment.getIdentifier();
-        if (ASN_TRANSACTION_TOTALS.equals(segmentIdentifier)) {
-            asnTx.setTransactionLineItems(ConversionUtil.convertStringToInteger(segment.getElement(1)));
-        } else {
-            throw X12ParsingUtil.handleUnexpectedSegment(ASN_TRANSACTION_TOTALS, segmentIdentifier);
-        }
-    }
-
-    /**
-     * currently enforcing only 1 top level HL in the transaction set (ie) only one
-     * Shipment HL
-     * 
-     * @param loops
-     * @param asnTx
-     * @return
-     */
-    protected void doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
-        if (!CollectionUtils.isEmpty(loops) && loops.size() == 1) {
-            X12Loop firstLoop = loops.get(0);
-            this.parseShipmentLoop(firstLoop, asnTx);
-        } else {
-            throw new X12ParserException(new X12ErrorDetail("HL", "HL00", "expected one top level HL"));
-        }
-    }
-
     /**
      * parse a Shipment Loop
      * 
@@ -644,4 +565,138 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         }    
     }
 
+    /**
+     * parse the optional DTM segments
+     * that can appear between the beginning segment
+     * and the first loop
+     * 
+     * it will also move the segment iterator to first loop
+     * 
+     * @param segments
+     * @param txSet
+     * @throws X12ParserException if no HL loop is found
+     */
+    protected void parseSegmentsBeforeFirstLoop(SegmentIterator segments, AsnTransactionSet txSet) {
+        
+        while (segments.hasNext()) {
+            X12Segment currentSegment = segments.next();
+            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)) {
+                // we should back up so 
+                // the parser starts w/ this segment
+                segments.previous();
+                break;
+            } else {
+                // add DTM segments to the transaction set
+                // ignore other segments until we find the first loop
+                String segmentId = currentSegment.getIdentifier();
+                LOGGER.debug(segmentId);
+                if (DTMDateTimeReference.IDENTIFIER.equals(segmentId)) {
+                    txSet.addDTMDateTimeReference(DTMDateTimeReferenceParser.parse(currentSegment));
+                } else {
+                    throw X12ParsingUtil.handleUnexpectedSegment(X12Loop.HIERARCHY_LOOP_ID, segmentId);
+                }
+            }
+        }
+    }
+    
+    /**
+     * parse the HL loops
+     * it will also move the segment iterator to first segment after loops
+     * 
+     * @param segments
+     * @param txSet
+     */
+    protected void handleLooping(SegmentIterator segments, AsnTransactionSet genericTx) {
+        
+        if (segments.hasNext()) {
+            X12Segment currentSegment = segments.next();
+            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)) {
+                segments.previous();
+                int firstLoopSegmentIndex = segments.currentIndex();
+                int indexToSegmentAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(segments);
+                List<X12Segment> loopSegments = segments.subList(firstLoopSegmentIndex, indexToSegmentAfterHierarchicalLoops);
+                
+                // manage the loops
+                // assigning the parents and children accordingly
+                List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
+
+                // parse each of the loops
+                this.doLoopParsing(loops, genericTx);
+                
+                // we processed all of the loops 
+                // so now set the iteraror up
+                // so that the next segment after 
+                // the last loop is next
+                segments.reset(indexToSegmentAfterHierarchicalLoops);
+            } else {
+                // doesn't start w/ HL
+                // we should back it up 
+                // and let the parser deal w/ this
+                // segment
+                segments.previous();
+            }                
+        }
+    }
+    
+    /**
+     * expects the current segment to be the first HL loop occurring 
+     * in the transaction set
+     */
+    private int findIndexForSegmentAfterHierarchicalLoops(SegmentIterator segments) {
+        int firstLoopSegmentIndex = segments.currentIndex();
+        int indexToSegmentAfterHierarchicalLoops = -1;
+        while (segments.hasNext()) {
+            X12Segment segment = segments.next();
+            if (X12TransactionSet.TRANSACTION_ITEM_TOTAL.equals(segment.getIdentifier())
+                || X12TransactionSet.TRANSACTION_AMOUNT_TOTAL.equals(segment.getIdentifier())
+                || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segment.getIdentifier())) {
+                // CTT segment or AMT segment or SE segment
+                indexToSegmentAfterHierarchicalLoops = segments.currentIndex() - 1;
+                break;
+            }
+        }
+        if (indexToSegmentAfterHierarchicalLoops == -1) {
+            indexToSegmentAfterHierarchicalLoops = segments.currentIndex() - 1;
+        }
+        
+        segments.reset(firstLoopSegmentIndex);
+        return indexToSegmentAfterHierarchicalLoops;
+    }
+    
+    /**
+     * currently enforcing only 1 top level HL in the transaction set (ie) only one
+     * Shipment HL
+     * 
+     * @param loops
+     * @param asnTx
+     * @return
+     */
+    protected void doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
+        if (!CollectionUtils.isEmpty(loops) && loops.size() == 1) {
+            X12Loop firstLoop = loops.get(0);
+            this.parseShipmentLoop(firstLoop, asnTx);
+        } else {
+            throw new X12ParserException(new X12ErrorDetail("HL", "HL00", "expected one top level HL"));
+        }
+    }
+    
+    /**
+     * checks for CTT or AMT
+     * @return
+     */
+    private void handleOptionalSegments(SegmentIterator segments, AsnTransactionSet genericTx) {
+        while (segments.hasNext()) {
+            X12Segment currentSegment = segments.next();
+            String segmentId = currentSegment.getIdentifier();
+            if (X12TransactionSet.TRANSACTION_ITEM_TOTAL.equals(segmentId)) {
+                this.parseTransactionTotals(currentSegment, genericTx);
+            } else {
+                // was not CTT or AMT
+                // hopefully it is SE
+                segments.previous();
+                break;
+            }
+                
+        }
+    }
 }

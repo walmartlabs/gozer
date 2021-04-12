@@ -116,10 +116,28 @@ public class SegmentIterator implements ListIterator<X12Segment> {
     }
     
     /**
-     * non-standard iterator method to return the current index
+     * non-standard iterator method 
+     * returns the current index
      */
     public int currentIndex() {
         return currentSegmentIdx;
     }
+    
+    /**
+     * non-standard iterator method 
+     * resets the cursor position to the specified index
+     */
+    public void reset(int index) {
+        currentSegmentIdx = index;
+    }
+    
+    /**
+     * non-standard iterator method 
+     * return a subset of segments from the backing list
+     */
+    public List<X12Segment> subList(int fromIndex, int toIndex) {
+        return segmentLines.subList(fromIndex, toIndex);
+    }
+
 
 }

@@ -27,6 +27,8 @@ public interface X12TransactionSet {
     
     public static final String TRANSACTION_SET_HEADER = "ST";
     public static final String TRANSACTION_SET_TRAILER = "SE";
+    public static final String TRANSACTION_ITEM_TOTAL = "CTT";
+    public static final String TRANSACTION_AMOUNT_TOTAL = "AMT";
     
     /**
      * The ST01 segment element contains the functional group code, which 
@@ -70,4 +72,14 @@ public interface X12TransactionSet {
     String getTrailerControlNumber();
     
     void setTrailerControlNumber(String trailerControlNumber);
+    
+    /**
+     * The CTT01 segment element contains the transaction count. 
+     * This is an optional segment lien
+     * 
+     * @return the CTT01 segment value 
+     */
+    Integer getTransactionLineItems();
+
+    void setTransactionLineItems(Integer transactionLineItems);
 }
