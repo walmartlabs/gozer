@@ -75,7 +75,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
         //
         if (segments.hasNext()) {
             currentSegment = segments.next();
-            if (this.isEndOfSegmentsBeforeLoops(currentSegment)) {
+            if (this.isLoopSegmentOrOptionalSegmentOrEndingSegment(currentSegment)) {
                 // unexpected segment HL, CTT, AMT or SE
                 throw X12ParsingUtil.handleUnexpectedSegment("Beginning", currentSegment.getIdentifier());
             } else {
@@ -127,7 +127,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
         
         while (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
-            if (this.isEndOfSegmentsBeforeLoops(currentSegment)) {
+            if (this.isLoopSegmentOrOptionalSegmentOrEndingSegment(currentSegment)) {
                 // we should back up so
                 // the parser starts w/ this segment
                 segments.previous();
@@ -144,7 +144,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
      * checks for an HL loop, CTT or AMT or SE
      * @return
      */
-    private boolean isEndOfSegmentsBeforeLoops(X12Segment segment) {
+    private boolean isLoopSegmentOrOptionalSegmentOrEndingSegment(X12Segment segment) {
         return X12ParsingUtil.isHierarchalLoopStart(segment) 
             || X12TransactionSet.TRANSACTION_ITEM_TOTAL.equals(segment.getIdentifier())
             || X12TransactionSet.TRANSACTION_AMOUNT_TOTAL.equals(segment.getIdentifier())
