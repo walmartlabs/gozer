@@ -17,8 +17,10 @@ limitations under the License.
 package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
+import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import org.springframework.util.CollectionUtils;
@@ -46,6 +48,14 @@ public class Item extends X12ParsedLoop {
      * LIN: Item Identification
      */
     private List<LINItemIdentification> itemIdentifications;
+    /*
+     * REF: references
+     */
+    private List<REFReferenceInformation> refList;
+    /*
+     * DTM: Date/Time Reference
+     */
+    List<DTMDateTimeReference> dtmReferences;
 
     public static boolean isItemLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ITEM__LOOP_CODE);
@@ -75,6 +85,29 @@ public class Item extends X12ParsedLoop {
         productIdentifications.add(pid);
     }
 
+    /**
+     * helper method to add REF
+     * 
+     * @param ref
+     */
+    public void addReferenceInformation(REFReferenceInformation ref) {
+        if (CollectionUtils.isEmpty(refList)) {
+            refList = new ArrayList<>();
+        }
+        refList.add(ref);
+    }
+    
+    /**
+     * helper method to add DTM to list
+     * @param dtm
+     */
+    public void addDTMDateTimeReference(DTMDateTimeReference dtm) {
+        if (CollectionUtils.isEmpty(dtmReferences)) {
+            dtmReferences = new ArrayList<>();
+        }
+        dtmReferences.add(dtm);
+    }
+    
     public SN1ItemDetail getSn1() {
         return sn1;
     }
@@ -99,4 +132,19 @@ public class Item extends X12ParsedLoop {
         this.productIdentifications = productIdentifications;
     }
     
+    public List<DTMDateTimeReference> getDtmReferences() {
+        return dtmReferences;
+    }
+
+    public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
+        this.dtmReferences = dtmReferences;
+    }
+
+    public List<REFReferenceInformation> getRefList() {
+        return refList;
+    }
+
+    public void setRefList(List<REFReferenceInformation> refList) {
+        this.refList = refList;
+    }
 }

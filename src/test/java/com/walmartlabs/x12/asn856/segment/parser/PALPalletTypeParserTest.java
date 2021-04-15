@@ -16,36 +16,33 @@ limitations under the License.
 package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
+import com.walmartlabs.x12.asn856.segment.PALPalletType;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
-public class MANMarkNumberParserTest {
-
+public class PALPalletTypeParserTest {
 
     @Test
     public void test_parse_null_segment() {
         X12Segment segment = null;
-        MANMarkNumber man = MANMarkNumberParser.parse(segment);
-        assertNull(man);
+        PALPalletType pal = PALPalletTypeParser.parse(segment);
+        assertNull(pal);
     }
 
     @Test
     public void test_parse_empty_segment() {
         X12Segment segment = new X12Segment("");
-        MANMarkNumber man = MANMarkNumberParser.parse(segment);
-        assertNull(man);
+        PALPalletType pal = PALPalletTypeParser.parse(segment);
+        assertNull(pal);
     }
 
     @Test
     public void test_parse_segment() {
-        X12Segment segment = new X12Segment("MAN*UC*10081131916931");
-        MANMarkNumber man = MANMarkNumberParser.parse(segment);
-        assertNotNull(man);
-        assertEquals("UC", man.getQualifier());
-        assertEquals("10081131916931", man.getNumber());
+        X12Segment segment = new X12Segment("PAL**6*5");
+        PALPalletType pal = PALPalletTypeParser.parse(segment);
+        assertNotNull(pal);
+        assertEquals("6", pal.getPalletTiers());
+        assertEquals("5", pal.getPalletBlocks());
     }
 }

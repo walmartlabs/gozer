@@ -26,6 +26,8 @@ import com.walmartlabs.x12.asn856.segment.PO4ItemPhysicalDetail;
 import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
 import com.walmartlabs.x12.asn856.segment.parser.MANMarkNumberParser;
+import com.walmartlabs.x12.asn856.segment.parser.PALPalletTypeParser;
+import com.walmartlabs.x12.asn856.segment.parser.PO4ItemPhysicalDetailParser;
 import com.walmartlabs.x12.asn856.segment.parser.PRFPurchaseOrderReferenceParser;
 import com.walmartlabs.x12.asn856.segment.parser.SN1ItemDetailParser;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
@@ -43,6 +45,7 @@ import com.walmartlabs.x12.common.segment.parser.FOBRelatedInstructionsParser;
 import com.walmartlabs.x12.common.segment.parser.LINItemIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.N1PartyIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.PIDPartyIdentificationParser;
+import com.walmartlabs.x12.common.segment.parser.PKGPackagingParser;
 import com.walmartlabs.x12.common.segment.parser.REFReferenceInformationParser;
 import com.walmartlabs.x12.common.segment.parser.TD1CarrierDetailParser;
 import com.walmartlabs.x12.common.segment.parser.TD3CarrierDetailParser;
@@ -357,7 +360,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             // these loops can appear in a variety of sequences
             //
             this.parseEachChildrenLoop(unparsedLoop, pack);
-        }        
+        }
     }
     
     private void parseItemLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
@@ -469,7 +472,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param shipment
      */
     private void doShipmentSegments(X12Segment segment, SegmentIterator segmentIterator, Shipment shipment) {
-        // TODO: need to keep working on this and add tests
+
         switch (segment.getIdentifier()) {
             case TD1CarrierDetail.IDENTIFIER:
                 shipment.setTd1(TD1CarrierDetailParser.parse(segment));
@@ -496,7 +499,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 shipment.setFob(fob);
                 break;                 
             default:
-                // TODO: what do we do w/ an unidentified segment
+                shipment.addUnparsedSegment(segment);
                 break;
         }
     }
@@ -516,9 +519,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case REFReferenceInformation.IDENTIFIER:
                 order.addReferenceInformation(REFReferenceInformationParser.parse(segment));
-                break;            
+                break;
+            case TD1CarrierDetail.IDENTIFIER:
+                order.setTd1(TD1CarrierDetailParser.parse(segment));
+                break;               
             default:
-                // TODO: what do we do w/ an unidentified segment
+                order.addUnparsedSegment(segment);
                 break;
         }
     }
@@ -534,16 +540,16 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     private void doTareSegments(X12Segment segment, SegmentIterator segmentIterator, Tare tare) {
         switch (segment.getIdentifier()) {
             case PKGPackaging.IDENTIFIER:
-                // TODO: add this
-                break;        
+                tare.addPKGPackaging(PKGPackagingParser.parse(segment));
+                break;       
             case PALPalletType.IDENTIFIER:
-                // TODO: add this
+                tare.setPal(PALPalletTypeParser.parse(segment));
                 break;
             case MANMarkNumber.IDENTIFIER:
-                tare.setMan(MANMarkNumberParser.parse(segment));
+                tare.addMANMarkNumber(MANMarkNumberParser.parse(segment));
                 break;                
             default:
-                // TODO: what do we do w/ an unidentified segment
+                tare.addUnparsedSegment(segment);
                 break;
         }
     }
@@ -560,13 +566,17 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     private void doPackSegments(X12Segment segment, SegmentIterator segmentIterator, Pack pack) {
         switch (segment.getIdentifier()) {
             case MANMarkNumber.IDENTIFIER:
-                pack.setMan(MANMarkNumberParser.parse(segment));
+                pack.addMANMarkNumber(MANMarkNumberParser.parse(segment));
                 break;
+            case N1PartyIdentification.IDENTIFIER:
+                N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
+                pack.setN1PartyIdentification(n1);
+                break;                
             case TD1CarrierDetail.IDENTIFIER:
                 pack.setTd1(TD1CarrierDetailParser.parse(segment));
                 break;                
             case PO4ItemPhysicalDetail.IDENTIFIER:
-                // TODO: add this
+                pack.setPo4(PO4ItemPhysicalDetailParser.parse(segment));
                 break;
             case PIDProductIdentification.IDENTIFIER:
                 pack.addPIDProductIdentification(PIDPartyIdentificationParser.parse(segment));
@@ -578,7 +588,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 pack.setSn1(SN1ItemDetailParser.parse(segment));
                 break;                 
             default:
-                // TODO: what do we do w/ an unidentified segment
+                pack.addUnparsedSegment(segment);
                 break;
         }    
     }
@@ -601,9 +611,16 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case SN1ItemDetail.IDENTIFIER:
                 item.setSn1(SN1ItemDetailParser.parse(segment));
+                break;  
+            case REFReferenceInformation.IDENTIFIER:
+                item.addReferenceInformation(REFReferenceInformationParser.parse(segment));
                 break;                 
+            case DTMDateTimeReference.IDENTIFIER:
+                DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
+                item.addDTMDateTimeReference(dtm);
+                break;                
             default:
-                // TODO: what do we do w/ an unidentified segment
+                item.addUnparsedSegment(segment);
                 break;
         }    
     }
@@ -639,7 +656,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 batch.addDTMDateTimeReference(dtm);
                 break;                  
             default:
-                // TODO: what do we do w/ an unidentified segment
+                batch.addUnparsedSegment(segment);
                 break;
         }    
     }

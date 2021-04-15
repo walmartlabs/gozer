@@ -262,7 +262,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", itemChildLoop.getCode());
 
         Pack pack = (Pack) itemChildLoop;
-        MANMarkNumber man = pack.getMan();
+        List<MANMarkNumber> manList = pack.getManList();
+        MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916931", man.getNumber());
@@ -276,7 +277,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", itemChildLoop.getCode());
 
         pack = (Pack) itemChildLoop;
-        man = pack.getMan();
+        manList = pack.getManList();
+        man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916932", man.getNumber());
@@ -333,7 +335,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("T", orderChildLoop.getCode());
 
         Tare tare = (Tare) orderChildLoop;
-        MANMarkNumber man = tare.getMan();
+        List<MANMarkNumber> manList = tare.getManList();
+        MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("GM", man.getQualifier());
         assertEquals("00100700302232310393", man.getNumber());
@@ -351,7 +354,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", tareChildLoop.getCode());
 
         Pack pack = (Pack) tareChildLoop;
-        man = pack.getMan();
+        manList = pack.getManList();
+        man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916933", man.getNumber());
@@ -438,7 +442,8 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", tareChildLoop.getCode());
 
         pack = (Pack) tareChildLoop;
-        man = pack.getMan();
+        manList = pack.getManList();
+        man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916934", man.getNumber());

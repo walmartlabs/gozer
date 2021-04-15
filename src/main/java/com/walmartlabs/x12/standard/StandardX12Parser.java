@@ -213,7 +213,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                         // we are already in a transaction
                         // and have not encountered the end
                         // so we will stop parsing
-                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
+                        this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
                     } else {
                         insideTransaction = true;
                         transactionSet.add(currentSegment);
@@ -307,7 +307,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
             x12Doc.setInterchangeControlEnvelope(isa);
         } else {
-            handleUnexpectedSegment(ENVELOPE_HEADER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(ENVELOPE_HEADER_ID, segmentIdentifier);
         }
     }
 
@@ -326,7 +326,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             isa.setNumberOfGroups(ConversionUtil.convertStringToInteger(segment.getElement(1)));
             isa.setTrailerInterchangeControlNumber(segment.getElement(2));
         } else {
-            handleUnexpectedSegment(ENVELOPE_TRAILER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(ENVELOPE_TRAILER_ID, segmentIdentifier);
         }
     }
 
@@ -352,7 +352,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             groupHeader.setResponsibleAgencyCode(segment.getElement(7));
             groupHeader.setVersion(segment.getElement(8));
         } else {
-            handleUnexpectedSegment(GROUP_HEADER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(GROUP_HEADER_ID, segmentIdentifier);
         }
         return groupHeader;
     }
@@ -370,7 +370,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             x12Group.setNumberOfTransactions(ConversionUtil.convertStringToInteger(segment.getElement(1)));
             x12Group.setTrailerGroupControlNumber(segment.getElement(2));
         } else {
-            handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
         }
     }
     

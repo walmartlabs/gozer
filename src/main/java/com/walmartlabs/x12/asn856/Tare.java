@@ -21,6 +21,10 @@ import com.walmartlabs.x12.asn856.segment.PALPalletType;
 import com.walmartlabs.x12.common.segment.PKGPackaging;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the Tare (Pallet) level of information
@@ -37,16 +41,40 @@ public class Tare extends X12ParsedLoop {
     /*
      * PKG: Packaging
      */
-    private PKGPackaging pkg;
+    private List<PKGPackaging> pkgList;
     /*
      * MAN: Marking
      */
-    private MANMarkNumber man;
+    private List<MANMarkNumber> manList;
 
     public static boolean isTareLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, TARE_LOOP_CODE);
     }
+    
+    /**
+     * helper method to add MAN
+     * 
+     * @param man
+     */
+    public void addMANMarkNumber(MANMarkNumber man) {
+        if (CollectionUtils.isEmpty(manList)) {
+            manList = new ArrayList<>();
+        }
+        manList.add(man);
+    }
 
+    /**
+     * helper method to add PKG
+     * 
+     * @param pkg
+     */
+    public void addPKGPackaging(PKGPackaging pkg) {
+        if (CollectionUtils.isEmpty(pkgList)) {
+            pkgList = new ArrayList<>();
+        }
+        pkgList.add(pkg);
+    }
+    
     public PALPalletType getPal() {
         return pal;
     }
@@ -55,20 +83,20 @@ public class Tare extends X12ParsedLoop {
         this.pal = pal;
     }
 
-    public PKGPackaging getPkg() {
-        return pkg;
+    public List<PKGPackaging> getPkgList() {
+        return pkgList;
     }
 
-    public void setPkg(PKGPackaging pkg) {
-        this.pkg = pkg;
+    public void setPkgList(List<PKGPackaging> pkgList) {
+        this.pkgList = pkgList;
     }
 
-    public MANMarkNumber getMan() {
-        return man;
+    public List<MANMarkNumber> getManList() {
+        return manList;
     }
 
-    public void setMan(MANMarkNumber man) {
-        this.man = man;
+    public void setManList(List<MANMarkNumber> manList) {
+        this.manList = manList;
     }
-
+    
 }
