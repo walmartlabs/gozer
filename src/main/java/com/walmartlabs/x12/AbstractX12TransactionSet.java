@@ -20,7 +20,7 @@ package com.walmartlabs.x12;
  * 
  * the {@link AbstractX12TransactionSet} is not required when creating a 
  * custom {@link X12TransactionSet}. It is provided as a convenience to handle 
- * common ST/SE elements. 
+ * common ST/SE elements and the CTT segment. 
  *
  */
 public abstract class AbstractX12TransactionSet implements X12TransactionSet {
@@ -33,6 +33,12 @@ public abstract class AbstractX12TransactionSet implements X12TransactionSet {
     private String headerControlNumber;
 
     /*
+     * CTT (optional)
+     */
+    // CTT 01
+    private Integer transactionLineItems;
+    
+    /*
      * SE
      */
     // SE01
@@ -40,7 +46,7 @@ public abstract class AbstractX12TransactionSet implements X12TransactionSet {
     // SE02
     private String trailerControlNumber;
     
-    
+
     public String getTransactionSetIdentifierCode() {
         return transactionSetIdentifierCode;
     }
@@ -71,6 +77,14 @@ public abstract class AbstractX12TransactionSet implements X12TransactionSet {
 
     public void setTrailerControlNumber(String trailerControlNumber) {
         this.trailerControlNumber = trailerControlNumber;
+    }
+    
+    public Integer getTransactionLineItems() {
+        return transactionLineItems;
+    }
+
+    public void setTransactionLineItems(Integer transactionLineItems) {
+        this.transactionLineItems = transactionLineItems;
     }
 
 }
