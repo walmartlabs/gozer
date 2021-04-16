@@ -47,6 +47,10 @@ public class Tare extends X12ParsedLoop {
      */
     private List<MANMarkNumber> manList;
 
+    
+    /**
+     * returns true if the loop passed in is a Tare loop
+     */
     public static boolean isTareLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, TARE_LOOP_CODE);
     }

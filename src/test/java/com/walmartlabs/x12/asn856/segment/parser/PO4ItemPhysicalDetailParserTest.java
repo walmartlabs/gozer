@@ -45,10 +45,14 @@ public class PO4ItemPhysicalDetailParserTest {
         X12Segment segment = new X12Segment("PO4**********60*40*17.2*CM");
         PO4ItemPhysicalDetail po4 = PO4ItemPhysicalDetailParser.parse(segment);
         assertNotNull(po4);
+        assertNull(po4.getSize());
+        assertNull(po4.getSizeUnitOfMeasure());
+        assertNull(po4.getGrossVolume());
+        assertNull(po4.getGrossVolumeUnitOfMeasure());
         assertEquals("60", po4.getLength());
         assertEquals("40", po4.getWidth());
         assertEquals("17.2", po4.getHeight());
-        assertEquals("CM", po4.getUnitOfMeasurement());
+        assertEquals("CM", po4.getDimensionUnitOfMeasurement());
         assertNull(po4.getAssignedIdentification());
     }
     
@@ -57,10 +61,30 @@ public class PO4ItemPhysicalDetailParserTest {
         X12Segment segment = new X12Segment("PO4****************RPC6413");
         PO4ItemPhysicalDetail po4 = PO4ItemPhysicalDetailParser.parse(segment);
         assertNotNull(po4);
+        assertNull(po4.getSize());
+        assertNull(po4.getSizeUnitOfMeasure());
+        assertNull(po4.getGrossVolume());
+        assertNull(po4.getGrossVolumeUnitOfMeasure());
         assertNull(po4.getLength());
         assertNull(po4.getWidth());
         assertNull(po4.getHeight());
-        assertNull(po4.getUnitOfMeasurement());
+        assertNull(po4.getDimensionUnitOfMeasurement());
         assertEquals("RPC6413", po4.getAssignedIdentification());
+    }
+    
+    @Test
+    public void test_parse_segment_size_volume() {
+        X12Segment segment = new X12Segment("PO4**50*MC*****.34*FO");
+        PO4ItemPhysicalDetail po4 = PO4ItemPhysicalDetailParser.parse(segment);
+        assertNotNull(po4);
+        assertEquals("50", po4.getSize());
+        assertEquals("MC", po4.getSizeUnitOfMeasure());
+        assertEquals(".34", po4.getGrossVolume());
+        assertEquals("FO", po4.getGrossVolumeUnitOfMeasure());
+        assertNull(po4.getLength());
+        assertNull(po4.getWidth());
+        assertNull(po4.getHeight());
+        assertNull(po4.getDimensionUnitOfMeasurement());
+        assertNull(po4.getAssignedIdentification());
     }
 }

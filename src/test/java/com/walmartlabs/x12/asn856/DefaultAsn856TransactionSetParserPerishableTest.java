@@ -86,17 +86,25 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(shipment);
         assertEquals("S", shipment.getCode());
 
-        TD1CarrierDetail td1 = shipment.getTd1();
+        List<TD1CarrierDetail> td1List = shipment.getTd1List();
+        assertNotNull(td1List);
+        assertEquals(1, td1List.size());
+        
+        TD1CarrierDetail td1 = td1List.get(0);
         assertNotNull(td1);
         assertNull(td1.getRawPackagingCode());
         assertEquals("G", td1.getWeightQualifier());
-        assertEquals("2490.0000", td1.getWeight().toString());
+        assertEquals("2490", td1.getWeight());
         assertEquals("LB", td1.getUnitOfMeasure());
 
         TD3CarrierDetail td3 = shipment.getTd3();
         assertNull(td3);
 
-        TD5CarrierDetail td5 = shipment.getTd5();
+        List<TD5CarrierDetail> td5List = shipment.getTd5List();
+        assertNotNull(td5List);
+        assertEquals(1, td5List.size());
+        
+        TD5CarrierDetail td5 = td5List.get(0);
         assertNotNull(td5);
         assertEquals("2", td5.getIdentificationCodeQualifier());
         assertEquals("PRIJ", td5.getIdentificationCode());
@@ -143,9 +151,16 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("Los Angeles Salad Company", n1Two.getName());
         assertNull(n1Two.getIdentificationCodeQualifier());
         assertNull(n1Two.getIdentificationCode());
-        N3PartyLocation n3 = n1Two.getN3();
+        
+        
+        List<N3PartyLocation> n3List = n1Two.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+        
+        N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("3030 E. WASHINGTON BLVD", n3.getAddressInfoOne());
+        
         N4GeographicLocation n4 = n1Two.getN4();
         assertEquals("LOS ANGELES", n4.getCityName());
         assertEquals("CA", n4.getStateOrProvinceCode());
@@ -160,8 +175,10 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("LONDON 6097", n1One.getName());
         assertEquals("UL", n1One.getIdentificationCodeQualifier());
         assertEquals("0078742035499", n1One.getIdentificationCode());
-        n3 = n1One.getN3();
-        assertNull(n3);
+        
+        n3List = n1One.getN3List();
+        assertNull(n3List);
+
         n4 = n1One.getN4();
         assertNull(n4);
 
@@ -286,15 +303,19 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("PRODUCT OF USA-CALIFORNIA", pid.getDescription());
         
-        TD1CarrierDetail td1 = packOne.getTd1();
+        List<TD1CarrierDetail> td1List = packOne.getTd1List();
+        assertNotNull(td1List);
+        assertEquals(1, td1List.size());
+        
+        TD1CarrierDetail td1 = td1List.get(0);
         assertNotNull(td1);
         assertEquals("G", td1.getWeightQualifier());
-        assertEquals("2490.0000", td1.getWeight().toString());
+        assertEquals("2490", td1.getWeight());
         assertEquals("LB", td1.getUnitOfMeasure());
         
         SN1ItemDetail sn1 = packOne.getSn1();
         assertNotNull(sn1);
-        assertEquals("5.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("5", sn1.getNumberOfUnits());
         assertEquals("CA", sn1.getUnitOfMeasurement());
 
         List<LINItemIdentification> itemIdList = packOne.getItemIdentifications();
@@ -346,7 +367,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         
         sn1 = batchOne.getSn1();
         assertNotNull(sn1);
-        assertEquals("5.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("5", sn1.getNumberOfUnits());
         assertEquals("CA", sn1.getUnitOfMeasurement());
         
         List<N1PartyIdentification> n1List = batchOne.getN1PartyIdentifications();
@@ -356,9 +377,15 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(n1);
         assertEquals("ZW", n1.getEntityIdentifierCode());
         assertEquals("2901 LETTUCE FIELD SW", n1.getName());
-        N3PartyLocation n3 = n1.getN3();
+        
+        List<N3PartyLocation> n3List = n1.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+        
+        N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("208 APPLE ST", n3.getAddressInfoOne());
+        
         N4GeographicLocation n4 = n1.getN4();
         assertNotNull(n4);
         assertEquals("COOLTOWN", n4.getCityName());
@@ -398,12 +425,12 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("PRODUCT OF USA-CALIFORNIA", pid.getDescription());
 
-        TD1CarrierDetail td1 = packTwo.getTd1();
-        assertNull(td1);
+        List<TD1CarrierDetail> td1List = packTwo.getTd1List();
+        assertNull(td1List);
         
         SN1ItemDetail sn1 = packTwo.getSn1();
         assertNotNull(sn1);
-        assertEquals("45.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("45", sn1.getNumberOfUnits());
         assertEquals("CA", sn1.getUnitOfMeasurement());
 
         List<LINItemIdentification> itemIdList = packTwo.getItemIdentifications();
@@ -455,7 +482,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         
         sn1 = batchTwo.getSn1();
         assertNotNull(sn1);
-        assertEquals("45.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("45", sn1.getNumberOfUnits());
         assertEquals("CA", sn1.getUnitOfMeasurement());
         
         List<N1PartyIdentification> n1List = batchTwo.getN1PartyIdentifications();
@@ -465,9 +492,15 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(n1);
         assertEquals("ZW", n1.getEntityIdentifierCode());
         assertEquals("2901 LETTUCE FIELD SW", n1.getName());
-        N3PartyLocation n3 = n1.getN3();
+        
+        List<N3PartyLocation> n3List = n1.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+        
+        N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("208 APPLE ST", n3.getAddressInfoOne());
+        
         N4GeographicLocation n4 = n1.getN4();
         assertNotNull(n4);
         assertEquals("COOLTOWN", n4.getCityName());

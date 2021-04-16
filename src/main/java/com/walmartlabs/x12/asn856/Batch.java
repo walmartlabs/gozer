@@ -56,13 +56,15 @@ public class Batch extends X12ParsedLoop {
     /*
      * DTM: Date/Time Reference
      */
-    List<DTMDateTimeReference> dtmReferences;
+    private List<DTMDateTimeReference> dtmReferences;
     /*
      * REF
      */
     private List<REFReferenceInformation> refList;
     
-    
+    /**
+     * returns true if the loop passed in is a Batch loop
+     */
     public static boolean isBatchLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, BATCH_LOOP_CODE);
     }

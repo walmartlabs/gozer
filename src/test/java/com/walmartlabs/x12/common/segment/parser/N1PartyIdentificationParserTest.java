@@ -88,9 +88,51 @@ public class N1PartyIdentificationParserTest {
         assertEquals("UL", n1.getIdentificationCodeQualifier());
         assertEquals("0078742090955", n1.getIdentificationCode().toString());
 
-        N3PartyLocation n3 = n1.getN3();
+        List<N3PartyLocation> n3List = n1.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+        
+        N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());
+        assertEquals(null, n3.getAddressInfoTwo());
+
+        N4GeographicLocation n4 = n1.getN4();
+        assertNotNull(n4);
+        assertEquals("CASA GRANDE", n4.getCityName());
+        assertEquals("AZ", n4.getStateOrProvinceCode());
+        assertEquals("85193", n4.getPostalCode());
+        assertEquals(null, n4.getCountryCode());
+
+        assertFalse(iterator.hasNext());
+    }
+    
+    @Test
+    public void test_parse_handleN1Loop_one_loop_ends_extra_n3() {
+        List<X12Segment> segments = this.getN1LoopOne();
+        segments.add(new X12Segment("N3*SUITE X"));
+        SegmentIterator iterator = new SegmentIterator(segments);
+        X12Segment n1Segment = iterator.next();
+
+        N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(n1Segment, iterator);
+        assertNotNull(n1);
+        assertEquals("ST", n1.getEntityIdentifierCode());
+        assertEquals("REGIONAL DISTRIBUTION CENTER 6285", n1.getName());
+        assertEquals("UL", n1.getIdentificationCodeQualifier());
+        assertEquals("0078742090955", n1.getIdentificationCode().toString());
+
+        List<N3PartyLocation> n3List = n1.getN3List();
+        assertNotNull(n3List);
+        assertEquals(2, n3List.size());
+        
+        N3PartyLocation n3 = n3List.get(0);
+        assertNotNull(n3);
+        assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());
+        assertEquals(null, n3.getAddressInfoTwo());
+        
+        n3 = n3List.get(1);
+        assertNotNull(n3);
+        assertEquals("SUITE X", n3.getAddressInfoOne());
         assertEquals(null, n3.getAddressInfoTwo());
 
         N4GeographicLocation n4 = n1.getN4();
@@ -117,7 +159,11 @@ public class N1PartyIdentificationParserTest {
         assertEquals("UL", n1.getIdentificationCodeQualifier());
         assertEquals("0078742090955", n1.getIdentificationCode().toString());
 
-        N3PartyLocation n3 = n1.getN3();
+        List<N3PartyLocation> n3List = n1.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+        
+        N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());
         assertEquals(null, n3.getAddressInfoTwo());
@@ -150,8 +196,8 @@ public class N1PartyIdentificationParserTest {
         assertEquals("UL", n1.getIdentificationCodeQualifier());
         assertEquals("0078742090955B", n1.getIdentificationCode().toString());
 
-        N3PartyLocation n3 = n1.getN3();
-        assertNull(n3);
+        List<N3PartyLocation> n3List = n1.getN3List();
+        assertNull(n3List);
 
         N4GeographicLocation n4 = n1.getN4();
         assertNull(n4);

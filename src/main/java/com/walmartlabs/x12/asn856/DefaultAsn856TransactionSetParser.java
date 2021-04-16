@@ -380,7 +380,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
                 function.accept(segment, segmentIterator, loopObject);
             }
-        }  
+        }
     }
 
 
@@ -396,13 +396,13 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
         switch (segment.getIdentifier()) {
             case TD1CarrierDetail.IDENTIFIER:
-                shipment.setTd1(TD1CarrierDetailParser.parse(segment));
+                shipment.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;
             case TD3CarrierDetail.IDENTIFIER:
                 shipment.setTd3(TD3CarrierDetailParser.parse(segment));
                 break;
             case TD5CarrierDetail.IDENTIFIER:
-                shipment.setTd5(TD5CarrierDetailParser.parse(segment));
+                shipment.addTD5CarrierDetail(TD5CarrierDetailParser.parse(segment));
                 break;
             case N1PartyIdentification.IDENTIFIER:
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
@@ -442,7 +442,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 order.addReferenceInformation(REFReferenceInformationParser.parse(segment));
                 break;
             case TD1CarrierDetail.IDENTIFIER:
-                order.setTd1(TD1CarrierDetailParser.parse(segment));
+                order.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;               
             default:
                 order.addUnparsedSegment(segment);
@@ -494,7 +494,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 pack.setN1PartyIdentification(n1);
                 break;                
             case TD1CarrierDetail.IDENTIFIER:
-                pack.setTd1(TD1CarrierDetailParser.parse(segment));
+                pack.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;                
             case PO4ItemPhysicalDetail.IDENTIFIER:
                 pack.setPo4(PO4ItemPhysicalDetailParser.parse(segment));

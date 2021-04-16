@@ -18,10 +18,11 @@ package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
-import com.walmartlabs.x12.exceptions.X12ParserException;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class SN1ItemDetailParserTest {
 
@@ -44,7 +45,7 @@ public class SN1ItemDetailParserTest {
         X12Segment segment = new X12Segment("SN1**18*EA");
         SN1ItemDetail sn1 = SN1ItemDetailParser.parse(segment);
         assertNotNull(sn1);
-        assertEquals("18.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("18", sn1.getNumberOfUnits());
         assertEquals("EA", sn1.getUnitOfMeasurement());
     }
     
@@ -53,13 +54,22 @@ public class SN1ItemDetailParserTest {
         X12Segment segment = new X12Segment("SN1**21.12*LB");
         SN1ItemDetail sn1 = SN1ItemDetailParser.parse(segment);
         assertNotNull(sn1);
-        assertEquals("21.120000", sn1.getNumberOfUnits().toString());
+        assertEquals("21.12", sn1.getNumberOfUnits());
         assertEquals("LB", sn1.getUnitOfMeasurement());
     }
     
-    @Test(expected = X12ParserException.class)
+    /**
+     * the Gozer parser will pass out the bad quantity
+     * value so that the application can evaluate it
+     * and use the rest of the document to generate
+     * an 824 error message
+     */
+    @Test
     public void test_parse_segment_bad_value() {
         X12Segment segment = new X12Segment("SN1**X*EA");
-        SN1ItemDetailParser.parse(segment);
+        SN1ItemDetail sn1 = SN1ItemDetailParser.parse(segment);
+        assertNotNull(sn1);
+        assertEquals("X", sn1.getNumberOfUnits());
+        assertEquals("EA", sn1.getUnitOfMeasurement());
     }
 }

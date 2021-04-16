@@ -33,10 +33,14 @@ public final class PO4ItemPhysicalDetailParser {
             String segmentIdentifier = segment.getIdentifier();
             if (PO4ItemPhysicalDetail.IDENTIFIER.equals(segmentIdentifier)) {
                 po4 = new PO4ItemPhysicalDetail();
+                po4.setSize(segment.getElement(2));
+                po4.setSizeUnitOfMeasure(segment.getElement(3));
+                po4.setGrossVolume(segment.getElement(8));
+                po4.setGrossVolumeUnitOfMeasure(segment.getElement(9));
                 po4.setLength(segment.getElement(10));
                 po4.setWidth(segment.getElement(11));
                 po4.setHeight(segment.getElement(12));
-                po4.setUnitOfMeasurement(segment.getElement(13));
+                po4.setDimensionUnitOfMeasurement(segment.getElement(13));
                 po4.setAssignedIdentification(segment.getElement(16));
             }
         }

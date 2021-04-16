@@ -41,7 +41,7 @@ public class Shipment extends X12ParsedLoop {
     /*
      * TD1: Carrier Details
      */
-    private TD1CarrierDetail td1;
+    private List<TD1CarrierDetail> td1List;
     /*
      * TD3: Carrier Details
      */
@@ -49,7 +49,7 @@ public class Shipment extends X12ParsedLoop {
     /*
      * TD5: Carrier Details
      */
-    private TD5CarrierDetail td5;
+    private List<TD5CarrierDetail> td5List;
     /*
      * N1: Party Identifiers
      */
@@ -61,16 +61,43 @@ public class Shipment extends X12ParsedLoop {
     /*
      * DTM: Date/Time Reference
      */
-    List<DTMDateTimeReference> dtmReferences;
+    private List<DTMDateTimeReference> dtmReferences;
     /*
      * FOB: payment related instructions
      */
-    FOBRelatedInstructions fob;
+    private FOBRelatedInstructions fob;
     
+    /**
+     * returns true if the loop passed in is a Shipment loop
+     */
     public static boolean isShipmentLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, SHIPMENT_LOOP_CODE);
     }
 
+    /**
+     * helper method to add TD1
+     * 
+     * @param td1
+     */
+    public void addTD1CarrierDetail(TD1CarrierDetail td1) {
+        if (CollectionUtils.isEmpty(td1List)) {
+            td1List = new ArrayList<>();
+        }
+        td1List.add(td1);
+    }
+    
+    /**
+     * helper method to add TD5
+     * 
+     * @param td5
+     */
+    public void addTD5CarrierDetail(TD5CarrierDetail td5) {
+        if (CollectionUtils.isEmpty(td5List)) {
+            td5List = new ArrayList<>();
+        }
+        td5List.add(td5);
+    }
+    
     /**
      * helper method to add REF
      * 
@@ -105,28 +132,12 @@ public class Shipment extends X12ParsedLoop {
         dtmReferences.add(dtm);
     }
     
-    public TD1CarrierDetail getTd1() {
-        return td1;
-    }
-
-    public void setTd1(TD1CarrierDetail td1) {
-        this.td1 = td1;
-    }
-
     public TD3CarrierDetail getTd3() {
         return td3;
     }
 
     public void setTd3(TD3CarrierDetail td3) {
         this.td3 = td3;
-    }
-
-    public TD5CarrierDetail getTd5() {
-        return td5;
-    }
-
-    public void setTd5(TD5CarrierDetail td5) {
-        this.td5 = td5;
     }
 
     public List<N1PartyIdentification> getN1PartyIdentifications() {
@@ -159,6 +170,22 @@ public class Shipment extends X12ParsedLoop {
 
     public void setFob(FOBRelatedInstructions fob) {
         this.fob = fob;
+    }
+
+    public List<TD1CarrierDetail> getTd1List() {
+        return td1List;
+    }
+
+    public void setTd1List(List<TD1CarrierDetail> td1List) {
+        this.td1List = td1List;
+    }
+
+    public List<TD5CarrierDetail> getTd5List() {
+        return td5List;
+    }
+
+    public void setTd5List(List<TD5CarrierDetail> td5List) {
+        this.td5List = td5List;
     }
 
 }

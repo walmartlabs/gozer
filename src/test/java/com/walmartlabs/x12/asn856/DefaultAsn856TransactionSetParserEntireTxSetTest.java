@@ -82,14 +82,22 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(shipment);
         assertEquals("S", shipment.getCode());
 
-        TD1CarrierDetail td1 = shipment.getTd1();
+        List<TD1CarrierDetail> td1List = shipment.getTd1List();
+        assertNotNull(td1List);
+        assertEquals(1, td1List.size());
+        
+        TD1CarrierDetail td1 = td1List.get(0);
         assertNotNull(td1);
         assertEquals("PLT94", td1.getRawPackagingCode());
 
         TD3CarrierDetail td3 = shipment.getTd3();
         assertNull(td3);
 
-        TD5CarrierDetail td5 = shipment.getTd5();
+        List<TD5CarrierDetail> td5List = shipment.getTd5List();
+        assertNotNull(td5List);
+        assertEquals(1, td5List.size());
+        
+        TD5CarrierDetail td5 = td5List.get(0);
         assertNotNull(td5);
         assertEquals("SQCA", td5.getIdentificationCode());
 
@@ -131,7 +139,12 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("WALMART CASA GRANDE PERISHABLE 7013", n1One.getName());
         assertEquals("UL", n1One.getIdentificationCodeQualifier());
         assertEquals("0078742042930", n1One.getIdentificationCode());
-        N3PartyLocation n3 = n1One.getN3();
+        
+        List<N3PartyLocation> n3List = n1One.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+        
+        N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());
         N4GeographicLocation n4 = n1One.getN4();
@@ -147,7 +160,12 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("RESER'S FINE FOODS, INC.", n1Two.getName());
         assertEquals("UL", n1Two.getIdentificationCodeQualifier());
         assertEquals("0090266420000", n1Two.getIdentificationCode());
-        n3 = n1Two.getN3();
+        
+        n3List = n1Two.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+        
+        n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("15570 S.W. JENKINS ROAD", n3.getAddressInfoOne());
         n4 = n1Two.getN4();
@@ -232,7 +250,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         SN1ItemDetail sn1 = item.getSn1();
         assertNotNull(sn1);
-        assertEquals("2.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("2", sn1.getNumberOfUnits());
         assertEquals("CA", sn1.getUnitOfMeasurement());
 
         List<LINItemIdentification> itemIdList = item.getItemIdentifications();
@@ -401,7 +419,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         SN1ItemDetail sn1 = item.getSn1();
         assertNotNull(sn1);
-        assertEquals("18.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("18", sn1.getNumberOfUnits());
         assertEquals("EA", sn1.getUnitOfMeasurement());
 
         List<LINItemIdentification> itemIdList = item.getItemIdentifications();
@@ -443,7 +461,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         sn1 = item.getSn1();
         assertNotNull(sn1);
-        assertEquals("3.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("3", sn1.getNumberOfUnits());
         assertEquals("EA", sn1.getUnitOfMeasurement());
 
         itemIdList = item.getItemIdentifications();
@@ -492,7 +510,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
         sn1 = item.getSn1();
         assertNotNull(sn1);
-        assertEquals("2.000000", sn1.getNumberOfUnits().toString());
+        assertEquals("2", sn1.getNumberOfUnits());
         assertEquals("EA", sn1.getUnitOfMeasurement());
 
         itemIdList = item.getItemIdentifications();
