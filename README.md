@@ -12,6 +12,7 @@ This open source library, available through @WalmartLabs, provides Java based cl
 
 | X12     	| Name                             	  | Description 	  | X12 Version(s) |
 |---------	|-----------------------------------   |-------------	  |--------------  |
+| Generic 	| Handles X12 Standard Documents 	      | Generic | 5010      |
 | DEX 894 	| Delivery/Return Base Record 	      | DSD deliveries | 4010,5010      |
 | ASN 856   	| Ship Notice/Manifest Transaction Set | Advance Ship Notice | 5010 |
 | PO 850   	| Purchase Order Transaction Set | Purchase Order | WIP |
