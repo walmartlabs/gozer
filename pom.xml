@@ -91,6 +91,11 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <excludes>
+            <exclude>**/*Test.*</exclude>
+          </excludes>
+        </configuration>        
       </plugin>
       <!-- checkstyle -->
       <plugin>

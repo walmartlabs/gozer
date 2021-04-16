@@ -46,13 +46,6 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     // the first loop in the HL hierarchy
     private Shipment shipment;
     
-    //
-    // CTT
-    //
-    // CTT 01
-    private Integer transactionLineItems;
-
-    
     
     /**
      * helper method to add DTM to list
@@ -111,14 +104,6 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
 
     public void setShipment(Shipment shipment) {
         this.shipment = shipment;
-    }
-
-    public Integer getTransactionLineItems() {
-        return transactionLineItems;
-    }
-
-    public void setTransactionLineItems(Integer transactionLineItems) {
-        this.transactionLineItems = transactionLineItems;
     }
 
     public List<DTMDateTimeReference> getDtmReferences() {

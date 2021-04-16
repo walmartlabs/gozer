@@ -93,7 +93,6 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
      */
     protected abstract boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group);
 
-    
     /**
      * parse the transaction set 
      * 
@@ -136,6 +135,23 @@ public abstract class AbstractTransactionSetParserChainable implements Transacti
             transactionSet.setTrailerControlNumber(segment.getElement(2));
         } else {
             throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, segmentIdentifier);
+        }
+    }
+    
+    /**
+     * parse the CTT segment
+     * 
+     * @param segment
+     * @param asnTx
+     */
+    protected void parseTransactionTotals(X12Segment segment, X12TransactionSet asnTx) {
+        LOGGER.debug(segment.getIdentifier());
+
+        String segmentIdentifier = segment.getIdentifier();
+        if (X12TransactionSet.TRANSACTION_ITEM_TOTAL.equals(segmentIdentifier)) {
+            asnTx.setTransactionLineItems(ConversionUtil.convertStringToInteger(segment.getElement(1)));
+        } else {
+            throw X12ParsingUtil.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_ITEM_TOTAL, segmentIdentifier);
         }
     }
 }
