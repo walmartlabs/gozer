@@ -8,11 +8,11 @@ The EDI X12 Standard provides a uniform way for companies to exchange informatio
 
 This open source library, available through @WalmartLabs, provides Java based classes that can parse various X12 file formats into a representative Java object model. It's primary focus is on those formats related to the Supply Chain sector.
 
-## Supported X12 Format Parsers
+## Supported X12 Format Parsers and Transaction Set Parsers
 
 | X12     	| Name                             	  | Description 	  | X12 Version(s) |
 |---------	|-----------------------------------   |-------------	  |--------------  |
-| Generic 	| Handles X12 Standard Documents 	      | Generic | 5010      |
+| Generic 	| Handles X12 Standard Documents in a generic way	      | Generic | 5010      |
 | DEX 894 	| Delivery/Return Base Record 	      | DSD deliveries | 4010,5010      |
 | ASN 856   	| Ship Notice/Manifest Transaction Set | Advance Ship Notice | 5010 |
 | PO 850   	| Purchase Order Transaction Set | Purchase Order | WIP |
