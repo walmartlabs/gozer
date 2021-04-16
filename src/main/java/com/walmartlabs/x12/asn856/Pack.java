@@ -20,6 +20,7 @@ import com.walmartlabs.x12.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.asn856.segment.PO4ItemPhysicalDetail;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
+import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.standard.X12Loop;
@@ -40,7 +41,11 @@ public class Pack extends X12ParsedLoop {
     /*
      * MAN: Marking
      */
-    private MANMarkNumber man;
+    private List<MANMarkNumber> manList;
+    /*
+     * N1: Party Identifiers
+     */
+    private N1PartyIdentification n1PartyIdentification;
     /*
      * PO4: Item Physical Details
      */
@@ -91,20 +96,25 @@ public class Pack extends X12ParsedLoop {
         productIdentifications.add(pid);
     }
     
+    /**
+     * helper method to add MAN
+     * 
+     * @param man
+     */
+    public void addMANMarkNumber(MANMarkNumber man) {
+        if (CollectionUtils.isEmpty(manList)) {
+            manList = new ArrayList<>();
+        }
+        manList.add(man);
+    }
+
+    
     public PO4ItemPhysicalDetail getPo4() {
         return po4;
     }
 
     public void setPo4(PO4ItemPhysicalDetail po4) {
         this.po4 = po4;
-    }
-
-    public MANMarkNumber getMan() {
-        return man;
-    }
-
-    public void setMan(MANMarkNumber man) {
-        this.man = man;
     }
 
     public List<PIDProductIdentification> getProductIdentifications() {
@@ -137,6 +147,22 @@ public class Pack extends X12ParsedLoop {
 
     public void setTd1(TD1CarrierDetail td1) {
         this.td1 = td1;
+    }
+
+    public N1PartyIdentification getN1PartyIdentification() {
+        return n1PartyIdentification;
+    }
+
+    public void setN1PartyIdentification(N1PartyIdentification n1PartyIdentification) {
+        this.n1PartyIdentification = n1PartyIdentification;
+    }
+
+    public List<MANMarkNumber> getManList() {
+        return manList;
+    }
+
+    public void setManList(List<MANMarkNumber> manList) {
+        this.manList = manList;
     }
     
 }

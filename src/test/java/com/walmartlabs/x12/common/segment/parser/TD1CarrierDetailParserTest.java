@@ -18,9 +18,7 @@ package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
-import com.walmartlabs.x12.common.segment.parser.TD1CarrierDetailParser;
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import com.walmartlabs.x12.types.UnitMeasure;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

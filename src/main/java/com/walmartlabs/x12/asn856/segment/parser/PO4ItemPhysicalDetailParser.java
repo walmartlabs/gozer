@@ -17,31 +17,33 @@ limitations under the License.
 package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
-import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.asn856.segment.PO4ItemPhysicalDetail;
 
-public class SN1ItemDetailParser {
+public final class PO4ItemPhysicalDetailParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static SN1ItemDetail parse(X12Segment segment) {
-        SN1ItemDetail sn1 = null;
+    public static PO4ItemPhysicalDetail parse(X12Segment segment) {
+        PO4ItemPhysicalDetail po4 = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (SN1ItemDetail.IDENTIFIER.equals(segmentIdentifier)) {
-                sn1 = new SN1ItemDetail();
-                sn1.setNumberOfUnits(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 6));
-                sn1.setUnitOfMeasurement(segment.getElement(3));
+            if (PO4ItemPhysicalDetail.IDENTIFIER.equals(segmentIdentifier)) {
+                po4 = new PO4ItemPhysicalDetail();
+                po4.setLength(segment.getElement(10));
+                po4.setWidth(segment.getElement(11));
+                po4.setHeight(segment.getElement(12));
+                po4.setUnitOfMeasurement(segment.getElement(13));
+                po4.setAssignedIdentification(segment.getElement(16));
             }
         }
-        return sn1;
+        return po4;
     }
 
-    private SN1ItemDetailParser() {
+    private PO4ItemPhysicalDetailParser() {
         // you can't make me
     }
 }

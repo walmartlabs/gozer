@@ -262,7 +262,11 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", itemChildLoop.getCode());
 
         Pack pack = (Pack) itemChildLoop;
-        MANMarkNumber man = pack.getMan();
+        List<MANMarkNumber> manList = pack.getManList();
+        assertNotNull(manList);
+        assertEquals(1, manList.size());
+        
+        MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916931", man.getNumber());
@@ -276,7 +280,11 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", itemChildLoop.getCode());
 
         pack = (Pack) itemChildLoop;
-        man = pack.getMan();
+        manList = pack.getManList();
+        assertNotNull(manList);
+        assertEquals(1, manList.size());
+        
+        man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916932", man.getNumber());
@@ -333,10 +341,19 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("T", orderChildLoop.getCode());
 
         Tare tare = (Tare) orderChildLoop;
-        MANMarkNumber man = tare.getMan();
+        List<MANMarkNumber> manList = tare.getManList();
+        assertNotNull(manList);
+        assertEquals(2, manList.size());
+        
+        MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("GM", man.getQualifier());
         assertEquals("00100700302232310393", man.getNumber());
+        
+        man = manList.get(1);
+        assertNotNull(man);
+        assertEquals("CP", man.getQualifier());
+        assertEquals("11211811413", man.getNumber());
 
         List<X12Loop> tareChildLoops = tare.getParsedChildrenLoops();
         assertNotNull(tareChildLoops);
@@ -351,10 +368,19 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", tareChildLoop.getCode());
 
         Pack pack = (Pack) tareChildLoop;
-        man = pack.getMan();
+        manList = pack.getManList();
+        assertNotNull(manList);
+        assertEquals(2, manList.size());
+        
+        man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916933", man.getNumber());
+        
+        man = manList.get(1);
+        assertNotNull(man);
+        assertEquals("CP", man.getQualifier());
+        assertEquals("09970020805822", man.getNumber());
 
         List<X12Loop> packChildLoops = pack.getParsedChildrenLoops();
         assertNotNull(packChildLoops);
@@ -438,7 +464,11 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("P", tareChildLoop.getCode());
 
         pack = (Pack) tareChildLoop;
-        man = pack.getMan();
+        manList = pack.getManList();
+        assertNotNull(manList);
+        assertEquals(1, manList.size());
+        
+        man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916934", man.getNumber());
@@ -537,10 +567,12 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         // Tare on Order 2
         txSegments.add(new X12Segment("HL*7*6*T"));
         txSegments.add(new X12Segment("MAN*GM*00100700302232310393"));
+        txSegments.add(new X12Segment("MAN*CP*11211811413"));
 
         // Pack 3 on Tare
         txSegments.add(new X12Segment("HL*8*7*P"));
         txSegments.add(new X12Segment("MAN*UC*10081131916933"));
+        txSegments.add(new X12Segment("MAN*CP*09970020805822"));
 
         // Item on Pack 3
         txSegments.add(new X12Segment("HL*9*8*I"));

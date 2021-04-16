@@ -14,38 +14,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12.common.segment.parser;
+package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.common.segment.REFReferenceInformation;
+import com.walmartlabs.x12.asn856.segment.PALPalletType;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
-public class REFReferenceInformationParserTest {
+public class PALPalletTypeParserTest {
 
     @Test
     public void test_parse_null_segment() {
         X12Segment segment = null;
-        REFReferenceInformation ref = REFReferenceInformationParser.parse(segment);
-        assertNull(ref);
+        PALPalletType pal = PALPalletTypeParser.parse(segment);
+        assertNull(pal);
     }
 
     @Test
     public void test_parse_empty_segment() {
         X12Segment segment = new X12Segment("");
-        REFReferenceInformation ref = REFReferenceInformationParser.parse(segment);
-        assertNull(ref);
+        PALPalletType pal = PALPalletTypeParser.parse(segment);
+        assertNull(pal);
     }
 
     @Test
     public void test_parse_segment() {
-        X12Segment segment = new X12Segment("REF*UCB*711170010491361");
-        REFReferenceInformation ref = REFReferenceInformationParser.parse(segment);
-        assertNotNull(ref);
-        assertEquals("UCB", ref.getReferenceIdentificationQualifier());
-        assertEquals("711170010491361", ref.getReferenceIdentification());
+        X12Segment segment = new X12Segment("PAL**6*5");
+        PALPalletType pal = PALPalletTypeParser.parse(segment);
+        assertNotNull(pal);
+        assertEquals("6", pal.getPalletTiers());
+        assertEquals("5", pal.getPalletBlocks());
     }
 }

@@ -17,31 +17,30 @@ limitations under the License.
 package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
-import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.asn856.segment.PALPalletType;
 
-public class SN1ItemDetailParser {
+public final class PALPalletTypeParser {
 
     /**
      * parse the segment
      * @param segment
      * @return
      */
-    public static SN1ItemDetail parse(X12Segment segment) {
-        SN1ItemDetail sn1 = null;
+    public static PALPalletType parse(X12Segment segment) {
+        PALPalletType pal = null;
 
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
-            if (SN1ItemDetail.IDENTIFIER.equals(segmentIdentifier)) {
-                sn1 = new SN1ItemDetail();
-                sn1.setNumberOfUnits(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 6));
-                sn1.setUnitOfMeasurement(segment.getElement(3));
+            if (PALPalletType.IDENTIFIER.equals(segmentIdentifier)) {
+                pal = new PALPalletType();
+                pal.setPalletTiers(segment.getElement(2));
+                pal.setPalletBlocks(segment.getElement(3));
             }
         }
-        return sn1;
+        return pal;
     }
 
-    private SN1ItemDetailParser() {
+    private PALPalletTypeParser() {
         // you can't make me
     }
 }

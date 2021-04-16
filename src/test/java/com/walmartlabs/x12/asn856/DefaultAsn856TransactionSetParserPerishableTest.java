@@ -28,6 +28,7 @@ import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
 import com.walmartlabs.x12.common.segment.N4GeographicLocation;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
+import com.walmartlabs.x12.common.segment.PKGPackaging;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
@@ -232,17 +233,19 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         
         Tare tare = (Tare) orderChildLoop;
         
-        MANMarkNumber man = tare.getMan();
+        List<MANMarkNumber> manList = tare.getManList();
+        MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("GM", man.getQualifier());
         assertEquals("00000006510095090366", man.getNumber());
         
-        //        PKGPackaging pkg = tare.getPkg();
-        //        assertNotNull(pkg);
-        //        assertEquals("S", pkg.getItemDescriptionType());
-        //        assertEquals("68", pkg.getPackagingCharacteristicCode());
-        //        assertEquals("FD", pkg.getItemDescriptionType());
-        //        assertEquals("37", pkg.getPackagingDescriptionCode());
+        List<PKGPackaging> pkgList = tare.getPkgList();
+        PKGPackaging pkg = pkgList.get(0);
+        assertNotNull(pkg);
+        assertEquals("S", pkg.getItemDescriptionType());
+        assertEquals("68", pkg.getPackagingCharacteristicCode());
+        assertEquals("FD", pkg.getAgencyQualifierCode());
+        assertEquals("37", pkg.getPackagingDescriptionCode());
 
         List<X12Loop> tareChildLoops = tare.getParsedChildrenLoops();
         assertNotNull(tareChildLoops);

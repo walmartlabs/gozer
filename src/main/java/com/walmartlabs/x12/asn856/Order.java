@@ -18,6 +18,7 @@ package com.walmartlabs.x12.asn856;
 
 import com.walmartlabs.x12.asn856.segment.PRFPurchaseOrderReference;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
+import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +38,11 @@ public class Order extends X12ParsedLoop {
      * PRF: Purchase Order Ref
      */
     private PRFPurchaseOrderReference prf;
+
+    /*
+     * TD1: Carrier Details
+     */
+    private TD1CarrierDetail td1;
 
     /*
      * REF
@@ -73,6 +79,14 @@ public class Order extends X12ParsedLoop {
 
     public void setRefList(List<REFReferenceInformation> refList) {
         this.refList = refList;
+    }
+    
+    public TD1CarrierDetail getTd1() {
+        return td1;
+    }
+
+    public void setTd1(TD1CarrierDetail td1) {
+        this.td1 = td1;
     }
 
 }
