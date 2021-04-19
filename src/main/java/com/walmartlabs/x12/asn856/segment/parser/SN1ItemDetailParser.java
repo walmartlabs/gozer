@@ -18,7 +18,6 @@ package com.walmartlabs.x12.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.asn856.segment.SN1ItemDetail;
-import com.walmartlabs.x12.util.ConversionUtil;
 
 public class SN1ItemDetailParser {
 
@@ -34,7 +33,7 @@ public class SN1ItemDetailParser {
             String segmentIdentifier = segment.getIdentifier();
             if (SN1ItemDetail.IDENTIFIER.equals(segmentIdentifier)) {
                 sn1 = new SN1ItemDetail();
-                sn1.setNumberOfUnits(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 6));
+                sn1.setNumberOfUnits(segment.getElement(2));
                 sn1.setUnitOfMeasurement(segment.getElement(3));
             }
         }

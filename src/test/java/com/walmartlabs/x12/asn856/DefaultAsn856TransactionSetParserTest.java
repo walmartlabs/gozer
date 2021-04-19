@@ -112,6 +112,44 @@ public class DefaultAsn856TransactionSetParserTest {
     }
     
     @Test
+    public void test_doParse_FirstLoop_NotShipment() {
+        try {
+            X12Group x12Group = new X12Group();
+            List<X12Segment> segments = this.getTestSegments("X", "O");
+            txParser.doParse(segments, x12Group);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("first HL is not a shipment", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test_doParseSecondLoop_NotOrder() {
+        try {
+            X12Group x12Group = new X12Group();
+            List<X12Segment> segments = this.getTestSegments("S", "X");
+            txParser.doParse(segments, x12Group);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected Order HL but got X", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test_doParse_Missing_SE() {
+        try {
+            X12Group x12Group = new X12Group();
+            List<X12Segment> segments = this.getTestSegments();
+            // remove SE
+            segments.remove(segments.size() - 1);
+            txParser.doParse(segments, x12Group);
+            fail("expected parsing exception");
+        } catch (X12ParserException e) {
+            assertEquals("expected SE segment but found SN1", e.getMessage());
+        }
+    }
+    
+    @Test
     public void test_doParse_NoHierarchicalLoops() {
         try {
             X12Group x12Group = new X12Group();
@@ -277,8 +315,12 @@ public class DefaultAsn856TransactionSetParserTest {
 
         return txSegments;
     }
-
+    
     private List<X12Segment> getTestSegments() {
+        return getTestSegments("S", "O");
+    }
+    
+    private List<X12Segment> getTestSegments(String firstLoopCode, String secondLoopCode) {
         List<X12Segment> txSegments = new ArrayList<>();
 
         //
@@ -289,12 +331,12 @@ public class DefaultAsn856TransactionSetParserTest {
         //
         // shipment
         //
-        txSegments.add(new X12Segment("HL*1**S"));
+        txSegments.add(new X12Segment("HL*1**" + firstLoopCode));
 
         //
         // order
         //
-        txSegments.add(new X12Segment("HL*2*1*O"));
+        txSegments.add(new X12Segment("HL*2*1*" + secondLoopCode));
 
         // Tare
         txSegments.add(new X12Segment("HL*3*2*T"));

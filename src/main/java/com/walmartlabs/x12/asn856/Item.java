@@ -55,8 +55,11 @@ public class Item extends X12ParsedLoop {
     /*
      * DTM: Date/Time Reference
      */
-    List<DTMDateTimeReference> dtmReferences;
+    private List<DTMDateTimeReference> dtmReferences;
 
+    /**
+     * returns true if the loop passed in is a Item loop
+     */
     public static boolean isItemLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ITEM__LOOP_CODE);
     }

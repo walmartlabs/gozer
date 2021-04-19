@@ -42,15 +42,30 @@ public class Order extends X12ParsedLoop {
     /*
      * TD1: Carrier Details
      */
-    private TD1CarrierDetail td1;
+    private List<TD1CarrierDetail> td1List;
 
     /*
      * REF
      */
     private List<REFReferenceInformation> refList;
 
+    /**
+     * returns true if the loop passed in is an Order loop
+     */
     public static boolean isOrderLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ORDER_LOOP_CODE);
+    }
+    
+    /**
+     * helper method to add TD1
+     * 
+     * @param td1
+     */
+    public void addTD1CarrierDetail(TD1CarrierDetail td1) {
+        if (CollectionUtils.isEmpty(td1List)) {
+            td1List = new ArrayList<>();
+        }
+        td1List.add(td1);
     }
 
     /**
@@ -80,13 +95,13 @@ public class Order extends X12ParsedLoop {
     public void setRefList(List<REFReferenceInformation> refList) {
         this.refList = refList;
     }
+
+    public List<TD1CarrierDetail> getTd1List() {
+        return td1List;
+    }
+
+    public void setTd1List(List<TD1CarrierDetail> td1List) {
+        this.td1List = td1List;
+    }
     
-    public TD1CarrierDetail getTd1() {
-        return td1;
-    }
-
-    public void setTd1(TD1CarrierDetail td1) {
-        this.td1 = td1;
-    }
-
 }

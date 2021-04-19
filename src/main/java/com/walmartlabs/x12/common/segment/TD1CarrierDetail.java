@@ -16,8 +16,6 @@ limitations under the License.
 
 package com.walmartlabs.x12.common.segment;
 
-import java.math.BigDecimal;
-
 /**
  * 
  * Purpose: To specify the transportation details relative to commodity, weight,
@@ -33,12 +31,12 @@ public class TD1CarrierDetail {
     private String packagingCodePartOne;
     private String packagingCodePartTwo;
     // TD102
-    private BigDecimal ladingQuantity;
+    private String ladingQuantity;
 
     // TD106
     private String weightQualifier;
     // TD107
-    private BigDecimal weight;
+    private String weight;
     // TD108
     private String unitOfMeasure;
 
@@ -66,11 +64,11 @@ public class TD1CarrierDetail {
         this.packagingCodePartTwo = packagingCodePartTwo;
     }
 
-    public BigDecimal getLadingQuantity() {
+    public String getLadingQuantity() {
         return ladingQuantity;
     }
 
-    public void setLadingQuantity(BigDecimal ladingQuantity) {
+    public void setLadingQuantity(String ladingQuantity) {
         this.ladingQuantity = ladingQuantity;
     }
 
@@ -82,11 +80,11 @@ public class TD1CarrierDetail {
         this.weightQualifier = weightQualifier;
     }
 
-    public BigDecimal getWeight() {
+    public String getWeight() {
         return weight;
     }
 
-    public void setWeight(BigDecimal weight) {
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 

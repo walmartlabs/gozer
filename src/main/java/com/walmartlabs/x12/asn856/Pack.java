@@ -57,7 +57,7 @@ public class Pack extends X12ParsedLoop {
     /*
      * TD1: Carrier Details
      */
-    private TD1CarrierDetail td1;
+    private List<TD1CarrierDetail> td1List;
     /*
      * SN1: Item Detail
      */
@@ -67,9 +67,23 @@ public class Pack extends X12ParsedLoop {
      */
     private List<LINItemIdentification> itemIdentifications;
     
-    
+    /**
+     * returns true if the loop passed in is a Pack loop
+     */
     public static boolean isPackLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, PACK_LOOP_CODE);
+    }
+    
+    /**
+     * helper method to add TD1
+     * 
+     * @param td1
+     */
+    public void addTD1CarrierDetail(TD1CarrierDetail td1) {
+        if (CollectionUtils.isEmpty(td1List)) {
+            td1List = new ArrayList<>();
+        }
+        td1List.add(td1);
     }
 
     /**
@@ -141,14 +155,6 @@ public class Pack extends X12ParsedLoop {
         this.itemIdentifications = itemIdentifications;
     }
 
-    public TD1CarrierDetail getTd1() {
-        return td1;
-    }
-
-    public void setTd1(TD1CarrierDetail td1) {
-        this.td1 = td1;
-    }
-
     public N1PartyIdentification getN1PartyIdentification() {
         return n1PartyIdentification;
     }
@@ -163,6 +169,14 @@ public class Pack extends X12ParsedLoop {
 
     public void setManList(List<MANMarkNumber> manList) {
         this.manList = manList;
+    }
+
+    public List<TD1CarrierDetail> getTd1List() {
+        return td1List;
+    }
+
+    public void setTd1List(List<TD1CarrierDetail> td1List) {
+        this.td1List = td1List;
     }
     
 }

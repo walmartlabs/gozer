@@ -25,6 +25,18 @@ public class PO4ItemPhysicalDetail {
 
     public static final String IDENTIFIER = "PO4";
 
+    // PO402
+    private String size;
+    
+    // PO403
+    private String sizeUnitOfMeasure;
+    
+    // PO408
+    private String grossVolume;
+    
+    // PO409
+    private String grossVolumeUnitOfMeasure;
+    
     // PO410
     private String length;
     
@@ -35,7 +47,7 @@ public class PO4ItemPhysicalDetail {
     private String height;
     
     // PO413
-    private String unitOfMeasurement;
+    private String dimensionUnitOfMeasurement;
     
     // PO416
     private String assignedIdentification;
@@ -64,12 +76,12 @@ public class PO4ItemPhysicalDetail {
         this.height = height;
     }
 
-    public String getUnitOfMeasurement() {
-        return unitOfMeasurement;
+    public String getDimensionUnitOfMeasurement() {
+        return dimensionUnitOfMeasurement;
     }
 
-    public void setUnitOfMeasurement(String uom) {
-        this.unitOfMeasurement = uom;
+    public void setDimensionUnitOfMeasurement(String uom) {
+        this.dimensionUnitOfMeasurement = uom;
     }
 
     public String getAssignedIdentification() {
@@ -78,6 +90,38 @@ public class PO4ItemPhysicalDetail {
 
     public void setAssignedIdentification(String assignedIdentification) {
         this.assignedIdentification = assignedIdentification;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getSizeUnitOfMeasure() {
+        return sizeUnitOfMeasure;
+    }
+
+    public void setSizeUnitOfMeasure(String sizeUnitOfMeasure) {
+        this.sizeUnitOfMeasure = sizeUnitOfMeasure;
+    }
+
+    public String getGrossVolume() {
+        return grossVolume;
+    }
+
+    public void setGrossVolume(String grossVolume) {
+        this.grossVolume = grossVolume;
+    }
+
+    public String getGrossVolumeUnitOfMeasure() {
+        return grossVolumeUnitOfMeasure;
+    }
+
+    public void setGrossVolumeUnitOfMeasure(String grossVolumeUnitOfMeasure) {
+        this.grossVolumeUnitOfMeasure = grossVolumeUnitOfMeasure;
     }
     
 }
