@@ -93,6 +93,9 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(shipment);
         assertEquals("S", shipment.getCode());
 
+        //
+        // TD1
+        //
         List<TD1CarrierDetail> td1List = shipment.getTd1List();
         assertNotNull(td1List);
         assertEquals(1, td1List.size());
@@ -104,20 +107,21 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("2490", td1.getWeight());
         assertEquals("LB", td1.getUnitOfMeasure());
 
-        TD3CarrierDetail td3 = shipment.getTd3();
-        assertNull(td3);
-
-        List<TD5CarrierDetail> td5List = shipment.getTd5List();
-        assertNotNull(td5List);
-        assertEquals(1, td5List.size());
+        List<TD3CarrierDetail> td3List = shipment.getTd3List();
+        assertNotNull(td3List);
+        assertEquals(1, td1List.size());
         
-        TD5CarrierDetail td5 = td5List.get(0);
-        assertNotNull(td5);
-        assertEquals("2", td5.getIdentificationCodeQualifier());
-        assertEquals("PRIJ", td5.getIdentificationCode());
-        assertEquals("M", td5.getTransportationMethodTypeCode());
-
-        List<REFReferenceInformation> refs = shipment.getRefList();
+        //
+        // TD3 group
+        //
+        TD3CarrierDetail td3 = td3List.get(0);
+        assertNotNull(td3);
+        assertEquals("TL", td3.getEquipmentDescriptionCode());
+        assertEquals("ABCD", td3.getEquipmentInitial());
+        assertEquals("07213567", td3.getEquipmentNumber());
+        assertEquals("30394938483234", td3.getSealNumber());
+        
+        List<REFReferenceInformation> refs = td3.getRefList();
         assertNotNull(refs);
         assertEquals(2, refs.size());
         
@@ -131,7 +135,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("AO", ref.getReferenceIdentificationQualifier());
         assertEquals("22693594", ref.getReferenceIdentification());
         
-        List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
+        List<DTMDateTimeReference> dtmList = td3.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(1, dtmList.size());
         
@@ -141,10 +145,23 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("20200523", dtm.getDate());
         assertNull(dtm.getTime());
         
-        FOBRelatedInstructions fob = shipment.getFob();
+        FOBRelatedInstructions fob = td3.getFob();
         assertNotNull(fob);
         assertEquals("PP", fob.getPaymentCode());
         
+        //
+        // TD5
+        //
+        List<TD5CarrierDetail> td5List = shipment.getTd5List();
+        assertNotNull(td5List);
+        assertEquals(1, td5List.size());
+        
+        TD5CarrierDetail td5 = td5List.get(0);
+        assertNotNull(td5);
+        assertEquals("2", td5.getIdentificationCodeQualifier());
+        assertEquals("PRIJ", td5.getIdentificationCode());
+        assertEquals("M", td5.getTransportationMethodTypeCode());
+
         List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
@@ -200,9 +217,9 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         // X12Loop instance 
         List<X12Segment> shipmentSegments = shipment.getSegments();
         assertNotNull(shipmentSegments);
-        assertEquals(10, shipmentSegments.size());
+        assertEquals(11, shipmentSegments.size());
         assertEquals("TD1******G*2490*LB", shipmentSegments.get(0).toString());
-        assertEquals("N1*ST*LONDON 6097*UL*0078742035499", shipmentSegments.get(9).toString());
+        assertEquals("N1*ST*LONDON 6097*UL*0078742035499", shipmentSegments.get(10).toString());
     }
 
     private void verifyTheFirstOrder(Shipment shipment) {
@@ -539,6 +556,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("HL*1**S"));
         txSegments.add(new X12Segment("TD1******G*2490*LB"));
         txSegments.add(new X12Segment("TD5**2*PRIJ*M"));
+        txSegments.add(new X12Segment("TD3*TL*ABCD*07213567******30394938483234"));
         txSegments.add(new X12Segment("REF*UCB*10000650002269359"));
         txSegments.add(new X12Segment("REF*AO*22693594"));
         txSegments.add(new X12Segment("DTM*011*20200523"));

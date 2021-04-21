@@ -21,7 +21,6 @@ import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
-import com.walmartlabs.x12.common.segment.FOBRelatedInstructions;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
@@ -31,7 +30,6 @@ import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 import com.walmartlabs.x12.common.segment.parser.DTMDateTimeReferenceParser;
-import com.walmartlabs.x12.common.segment.parser.FOBRelatedInstructionsParser;
 import com.walmartlabs.x12.common.segment.parser.LINItemIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.N1PartyIdentificationParser;
 import com.walmartlabs.x12.common.segment.parser.PIDPartyIdentificationParser;
@@ -405,7 +403,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 shipment.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;
             case TD3CarrierDetail.IDENTIFIER:
-                shipment.setTd3(TD3CarrierDetailParser.parse(segment));
+                shipment.addTD3CarrierDetail(TD3CarrierDetailParser.handleTD3Loop(segment, segmentIterator));
                 break;
             case TD5CarrierDetail.IDENTIFIER:
                 shipment.addTD5CarrierDetail(TD5CarrierDetailParser.parse(segment));
@@ -414,17 +412,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
                 shipment.addN1PartyIdentification(n1);
                 break;
-            case REFReferenceInformation.IDENTIFIER:
-                shipment.addReferenceInformation(REFReferenceInformationParser.parse(segment));
-                break;                 
-            case DTMDateTimeReference.IDENTIFIER:
-                DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
-                shipment.addDTMDateTimeReference(dtm);
-                break;
-            case FOBRelatedInstructions.IDENTIFIER:
-                FOBRelatedInstructions fob = FOBRelatedInstructionsParser.parse(segment);
-                shipment.setFob(fob);
-                break;                 
             default:
                 shipment.addUnparsedSegment(segment);
                 break;

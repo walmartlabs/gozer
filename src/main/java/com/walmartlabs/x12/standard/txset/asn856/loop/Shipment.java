@@ -33,6 +33,14 @@ import java.util.List;
 /**
  * Represents the Shipment level of information
  * 
+ * Note: if there is a TD3 segment the subsequent segment
+ * lines (REF, DTM and FOB) will be included as part of
+ * that object. 
+ * 
+ * if there is not a TD3 segment any segment
+ * lines (REF, DTM and FOB) will be included at 
+ * the Shipment level
+ * 
  */
 public class Shipment extends X12ParsedLoop {
 
@@ -43,17 +51,13 @@ public class Shipment extends X12ParsedLoop {
      */
     private List<TD1CarrierDetail> td1List;
     /*
-     * TD3: Carrier Details
-     */
-    private TD3CarrierDetail td3;
-    /*
      * TD5: Carrier Details
      */
     private List<TD5CarrierDetail> td5List;
     /*
-     * N1: Party Identifiers
+     * TD3: Carrier Details
      */
-    private List<N1PartyIdentification> n1PartyIdentifications;
+    private List<TD3CarrierDetail> td3List;
     /*
      * REF: references
      */
@@ -66,6 +70,11 @@ public class Shipment extends X12ParsedLoop {
      * FOB: payment related instructions
      */
     private FOBRelatedInstructions fob;
+    /*
+     * N1: Party Identifiers
+     */
+    private List<N1PartyIdentification> n1PartyIdentifications;
+
     
     /**
      * returns true if the loop passed in is a Shipment loop
@@ -99,6 +108,18 @@ public class Shipment extends X12ParsedLoop {
     }
     
     /**
+     * helper method to add TD3
+     * 
+     * @param td3
+     */
+    public void addTD3CarrierDetail(TD3CarrierDetail td3) {
+        if (CollectionUtils.isEmpty(td3List)) {
+            td3List = new ArrayList<>();
+        }
+        td3List.add(td3);
+    }
+    
+    /**
      * helper method to add REF
      * 
      * @param ref
@@ -108,17 +129,6 @@ public class Shipment extends X12ParsedLoop {
             refList = new ArrayList<>();
         }
         refList.add(ref);
-    }
-    
-    /**
-     * helper method to add N1 to list
-     * @param n1
-     */
-    public void addN1PartyIdentification(N1PartyIdentification n1) {
-        if (CollectionUtils.isEmpty(n1PartyIdentifications)) {
-            n1PartyIdentifications = new ArrayList<>();
-        }
-        n1PartyIdentifications.add(n1);
     }
     
     /**
@@ -132,13 +142,17 @@ public class Shipment extends X12ParsedLoop {
         dtmReferences.add(dtm);
     }
     
-    public TD3CarrierDetail getTd3() {
-        return td3;
+    /**
+     * helper method to add N1 to list
+     * @param n1
+     */
+    public void addN1PartyIdentification(N1PartyIdentification n1) {
+        if (CollectionUtils.isEmpty(n1PartyIdentifications)) {
+            n1PartyIdentifications = new ArrayList<>();
+        }
+        n1PartyIdentifications.add(n1);
     }
-
-    public void setTd3(TD3CarrierDetail td3) {
-        this.td3 = td3;
-    }
+    
 
     public List<N1PartyIdentification> getN1PartyIdentifications() {
         return n1PartyIdentifications;
@@ -148,6 +162,30 @@ public class Shipment extends X12ParsedLoop {
         this.n1PartyIdentifications = n1PartyIdentifications;
     }
 
+    public List<TD1CarrierDetail> getTd1List() {
+        return td1List;
+    }
+
+    public void setTd1List(List<TD1CarrierDetail> td1List) {
+        this.td1List = td1List;
+    }
+
+    public List<TD5CarrierDetail> getTd5List() {
+        return td5List;
+    }
+
+    public void setTd5List(List<TD5CarrierDetail> td5List) {
+        this.td5List = td5List;
+    }
+    
+    public List<TD3CarrierDetail> getTd3List() {
+        return td3List;
+    }
+
+    public void setTd3List(List<TD3CarrierDetail> td3List) {
+        this.td3List = td3List;
+    }
+    
     public List<DTMDateTimeReference> getDtmReferences() {
         return dtmReferences;
     }
@@ -170,22 +208,6 @@ public class Shipment extends X12ParsedLoop {
 
     public void setFob(FOBRelatedInstructions fob) {
         this.fob = fob;
-    }
-
-    public List<TD1CarrierDetail> getTd1List() {
-        return td1List;
-    }
-
-    public void setTd1List(List<TD1CarrierDetail> td1List) {
-        this.td1List = td1List;
-    }
-
-    public List<TD5CarrierDetail> getTd5List() {
-        return td5List;
-    }
-
-    public void setTd5List(List<TD5CarrierDetail> td5List) {
-        this.td5List = td5List;
     }
 
 }

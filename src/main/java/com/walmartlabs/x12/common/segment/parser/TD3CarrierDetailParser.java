@@ -16,7 +16,11 @@ limitations under the License.
 
 package com.walmartlabs.x12.common.segment.parser;
 
+import com.walmartlabs.x12.SegmentIterator;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
+import com.walmartlabs.x12.common.segment.FOBRelatedInstructions;
+import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 
 public final class TD3CarrierDetailParser {
@@ -37,6 +41,39 @@ public final class TD3CarrierDetailParser {
                 td3.setEquipmentInitial(segment.getElement(2));
                 td3.setEquipmentNumber(segment.getElement(3));
                 td3.setSealNumber(segment.getElement(9));
+            }
+        }
+        return td3;
+    }
+    
+    /**
+     * parse the TD3 segment and "attach" all related segment lines
+     * this is the preferred method to use
+     * @param segment
+     * @param segmentIterator
+     * @return
+     */
+    public static TD3CarrierDetail handleTD3Loop(X12Segment segment, SegmentIterator segmentIterator) {
+        TD3CarrierDetail td3 = TD3CarrierDetailParser.parse(segment);
+        boolean keepLooping = true;
+        while (td3 != null && keepLooping && segmentIterator.hasNext()) {
+            X12Segment nextSegment = segmentIterator.next();
+            switch (nextSegment.getIdentifier()) {
+                case REFReferenceInformation.IDENTIFIER:
+                    td3.addReferenceInformation(REFReferenceInformationParser.parse(nextSegment));
+                    break;                    
+                case DTMDateTimeReference.IDENTIFIER:
+                    td3.addDTMDateTimeReference(DTMDateTimeReferenceParser.parse(nextSegment));
+                    break;
+                case FOBRelatedInstructions.IDENTIFIER:
+                    td3.setFob(FOBRelatedInstructionsParser.parse(nextSegment));
+                    break;                    
+                default:
+                    // assume any other identifier is a break out of the TD3 loop
+                    // and let the other parser deal with it
+                    segmentIterator.previous();
+                    keepLooping = false;
+                    break;
             }
         }
         return td3;
