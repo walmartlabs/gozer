@@ -405,7 +405,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 shipment.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;
             case TD3CarrierDetail.IDENTIFIER:
-                shipment.setTd3(TD3CarrierDetailParser.parse(segment));
+                shipment.addTD3CarrierDetail(TD3CarrierDetailParser.parse(segment));
                 break;
             case TD5CarrierDetail.IDENTIFIER:
                 shipment.addTD5CarrierDetail(TD5CarrierDetailParser.parse(segment));
@@ -416,15 +416,13 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case REFReferenceInformation.IDENTIFIER:
                 shipment.addReferenceInformation(REFReferenceInformationParser.parse(segment));
-                break;                 
+                break;
             case DTMDateTimeReference.IDENTIFIER:
-                DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
-                shipment.addDTMDateTimeReference(dtm);
+                shipment.addDTMDateTimeReference(DTMDateTimeReferenceParser.parse(segment));
                 break;
             case FOBRelatedInstructions.IDENTIFIER:
-                FOBRelatedInstructions fob = FOBRelatedInstructionsParser.parse(segment);
-                shipment.setFob(fob);
-                break;                 
+                shipment.setFob(FOBRelatedInstructionsParser.parse(segment));
+                break;                
             default:
                 shipment.addUnparsedSegment(segment);
                 break;

@@ -89,6 +89,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(shipment);
         assertEquals("S", shipment.getCode());
 
+        // TD1
         List<TD1CarrierDetail> td1List = shipment.getTd1List();
         assertNotNull(td1List);
         assertEquals(1, td1List.size());
@@ -97,9 +98,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(td1);
         assertEquals("PLT94", td1.getRawPackagingCode());
 
-        TD3CarrierDetail td3 = shipment.getTd3();
-        assertNull(td3);
-
+        // TD5
         List<TD5CarrierDetail> td5List = shipment.getTd5List();
         assertNotNull(td5List);
         assertEquals(1, td5List.size());
@@ -107,16 +106,42 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         TD5CarrierDetail td5 = td5List.get(0);
         assertNotNull(td5);
         assertEquals("SQCA", td5.getIdentificationCode());
-
+        
+        // TD3 
+        List<TD3CarrierDetail> td3List = shipment.getTd3List();
+        assertNotNull(td3List);
+        assertEquals(2, td3List.size());
+        
+        TD3CarrierDetail td3 = td3List.get(0);
+        assertNotNull(td3);
+        assertEquals("TL", td3.getEquipmentDescriptionCode());
+        assertEquals("ABCD", td3.getEquipmentInitial());
+        assertEquals("07213567", td3.getEquipmentNumber());
+        assertEquals("30394938483234", td3.getSealNumber());
+        
+        td3 = td3List.get(1);
+        assertNotNull(td3);
+        assertEquals("TL", td3.getEquipmentDescriptionCode());
+        assertEquals("YYZ", td3.getEquipmentInitial());
+        assertEquals("98765", td3.getEquipmentNumber());
+        assertNull(td3.getSealNumber());
+        
+        // REF(s)
         List<REFReferenceInformation> refs = shipment.getRefList();
         assertNotNull(refs);
-        assertEquals(1, refs.size());
+        assertEquals(2, refs.size());
 
         REFReferenceInformation ref = refs.get(0);
         assertNotNull(ref);
         assertEquals("UCB", ref.getReferenceIdentificationQualifier());
         assertEquals("711170010491361", ref.getReferenceIdentification());
         
+        ref = refs.get(1);
+        assertNotNull(ref);
+        assertEquals("AO", ref.getReferenceIdentificationQualifier());
+        assertEquals("42", ref.getReferenceIdentification());
+        
+        // DTM(s)
         List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(2, dtmList.size());
@@ -130,9 +155,10 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         dtm = dtmList.get(1);
         assertNotNull(dtm);
         assertEquals("067", dtm.getDateTimeQualifier());
-        assertEquals("201905233", dtm.getDate());
+        assertEquals("20190523", dtm.getDate());
         assertNull(dtm.getTime());
-        
+
+        // N1
         List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
@@ -190,9 +216,9 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         // X12Loop instance 
         List<X12Segment> shipmentSegments = shipment.getSegments();
         assertNotNull(shipmentSegments);
-        assertEquals(12, shipmentSegments.size());
+        assertEquals(15, shipmentSegments.size());
         assertEquals("TD1*PLT94*1****G*31302*LB", shipmentSegments.get(0).toString());
-        assertEquals("N4*BEAVERTON*OR*97006", shipmentSegments.get(11).toString());
+        assertEquals("N4*BEAVERTON*OR*97006", shipmentSegments.get(14).toString());
     }
 
     private void verifyTheFirstOrder(Shipment shipment) {
@@ -544,9 +570,13 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         txSegments.add(new X12Segment("HL*1**S"));
         txSegments.add(new X12Segment("TD1*PLT94*1****G*31302*LB"));
         txSegments.add(new X12Segment("TD5**2*SQCA"));
+        // TD3
+        txSegments.add(new X12Segment("TD3*TL*ABCD*07213567******30394938483234"));
+        txSegments.add(new X12Segment("TD3*TL*YYZ*98765"));
         txSegments.add(new X12Segment("REF*UCB*711170010491361"));
+        txSegments.add(new X12Segment("REF*AO*42"));
         txSegments.add(new X12Segment("DTM*011*20190523"));
-        txSegments.add(new X12Segment("DTM*067*201905233"));
+        txSegments.add(new X12Segment("DTM*067*20190523"));
         txSegments.add(new X12Segment("FOB*PP"));
         // ship to
         txSegments.add(new X12Segment("N1*ST*WALMART CASA GRANDE PERISHABLE 7013*UL*0078742042930"));

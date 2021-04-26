@@ -17,6 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856;
 
 import com.walmartlabs.x12.X12Document;
+import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
 import com.walmartlabs.x12.standard.StandardX12Document;
@@ -30,6 +31,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -115,5 +117,5 @@ public class Asn856ParserTest {
         assertEquals(Integer.valueOf(31), asnTx.getExpectedNumberOfSegments());
         assertEquals("0008", asnTx.getTrailerControlNumber());
     }
-
+    
 }
