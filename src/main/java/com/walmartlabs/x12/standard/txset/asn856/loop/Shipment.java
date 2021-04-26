@@ -33,14 +33,6 @@ import java.util.List;
 /**
  * Represents the Shipment level of information
  * 
- * Note: if there is a TD3 segment the subsequent segment
- * lines (REF, DTM and FOB) will be included as part of
- * that object. 
- * 
- * if there is not a TD3 segment any segment
- * lines (REF, DTM and FOB) will be included at 
- * the Shipment level
- * 
  */
 public class Shipment extends X12ParsedLoop {
 
