@@ -16,11 +16,6 @@ limitations under the License.
 
 package com.walmartlabs.x12.common.segment;
 
-import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 
  * Purpose: To specify transportation details relating to the equipment used by
@@ -42,43 +37,6 @@ public class TD3CarrierDetail {
     private String equipmentNumber;
     // TD309
     private String sealNumber;
-    
-    /*
-     * REF: references
-     */
-    private List<REFReferenceInformation> refList;
-    /*
-     * DTM: Date/Time Reference
-     */
-    private List<DTMDateTimeReference> dtmReferences;
-    /*
-     * FOB: payment related instructions
-     */
-    private FOBRelatedInstructions fob;
-    
-    
-    /**
-     * helper method to add REF
-     * 
-     * @param ref
-     */
-    public void addReferenceInformation(REFReferenceInformation ref) {
-        if (CollectionUtils.isEmpty(refList)) {
-            refList = new ArrayList<>();
-        }
-        refList.add(ref);
-    }
-    
-    /**
-     * helper method to add DTM to list
-     * @param dtm
-     */
-    public void addDTMDateTimeReference(DTMDateTimeReference dtm) {
-        if (CollectionUtils.isEmpty(dtmReferences)) {
-            dtmReferences = new ArrayList<>();
-        }
-        dtmReferences.add(dtm);
-    }
     
 
     public String getEquipmentDescriptionCode() {
@@ -111,30 +69,6 @@ public class TD3CarrierDetail {
 
     public void setSealNumber(String sealNumber) {
         this.sealNumber = sealNumber;
-    }
-    
-    public List<DTMDateTimeReference> getDtmReferences() {
-        return dtmReferences;
-    }
-
-    public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
-        this.dtmReferences = dtmReferences;
-    }
-
-    public List<REFReferenceInformation> getRefList() {
-        return refList;
-    }
-
-    public void setRefList(List<REFReferenceInformation> refList) {
-        this.refList = refList;
-    }
-
-    public FOBRelatedInstructions getFob() {
-        return fob;
-    }
-
-    public void setFob(FOBRelatedInstructions fob) {
-        this.fob = fob;
     }
 
 }

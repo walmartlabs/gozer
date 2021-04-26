@@ -112,7 +112,20 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals(1, td1List.size());
         
         //
-        // TD3 group
+        // TD5
+        //
+        List<TD5CarrierDetail> td5List = shipment.getTd5List();
+        assertNotNull(td5List);
+        assertEquals(1, td5List.size());
+        
+        TD5CarrierDetail td5 = td5List.get(0);
+        assertNotNull(td5);
+        assertEquals("2", td5.getIdentificationCodeQualifier());
+        assertEquals("PRIJ", td5.getIdentificationCode());
+        assertEquals("M", td5.getTransportationMethodTypeCode());
+        
+        //
+        // TD3
         //
         TD3CarrierDetail td3 = td3List.get(0);
         assertNotNull(td3);
@@ -121,7 +134,10 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("07213567", td3.getEquipmentNumber());
         assertEquals("30394938483234", td3.getSealNumber());
         
-        List<REFReferenceInformation> refs = td3.getRefList();
+        //
+        // REF(s)
+        //
+        List<REFReferenceInformation> refs = shipment.getRefList();
         assertNotNull(refs);
         assertEquals(2, refs.size());
         
@@ -135,7 +151,10 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("AO", ref.getReferenceIdentificationQualifier());
         assertEquals("22693594", ref.getReferenceIdentification());
         
-        List<DTMDateTimeReference> dtmList = td3.getDtmReferences();
+        //
+        // DTM(s)
+        //
+        List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(1, dtmList.size());
         
@@ -145,27 +164,20 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("20200523", dtm.getDate());
         assertNull(dtm.getTime());
         
-        FOBRelatedInstructions fob = td3.getFob();
+        //
+        // FOB
+        //
+        FOBRelatedInstructions fob = shipment.getFob();
         assertNotNull(fob);
         assertEquals("PP", fob.getPaymentCode());
         
         //
-        // TD5
+        // N1
         //
-        List<TD5CarrierDetail> td5List = shipment.getTd5List();
-        assertNotNull(td5List);
-        assertEquals(1, td5List.size());
-        
-        TD5CarrierDetail td5 = td5List.get(0);
-        assertNotNull(td5);
-        assertEquals("2", td5.getIdentificationCodeQualifier());
-        assertEquals("PRIJ", td5.getIdentificationCode());
-        assertEquals("M", td5.getTransportationMethodTypeCode());
-
         List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
-
+        
         //
         // shipping from
         //
