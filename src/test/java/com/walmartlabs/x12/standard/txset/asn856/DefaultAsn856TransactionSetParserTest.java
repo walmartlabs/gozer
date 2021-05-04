@@ -154,8 +154,9 @@ public class DefaultAsn856TransactionSetParserTest {
             assertEquals("expected SE segment but found SN1", e.getMessage());
         }
     }
-    
-    // TODO: update after changes to looping
+    /**
+     * TODO: update after changes to looping
+     */
     @Ignore
     public void test_doParse_NoHierarchicalLoops() {
         try {
