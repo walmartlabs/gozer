@@ -147,10 +147,10 @@ public final class X12ParsingUtil {
             // the segment list starts with HL so we can 
             // attempt to handle the looping that was provided
             if (isHierarchalLoopStart(firstSegment)) {
-                loops = processLoops(segmentList);
+                loops = X12ParsingUtil.processLoops(segmentList);
             } else {
                 String actualSegment = (firstSegment != null ? firstSegment.getIdentifier() : "");
-                throw handleUnexpectedSegment("HL", actualSegment);
+                throw X12ParsingUtil.handleUnexpectedSegment("HL", actualSegment);
             }
         }
         
@@ -173,7 +173,7 @@ public final class X12ParsingUtil {
 
         for (X12Segment x12Segment : segmentList) {
             if (isHierarchalLoopStart(x12Segment)) {
-                X12Loop loop = buildHierarchalLoop(x12Segment);
+                X12Loop loop = X12ParsingUtil.buildHierarchalLoop(x12Segment);
 
                 // when the HL has no parent
                 // we will add it to the top level
