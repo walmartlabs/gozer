@@ -595,26 +595,32 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * 
      * @param segments
      * @param txSet
-     * @throws X12ParserException if no HL loop is found
      */
     protected void parseSegmentsBeforeFirstLoop(SegmentIterator segments, AsnTransactionSet txSet) {
         
         while (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
-            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)) {
+            String segmentId = currentSegment.getIdentifier();
+            LOGGER.debug(segmentId);
+            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)
+                || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentId)) {
+                // we found one of two things
+                // (1) start of loops (HL)
+                // (2) the end of the transaction (SE)
+                // in either case 
                 // we should back up so 
-                // the parser starts w/ this segment
+                // the parser template method 
+                // starts w/ this segment
                 segments.previous();
                 break;
             } else {
                 // add DTM segments to the transaction set
                 // ignore other segments until we find the first loop
-                String segmentId = currentSegment.getIdentifier();
-                LOGGER.debug(segmentId);
                 if (DTMDateTimeReference.IDENTIFIER.equals(segmentId)) {
                     txSet.addDTMDateTimeReference(DTMDateTimeReferenceParser.parse(currentSegment));
                 } else {
-                    throw X12ParsingUtil.handleUnexpectedSegment(X12Loop.HIERARCHY_LOOP_ID, segmentId);
+                    // add segment to unexpected segment list
+                    txSet.addUnexpectedSegmentBeforeLoop(currentSegment);
                 }
             }
         }
@@ -645,7 +651,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 this.doLoopParsing(loops, genericTx);
                 
                 // we processed all of the loops 
-                // so now set the iteraror up
+                // so now set the iterator up
                 // so that the next segment after 
                 // the last loop is next
                 segments.reset(indexToSegmentAfterHierarchicalLoops);
@@ -655,7 +661,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 // and let the parser deal w/ this
                 // segment
                 segments.previous();
-            }                
+            }
         }
     }
     

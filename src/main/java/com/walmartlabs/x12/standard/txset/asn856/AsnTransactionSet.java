@@ -17,6 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856;
 
 import com.walmartlabs.x12.AbstractX12TransactionSet;
+import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import org.springframework.util.CollectionUtils;
@@ -42,6 +43,8 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     
     // DTM segments (can appear between BSN and HL*S
     private List<DTMDateTimeReference> dtmReferences;
+    // non-DTM segments appearing between BSN and HL*S
+    private List<X12Segment> unexpectedSegmentsBeforeLoop;
     
     // HL (Shipment)
     // the first loop in the HL hierarchy
@@ -57,6 +60,18 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
             dtmReferences = new ArrayList<>();
         }
         dtmReferences.add(dtm);
+    }
+    
+    /**
+     * helper method to add unexpected segments to list
+     * that appear before looping
+     * @param segment
+     */
+    public void addUnexpectedSegmentBeforeLoop(X12Segment segment) {
+        if (CollectionUtils.isEmpty(unexpectedSegmentsBeforeLoop)) {
+            unexpectedSegmentsBeforeLoop = new ArrayList<>();
+        }
+        unexpectedSegmentsBeforeLoop.add(segment);
     }
     
     public String getPurposeCode() {
@@ -113,6 +128,14 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
 
     public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
         this.dtmReferences = dtmReferences;
+    }
+
+    public List<X12Segment> getUnexpectedSegmentsBeforeLoop() {
+        return unexpectedSegmentsBeforeLoop;
+    }
+
+    public void setUnexpectedSegmentsBeforeLoop(List<X12Segment> unexpectedSegmentsBeforeLoop) {
+        this.unexpectedSegmentsBeforeLoop = unexpectedSegmentsBeforeLoop;
     }
     
 }
