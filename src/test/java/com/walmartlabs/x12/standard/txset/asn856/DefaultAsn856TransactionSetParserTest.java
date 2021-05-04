@@ -28,7 +28,6 @@ import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Tare;
 import com.walmartlabs.x12.standard.txset.asn856.segment.MANMarkNumber;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -130,10 +129,7 @@ public class DefaultAsn856TransactionSetParserTest {
         }
     }
     
-    /**
-     * TODO: fix in next PR
-     */
-    @Ignore
+    @Test
     public void test_doParse_NoHierarchicalLoops() {
         X12Group x12Group = new X12Group();
         List<X12Segment> segments = this.getSegmentsNoHierarchicalLoops();
