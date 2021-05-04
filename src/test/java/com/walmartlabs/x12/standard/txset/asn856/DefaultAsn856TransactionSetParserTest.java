@@ -192,8 +192,14 @@ public class DefaultAsn856TransactionSetParserTest {
         
         AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
         assertEquals("05755986", asnTx.getShipmentIdentification());
+        
         List<DTMDateTimeReference> dtms = asnTx.getDtmReferences();
         assertEquals(1, dtms.size());
+        assertEquals("20210323", dtms.get(0).getDate());
+        
+        List<X12Segment> unexpectedSegments = asnTx.getUnexpectedSegmentsBeforeLoop();
+        assertEquals(1, unexpectedSegments.size());
+        assertEquals("REF", unexpectedSegments.get(0).getIdentifier());
     }
     
     @Test
@@ -206,6 +212,7 @@ public class DefaultAsn856TransactionSetParserTest {
         
         AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
         assertEquals("05755986", asnTx.getShipmentIdentification());
+        
         List<DTMDateTimeReference> dtms = asnTx.getDtmReferences();
         assertEquals(2, dtms.size());
     }

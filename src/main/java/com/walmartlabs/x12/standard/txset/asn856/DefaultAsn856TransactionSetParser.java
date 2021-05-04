@@ -602,16 +602,15 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             X12Segment currentSegment = segments.next();
             String segmentId = currentSegment.getIdentifier();
             LOGGER.debug(segmentId);
-            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)) {
-                // start of loops
+            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)
+                || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentId)) {
+                // we found one of two things
+                // (1) start of loops (HL)
+                // (2) the end of the transaction (SE)
+                // in either case 
                 // we should back up so 
-                // the parser starts w/ this segment
-                segments.previous();
-                break;
-            } else if (X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentId)) {
-                // reached end of the transaction
-                // unexpected but let's back up
-                // and return to template
+                // the parser template method 
+                // starts w/ this segment
                 segments.previous();
                 break;
             } else {
@@ -619,6 +618,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 // ignore other segments until we find the first loop
                 if (DTMDateTimeReference.IDENTIFIER.equals(segmentId)) {
                     txSet.addDTMDateTimeReference(DTMDateTimeReferenceParser.parse(currentSegment));
+                } else {
+                    // add segment to unexpected segment list
+                    txSet.addUnexpectedSegmentBeforeLoop(currentSegment);
                 }
             }
         }
