@@ -14,11 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12;
+package com.walmartlabs.x12.util.loop;
 
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import org.junit.Test;
 
@@ -31,25 +30,42 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-public class X12ParsingUtilTest {
+public class X12LoopUtilTest {
 
+    @Test
+    public void test_isHierarchicalLoopStart() {
+        assertFalse(X12LoopUtil.isHierarchicalLoopStart(null));
+        assertFalse(X12LoopUtil.isHierarchicalLoopStart(new X12Segment("REF*ZZ*123")));
+        assertTrue(X12LoopUtil.isHierarchicalLoopStart(new X12Segment("HL*1**S")));
+    }
     
     @Test
     public void test_findHierarchicalLoops_null() {
         List<X12Segment> segmentList = null;
-        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
-        assertNotNull(loops);
-        assertTrue(loops.isEmpty());
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
+        
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
+        assertNull(loops);
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNull(loopErrors);
     }
     
     @Test
     public void test_findHierarchicalLoops_empty() {
         List<X12Segment> segmentList = Collections.emptyList();
-        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
-        assertNotNull(loops);
-        assertTrue(loops.isEmpty());
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
+        
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
+        assertNull(loops);
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNull(loopErrors);
     }
     
     @Test
@@ -62,7 +78,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("TD3*TL");
         segmentList.add(segment);  
         
-        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
+        
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
         assertNotNull(loops);
         assertEquals(1, loops.size());
         
@@ -80,6 +100,11 @@ public class X12ParsingUtilTest {
         
         List<X12Loop> childLoops = loop.getChildLoops();
         assertNull(childLoops);
+        
+        
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNull(loopErrors);
     }
     
     @Test
@@ -112,7 +137,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("MAN*GM*56");
         segmentList.add(segment);
         
-        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
+        
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
         assertNotNull(loops);
         assertEquals(1, loops.size());
         
@@ -180,6 +209,10 @@ public class X12ParsingUtilTest {
         assertEquals("MAN", segmentsInPackLoop.get(0).getIdentifier());
         
         assertNull(packLoop.getChildLoops());
+        
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNull(loopErrors);
     }
     
     @Test
@@ -199,18 +232,46 @@ public class X12ParsingUtilTest {
         segmentList.add(segment);
         segment = new X12Segment("REF*IA*12345");
         segmentList.add(segment);
-        // pack 1 on order 2 which does not exit
+        // pack 1 on order 2 which does not exist
         segment = new X12Segment("HL*4*3*P");
         segmentList.add(segment);
         segment = new X12Segment("MAN*GM*56");
         segmentList.add(segment);
+
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
         
-        try {
-            X12ParsingUtil.findHierarchicalLoops(segmentList);
-            fail("expected X12ParserException");
-        } catch (X12ParserException e) {
-            assertEquals("HL segment (4) is missing parent (3)", e.getMessage());
-        }
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
+        assertNotNull(loops);
+        assertEquals(1, loops.size());
+        
+        // shipment loop
+        X12Loop shipmentLoop = loops.get(0);
+        assertNotNull(shipmentLoop);
+        assertEquals("1", shipmentLoop.getHierarchicalId());
+        assertEquals(null, shipmentLoop.getParentHierarchicalId());
+        assertEquals("S", shipmentLoop.getCode());
+        
+        List<X12Loop> childrenOfShipmentLoop = shipmentLoop.getChildLoops();
+        assertNotNull(childrenOfShipmentLoop);
+        assertEquals(1, childrenOfShipmentLoop.size());
+        
+        // order loop
+        X12Loop orderLoop = childrenOfShipmentLoop.get(0);
+        assertNotNull(orderLoop);
+        assertEquals("2", orderLoop.getHierarchicalId());
+        assertEquals("1", orderLoop.getParentHierarchicalId());
+        assertEquals("O", orderLoop.getCode());
+        
+        // no pack loop
+        assertNull(orderLoop.getChildLoops());
+        
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNotNull(loopErrors);
+        assertEquals(1, loopErrors.size());
+        assertEquals("HL segment (4) is missing parent (3)", loopErrors.get(0).getMessage());
     }
     
     @Test
@@ -236,12 +297,50 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("MAN*GM*56");
         segmentList.add(segment);
         
-        try {
-            X12ParsingUtil.findHierarchicalLoops(segmentList);
-            fail("expected X12ParserException");
-        } catch (X12ParserException e) {
-            assertEquals("HL segment with id (2) already exists", e.getMessage());
-        }
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
+        
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
+        assertNotNull(loops);
+        assertEquals(1, loops.size());
+        
+        // shipment loop
+        X12Loop shipmentLoop = loops.get(0);
+        assertNotNull(shipmentLoop);
+        assertEquals("1", shipmentLoop.getHierarchicalId());
+        assertEquals(null, shipmentLoop.getParentHierarchicalId());
+        assertEquals("S", shipmentLoop.getCode());
+        
+        List<X12Loop> childrenOfShipmentLoop = shipmentLoop.getChildLoops();
+        assertNotNull(childrenOfShipmentLoop);
+        assertEquals(1, childrenOfShipmentLoop.size());
+        
+        // order loop
+        X12Loop orderLoop = childrenOfShipmentLoop.get(0);
+        assertNotNull(orderLoop);
+        assertEquals("2", orderLoop.getHierarchicalId());
+        assertEquals("1", orderLoop.getParentHierarchicalId());
+        assertEquals("O", orderLoop.getCode());
+        
+        List<X12Loop> childrenOfOrdertLoop = orderLoop.getChildLoops();
+        assertNotNull(childrenOfOrdertLoop);
+        assertEquals(1, childrenOfOrdertLoop.size());
+        
+        // pack loop
+        X12Loop packLoop = childrenOfOrdertLoop.get(0);
+        assertNotNull(packLoop);
+        assertEquals("2", packLoop.getHierarchicalId());
+        assertEquals("2", packLoop.getParentHierarchicalId());
+        assertEquals("P", packLoop.getCode());
+        
+        assertNull(packLoop.getChildLoops());
+        
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNotNull(loopErrors);
+        assertEquals(1, loopErrors.size());
+        assertEquals("HL segment with id (2) already exists", loopErrors.get(0).getMessage());
     }
     
     @Test
@@ -258,9 +357,13 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("HL*2**S");
         segmentList.add(segment);
         segment = new X12Segment("TD3*B");
-        segmentList.add(segment);          
+        segmentList.add(segment);         
         
-        List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(segmentList);
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
+        
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
         assertNotNull(loops);
         assertEquals(2, loops.size());
         
@@ -296,6 +399,10 @@ public class X12ParsingUtilTest {
         
         childLoops = loop.getChildLoops();
         assertNull(childLoops);
+        
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNull(loopErrors);
     }
     
     @Test
@@ -308,174 +415,18 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("TD3*TL");
         segmentList.add(segment);  
         
-        try {
-            X12ParsingUtil.findHierarchicalLoops(segmentList);
-            fail("expected X12ParserException");
-        } catch (X12ParserException e) {
-            assertEquals("expected HL segment but found TOP", e.getMessage());
-        }
-    }
-    
-    @Test
-    public void test_isValidEnvelope() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("TOP*1");
-        segmentList.add(segment);
-        segment = new X12Segment("MIDDLE*2");
-        segmentList.add(segment);
-        segment = new X12Segment("BOTTOM*3");
-        segmentList.add(segment);  
+        X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(segmentList);
+        assertNotNull(loopHolder);
         
-        assertTrue(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
-    }
-    
-    @Test
-    public void test_isValidEnvelope_fails_missing_bottom() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("TOP*1");
-        segmentList.add(segment);
-        segment = new X12Segment("BOTTOM*2");
-        segmentList.add(segment);
-        segment = new X12Segment("MIDDLE*3");
-        segmentList.add(segment);  
+        // loops
+        List<X12Loop> loops = loopHolder.getLoops();
+        assertNull(loops);
         
-        assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
-    }
-    
-    @Test
-    public void test_isValidEnvelope_fails_missing_top() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("HEAD*1");
-        segmentList.add(segment);
-        segment = new X12Segment("MIDDLE*2");
-        segmentList.add(segment);
-        segment = new X12Segment("BOTTOM*3");
-        segmentList.add(segment);  
-        
-        assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
-    }
-    
-    @Test
-    public void test_isValidEnvelope_fails_missing_both() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("HEAD*1");
-        segmentList.add(segment);
-        segment = new X12Segment("MIDDLE*2");
-        segmentList.add(segment);
-        segment = new X12Segment("ANOTHER*3");
-        segmentList.add(segment);  
-        
-        assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
-    }
-    
-    @Test
-    public void test_isValidEnvelope_null() {
-        List<X12Segment> segmentList = null;
-        assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
-    }
-    
-    @Test
-    public void test_isValidEnvelope_empty() {
-        List<X12Segment> segmentList = Collections.emptyList();
-        assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
-    }
-    
-    @Test
-    public void test_verifyTransactionSetType() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("ST*856*0001");
-        segmentList.add(segment);
-        segment = new X12Segment("BSN*00****0001");
-        segmentList.add(segment);
-        segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
-        assertTrue(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
-    }
-    
-    @Test
-    public void test_verifyTransactionSetType_wrong_type() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("ST*856*0001");
-        segmentList.add(segment);
-        segment = new X12Segment("BSN*00****0001");
-        segmentList.add(segment);
-        segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
-        assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "999"));
-    }
-    
-    @Test
-    public void test_verifyTransactionSetType_partial_header() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("ST");
-        segmentList.add(segment);
-        segment = new X12Segment("BSN*00****0001");
-        segmentList.add(segment);
-        segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
-        assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "999"));
-    }
-    
-    @Test
-    public void test_verifyTransactionSetType_wrong_first_line() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("XX*856*0001");
-        segmentList.add(segment);
-        segment = new X12Segment("BSN*00****0001");
-        segmentList.add(segment);
-        segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
-        assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
-    }
-    
-    @Test
-    public void test_verifyTransactionSetType_null_type() {
-        List<X12Segment> segmentList = new ArrayList<>();
-        X12Segment segment = new X12Segment("ST*856*0001");
-        segmentList.add(segment);
-        segment = new X12Segment("BSN*00****0001");
-        segmentList.add(segment);
-        segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
-        assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, null));
-    }
-    
-    @Test
-    public void test_verifyTransactionSetType_null() {
-        List<X12Segment> segmentList = null;
-        assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
-    }
-    
-    @Test
-    public void test_verifyTransactionSetType_empty() {
-        List<X12Segment> segmentList = Collections.emptyList();
-        assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
-    }
-    
-    @Test
-    public void test_parseVersion() {
-        assertNull(X12ParsingUtil.parseVersion(null));
-        assertNull(X12ParsingUtil.parseVersion(""));
-        assertEquals(new Integer(4010), X12ParsingUtil.parseVersion("004010UCS"));
-        assertEquals(new Integer(5010), X12ParsingUtil.parseVersion("005010UCS"));
-        assertEquals(new Integer(4010), X12ParsingUtil.parseVersion("4010"));
-        assertEquals(new Integer(4010), X12ParsingUtil.parseVersion("004010"));
-        assertEquals(new Integer(4010), X12ParsingUtil.parseVersion("4010UCS"));
-    }
-
-    @Test(expected = X12ParserException.class)
-    public void test_parseVersion_error_text() {
-        X12ParsingUtil.parseVersion("VERSION");
-    }
-
-    @Test(expected = X12ParserException.class)
-    public void test_parseVersion_error_incorrect_ending() {
-        X12ParsingUtil.parseVersion("004010VERSION");
+        // errors
+        List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+        assertNotNull(loopErrors);
+        assertEquals(1, loopErrors.size());
+        assertEquals("expected HL segment but found TOP", loopErrors.get(0).getMessage());
     }
 
 }

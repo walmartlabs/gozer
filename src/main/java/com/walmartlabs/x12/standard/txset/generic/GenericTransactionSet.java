@@ -2,6 +2,7 @@ package com.walmartlabs.x12.standard.txset.generic;
 
 import com.walmartlabs.x12.AbstractX12TransactionSet;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import org.springframework.util.CollectionUtils;
 
@@ -49,6 +50,10 @@ public class GenericTransactionSet extends AbstractX12TransactionSet {
     
     // the loops
     private List<X12Loop> loops;
+    
+    // looping issues are captured 
+    private boolean loopingValid = true;
+    private List<X12ErrorDetail> loopingErrors;
    
     /**
      * helper method to add segment to list
@@ -94,6 +99,22 @@ public class GenericTransactionSet extends AbstractX12TransactionSet {
     
     public void setLoops(List<X12Loop> loops) {
         this.loops = loops;
+    }
+
+    public boolean isLoopingValid() {
+        return loopingValid;
+    }
+
+    public void setLoopingValid(boolean loopingValid) {
+        this.loopingValid = loopingValid;
+    }
+
+    public List<X12ErrorDetail> getLoopingErrors() {
+        return loopingErrors;
+    }
+
+    public void setLoopingErrors(List<X12ErrorDetail> loopingErrors) {
+        this.loopingErrors = loopingErrors;
     }
     
 }

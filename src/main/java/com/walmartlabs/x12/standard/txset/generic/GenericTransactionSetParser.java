@@ -1,13 +1,16 @@
 package com.walmartlabs.x12.standard.txset.generic;
 
 import com.walmartlabs.x12.SegmentIterator;
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
+import com.walmartlabs.x12.util.X12ParsingUtil;
+import com.walmartlabs.x12.util.loop.X12LoopHolder;
+import com.walmartlabs.x12.util.loop.X12LoopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -145,7 +148,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
      * @return
      */
     private boolean isLoopSegmentOrOptionalSegmentOrEndingSegment(X12Segment segment) {
-        return X12ParsingUtil.isHierarchalLoopStart(segment) 
+        return X12LoopUtil.isHierarchicalLoopStart(segment) 
             || X12TransactionSet.TRANSACTION_ITEM_TOTAL.equals(segment.getIdentifier())
             || X12TransactionSet.TRANSACTION_AMOUNT_TOTAL.equals(segment.getIdentifier())
             || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segment.getIdentifier());
@@ -177,7 +180,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
         
         if (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
-            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)) {
+            if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)) {
                 segments.previous();
                 int firstLoopSegmentIndex = segments.currentIndex();
                 int indexToSegmentAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(segments);
@@ -185,10 +188,16 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
                 
                 // manage the loops
                 // assigning the parents and children accordingly
-                List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
+                X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(loopSegments);
 
-                // parse each of the loops
-                this.doLoopParsing(loops, genericTx);
+                // add loops
+                List<X12Loop> loops = loopHolder.getLoops();
+                genericTx.setLoops(loops);
+                
+                // add loop errors to tx (if any)
+                List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+                genericTx.setLoopingValid(CollectionUtils.isEmpty(loopErrors));
+                genericTx.setLoopingErrors(loopHolder.getLoopErrors());
                 
                 // we processed all of the loops 
                 // so now set the iteraror up
@@ -228,10 +237,6 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
         
         segments.reset(firstLoopSegmentIndex);
         return indexToSegmentAfterHierarchicalLoops;
-    }
-    
-    protected void doLoopParsing(List<X12Loop> loops, GenericTransactionSet genericTx) {
-        genericTx.setLoops(loops);
     }
 
 }

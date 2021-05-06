@@ -17,7 +17,6 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856;
 
 import com.walmartlabs.x12.SegmentIterator;
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
@@ -63,6 +62,9 @@ import com.walmartlabs.x12.standard.txset.asn856.segment.parser.PO4ItemPhysicalD
 import com.walmartlabs.x12.standard.txset.asn856.segment.parser.PRFPurchaseOrderReferenceParser;
 import com.walmartlabs.x12.standard.txset.asn856.segment.parser.SN1ItemDetailParser;
 import com.walmartlabs.x12.util.TriConsumer;
+import com.walmartlabs.x12.util.X12ParsingUtil;
+import com.walmartlabs.x12.util.loop.X12LoopHolder;
+import com.walmartlabs.x12.util.loop.X12LoopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -603,7 +605,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             X12Segment currentSegment = segments.next();
             String segmentId = currentSegment.getIdentifier();
             LOGGER.debug(segmentId);
-            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)
+            if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)
                 || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentId)) {
                 // we found one of two things
                 // (1) start of loops (HL)
@@ -634,11 +636,11 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param segments
      * @param txSet
      */
-    protected void handleLooping(SegmentIterator segments, AsnTransactionSet genericTx) {
+    protected void handleLooping(SegmentIterator segments, AsnTransactionSet asnTx) {
         
         if (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
-            if (X12ParsingUtil.isHierarchalLoopStart(currentSegment)) {
+            if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)) {
                 segments.previous();
                 int firstLoopSegmentIndex = segments.currentIndex();
                 int indexToSegmentAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(segments);
@@ -646,11 +648,17 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 
                 // manage the loops
                 // assigning the parents and children accordingly
-                List<X12Loop> loops = X12ParsingUtil.findHierarchicalLoops(loopSegments);
+                X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(loopSegments);
 
-                // parse each of the loops
-                this.doLoopParsing(loops, genericTx);
+                // add loop errors to tx (if any)
+                List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
+                asnTx.setLoopingValid(CollectionUtils.isEmpty(loopErrors));
+                asnTx.setLoopingErrors(loopHolder.getLoopErrors());
                 
+                // handle loops
+                List<X12Loop> loops = loopHolder.getLoops();
+                this.doLoopParsing(loops, asnTx);
+
                 // we processed all of the loops 
                 // so now set the iterator up
                 // so that the next segment after 
@@ -658,9 +666,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 segments.reset(indexToSegmentAfterHierarchicalLoops);
             } else {
                 // doesn't start w/ HL
-                // we should back it up 
-                // and let the parser deal w/ this
-                // segment
+                asnTx.setLoopingValid(false);
+                asnTx.addX12ErrorDetailForLoop(
+                    new X12ErrorDetail(currentSegment.getIdentifier(), "", "missing shipment loop"));
+                // we should back it up
+                // and let the parser keep going
+                // with that segment
                 segments.previous();
             }
         }

@@ -75,6 +75,9 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("20190523", asnTx.getShipmentDate());
         assertEquals("171543", asnTx.getShipmentTime());
         assertEquals("0002", asnTx.getHierarchicalStructureCode());
+        
+        assertTrue(asnTx.isLoopingValid());
+        assertNull(asnTx.getLoopingErrors());
 
         this.verifyTheShipment(asnTx);
         this.verifyTheFirstOrder(asnTx.getShipment());
