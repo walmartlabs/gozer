@@ -19,11 +19,10 @@ package com.walmartlabs.x12.standard.txset.asn856;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
-import com.walmartlabs.x12.standard.txset.asn856.AsnTransactionSet;
-import com.walmartlabs.x12.standard.txset.asn856.DefaultAsn856TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Order;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Tare;
@@ -118,30 +117,6 @@ public class DefaultAsn856TransactionSetParserTest {
     }
     
     @Test
-    public void test_doParse_FirstLoop_NotShipment() {
-        try {
-            X12Group x12Group = new X12Group();
-            List<X12Segment> segments = this.getTestSegments("X", "O");
-            txParser.doParse(segments, x12Group);
-            fail("expected parsing exception");
-        } catch (X12ParserException e) {
-            assertEquals("first HL is not a shipment", e.getMessage());
-        }
-    }
-    
-    @Test
-    public void test_doParseSecondLoop_NotOrder() {
-        try {
-            X12Group x12Group = new X12Group();
-            List<X12Segment> segments = this.getTestSegments("S", "X");
-            txParser.doParse(segments, x12Group);
-            fail("expected parsing exception");
-        } catch (X12ParserException e) {
-            assertEquals("expected Order HL but got X", e.getMessage());
-        }
-    }
-    
-    @Test
     public void test_doParse_Missing_SE() {
         try {
             X12Group x12Group = new X12Group();
@@ -154,31 +129,84 @@ public class DefaultAsn856TransactionSetParserTest {
             assertEquals("expected SE segment but found SN1", e.getMessage());
         }
     }
+    
     /**
-     * TODO: update after changes to looping
+     * TODO: fix in next PR
      */
     @Ignore
     public void test_doParse_NoHierarchicalLoops() {
-        try {
-            X12Group x12Group = new X12Group();
-            List<X12Segment> segments = this.getSegmentsNoHierarchicalLoops();
-            txParser.doParse(segments, x12Group);
-            fail("expected parsing exception");
-        } catch (X12ParserException e) {
-            assertEquals("expected HL segment but found SE", e.getMessage());
-        }
+        X12Group x12Group = new X12Group();
+        List<X12Segment> segments = this.getSegmentsNoHierarchicalLoops();
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+        
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        
+        // looping check
+        assertFalse(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("expected HL segment but found SE", loopErrors.get(0).getMessage());
+        
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
     }
     
     @Test
+    public void test_doParse_FirstLoop_NotShipment() {
+        X12Group x12Group = new X12Group();
+        List<X12Segment> segments = this.getTestSegments("X", "O");
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+        
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        
+        // looping check
+        assertFalse(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("first HL is not a shipment", loopErrors.get(0).getMessage());
+        
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+    }
+    
+    @Test
+    public void test_doParseSecondLoop_NotOrder() {
+        X12Group x12Group = new X12Group();
+        List<X12Segment> segments = this.getTestSegments("S", "X");
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+        
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        
+        // looping check
+        assertFalse(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("expected Order HL but got X", loopErrors.get(0).getMessage());
+        
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+    }
+
+    @Test
     public void test_doParse_TwoTopLevelHierarchicalLoops() {
-        try {
-            X12Group x12Group = new X12Group();
-            List<X12Segment> segments = this.getTwoShipmentLoops();
-            txParser.doParse(segments, x12Group);
-            fail("expected parsing exception");
-        } catch (X12ParserException e) {
-            assertEquals("expected one top level HL", e.getMessage());
-        }
+        X12Group x12Group = new X12Group();
+        List<X12Segment> segments = this.getTwoShipmentLoops();
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+        
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        
+        // looping check
+        assertFalse(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("expected one top level HL", loopErrors.get(0).getMessage());
+        
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
     }
     
     @Test
@@ -191,6 +219,13 @@ public class DefaultAsn856TransactionSetParserTest {
         assertNotNull(txSet);
         
         AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        
+        // looping check
+        assertTrue(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertNull(loopErrors);
+        
+        // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
         
         List<DTMDateTimeReference> dtms = asnTx.getDtmReferences();
@@ -211,6 +246,13 @@ public class DefaultAsn856TransactionSetParserTest {
         assertNotNull(txSet);
         
         AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        
+        // looping check
+        assertTrue(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertNull(loopErrors);
+        
+        // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
         
         List<DTMDateTimeReference> dtms = asnTx.getDtmReferences();
@@ -225,7 +267,15 @@ public class DefaultAsn856TransactionSetParserTest {
         assertNotNull(txSet);
         
         AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+        
+        // looping check
+        assertTrue(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertNull(loopErrors);
+        
+        // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
+        
         List<DTMDateTimeReference> dtms = asnTx.getDtmReferences();
         assertNull(dtms);
         

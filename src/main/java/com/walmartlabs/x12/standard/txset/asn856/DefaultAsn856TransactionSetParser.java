@@ -203,11 +203,12 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             List<X12Loop> shipmentChildLoops = unparsedLoop.getChildLoops();
             if (!CollectionUtils.isEmpty(shipmentChildLoops)) {
                 shipmentChildLoops.forEach(childLoop -> {
-                    this.parseOrderLoop(childLoop, shipment);
+                    this.parseOrderLoop(childLoop, shipment, asnTx);
                 });
             }
         } else {
-            throw new X12ParserException(new X12ErrorDetail("HL", "HL03", "first HL is not a shipment"));
+            asnTx.setLoopingValid(false);
+            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", "HL03", "first HL is not a shipment"));
         }
     }
 
@@ -217,7 +218,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param unparsedLoop
      * @param shipment
      */
-    private void parseOrderLoop(X12Loop unparsedLoop, Shipment shipment) {
+    private void parseOrderLoop(X12Loop unparsedLoop, Shipment shipment, AsnTransactionSet asnTx) {
         //
         // should be an Order
         //
@@ -239,8 +240,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             this.parseEachChildrenLoop(unparsedLoop, order);
 
         } else {
-            throw new X12ParserException(
-                new X12ErrorDetail("HL", "HL03", "expected Order HL but got " + unparsedLoop.getCode()));
+            asnTx.setLoopingValid(false);
+            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", "HL03", "expected Order HL but got " + unparsedLoop.getCode()));
         }
     }
     
@@ -696,20 +697,19 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * 
      * @param loops
      * @param asnTx
-     * @return
      */
     protected void doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
         if (!CollectionUtils.isEmpty(loops) && loops.size() == 1) {
             X12Loop firstLoop = loops.get(0);
             this.parseShipmentLoop(firstLoop, asnTx);
         } else {
-            throw new X12ParserException(new X12ErrorDetail("HL", "HL00", "expected one top level HL"));
+            asnTx.setLoopingValid(false);
+            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", "HL00", "expected one top level HL"));
         }
     }
     
     /**
      * checks for CTT or AMT
-     * @return
      */
     private void handleOptionalSegments(SegmentIterator segments, AsnTransactionSet genericTx) {
         while (segments.hasNext()) {
