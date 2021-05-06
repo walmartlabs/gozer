@@ -148,7 +148,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
      * @return
      */
     private boolean isLoopSegmentOrOptionalSegmentOrEndingSegment(X12Segment segment) {
-        return X12LoopUtil.isHierarchalLoopStart(segment) 
+        return X12LoopUtil.isHierarchicalLoopStart(segment) 
             || X12TransactionSet.TRANSACTION_ITEM_TOTAL.equals(segment.getIdentifier())
             || X12TransactionSet.TRANSACTION_AMOUNT_TOTAL.equals(segment.getIdentifier())
             || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segment.getIdentifier());
@@ -180,7 +180,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
         
         if (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
-            if (X12LoopUtil.isHierarchalLoopStart(currentSegment)) {
+            if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)) {
                 segments.previous();
                 int firstLoopSegmentIndex = segments.currentIndex();
                 int indexToSegmentAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(segments);

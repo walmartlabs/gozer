@@ -34,10 +34,10 @@ import static org.junit.Assert.assertTrue;
 public class X12LoopUtilTest {
 
     @Test
-    public void test_isHierarchalLoopStart() {
-        assertFalse(X12LoopUtil.isHierarchalLoopStart(null));
-        assertFalse(X12LoopUtil.isHierarchalLoopStart(new X12Segment("REF*ZZ*123")));
-        assertTrue(X12LoopUtil.isHierarchalLoopStart(new X12Segment("HL*1**S")));
+    public void test_isHierarchicalLoopStart() {
+        assertFalse(X12LoopUtil.isHierarchicalLoopStart(null));
+        assertFalse(X12LoopUtil.isHierarchicalLoopStart(new X12Segment("REF*ZZ*123")));
+        assertTrue(X12LoopUtil.isHierarchicalLoopStart(new X12Segment("HL*1**S")));
     }
     
     @Test

@@ -34,7 +34,7 @@ public final class X12LoopUtil {
      * @param segment
      * @return true if HL otherwise false
      */
-    public static boolean isHierarchalLoopStart(X12Segment segment) {
+    public static boolean isHierarchicalLoopStart(X12Segment segment) {
         return segment != null && X12Loop.HIERARCHY_LOOP_ID.equals(segment.getIdentifier());
     }
     
@@ -60,7 +60,7 @@ public final class X12LoopUtil {
             X12Segment firstSegment = segmentList.get(0);
             // the segment list starts with HL so we can 
             // attempt to handle the looping that was provided
-            if (X12LoopUtil.isHierarchalLoopStart(firstSegment)) {
+            if (X12LoopUtil.isHierarchicalLoopStart(firstSegment)) {
                 loopHolder = X12LoopUtil.processLoops(segmentList);
             } else {
                 // unexpected segment
@@ -91,8 +91,8 @@ public final class X12LoopUtil {
         Map<String, X12Loop> loopMap = new HashMap<>();
 
         for (X12Segment x12Segment : segmentList) {
-            if (X12LoopUtil.isHierarchalLoopStart(x12Segment)) {
-                X12Loop loop = X12LoopUtil.buildHierarchalLoop(x12Segment);
+            if (X12LoopUtil.isHierarchicalLoopStart(x12Segment)) {
+                X12Loop loop = X12LoopUtil.buildHierarchicalLoop(x12Segment);
 
                 // when the HL has no parent
                 // we will add it to the top level
@@ -133,7 +133,7 @@ public final class X12LoopUtil {
         return loopHolder;
     }
     
-    private static X12Loop buildHierarchalLoop(X12Segment x12Segment) {
+    private static X12Loop buildHierarchicalLoop(X12Segment x12Segment) {
         // starting new loop
         String loopId = x12Segment.getElement(1);
         String parentLoopId = x12Segment.getElement(2);

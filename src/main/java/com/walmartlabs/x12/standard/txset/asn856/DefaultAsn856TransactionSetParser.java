@@ -605,7 +605,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             X12Segment currentSegment = segments.next();
             String segmentId = currentSegment.getIdentifier();
             LOGGER.debug(segmentId);
-            if (X12LoopUtil.isHierarchalLoopStart(currentSegment)
+            if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)
                 || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segmentId)) {
                 // we found one of two things
                 // (1) start of loops (HL)
@@ -640,7 +640,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         
         if (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
-            if (X12LoopUtil.isHierarchalLoopStart(currentSegment)) {
+            if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)) {
                 segments.previous();
                 int firstLoopSegmentIndex = segments.currentIndex();
                 int indexToSegmentAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(segments);
