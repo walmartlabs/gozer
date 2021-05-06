@@ -35,6 +35,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class Asn856ParserTest {
 
@@ -103,6 +104,10 @@ public class Asn856ParserTest {
         AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
         assertEquals("856", asnTx.getTransactionSetIdentifierCode());
         assertEquals("0008", asnTx.getHeaderControlNumber());
+        
+        assertTrue(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertNull(loopErrors);
         
         // BSN
         assertEquals("14", asnTx.getPurposeCode());
