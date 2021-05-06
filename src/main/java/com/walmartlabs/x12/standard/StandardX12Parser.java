@@ -18,7 +18,6 @@ package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.SegmentIterator;
 import com.walmartlabs.x12.X12Parser;
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
@@ -27,6 +26,7 @@ import com.walmartlabs.x12.standard.txset.TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.UnhandledTransactionSet;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.SourceToSegmentUtil;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;

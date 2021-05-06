@@ -2,6 +2,7 @@ package com.walmartlabs.x12.standard.txset.generic;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
@@ -82,6 +83,10 @@ public class GenericTransactionSetParserTest {
         
         List<X12Loop> loops = genericTx.getLoops();
         assertNull(loops);
+        
+        assertTrue(genericTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
+        assertNull(loopErrors);
     }
     
     @Test
@@ -101,6 +106,11 @@ public class GenericTransactionSetParserTest {
         List<X12Loop> loops = genericTx.getLoops();
         assertNotNull(loops);
         assertEquals(2, loops.size());
+        
+        // Loop Errors
+        assertTrue(genericTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
+        assertNull(loopErrors);
     }
     
     @Test
@@ -124,20 +134,34 @@ public class GenericTransactionSetParserTest {
         List<X12Loop> loops = genericTx.getLoops();
         assertNotNull(loops);
         assertEquals(1, loops.size());
+
+        assertTrue(genericTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
+        assertNull(loopErrors);
     }
     
     @Test
     public void test_doParse() {
         X12Group x12Group = new X12Group();
         List<X12Segment> segments = this.getTestSegments();
+        
         X12TransactionSet txSet = txParser.doParse(segments, x12Group);
         assertNotNull(txSet);
         
         GenericTransactionSet genericTx = (GenericTransactionSet) txSet;
         assertEquals("BSN",genericTx.getBeginningSegment().getElement(0));
         assertEquals("05755986",genericTx.getBeginningSegment().getElement(2));
+        
         List<X12Segment> segmentsBeforeLoop = genericTx.getSegmentsBeforeLoops();
         assertNull(segmentsBeforeLoop);
+        
+        List<X12Loop> loops = genericTx.getLoops();
+        assertNotNull(loops);
+        assertEquals(1, loops.size());
+        
+        assertTrue(genericTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
+        assertNull(loopErrors);
     }
     
     private List<X12Segment> getSegmentsOnlyTransactionEnvelope() {

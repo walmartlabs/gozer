@@ -17,14 +17,15 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Parser;
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.types.InvoiceType;
 import com.walmartlabs.x12.types.ProductQualifier;
 import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.SourceToSegmentUtil;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -329,7 +330,12 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
     }
 
     protected void parseVersion(Dex894 dex) {
-        dex.setVersionNumber(X12ParsingUtil.parseVersion(dex.getVersion()));
+        Integer version = X12ParsingUtil.parseVersion(dex.getVersion());
+        if (version == null) {
+            throw new X12ParserException(new X12ErrorDetail(DefaultDex894Parser.DEX_HEADER_ID, "DXS03", "Invalid version format"));
+        } else {
+            dex.setVersionNumber(version);
+        }
     }
 
     /**

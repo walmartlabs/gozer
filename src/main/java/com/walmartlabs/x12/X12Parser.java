@@ -17,6 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 
 public interface X12Parser<T extends X12Document> {
     

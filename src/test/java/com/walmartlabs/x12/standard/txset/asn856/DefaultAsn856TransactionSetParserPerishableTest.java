@@ -80,6 +80,9 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("20200523", asnTx.getShipmentDate());
         assertEquals("215946", asnTx.getShipmentTime());
         assertEquals("ZZZZ", asnTx.getHierarchicalStructureCode());
+        
+        assertTrue(asnTx.isLoopingValid());
+        assertNull(asnTx.getLoopingErrors());
 
         this.verifyTheShipment(asnTx);
         this.verifyTheFirstOrder(asnTx.getShipment());

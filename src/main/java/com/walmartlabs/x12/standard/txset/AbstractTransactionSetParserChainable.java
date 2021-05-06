@@ -16,12 +16,12 @@ limitations under the License.
 
 package com.walmartlabs.x12.standard.txset;
 
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

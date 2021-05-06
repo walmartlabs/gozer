@@ -17,24 +17,22 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856;
 
 import com.walmartlabs.x12.X12Document;
-import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
 import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.StandardX12Parser;
 import com.walmartlabs.x12.standard.X12Group;
-import com.walmartlabs.x12.standard.txset.asn856.AsnTransactionSet;
-import com.walmartlabs.x12.standard.txset.asn856.DefaultAsn856TransactionSetParser;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -105,6 +103,72 @@ public class Asn856ParserTest {
         AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
         assertEquals("856", asnTx.getTransactionSetIdentifierCode());
         assertEquals("0008", asnTx.getHeaderControlNumber());
+        
+        // BSN
+        assertEquals("14", asnTx.getPurposeCode());
+        assertEquals("829716", asnTx.getShipmentIdentification());
+        assertEquals("20111206", asnTx.getShipmentDate());
+        assertEquals("142428", asnTx.getShipmentTime());
+        assertEquals("0002", asnTx.getHierarchicalStructureCode());
+        
+        // SE
+        assertEquals(Integer.valueOf(31), asnTx.getExpectedNumberOfSegments());
+        assertEquals("0008", asnTx.getTrailerControlNumber());
+    }
+    
+
+    @Test
+    public void test_Parsing_Asn856_badLoops() throws IOException {
+        byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
+        String sourceData = new String(asnBytes);
+        sourceData = sourceData.replace("HL*2*1*O", "HL*2*99*O");
+        
+        StandardX12Document x12 = asnParser.parse(sourceData);
+        assertNotNull(x12);
+
+        // ISA segment
+        InterchangeControlEnvelope isa = x12.getInterchangeControlEnvelope();
+        assertNotNull(isa);
+        assertEquals("01", isa.getAuthorizationInformationQualifier());
+        assertEquals("0000000000", isa.getAuthorizationInformation());
+        assertEquals("01", isa.getSecurityInformationQualifier());
+        assertEquals("0000000000", isa.getSecurityInformation());
+        assertEquals("ZZ", isa.getInterchangeIdQualifier());
+        assertEquals("ABCDEFGHIJKLMNO", isa.getInterchangeSenderId());
+        assertEquals("ZZ", isa.getInterchangeIdQualifierTwo());
+        assertEquals("123456789012345", isa.getInterchangeReceiverId());
+        assertEquals("101127", isa.getInterchangeDate());
+        assertEquals("1719", isa.getInterchangeTime());
+        assertEquals("U", isa.getInterchangeControlStandardId());
+        assertEquals("00400", isa.getInterchangeControlVersion());
+        assertEquals("000003438", isa.getInterchangeControlNumber());
+        assertEquals("0", isa.getAcknowledgementRequested());
+        assertEquals("P", isa.getUsageIndicator());
+        assertEquals(">", isa.getElementSeparator());
+        
+        // Groups
+        assertEquals(new Integer(1), isa.getNumberOfGroups());
+        assertEquals("000000049", isa.getTrailerInterchangeControlNumber());
+
+        List<X12Group> groups = x12.getGroups();
+        assertNotNull(groups);
+        assertEquals(1, groups.size());
+
+        // Transaction Sets
+        List<X12TransactionSet> txForGroupOne = x12.getGroups().get(0).getTransactions();
+        assertNotNull(txForGroupOne);
+        assertEquals(1, txForGroupOne.size());
+
+        // ST
+        AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
+        assertEquals("856", asnTx.getTransactionSetIdentifierCode());
+        assertEquals("0008", asnTx.getHeaderControlNumber());
+        
+        assertFalse(asnTx.isLoopingValid());
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertNotNull(loopErrors);
+        assertEquals(1, loopErrors.size());
+        assertEquals("HL segment (2) is missing parent (99)", loopErrors.get(0).getMessage());
         
         // BSN
         assertEquals("14", asnTx.getPurposeCode());
