@@ -11,7 +11,7 @@
   <groupId>com.walmartlabs.x12</groupId>
   <artifactId>gozer</artifactId>
   <name>gozer</name>
-  <version>0.3.0.M8-SNAPSHOT</version>
+  <version>0.3.0.M8</version>
   <packaging>takari-jar</packaging>
 
   <properties>
@@ -123,4 +123,8 @@
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <tag>gozer-0.3.0.M8</tag>
+  </scm>
 </project>
