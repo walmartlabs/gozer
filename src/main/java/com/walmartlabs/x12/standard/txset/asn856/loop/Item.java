@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class Item extends X12ParsedLoop {
 
-    public static final String ITEM__LOOP_CODE = "I";
+    public static final String ITEM_LOOP_CODE = "I";
 
     /*
      * PID: Product Identification
@@ -61,7 +61,7 @@ public class Item extends X12ParsedLoop {
      * returns true if the loop passed in is a Item loop
      */
     public static boolean isItemLoop(X12Loop loop) {
-        return X12Loop.isLoopWithCode(loop, ITEM__LOOP_CODE);
+        return X12Loop.isLoopWithCode(loop, ITEM_LOOP_CODE);
     }
 
     /**

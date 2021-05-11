@@ -271,7 +271,11 @@ public class X12LoopUtilTest {
         List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
         assertNotNull(loopErrors);
         assertEquals(1, loopErrors.size());
-        assertEquals("HL segment (4) is missing parent (3)", loopErrors.get(0).getMessage());
+        X12ErrorDetail loopError = loopErrors.get(0);
+        assertEquals("HL", loopError.getSegmentId());
+        assertNull(loopError.getElementId());
+        assertNull(loopError.getLineNumber());
+        assertEquals("HL segment (4) is missing parent (3)", loopError.getMessage());
     }
     
     @Test
@@ -340,7 +344,11 @@ public class X12LoopUtilTest {
         List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
         assertNotNull(loopErrors);
         assertEquals(1, loopErrors.size());
-        assertEquals("HL segment with id (2) already exists", loopErrors.get(0).getMessage());
+        X12ErrorDetail loopError = loopErrors.get(0);
+        assertEquals("HL", loopError.getSegmentId());
+        assertNull(loopError.getElementId());
+        assertNull(loopError.getLineNumber());
+        assertEquals("HL segment with id (2) already exists", loopError.getMessage());
     }
     
     @Test
@@ -426,7 +434,11 @@ public class X12LoopUtilTest {
         List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
         assertNotNull(loopErrors);
         assertEquals(1, loopErrors.size());
-        assertEquals("expected HL segment but found TOP", loopErrors.get(0).getMessage());
+        X12ErrorDetail loopError = loopErrors.get(0);
+        assertEquals("TOP", loopError.getSegmentId());
+        assertNull(loopError.getElementId());
+        assertNull(loopError.getLineNumber());
+        assertEquals("expected HL segment but found TOP", loopError.getMessage());
     }
 
 }
