@@ -162,7 +162,7 @@ public class DefaultAsn856TransactionSetParserTest {
         assertFalse(asnTx.isLoopingValid());
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("first HL is not a shipment", loopErrors.get(0).getMessage());
+        assertEquals("first HL is not a shipment it was X", loopErrors.get(0).getMessage());
         
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());

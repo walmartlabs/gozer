@@ -169,11 +169,16 @@ public class Asn856ParserTest {
         assertEquals("856", asnTx.getTransactionSetIdentifierCode());
         assertEquals("0008", asnTx.getHeaderControlNumber());
         
+        // check loops
         assertFalse(asnTx.isLoopingValid());
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertNotNull(loopErrors);
         assertEquals(1, loopErrors.size());
-        assertEquals("HL segment (2) is missing parent (99)", loopErrors.get(0).getMessage());
+        X12ErrorDetail loopError = loopErrors.get(0);
+        assertEquals("HL", loopError.getSegmentId());
+        assertNull(loopError.getElementId());
+        assertNull(loopError.getLineNumber());
+        assertEquals("HL segment (2) is missing parent (99)", loopError.getMessage());
         
         // BSN
         assertEquals("14", asnTx.getPurposeCode());

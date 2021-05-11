@@ -112,7 +112,7 @@ public final class X12LoopUtil {
                         .append(loopId)
                         .append(") already exists");
                     loopHolder.addX12ErrorDetail(
-                        new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, loopId, sb.toString()));
+                        new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, sb.toString()));
                 } else {
                     loopMap.put(loop.getHierarchicalId(), loop);
                 }
@@ -164,7 +164,7 @@ public final class X12LoopUtil {
                 sb.append("HL segment (").append(loop.getHierarchicalId()).append(")");
                 sb.append(" is missing parent (").append(loop.getParentHierarchicalId()).append(")");
                 loopHolder.addX12ErrorDetail(
-                    new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, loop.getHierarchicalId(), sb.toString()));
+                    new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, sb.toString()));
             }
         }
     }

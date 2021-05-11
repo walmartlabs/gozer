@@ -210,7 +210,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             }
         } else {
             asnTx.setLoopingValid(false);
-            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", "HL03", "first HL is not a shipment"));
+            asnTx.addX12ErrorDetailForLoop(
+                new X12ErrorDetail("HL", "03", "first HL is not a shipment it was " + unparsedLoop.getCode()));
         }
     }
 
@@ -243,7 +244,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
         } else {
             asnTx.setLoopingValid(false);
-            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", "HL03", "expected Order HL but got " + unparsedLoop.getCode()));
+            asnTx.addX12ErrorDetailForLoop(
+                new X12ErrorDetail("HL", "03", "expected Order HL but got " + unparsedLoop.getCode()));
         }
     }
     
@@ -360,7 +362,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             case Pack.PACK_LOOP_CODE:
                 this.parsePackLoop(unparsedLoop, parentLoop);
                 break;
-            case Item.ITEM__LOOP_CODE:
+            case Item.ITEM_LOOP_CODE:
                 this.parseItemLoop(unparsedLoop, parentLoop);
                 break;
             case Batch.BATCH_LOOP_CODE:
@@ -668,7 +670,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 // doesn't start w/ HL
                 asnTx.setLoopingValid(false);
                 asnTx.addX12ErrorDetailForLoop(
-                    new X12ErrorDetail(currentSegment.getIdentifier(), "", "missing shipment loop"));
+                    new X12ErrorDetail(currentSegment.getIdentifier(), null, "missing shipment loop"));
                 // we should back it up
                 // and let the parser keep going
                 // with that segment
@@ -715,7 +717,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             this.parseShipmentLoop(firstLoop, asnTx);
         } else {
             asnTx.setLoopingValid(false);
-            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", "HL00", "expected one top level HL"));
+            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", null, "expected one top level HL"));
         }
     }
     
