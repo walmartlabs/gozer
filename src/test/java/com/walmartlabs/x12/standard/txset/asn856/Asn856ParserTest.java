@@ -178,7 +178,7 @@ public class Asn856ParserTest {
         assertEquals("HL", loopError.getSegmentId());
         assertNull(loopError.getElementId());
         assertNull(loopError.getLineNumber());
-        assertEquals("HL segment (2) is missing parent (99)", loopError.getMessage());
+        assertEquals("HL segment with id (2) is missing parent (99)", loopError.getMessage());
         
         // BSN
         assertEquals("14", asnTx.getPurposeCode());

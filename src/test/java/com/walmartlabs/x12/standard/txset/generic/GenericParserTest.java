@@ -425,7 +425,7 @@ public class GenericParserTest {
         assertNotNull(loopErrors);
         assertEquals(2, loopErrors.size());
         assertEquals("HL segment with id (1) already exists", loopErrors.get(0).getMessage());
-        assertEquals("HL segment (3) is missing parent (2)", loopErrors.get(1).getMessage());
+        assertEquals("HL segment with id (3) is missing parent (2)", loopErrors.get(1).getMessage());
         
         // Shipment 
         X12Loop shipmentLoop = topLoops.get(0);

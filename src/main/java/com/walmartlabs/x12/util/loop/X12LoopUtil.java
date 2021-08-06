@@ -161,7 +161,7 @@ public final class X12LoopUtil {
                 parentLoop.addLoop(loop);
             } else {
                 StringBuilder sb = new StringBuilder();
-                sb.append("HL segment (").append(loop.getHierarchicalId()).append(")");
+                sb.append("HL segment with id (").append(loop.getHierarchicalId()).append(")");
                 sb.append(" is missing parent (").append(loop.getParentHierarchicalId()).append(")");
                 loopHolder.addX12ErrorDetail(
                     new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, sb.toString()));
