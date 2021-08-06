@@ -275,7 +275,7 @@ public class X12LoopUtilTest {
         assertEquals("HL", loopError.getSegmentId());
         assertNull(loopError.getElementId());
         assertNull(loopError.getLineNumber());
-        assertEquals("HL segment (4) is missing parent (3)", loopError.getMessage());
+        assertEquals("HL segment with id (4) is missing parent (3)", loopError.getMessage());
     }
     
     @Test
