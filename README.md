@@ -218,8 +218,16 @@ For example:
 Dex894 dex = (Dex894)x12;
 Dex894Item dexItem = dex.getItems().get(0);
 
-// convert the UPC in G8304 to a 14 digit GTIN
-String itf14 = util.convertRetailNumberToItf14(dexItem.getUpc());
+// check CRC on each DEX transaction
+CyclicRedundancyCheck crc16 = new CyclicRedundancyCheck();
+List<Dex894TransactionSet> dexTxList = dex.getTransactions();
+for (Dex894TransactionSet dexTx : dexTxList) {
+   if (crc16.verifyBlockOfText(dexTx.getIntegrityCheckValue(), dexTx.getTransactionData())) {
+      // passed CRC check
+   } else {
+      // failed CRC check
+   }
+}
 
 ```
 
