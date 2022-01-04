@@ -209,7 +209,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 });
             }
         } else {
-            asnTx.setLoopingValid(false);
             asnTx.addX12ErrorDetailForLoop(
                 new X12ErrorDetail("HL", "03", "first HL is not a shipment it was " + unparsedLoop.getCode()));
         }
@@ -243,7 +242,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             this.parseEachChildrenLoop(unparsedLoop, order);
 
         } else {
-            asnTx.setLoopingValid(false);
             asnTx.addX12ErrorDetailForLoop(
                 new X12ErrorDetail("HL", "03", "expected Order HL but got " + unparsedLoop.getCode()));
         }
@@ -654,8 +652,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
                 // add loop errors to tx (if any)
                 List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
-                asnTx.setLoopingValid(CollectionUtils.isEmpty(loopErrors));
-                asnTx.setLoopingErrors(loopHolder.getLoopErrors());
+                asnTx.addX12ErrorDetailForLoop(loopErrors);
                 
                 // handle loops
                 List<X12Loop> loops = loopHolder.getLoops();
@@ -668,7 +665,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 segments.reset(indexToSegmentAfterHierarchicalLoops);
             } else {
                 // doesn't start w/ HL
-                asnTx.setLoopingValid(false);
                 asnTx.addX12ErrorDetailForLoop(
                     new X12ErrorDetail(currentSegment.getIdentifier(), null, "missing shipment loop"));
                 // we should back it up
@@ -716,7 +712,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             X12Loop firstLoop = loops.get(0);
             this.parseShipmentLoop(firstLoop, asnTx);
         } else {
-            asnTx.setLoopingValid(false);
             asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", null, "expected one top level HL"));
         }
     }

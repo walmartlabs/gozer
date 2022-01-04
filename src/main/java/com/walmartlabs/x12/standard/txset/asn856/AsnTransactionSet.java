@@ -24,6 +24,7 @@ import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AsnTransactionSet extends AbstractX12TransactionSet {
@@ -65,17 +66,6 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
         }
         dtmReferences.add(dtm);
     }
-
-    /**
-     * helper method to add X12ErrorDetail for looping errors
-     * @param errorDetail
-     */
-    public void addX12ErrorDetailForLoop(X12ErrorDetail errorDetail) {
-        if (CollectionUtils.isEmpty(loopingErrors)) {
-            loopingErrors = new ArrayList<>();
-        }
-        loopingErrors.add(errorDetail);
-    }
     
     /**
      * helper method to add unexpected segments to list
@@ -88,7 +78,44 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
         }
         unexpectedSegmentsBeforeLoop.add(segment);
     }
+
+    /**
+     * helper method to add X12ErrorDetail for looping errors
+     * @param errorDetail
+     */
+    public void addX12ErrorDetailForLoop(X12ErrorDetail errorDetail) {
+        this.addX12ErrorDetailForLoop(Collections.singletonList(errorDetail));
+    }
     
+    /**
+     * helper method to add multiple X12ErrorDetail for looping errors
+     * @param errorDetail
+     */
+    public void addX12ErrorDetailForLoop(List<X12ErrorDetail> errorDetails) {
+        if (!CollectionUtils.isEmpty(errorDetails)) {
+            if (CollectionUtils.isEmpty(loopingErrors)) {
+                loopingErrors = new ArrayList<>();
+            }
+            loopingErrors.addAll(errorDetails);
+            loopingValid = false;
+        }
+    }
+
+    @Override
+    public boolean hasLooping() {
+        return true;
+    }
+    
+    @Override
+    public boolean isLoopingValid() {
+        return loopingValid;
+    }
+
+    @Override
+    public List<X12ErrorDetail> getLoopingErrors() {
+        return loopingErrors;
+    }
+
     public String getPurposeCode() {
         return purposeCode;
     }
@@ -151,22 +178,6 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
 
     public void setUnexpectedSegmentsBeforeLoop(List<X12Segment> unexpectedSegmentsBeforeLoop) {
         this.unexpectedSegmentsBeforeLoop = unexpectedSegmentsBeforeLoop;
-    }
-
-    public boolean isLoopingValid() {
-        return loopingValid;
-    }
-
-    public void setLoopingValid(boolean loopingValid) {
-        this.loopingValid = loopingValid;
-    }
-
-    public List<X12ErrorDetail> getLoopingErrors() {
-        return loopingErrors;
-    }
-
-    public void setLoopingErrors(List<X12ErrorDetail> loopingErrors) {
-        this.loopingErrors = loopingErrors;
     }
     
 }

@@ -24,6 +24,7 @@ package com.walmartlabs.x12;
  *
  */
 public abstract class AbstractX12TransactionSet implements X12TransactionSet {
+    
     /*
      * ST
      */
