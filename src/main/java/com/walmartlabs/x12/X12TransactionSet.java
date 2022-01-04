@@ -40,7 +40,7 @@ public interface X12TransactionSet {
      * the X12 transaction type
      * 
      * common X12 transaction types associated with retail are 856 (ASN), 850 (PO),
-     * and 812 (invoice).
+     * and 810 (invoice).
      * 
      * @return the ST01 segment value
      */
@@ -79,8 +79,8 @@ public interface X12TransactionSet {
     void setTrailerControlNumber(String trailerControlNumber);
 
     /**
-     * The CTT01 segment element contains the transaction count. This is an optional
-     * segment lien
+     * The CTT01 segment element contains the transaction count. 
+     * This is an optional segment line
      * 
      * @return the CTT01 segment value
      */
