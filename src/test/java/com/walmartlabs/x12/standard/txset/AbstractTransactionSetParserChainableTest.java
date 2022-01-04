@@ -18,8 +18,6 @@ package com.walmartlabs.x12.standard.txset;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.standard.AbstractTransactionSetParserChainable;
-import com.walmartlabs.x12.standard.X12TransactionSet;
 import org.junit.Test;
 import sample.aaa.AaaTransactionSetParser;
 import sample.aaa.TypeAaaTransactionSet;

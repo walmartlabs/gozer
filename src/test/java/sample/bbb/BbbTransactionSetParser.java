@@ -18,8 +18,8 @@ package sample.bbb;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.standard.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
 
 import java.util.List;
 
