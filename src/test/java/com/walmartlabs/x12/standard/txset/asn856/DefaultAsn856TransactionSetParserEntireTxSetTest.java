@@ -30,8 +30,6 @@ import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
-import com.walmartlabs.x12.standard.txset.asn856.AsnTransactionSet;
-import com.walmartlabs.x12.standard.txset.asn856.DefaultAsn856TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Item;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Order;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Pack;
@@ -46,7 +44,10 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 

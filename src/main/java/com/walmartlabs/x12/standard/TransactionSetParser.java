@@ -14,27 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12.standard.txset.po850;
+package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.standard.AbstractTransactionSetParserChainable;
-import com.walmartlabs.x12.standard.X12Group;
 
 import java.util.List;
 
-public class DefaultPo850TransactionSetParser extends AbstractTransactionSetParserChainable {
-
-    @Override
-    protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    protected X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+public interface TransactionSetParser {
+    
+    /**
+     * parse the transaction set 
+     * implementation should NOT add the transaction set to the group
+     * the group is available to give the transaction context if needed
+     * 
+     * it can expect the list of transactionSegments to have the first segment have an id of ST
+     * and the last segment have an id of SE
+     * 
+     * @param transactionSegments
+     * @param x12Group
+     * @return the parsed transaction set
+     */
+    X12TransactionSet parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group);
+    
 }

@@ -13,6 +13,17 @@ Each new X12 Parser should be placed in its own package.
 0.2.1 will remove the `AbstractStandardX12Document`
 TODO: update this documentation 
 
+## Add the Transaction Set Parser 
+The `StandardX12Parser` requires one or more `TransactionSetParser` implementations to be registered in order to do any useful work. 
+
+To extend the capabilities of the `StandardX12Parser` so that additional EDI document types can be supported, a new `TransactionSetParser` implementation should be submitted. 
+
+Each transaction set represents a different document type that can be sent. For example the ASN (856) or a Purchase Order (850). Each of these transaction sets is comprised of a variety of different segments, therefore each requires its own parser that extends the `AbstractTransactionSetParserChainable`. 
+
+The implementation will be passed all of the segment lines for the transaction set and is expected to return a POJO that extends `AbstractX12TransactionSet` and represents the document.
+
+
+
 ## What is the format?
 The first step is to create the domain model for the format. This object (or set of objects) will represent structure of the EDI X12 document and define the attributes. 
 
@@ -50,6 +61,8 @@ TODO
 ![X12Parser hierarchy](X12ParserHierarchy.png)
 
 ![X12TransactionSet hierarchy](X12TransactionSetHierarchy.png)
+
+
 
 # Creating a "non-standard" EDI X12 Parser
 An example of a non-standard EDI X12 Parser is the DEX 894 format. This format does not include an interchange control header, nor adhere to the overall structure of the standard documents.
