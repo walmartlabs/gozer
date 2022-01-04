@@ -77,6 +77,35 @@ public class GenericTransactionSet extends AbstractX12TransactionSet {
         loops.add(loop);
     }
     
+    @Override
+    public boolean hasLooping() {
+        // TODO: Generic will have no way of knowing
+        // if what it is parsing supports HL
+        // so may have to assume it doesn't 
+        // unless loops were found
+        return true;
+    }
+    
+    @Override
+    public boolean isLoopingValid() {
+        return loopingValid;
+    }
+
+    // TODO: should incorporate into addLoopingError method
+    public void setLoopingValid(boolean loopingValid) {
+        this.loopingValid = loopingValid;
+    }
+
+    @Override
+    public List<X12ErrorDetail> getLoopingErrors() {
+        return loopingErrors;
+    }
+
+    // TODO: should replace with addLoopingError method
+    public void setLoopingErrors(List<X12ErrorDetail> loopingErrors) {
+        this.loopingErrors = loopingErrors;
+    }
+    
     public X12Segment getBeginningSegment() {
         return beginningSegment;
     }
@@ -101,20 +130,4 @@ public class GenericTransactionSet extends AbstractX12TransactionSet {
         this.loops = loops;
     }
 
-    public boolean isLoopingValid() {
-        return loopingValid;
-    }
-
-    public void setLoopingValid(boolean loopingValid) {
-        this.loopingValid = loopingValid;
-    }
-
-    public List<X12ErrorDetail> getLoopingErrors() {
-        return loopingErrors;
-    }
-
-    public void setLoopingErrors(List<X12ErrorDetail> loopingErrors) {
-        this.loopingErrors = loopingErrors;
-    }
-    
 }
