@@ -14,11 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12.standard;
+package com.walmartlabs.x12.testing.util;
 
 import com.walmartlabs.x12.X12TransactionSet;
-import sample.aaa.TypeAaaTransactionSet;
-import sample.bbb.TypeBbbTransactionSet;
+import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
+import com.walmartlabs.x12.standard.StandardX12Document;
+import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.testing.util.txset.aaa.TypeAaaTransactionSet;
+import com.walmartlabs.x12.testing.util.txset.bbb.TypeBbbTransactionSet;
 
 import java.util.List;
 
@@ -27,8 +30,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * 
+ * assert based on the x12.base.txt document
+ *
+ */
 public final class AssertBaseDocumentUtil {
 
+    public static final String X12_BASE_DOCUMENT_FILE = "src/test/resources/x12.base.txt";
+    
     /**
      * 
      * check for correct parsing of base document
@@ -180,6 +190,10 @@ public final class AssertBaseDocumentUtil {
         assertTrue(tx3 instanceof TypeAaaTransactionSet);
         assertEquals("AAA", tx3.getTransactionSetIdentifierCode());
         assertEquals("3", ((TypeAaaTransactionSet)tx3).getAaaOnlyValue());
+    }
+    
+    public AssertBaseDocumentUtil() {
+        // you can't make me
     }
     
 }

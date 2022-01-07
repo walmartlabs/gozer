@@ -32,7 +32,7 @@ public class SampleX12Validator implements X12Validator<SampleX12Document> {
             errors.add(new X12ErrorDetail(null, null, "no object"));
         } else {
             if (StringUtils.isEmpty(pojo.getFunctionalId())) {
-                errors.add(new X12ErrorDetail("MCK", "MK01", "missing functional id"));
+                errors.add(new X12ErrorDetail("TST", "01", "missing functional id"));
             }
         }
 

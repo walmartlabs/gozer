@@ -20,11 +20,11 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.txset.TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.UnhandledTransactionSet;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import com.walmartlabs.x12.testing.util.AssertBaseDocumentUtil;
+import com.walmartlabs.x12.testing.util.X12DocumentTestData;
+import com.walmartlabs.x12.testing.util.txset.aaa.AaaTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.bbb.BbbTransactionSetParser;
 import org.junit.Test;
-import sample.aaa.AaaTransactionSetParser;
-import sample.bbb.BbbTransactionSetParser;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,21 +37,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class StandardX12ParserBaseDocTest {
+/**
+ * 
+ * test standard parser w/ a simple generic X12 document (x12.base.txt)
+ * and a variety of scenarios with different 
+ * registered transaction set parsers
+ *
+ */
+public class StandardX12ParserUsingX12BaseDocumentTest {
 
-    private static byte[] x12Bytes;
-    private String sourceData = new String(x12Bytes);
-    private StandardX12Parser standardParser;
-
-    @BeforeClass
-    public static void setup() throws IOException {
-        x12Bytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.txt"));
-    }
-    
-    @Before
-    public void init() {
-        standardParser = new StandardX12Parser();
-    }
+    private final String sourceData = X12DocumentTestData.readFile(AssertBaseDocumentUtil.X12_BASE_DOCUMENT_FILE);
+    private StandardX12Parser standardParser = new StandardX12Parser();
 
     @Test
     public void test_Parsing_BaseDocument_no_transaction_parsers() throws IOException {
