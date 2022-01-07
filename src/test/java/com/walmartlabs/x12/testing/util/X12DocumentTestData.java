@@ -24,6 +24,12 @@ public final class X12DocumentTestData {
         return fileContents;
     }
     
+    /**
+     * read a file and return file contents as byte array
+     * 
+     * @param file
+     * @return
+     */
     public static byte[] readFileAsBytes(String file) {
         byte[] fileContents = null;
         try {
