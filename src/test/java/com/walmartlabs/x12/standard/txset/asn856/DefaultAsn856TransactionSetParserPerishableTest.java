@@ -32,8 +32,6 @@ import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
-import com.walmartlabs.x12.standard.txset.asn856.AsnTransactionSet;
-import com.walmartlabs.x12.standard.txset.asn856.DefaultAsn856TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Batch;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Order;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Pack;
