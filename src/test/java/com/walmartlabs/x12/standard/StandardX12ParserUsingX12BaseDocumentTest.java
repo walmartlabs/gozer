@@ -95,10 +95,8 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
     public void test_Parsing_BaseDocument_empty_lines_at_end() throws IOException {
         this.registerUsingCollection();
         
-        byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.empty.line.txt"));
-        String noLineBreakSource = new String(x12MsgBytes);
-        
-        StandardX12Document x12 = standardParser.parse(noLineBreakSource);
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.no.line.breaks.empty.line.txt");
+        StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
     
@@ -106,10 +104,8 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
     public void test_Parsing_BaseDocument_no_line_breaks_different_delimiter() throws IOException {
         this.registerUsingCollection();
         
-        byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.odd.char.txt"));
-        String oddCharSource = new String(x12MsgBytes);
-        
-        StandardX12Document x12 = standardParser.parse(oddCharSource);
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.no.line.breaks.odd.char.txt");
+        StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
     
@@ -130,10 +126,8 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
     public void test_Parsing_BaseDocument_no_line_breaks() throws IOException {
         this.registerUsingCollection();
         
-        byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.no.line.breaks.txt"));
-        String noLineBreakSource = new String(x12MsgBytes);
-
-        StandardX12Document x12 = standardParser.parse(noLineBreakSource);
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.no.line.breaks.txt");
+        StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
     
@@ -142,14 +136,11 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
         this.registerUsingCollection();
         
         try {
-            byte[] x12MsgBytes = Files.readAllBytes(Paths.get("src/test/resources/x12.no.line.break.no.delim.txt"));
-            String noDelimSource = new String(x12MsgBytes);
-            standardParser.parse(noDelimSource);
+            String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.no.line.break.no.delim.txt");
+            standardParser.parse(sourceData);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
             assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
-        } catch (IOException e) {
-            fail("expected parsing exception");
         }
     }
     

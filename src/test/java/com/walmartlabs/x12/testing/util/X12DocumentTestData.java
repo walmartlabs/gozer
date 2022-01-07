@@ -24,6 +24,16 @@ public final class X12DocumentTestData {
         return fileContents;
     }
     
+    public static byte[] readFileAsBytes(String file) {
+        byte[] fileContents = null;
+        try {
+            fileContents = Files.readAllBytes(Paths.get(file));
+        } catch (IOException e) {
+            fail("could not read file for testing: " + e.getMessage());
+        }
+        return fileContents;
+    }
+    
     public X12DocumentTestData() {
         // you can't make me
     }

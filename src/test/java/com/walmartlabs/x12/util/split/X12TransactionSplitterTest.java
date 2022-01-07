@@ -19,6 +19,7 @@ package com.walmartlabs.x12.util.split;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.rule.X12Rule;
+import com.walmartlabs.x12.testing.util.X12DocumentTestData;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -253,8 +254,7 @@ public class X12TransactionSplitterTest {
     
     @Test
     public void test_split_sourceData_one_group_one_document() throws IOException {
-        byte[] x12Bytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.one.txt"));
-        String sourceData = new String(x12Bytes);
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.one.txt");
         List<String> ediDocuments = splitter.split(sourceData);
         assertNotNull(ediDocuments);
         assertEquals(1, ediDocuments.size());
@@ -281,8 +281,7 @@ public class X12TransactionSplitterTest {
     
     @Test
     public void test_split_sourceData_two_groups_four_documents() throws IOException {
-        byte[] x12Bytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.txt"));
-        String sourceData = new String(x12Bytes);
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.txt");
         List<String> ediDocuments = splitter.split(sourceData);
         assertNotNull(ediDocuments);
         assertEquals(4, ediDocuments.size());
@@ -366,8 +365,7 @@ public class X12TransactionSplitterTest {
     
     @Test(expected = X12ParserException.class)
     public void test_split_sourceData_one_group_one_document_rules_fail() throws IOException {
-        byte[] x12Bytes = Files.readAllBytes(Paths.get("src/test/resources/x12.base.one.txt"));
-        String sourceData = new String(x12Bytes);
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.one.txt");
         
         X12Rule mockRule = Mockito.mock(X12Rule.class);
         Mockito.doThrow(X12ParserException.class)
