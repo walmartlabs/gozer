@@ -34,14 +34,16 @@ The initial design provided some basic validation capabilities but most of that 
 ### Practical Approach to Parsing
 Each X12 format that is supported will have a Java implementation of the `X12Parser`. The parser will be responsible for parsing the message in the given format to an `X12Document`, which is the representative Java object model (POJO).
 
-	public interface X12Parser<T extends X12Document> {
-		/**
-	     * parse the X12 transmission into a representative Java object
-	     *
-	     * @return the representative Java object
-	     * @throws X12ParserException
-	     */
-		T parse(String sourceData);
+```java
+public interface X12Parser<T extends X12Document> {
+   /**
+   * parse the X12 transmission into a representative Java object
+   *
+   * @return the representative Java object
+   * @throws X12ParserException
+   */
+   T parse(String sourceData);
+```
 
 The Gozer parsers that implement `X12Parser` are designed to parse a specific EDI X12 document type. In order for a document to be considered successfully parsed the message MUST be well-formed. That means that the segments must have the correct segment identifiers, which must be nested correctly and appear in the proper order. If the X12 message is not well-formed and can't be parsed the parser will throw an `X12ParserException`. 
 
@@ -66,10 +68,10 @@ Creating an instance of the `StandardX12Parser` is very simple:
 
 ```java
 try {
-	StandardX12Parser x12Parser = new StandardX12Parser();
-	StandardX12Document x12Document = x12Parser.parse(new String(ediMessage));
+   StandardX12Parser x12Parser = new StandardX12Parser();
+   StandardX12Document x12Document = x12Parser.parse(new String(ediMessage));
 } catch (X12ParserException e) {
-	// parsing did not go well
+   // parsing did not go well
 }
 ```
 	
@@ -193,27 +195,28 @@ The `StandardX12Document` provides access to the entire parsed EDI message which
 
 In order to access the first transaction set on the first group:
 
-	// parse an EDI file transmission
-	StandardX12Document x12 = x12Parser.parse(new String(ediMessage));
+```java
+// parse an EDI file transmission
+StandardX12Document x12 = x12Parser.parse(new String(ediMessage));
 	
-	// access to envelope
-	InterchangeControlEnvelope envelope = x12.getInterchangeControlEnvelope();
+// access to envelope
+InterchangeControlEnvelope envelope = x12.getInterchangeControlEnvelope();
 	
-	// access to the groups
-	List<X12Group> groups = x12.getGroups();
+// access to the groups
+List<X12Group> groups = x12.getGroups();
 	
-	// retrieve the transaction sets from the first group
-	List<X12TransactionSet> txForGroupOne = groups.get(0).getTransactions();
+// retrieve the transaction sets from the first group
+List<X12TransactionSet> txForGroupOne = groups.get(0).getTransactions();
 	
-	// retrieve the first transaction set from the first group
-	X12TransactionSet txSet = txForGroupOne.get(0);
+// retrieve the first transaction set from the first group
+X12TransactionSet txSet = txForGroupOne.get(0);
 	
-	// identify which EDI document type 
-	// the transaction set represents
-	if ("856".equals(txSet.getTransactionSetIdentifierCode()) {
-		// we have an ASN
-		AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
-		
+// identify which EDI document type 
+// the transaction set represents
+if ("856".equals(txSet.getTransactionSetIdentifierCode()) {
+   // we have an ASN
+   AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+```	
 
 ### Dealing with Hierarchy Loops
 
@@ -244,43 +247,43 @@ All looping information will be available in the `X12TransactionSet` object retu
 ```java
 // after parsing an EDI message
 if ("856".equals(txSet.getTransactionSetIdentifierCode()) {
-	// we have an ASN
-	AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
-	// the first loop is an X12Loop of type Shipment
-	Shipment shipment = asnTx.getShipment()
+   // we have an ASN
+   AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+   // the first loop is an X12Loop of type Shipment
+   Shipment shipment = asnTx.getShipment()
 	
-	// get the children loops
-	List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
+   // get the children loops
+   List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
 	
-	// the Shipment has one or more Order loops
-	// get the first child
-	X12Loop loop = shipmentChildLoops.get(0);
-	if ("O".equals(loop.getCode()) {
-		// we have an Order loop
-		Order orderLoop = (Order) loop;
-		// access a segment on the order loop
-		order.getPrf().getPurchaseOrderNumber();
+   // the Shipment has one or more Order loops
+   // get the first child
+   X12Loop loop = shipmentChildLoops.get(0);
+   if ("O".equals(loop.getCode()) {
+      // we have an Order loop
+      Order orderLoop = (Order) loop;
+      // access a segment on the order loop
+      order.getPrf().getPurchaseOrderNumber();
    
-		List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
-		X12Loop orderChildLoop = orderChildLoops.get(0);
+      List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
+      X12Loop orderChildLoop = orderChildLoops.get(0);
 		
-		// examine loops on the order
-		switch (orderChildLoop.getCode()) {
-			case "T" :
-	         		// found a tare
-	         		this.processTare((Tare)orderChildLoop);
-	         		break;
-      		case "P" :
-         			// found a pack
-			     this.processPack((Pack)orderChildLoop);
-			     break;
-			case  "I" :
-				// found an item
-			     this.processItem((Item)orderChildLoop);
-			     break;
-		      default:
-		      	break;
-		}
+      // examine loops on the order
+      switch (orderChildLoop.getCode()) {
+         case "T" :
+            // found a tare
+            this.processTare((Tare)orderChildLoop);
+            break;
+         case "P" :
+             // found a pack
+            this.processPack((Pack)orderChildLoop);
+            break;
+         case  "I" :
+            // found an item
+            this.processItem((Item)orderChildLoop);
+            break;
+         default:
+            break;
+      }
    
 ```
 
@@ -293,14 +296,16 @@ In earlier versions any error detected during looping would throw an `X12ParserE
 ### Dealing with Hierarchy Loop errors
 It is expected that after parsing, the code should verify how looping was handled.
 	
-	X12TransactionSet txSet = txForGroupOne.get(0);
-	if (txSet.hasLooping()) {
-		if (txSet.isLoopingValid()) {
-	     	// looping ok
-		} else {
-	     	// handle looping errors
-	     	List<X12ErrorDetail> loopingErrors = asnTx.getLoopingErrors();
-		}
+```java
+X12TransactionSet txSet = txForGroupOne.get(0);
+if (txSet.hasLooping()) {
+   if (txSet.isLoopingValid()) {
+      // looping ok
+   } else {
+      // handle looping errors
+      List<X12ErrorDetail> loopingErrors = asnTx.getLoopingErrors();
+   }
+```
 
 After parsing, it is considered the responsibility of the consumer to perform any additional validations on the data that was provided in various segments and elements. That can be done through custom code. 
 
