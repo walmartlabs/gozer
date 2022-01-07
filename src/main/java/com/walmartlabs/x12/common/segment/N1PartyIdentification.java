@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.walmartlabs.x12.common.segment;
 
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

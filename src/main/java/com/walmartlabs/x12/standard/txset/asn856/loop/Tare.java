@@ -21,7 +21,7 @@ import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import com.walmartlabs.x12.standard.txset.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.standard.txset.asn856.segment.PALPalletType;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

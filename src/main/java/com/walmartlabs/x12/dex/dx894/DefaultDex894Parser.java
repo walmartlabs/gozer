@@ -26,9 +26,9 @@ import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import com.walmartlabs.x12.util.X12ParsingUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -89,7 +89,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
     public Dex894 parse(String sourceData) {
         Dex894 dex = null;
 
-        if (!StringUtils.isEmpty(sourceData)) {
+        if (StringUtils.isNotEmpty(sourceData)) {
             dex = new Dex894();
             List<X12Segment> segmentLines = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
 

@@ -21,7 +21,7 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -24,8 +24,8 @@ import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.rule.X12Rule;
 import com.walmartlabs.x12.standard.StandardX12Parser;
 import com.walmartlabs.x12.util.SourceToSegmentUtil;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -18,7 +18,7 @@ package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TD1CarrierDetailParser {
 
@@ -36,7 +36,7 @@ public final class TD1CarrierDetailParser {
                 td1 = new TD1CarrierDetail();
                 String packagingCode = segment.getElement(1);
                 td1.setRawPackagingCode(packagingCode);
-                if (!StringUtils.isEmpty(packagingCode)) {
+                if (StringUtils.isNotEmpty(packagingCode)) {
                     if (packagingCode.length() == 3 || packagingCode.length() == 5) {
                         td1.setPackagingCodePartOne(packagingCode.substring(0, 3));
                         td1.setPackagingCodePartTwo(packagingCode.substring(3));

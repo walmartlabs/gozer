@@ -18,7 +18,7 @@ package sample.parser;
 
 import com.walmartlabs.x12.X12Validator;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
