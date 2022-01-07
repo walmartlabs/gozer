@@ -17,14 +17,13 @@ limitations under the License.
 package com.walmartlabs.x12.util;
 
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.testing.util.X12DocumentTestData;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
@@ -38,13 +37,13 @@ public class SourceToSegmentUtilTest {
 
     @Before
     public void init() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
-        sourceDataFromFile = new String(dexBytes);
+        sourceDataFromFile = X12DocumentTestData.readFile("src/test/resources/dex/894/dex.sample.1.txt");
     }
 
     @Test
     public void test_splitSourceDataIntoSegments_Null() {
         String sourceData = null;
+        
         List<X12Segment> segmentsList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
         assertNotNull(segmentsList);
         assertEquals(0, segmentsList.size());
@@ -53,6 +52,7 @@ public class SourceToSegmentUtilTest {
     @Test
     public void test_splitSourceDataIntoSegments_Empty() {
         String sourceData = "";
+        
         List<X12Segment> segmentsList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
         assertNotNull(segmentsList);
         assertEquals(0, segmentsList.size());
@@ -61,6 +61,7 @@ public class SourceToSegmentUtilTest {
     @Test
     public void test_splitSourceDataIntoSegments_OneSegment() {
         String sourceData = "DXE*1*2";
+        
         List<X12Segment> segmentsList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
         assertNotNull(segmentsList);
         assertEquals(1, segmentsList.size());

@@ -14,20 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package sample.bbb;
+package com.walmartlabs.x12.testing.util.txset.aaa;
 
 import com.walmartlabs.x12.AbstractX12TransactionSet;
 
-public class TypeBbbTransactionSet extends AbstractX12TransactionSet {
+public class TypeAaaTransactionSet extends AbstractX12TransactionSet {
+    private String anAaaOnlyValue;
     
-    private String value;
-
-    public String getValue() {
-        return value;
+    public String getAaaOnlyValue() {
+        return anAaaOnlyValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setAaaOnlyValue(String value) {
+        this.anAaaOnlyValue = value;
     }
-
 }

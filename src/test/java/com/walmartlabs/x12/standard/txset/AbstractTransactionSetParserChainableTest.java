@@ -18,13 +18,13 @@ package com.walmartlabs.x12.standard.txset;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.testing.util.txset.aaa.AaaTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.aaa.TypeAaaTransactionSet;
+import com.walmartlabs.x12.testing.util.txset.bbb.BbbTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.bbb.TypeBbbTransactionSet;
+import com.walmartlabs.x12.testing.util.txset.yyz.TypeYyzTransactionSet;
+import com.walmartlabs.x12.testing.util.txset.yyz.YyzTransactionSetParser;
 import org.junit.Test;
-import sample.aaa.AaaTransactionSetParser;
-import sample.aaa.TypeAaaTransactionSet;
-import sample.bbb.BbbTransactionSetParser;
-import sample.bbb.TypeBbbTransactionSet;
-import sample.yyz.TypeYyzTransactionSet;
-import sample.yyz.YyzTransactionSetParser;
 
 import java.util.ArrayList;
 import java.util.List;

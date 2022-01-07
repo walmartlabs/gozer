@@ -23,6 +23,7 @@ import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
 import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.StandardX12Parser;
 import com.walmartlabs.x12.standard.X12Group;
+import com.walmartlabs.x12.testing.util.X12DocumentTestData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,8 +64,8 @@ public class Asn856ParserTest {
 
     @Test
     public void test_Parsing_Asn856() throws IOException {
-        byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
-        StandardX12Document x12 = asnParser.parse(new String(asnBytes));
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/asn856/asn856.txt");
+        StandardX12Document x12 = asnParser.parse(sourceData);
         assertNotNull(x12);
 
         // ISA segment
@@ -124,8 +125,7 @@ public class Asn856ParserTest {
 
     @Test
     public void test_Parsing_Asn856_badLoops() throws IOException {
-        byte[] asnBytes = Files.readAllBytes(Paths.get("src/test/resources/asn856/asn856.txt"));
-        String sourceData = new String(asnBytes);
+        String sourceData = X12DocumentTestData.readFile("src/test/resources/asn856/asn856.txt");
         sourceData = sourceData.replace("HL*2*1*O", "HL*2*99*O");
         
         StandardX12Document x12 = asnParser.parse(sourceData);

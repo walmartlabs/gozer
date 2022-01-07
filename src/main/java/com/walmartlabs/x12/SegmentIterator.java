@@ -141,6 +141,14 @@ public class SegmentIterator implements ListIterator<X12Segment> {
     
     /**
      * non-standard iterator method 
+     * returns the index of the last segment line
+     */
+    public int lastIndex() {
+        return (segmentLines.size() - 1);
+    }
+    
+    /**
+     * non-standard iterator method 
      * resets the cursor position to the specified index
      */
     public void reset(int index) {
