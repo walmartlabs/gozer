@@ -18,6 +18,10 @@ package com.walmartlabs.x12.testing.util.txset.yyz;
 
 import com.walmartlabs.x12.AbstractX12TransactionSet;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import com.walmartlabs.x12.standard.X12Loop;
+
+import java.util.List;
 
 /**
  * 
@@ -31,8 +35,11 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
     private String headerControlNumber;
     private String trailerControlNumber;
     private Integer numSegments;
-    private String value;
+    private String rushValue;
     private Integer transactionLineItems;
+    
+    private List<X12Loop> loops;
+    private List<X12ErrorDetail> loopingErrors;
 
     @Override
     public String getTransactionSetIdentifierCode() {
@@ -74,12 +81,12 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
         this.numSegments = expectedNumberOfSegments;
     }
     
-    public String getValue() {
-        return value;
+    public String getRushValue() {
+        return rushValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setRushValue(String value) {
+        this.rushValue = value;
     }
 
     @Override
@@ -90,6 +97,22 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
     @Override
     public void setTransactionLineItems(Integer transactionLineItems) {
         this.transactionLineItems = transactionLineItems;
+    }
+
+    public List<X12Loop> getLoops() {
+        return loops;
+    }
+
+    public void setLoops(List<X12Loop> loops) {
+        this.loops = loops;
+    }
+
+    public List<X12ErrorDetail> getLoopingErrors() {
+        return loopingErrors;
+    }
+
+    public void setLoopingErrors(List<X12ErrorDetail> loopingErrors) {
+        this.loopingErrors = loopingErrors;
     }
 
 }

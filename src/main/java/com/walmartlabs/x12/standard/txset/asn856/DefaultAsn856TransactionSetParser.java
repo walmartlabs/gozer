@@ -65,9 +65,9 @@ import com.walmartlabs.x12.util.TriConsumer;
 import com.walmartlabs.x12.util.X12ParsingUtil;
 import com.walmartlabs.x12.util.loop.X12LoopHolder;
 import com.walmartlabs.x12.util.loop.X12LoopUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -99,7 +99,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     protected X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group) {
         AsnTransactionSet asnTx = null;
 
-        if (!CollectionUtils.isEmpty(transactionSegments)) {
+        if (CollectionUtils.isNotEmpty(transactionSegments)) {
             asnTx = new AsnTransactionSet();
             this.doParsing(transactionSegments, asnTx);
         }
@@ -203,7 +203,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             // handle the children loops
             //
             List<X12Loop> shipmentChildLoops = unparsedLoop.getChildLoops();
-            if (!CollectionUtils.isEmpty(shipmentChildLoops)) {
+            if (CollectionUtils.isNotEmpty(shipmentChildLoops)) {
                 shipmentChildLoops.forEach(childLoop -> {
                     this.parseOrderLoop(childLoop, shipment, asnTx);
                 });
@@ -346,7 +346,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     
     private void parseEachChildrenLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
         List<X12Loop> unparsedLoopChildren = unparsedLoop.getChildLoops();
-        if (!CollectionUtils.isEmpty(unparsedLoopChildren)) {
+        if (CollectionUtils.isNotEmpty(unparsedLoopChildren)) {
             unparsedLoopChildren.forEach(childLoop -> {
                 this.parseChildrenLoop(childLoop, parentLoop);
             });
@@ -383,7 +383,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      */
     private <T> void handleLoopSegments(X12Loop loop, T loopObject, TriConsumer<X12Segment, SegmentIterator, T> function) {
         List<X12Segment> shipmentSegments = loop.getSegments();
-        if (!CollectionUtils.isEmpty(shipmentSegments)) {
+        if (CollectionUtils.isNotEmpty(shipmentSegments)) {
             SegmentIterator segmentIterator = new SegmentIterator(shipmentSegments);
             while (segmentIterator.hasNext()) {
                 X12Segment segment = segmentIterator.next();
@@ -712,7 +712,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * @param asnTx
      */
     protected void doLoopParsing(List<X12Loop> loops, AsnTransactionSet asnTx) {
-        if (!CollectionUtils.isEmpty(loops) && loops.size() == 1) {
+        if (CollectionUtils.isNotEmpty(loops) && loops.size() == 1) {
             X12Loop firstLoop = loops.get(0);
             this.parseShipmentLoop(firstLoop, asnTx);
         } else {

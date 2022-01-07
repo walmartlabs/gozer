@@ -20,9 +20,9 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.testing.util.X12DocumentTestData;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -30,10 +30,13 @@ import java.util.regex.PatternSyntaxException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SourceToSegmentUtilTest {
 
     private String sourceDataFromFile;
+    private Object object;
 
     @Before
     public void init() throws IOException {
@@ -78,32 +81,48 @@ public class SourceToSegmentUtilTest {
     }
     
     @Test
-    @SuppressWarnings("unchecked")
     public void test_splitSourceDataIntoSegments_null_delimiter() {
-        Method method = this.findSplitSourceDataIntoSegments();
-        List<X12Segment> segmentsList =  (List<X12Segment>) ReflectionUtils.invokeMethod(method, null, sourceDataFromFile, null);
-        assertNotNull(segmentsList);
-        assertEquals(0, segmentsList.size());
+        try {
+            List<X12Segment> segmentsList = this.invokeSplitSourceDataIntoSegments(sourceDataFromFile, null);
+            assertNotNull(segmentsList);
+            assertEquals(0, segmentsList.size());
+        } catch (Throwable t) {
+            fail("unexpected exception");
+        }
     }
     
-    @Test(expected = PatternSyntaxException.class)
+    @Test
+    public void test_splitSourceDataIntoSegments_empty_delimiter() {
+        try {
+            List<X12Segment> segmentsList = this.invokeSplitSourceDataIntoSegments(sourceDataFromFile, "");
+            assertNotNull(segmentsList);
+            assertEquals(0, segmentsList.size());
+        } catch (Throwable t) {
+            fail("unexpected exception");
+        }
+    }
+    
+    @Test
     public void test_splitSourceDataIntoSegments_partial_delimiter() {
-        Method method = this.findSplitSourceDataIntoSegments();
-        ReflectionUtils.invokeMethod(method, null, sourceDataFromFile, "\\");
+        try {
+            this.invokeSplitSourceDataIntoSegments(sourceDataFromFile, "\\");
+        } catch (PatternSyntaxException e) {
+            assertTrue(true);
+        } catch (Throwable t) {
+            fail("unexpected exception");
+        }
     }
     
     @Test
     public void test_findElementDelimiterCharacter_null() {
         String sourceData = null;
-        Method method = this.findElementDelimiterCharacter();
-        Character delimiterChar =  (Character) ReflectionUtils.invokeMethod(method, null, sourceData);
+        Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceData);
         assertNull(delimiterChar);
     }
     
     @Test
     public void test_findElementDelimiterCharacter_sourceFile() {
-        Method method = this.findElementDelimiterCharacter();
-        Character delimiterChar =  (Character) ReflectionUtils.invokeMethod(method, null, sourceDataFromFile);
+        Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceDataFromFile);
         assertNotNull(delimiterChar);
         assertEquals(new Character('*'), delimiterChar);
     }
@@ -111,8 +130,7 @@ public class SourceToSegmentUtilTest {
     @Test
     public void test_findElementDelimiterCharacter_sourceIsaSegment() {
         String sourceData = "ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>";
-        Method method = this.findElementDelimiterCharacter();
-        Character delimiterChar =  (Character) ReflectionUtils.invokeMethod(method, null, sourceData);
+        Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceData);
         assertNotNull(delimiterChar);
         assertEquals(new Character('*'), delimiterChar);
     }
@@ -120,8 +138,7 @@ public class SourceToSegmentUtilTest {
     @Test
     public void test_findElementDelimiterCharacter_sourceIsaSegmentNonDefaultChar() {
         String sourceData = "ISA~01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>";
-        Method method = this.findElementDelimiterCharacter();
-        Character delimiterChar =  (Character) ReflectionUtils.invokeMethod(method, null, sourceData);
+        Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceData);
         assertNotNull(delimiterChar);
         assertEquals(new Character('~'), delimiterChar);
     }
@@ -129,21 +146,43 @@ public class SourceToSegmentUtilTest {
     @Test
     public void test_findElementDelimiterCharacter_sourceShorterThanExpected() {
         String sourceData = "ISA";
-        Method method = this.findElementDelimiterCharacter();
-        Character delimiterChar =  (Character) ReflectionUtils.invokeMethod(method, null, sourceData);
+        Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceData);
         assertNull(delimiterChar);
     }
     
-    private Method findSplitSourceDataIntoSegments() {
-        Method method = ReflectionUtils.findMethod(SourceToSegmentUtil.class, "splitSourceDataIntoSegments", String.class, String.class);
-        method.setAccessible(true);
-        return method;
+    private Character invokeFindElementDelimiterCharacter(String sourceData) {
+        Character delimiterChar = null;
+        try {
+            Method method = SourceToSegmentUtil.class.getDeclaredMethod("findElementDelimiterCharacter", String.class);
+            method.setAccessible(true);
+            delimiterChar = (Character) method.invoke(null, sourceData);
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            fail("method could not be found or invoked");
+        }
+        return delimiterChar;
     }
-    
-    private Method findElementDelimiterCharacter() {
-        Method method = ReflectionUtils.findMethod(SourceToSegmentUtil.class, "findElementDelimiterCharacter", String.class);
-        method.setAccessible(true);
-        return method;
+
+    @SuppressWarnings("unchecked")
+    private List<X12Segment> invokeSplitSourceDataIntoSegments(String sourceData, String regEx) throws Throwable {
+        List<X12Segment> segments = null;
+        try {
+            Method method = SourceToSegmentUtil.class.getDeclaredMethod("splitSourceDataIntoSegments", String.class,
+                String.class);
+            method.setAccessible(true);
+            segments = (List<X12Segment>) method.invoke(null, sourceData, regEx);
+        } catch (IllegalAccessException | NoSuchMethodException e) {
+            fail("method could not be found or invoked");
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() != null) {
+                // need to throw exception
+                // that method would have if not called
+                // with reflection
+                throw e.getTargetException();
+            } else {
+                fail("method was not found");
+            }
+        }
+        return segments;
     }
 
 }

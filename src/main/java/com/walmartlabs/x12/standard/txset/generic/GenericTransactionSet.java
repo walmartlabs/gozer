@@ -4,7 +4,7 @@ import com.walmartlabs.x12.AbstractX12TransactionSet;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.X12Loop;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

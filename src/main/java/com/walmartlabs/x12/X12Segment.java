@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.util.SourceToSegmentUtil;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;

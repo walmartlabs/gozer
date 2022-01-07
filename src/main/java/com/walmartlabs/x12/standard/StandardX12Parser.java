@@ -27,9 +27,9 @@ import com.walmartlabs.x12.standard.txset.UnhandledTransactionSet;
 import com.walmartlabs.x12.util.ConversionUtil;
 import com.walmartlabs.x12.util.SourceToSegmentUtil;
 import com.walmartlabs.x12.util.X12ParsingUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,7 +79,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
         StandardX12Document x12Doc = null;
 
         try {
-            if (!StringUtils.isEmpty(sourceData)) {
+            if (StringUtils.isNotEmpty(sourceData)) {
                 x12Doc = new StandardX12Document();
 
                 // remove any excess white space

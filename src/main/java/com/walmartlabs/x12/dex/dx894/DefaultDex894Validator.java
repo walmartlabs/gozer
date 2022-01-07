@@ -21,7 +21,7 @@ import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.crc.CyclicRedundancyCheck;
 import com.walmartlabs.x12.util.crc.DefaultCrc16;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;

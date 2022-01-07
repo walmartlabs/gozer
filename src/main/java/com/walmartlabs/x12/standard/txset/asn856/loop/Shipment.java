@@ -25,7 +25,7 @@ import com.walmartlabs.x12.common.segment.TD3CarrierDetail;
 import com.walmartlabs.x12.common.segment.TD5CarrierDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -21,7 +21,7 @@ import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import com.walmartlabs.x12.standard.txset.asn856.segment.PRFPurchaseOrderReference;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -23,7 +23,7 @@ import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.X12ParsedLoop;
 import com.walmartlabs.x12.standard.txset.asn856.segment.SN1ItemDetail;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

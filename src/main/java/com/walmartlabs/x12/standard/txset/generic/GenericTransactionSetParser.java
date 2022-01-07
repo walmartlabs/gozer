@@ -11,9 +11,9 @@ import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.util.X12ParsingUtil;
 import com.walmartlabs.x12.util.loop.X12LoopHolder;
 import com.walmartlabs.x12.util.loop.X12LoopUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
     protected X12TransactionSet doParse(List<X12Segment> transactionSegments, X12Group x12Group) {
         GenericTransactionSet genericTxSet = null;
 
-        if (!CollectionUtils.isEmpty(transactionSegments)) {
+        if (CollectionUtils.isNotEmpty(transactionSegments)) {
             genericTxSet = new GenericTransactionSet();
             this.doParsing(transactionSegments, genericTxSet);
         }
