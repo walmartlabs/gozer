@@ -19,7 +19,7 @@ package com.walmartlabs.x12.testing.util.txset.bbb;
 import com.walmartlabs.x12.AbstractX12TransactionSet;
 
 public class TypeBbbTransactionSet extends AbstractX12TransactionSet {
-    
+
     private String value;
 
     public String getValue() {

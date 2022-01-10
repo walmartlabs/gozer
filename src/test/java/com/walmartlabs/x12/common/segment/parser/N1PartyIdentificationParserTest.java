@@ -91,7 +91,7 @@ public class N1PartyIdentificationParserTest {
         List<N3PartyLocation> n3List = n1.getN3List();
         assertNotNull(n3List);
         assertEquals(1, n3List.size());
-        
+
         N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());
@@ -106,7 +106,7 @@ public class N1PartyIdentificationParserTest {
 
         assertFalse(iterator.hasNext());
     }
-    
+
     @Test
     public void test_parse_handleN1Loop_one_loop_ends_extra_n3() {
         List<X12Segment> segments = this.getN1LoopOne();
@@ -124,12 +124,12 @@ public class N1PartyIdentificationParserTest {
         List<N3PartyLocation> n3List = n1.getN3List();
         assertNotNull(n3List);
         assertEquals(2, n3List.size());
-        
+
         N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());
         assertEquals(null, n3.getAddressInfoTwo());
-        
+
         n3 = n3List.get(1);
         assertNotNull(n3);
         assertEquals("SUITE X", n3.getAddressInfoOne());
@@ -162,7 +162,7 @@ public class N1PartyIdentificationParserTest {
         List<N3PartyLocation> n3List = n1.getN3List();
         assertNotNull(n3List);
         assertEquals(1, n3List.size());
-        
+
         N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());

@@ -17,8 +17,8 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856.segment;
 
 /**
- * 
- * Purpose: To provide reference to a specific purchase order 
+ *
+ * Purpose: To provide reference to a specific purchase order
  *
  */
 public class PRFPurchaseOrderReference {

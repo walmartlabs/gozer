@@ -78,8 +78,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("20200523", asnTx.getShipmentDate());
         assertEquals("215946", asnTx.getShipmentTime());
         assertEquals("ZZZZ", asnTx.getHierarchicalStructureCode());
-        
-        assertTrue(asnTx.isLoopingValid());
+
         assertNull(asnTx.getLoopingErrors());
 
         this.verifyTheShipment(asnTx);
@@ -100,7 +99,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         List<TD1CarrierDetail> td1List = shipment.getTd1List();
         assertNotNull(td1List);
         assertEquals(1, td1List.size());
-        
+
         TD1CarrierDetail td1 = td1List.get(0);
         assertNotNull(td1);
         assertNull(td1.getRawPackagingCode());
@@ -111,20 +110,20 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         List<TD3CarrierDetail> td3List = shipment.getTd3List();
         assertNotNull(td3List);
         assertEquals(1, td1List.size());
-        
+
         //
         // TD5
         //
         List<TD5CarrierDetail> td5List = shipment.getTd5List();
         assertNotNull(td5List);
         assertEquals(1, td5List.size());
-        
+
         TD5CarrierDetail td5 = td5List.get(0);
         assertNotNull(td5);
         assertEquals("2", td5.getIdentificationCodeQualifier());
         assertEquals("PRIJ", td5.getIdentificationCode());
         assertEquals("M", td5.getTransportationMethodTypeCode());
-        
+
         //
         // TD3
         //
@@ -134,14 +133,14 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("ABCD", td3.getEquipmentInitial());
         assertEquals("07213567", td3.getEquipmentNumber());
         assertEquals("30394938483234", td3.getSealNumber());
-        
+
         //
         // REF(s)
         //
         List<REFReferenceInformation> refs = shipment.getRefList();
         assertNotNull(refs);
         assertEquals(2, refs.size());
-        
+
         REFReferenceInformation ref = refs.get(0);
         assertNotNull(ref);
         assertEquals("UCB", ref.getReferenceIdentificationQualifier());
@@ -151,34 +150,34 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(ref);
         assertEquals("AO", ref.getReferenceIdentificationQualifier());
         assertEquals("22693594", ref.getReferenceIdentification());
-        
+
         //
         // DTM(s)
         //
         List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(1, dtmList.size());
-        
+
         DTMDateTimeReference dtm = dtmList.get(0);
         assertNotNull(dtm);
         assertEquals("011", dtm.getDateTimeQualifier());
         assertEquals("20200523", dtm.getDate());
         assertNull(dtm.getTime());
-        
+
         //
         // FOB
         //
         FOBRelatedInstructions fob = shipment.getFob();
         assertNotNull(fob);
         assertEquals("PP", fob.getPaymentCode());
-        
+
         //
         // N1
         //
         List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(2, n1List.size());
-        
+
         //
         // shipping from
         //
@@ -188,21 +187,21 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("Los Angeles Salad Company", n1Two.getName());
         assertNull(n1Two.getIdentificationCodeQualifier());
         assertNull(n1Two.getIdentificationCode());
-        
-        
+
+
         List<N3PartyLocation> n3List = n1Two.getN3List();
         assertNotNull(n3List);
         assertEquals(1, n3List.size());
-        
+
         N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("3030 E. WASHINGTON BLVD", n3.getAddressInfoOne());
-        
+
         N4GeographicLocation n4 = n1Two.getN4();
         assertEquals("LOS ANGELES", n4.getCityName());
         assertEquals("CA", n4.getStateOrProvinceCode());
         assertEquals("90023", n4.getPostalCode());
-        
+
         //
         // shipping to
         //
@@ -212,7 +211,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("LONDON 6097", n1One.getName());
         assertEquals("UL", n1One.getIdentificationCodeQualifier());
         assertEquals("0078742035499", n1One.getIdentificationCode());
-        
+
         n3List = n1One.getN3List();
         assertNull(n3List);
 
@@ -223,11 +222,11 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
         assertNotNull(shipmentChildLoops);
         assertEquals(1, shipmentChildLoops.size());
-        
-        // always have access to 
-        // segments even though 
+
+        // always have access to
+        // segments even though
         // it is easier to use the
-        // X12Loop instance 
+        // X12Loop instance
         List<X12Segment> shipmentSegments = shipment.getSegments();
         assertNotNull(shipmentSegments);
         assertEquals(11, shipmentSegments.size());
@@ -266,33 +265,33 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
         assertNotNull(orderChildLoops);
         assertEquals(1, orderChildLoops.size());
-        
-        // always have access to 
-        // segments even though 
+
+        // always have access to
+        // segments even though
         // it is easier to use the
-        // X12Loop instance 
+        // X12Loop instance
         List<X12Segment> firtOrderSegments = order.getSegments();
         assertNotNull(firtOrderSegments);
         assertEquals(2, firtOrderSegments.size());
         assertEquals("PRF*0391494868", firtOrderSegments.get(0).toString());
         assertEquals("REF*IA*579284804", firtOrderSegments.get(1).toString());
-        
+
         //
         // tare 1
-        // 
+        //
         X12Loop orderChildLoop = orderChildLoops.get(0);
         assertNotNull(orderChildLoop);
         assertTrue(orderChildLoop instanceof Tare);
         assertEquals("T", orderChildLoop.getCode());
-        
+
         Tare tare = (Tare) orderChildLoop;
-        
+
         List<MANMarkNumber> manList = tare.getManList();
         MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("GM", man.getQualifier());
         assertEquals("00000006510095090366", man.getNumber());
-        
+
         List<PKGPackaging> pkgList = tare.getPkgList();
         PKGPackaging pkg = pkgList.get(0);
         assertNotNull(pkg);
@@ -304,20 +303,20 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         List<X12Loop> tareChildLoops = tare.getParsedChildrenLoops();
         assertNotNull(tareChildLoops);
         assertEquals(2, tareChildLoops.size());
-        
+
         //
         // pack 1
         //
         X12Loop tareChildLoop = tareChildLoops.get(0);
         this.verifyTheFirstPackOnOrderOne(tareChildLoop);
-        
+
         //
         // pack 2
         //
         X12Loop tareChildLoopTwo = tareChildLoops.get(1);
         this.verifyTheSecondPackOnOrderOne(tareChildLoopTwo);
     }
-    
+
     private void verifyTheFirstPackOnOrderOne(X12Loop tareChildLoop) {
         //
         // pack 1 on tare 1
@@ -339,17 +338,17 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(pid);
         assertEquals("F", pid.getItemDescriptionType());
         assertEquals("PRODUCT OF USA-CALIFORNIA", pid.getDescription());
-        
+
         List<TD1CarrierDetail> td1List = packOne.getTd1List();
         assertNotNull(td1List);
         assertEquals(1, td1List.size());
-        
+
         TD1CarrierDetail td1 = td1List.get(0);
         assertNotNull(td1);
         assertEquals("G", td1.getWeightQualifier());
         assertEquals("2490", td1.getWeight());
         assertEquals("LB", td1.getUnitOfMeasure());
-        
+
         SN1ItemDetail sn1 = packOne.getSn1();
         assertNotNull(sn1);
         assertEquals("5", sn1.getNumberOfUnits());
@@ -363,7 +362,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(lin);
         assertEquals("IN", lin.getProductIdQualifier());
         assertEquals("009444543", lin.getProductId());
-        
+
         lin = itemIdList.get(1);
         assertNotNull(lin);
         assertEquals("UK", lin.getProductIdQualifier());
@@ -373,7 +372,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(lin);
         assertEquals("UP", lin.getProductIdQualifier());
         assertEquals("000651814056", lin.getProductId());
-        
+
         lin = itemIdList.get(3);
         assertNotNull(lin);
         assertEquals("CH", lin.getProductIdQualifier());
@@ -382,7 +381,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         List<X12Loop> packChildLoops = packOne.getParsedChildrenLoops();
         assertNotNull(packChildLoops);
         assertEquals(1, packChildLoops.size());
-        
+
         //
         // batch on pack 1
         //
@@ -392,7 +391,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertEquals("ZZ", batchChildLoopOne.getCode());
 
         Batch batchOne = (Batch) batchChildLoopOne;
-        
+
         List<LINItemIdentification> batchItemIdList = batchOne.getItemIdentifications();
         assertNotNull(batchItemIdList);
         assertEquals(1, batchItemIdList.size());
@@ -401,12 +400,12 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(lin);
         assertEquals("LT", lin.getProductIdQualifier());
         assertEquals("1-1356484", lin.getProductId());
-        
+
         sn1 = batchOne.getSn1();
         assertNotNull(sn1);
         assertEquals("5", sn1.getNumberOfUnits());
         assertEquals("CA", sn1.getUnitOfMeasurement());
-        
+
         List<N1PartyIdentification> n1List = batchOne.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(1, n1List.size());
@@ -414,32 +413,32 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(n1);
         assertEquals("ZW", n1.getEntityIdentifierCode());
         assertEquals("2901 LETTUCE FIELD SW", n1.getName());
-        
+
         List<N3PartyLocation> n3List = n1.getN3List();
         assertNotNull(n3List);
         assertEquals(1, n3List.size());
-        
+
         N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("208 APPLE ST", n3.getAddressInfoOne());
-        
+
         N4GeographicLocation n4 = n1.getN4();
         assertNotNull(n4);
         assertEquals("COOLTOWN", n4.getCityName());
         assertEquals("CA", n4.getStateOrProvinceCode());
         assertEquals("90839", n4.getPostalCode());
-        
+
         List<DTMDateTimeReference> dtmList = batchOne.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(1, dtmList.size());
-        
+
         DTMDateTimeReference dtm = dtmList.get(0);
         assertNotNull(dtm);
         assertEquals("510", dtm.getDateTimeQualifier());
         assertEquals("20200521", dtm.getDate());
         assertNull(dtm.getTime());
     }
-    
+
     private void verifyTheSecondPackOnOrderOne(X12Loop tareChildLoopTwo) {
         //
         // pack 2 on tare 1
@@ -464,7 +463,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
 
         List<TD1CarrierDetail> td1List = packTwo.getTd1List();
         assertNull(td1List);
-        
+
         SN1ItemDetail sn1 = packTwo.getSn1();
         assertNotNull(sn1);
         assertEquals("45", sn1.getNumberOfUnits());
@@ -478,7 +477,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(lin);
         assertEquals("IN", lin.getProductIdQualifier());
         assertEquals("009495175", lin.getProductId());
-        
+
         lin = itemIdList.get(1);
         assertNotNull(lin);
         assertEquals("UK", lin.getProductIdQualifier());
@@ -488,7 +487,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(lin);
         assertEquals("UP", lin.getProductIdQualifier());
         assertEquals("000000047623", lin.getProductId());
-        
+
         lin = itemIdList.get(3);
         assertNotNull(lin);
         assertEquals("CH", lin.getProductIdQualifier());
@@ -497,7 +496,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         List<X12Loop> packChildLoops = packTwo.getParsedChildrenLoops();
         assertNotNull(packChildLoops);
         assertEquals(1, packChildLoops.size());
-        
+
         //
         // batch on pack 2
         //
@@ -505,9 +504,9 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(batchChildLoopTwo);
         assertTrue(batchChildLoopTwo instanceof Batch);
         assertEquals("ZZ", batchChildLoopTwo.getCode());
-        
+
         Batch batchTwo = (Batch) batchChildLoopTwo;
-        
+
         List<LINItemIdentification> batchItemIdList = batchTwo.getItemIdentifications();
         assertNotNull(batchItemIdList);
         assertEquals(1, batchItemIdList.size());
@@ -516,12 +515,12 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(lin);
         assertEquals("LT", lin.getProductIdQualifier());
         assertEquals("1-1354687", lin.getProductId());
-        
+
         sn1 = batchTwo.getSn1();
         assertNotNull(sn1);
         assertEquals("45", sn1.getNumberOfUnits());
         assertEquals("CA", sn1.getUnitOfMeasurement());
-        
+
         List<N1PartyIdentification> n1List = batchTwo.getN1PartyIdentifications();
         assertNotNull(n1List);
         assertEquals(1, n1List.size());
@@ -529,25 +528,25 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         assertNotNull(n1);
         assertEquals("ZW", n1.getEntityIdentifierCode());
         assertEquals("2901 LETTUCE FIELD SW", n1.getName());
-        
+
         List<N3PartyLocation> n3List = n1.getN3List();
         assertNotNull(n3List);
         assertEquals(1, n3List.size());
-        
+
         N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("208 APPLE ST", n3.getAddressInfoOne());
-        
+
         N4GeographicLocation n4 = n1.getN4();
         assertNotNull(n4);
         assertEquals("COOLTOWN", n4.getCityName());
         assertEquals("CA", n4.getStateOrProvinceCode());
         assertEquals("90839", n4.getPostalCode());
-        
+
         List<DTMDateTimeReference> dtmList = batchTwo.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(1, dtmList.size());
-        
+
         DTMDateTimeReference dtm = dtmList.get(0);
         assertNotNull(dtm);
         assertEquals("510", dtm.getDateTimeQualifier());
@@ -592,7 +591,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("HL*3*2*T"));
         txSegments.add(new X12Segment("PKG*S*68*FD*37"));
         txSegments.add(new X12Segment("MAN*GM*00000006510095090366"));
-        
+
         // Pack 1 on Order 1
         txSegments.add(new X12Segment("HL*4*3*P"));
         txSegments.add(new X12Segment("LIN**IN*009444543*UK*10000651037551*UP*000651814056*CH*US-CA"));
@@ -601,7 +600,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("PID*F****RADISH BUNCH OM"));
         txSegments.add(new X12Segment("PID*F*MSG***PRODUCT OF USA-CALIFORNIA"));
         txSegments.add(new X12Segment("TD1******G*2490*LB"));
-        
+
         // Batch
         txSegments.add(new X12Segment("HL*5*4*ZZ"));
         txSegments.add(new X12Segment("LIN**LT*1-1356484"));
@@ -610,7 +609,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("N1*ZW*2901 LETTUCE FIELD SW"));
         txSegments.add(new X12Segment("N3*208 APPLE ST"));
         txSegments.add(new X12Segment("N4*COOLTOWN*CA*90839"));
-        
+
         // Pack 2 on Order 1
         txSegments.add(new X12Segment("HL*6*3*P"));
         txSegments.add(new X12Segment("LIN**IN*009495175*UK*10000651044436*UP*000000047623*CH*US-CA"));
@@ -618,7 +617,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("PO4****************RPC6413"));
         txSegments.add(new X12Segment("PID*F****ARTICHOKE LG CA OM"));
         txSegments.add(new X12Segment("PID*F*MSG***PRODUCT OF USA-CALIFORNIA"));
-        
+
         // Batch
         txSegments.add(new X12Segment("HL*7*6*ZZ"));
         txSegments.add(new X12Segment("LIN**LT*1-1354687"));
@@ -627,7 +626,7 @@ public class DefaultAsn856TransactionSetParserPerishableTest {
         txSegments.add(new X12Segment("N1*ZW*2901 LETTUCE FIELD SW"));
         txSegments.add(new X12Segment("N3*208 APPLE ST"));
         txSegments.add(new X12Segment("N4*COOLTOWN*CA*90839"));
-        
+
         // End of Transaction
         txSegments.add(new X12Segment("SE*296*368090001"));
 

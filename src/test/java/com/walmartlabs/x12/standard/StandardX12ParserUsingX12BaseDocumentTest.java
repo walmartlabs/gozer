@@ -27,8 +27,6 @@ import com.walmartlabs.x12.testing.util.txset.bbb.BbbTransactionSetParser;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +36,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 /**
- * 
+ *
  * test standard parser w/ a simple generic X12 document (x12.base.txt)
- * and a variety of scenarios with different 
+ * and a variety of scenarios with different
  * registered transaction set parsers
  *
  */
@@ -54,65 +52,65 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocumentNoParsers(x12);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_with_unhandled() throws IOException {
         this.registerTransactionSetParsers();
 
         StubUnhandledTransactionSet uts = new StubUnhandledTransactionSet();
         standardParser.registerUnhandledTransactionSet(uts);
-        
+
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
         assertEquals("YYZ",  uts.unhandledTxSetId);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_register_using_setter() throws IOException {
         this.registerTransactionSetParsers();
-        
+
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_register_using_collection() throws IOException {
         this.registerUsingCollection();
-        
+
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_register_using_mixed() throws IOException {
         this.registerMixed();
-        
+
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_empty_lines_at_end() throws IOException {
         this.registerUsingCollection();
-        
+
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.no.line.breaks.empty.line.txt");
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_no_line_breaks_different_delimiter() throws IOException {
         this.registerUsingCollection();
-        
+
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.no.line.breaks.odd.char.txt");
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_no_line_breaks_short_file() {
         this.registerUsingCollection();
-        
+
         try {
             String sourceData = "ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ";
             standardParser.parse(sourceData);
@@ -121,20 +119,20 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
             assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
         }
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_no_line_breaks() throws IOException {
         this.registerUsingCollection();
-        
+
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.no.line.breaks.txt");
         StandardX12Document x12 = standardParser.parse(sourceData);
         AssertBaseDocumentUtil.assertBaseDocument(x12);
     }
-    
+
     @Test
     public void test_Parsing_BaseDocument_no_line_breaks_no_delim() throws IOException {
         this.registerUsingCollection();
-        
+
         try {
             String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.no.line.break.no.delim.txt");
             standardParser.parse(sourceData);
@@ -143,33 +141,33 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
             assertEquals("Invalid EDI X12 message: must be wrapped in ISA/ISE", e.getMessage());
         }
     }
-    
+
     private void registerTransactionSetParsers() {
         standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
         standardParser.registerTransactionSetParser((TransactionSetParser)null);
         standardParser.registerTransactionSetParser(new BbbTransactionSetParser());
     }
-    
+
     private void registerUsingCollection() {
         List<TransactionSetParser> parsers = new ArrayList<>();
         parsers.add(new AaaTransactionSetParser());
         parsers.add(new BbbTransactionSetParser());
-        
+
         standardParser.registerTransactionSetParser(parsers);
     }
-    
+
     private void registerMixed() {
         List<TransactionSetParser> parsers = new ArrayList<>();
         parsers.add(new BbbTransactionSetParser());
-        
+
         standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
         standardParser.registerTransactionSetParser(parsers);
     }
-    
+
     public class StubUnhandledTransactionSet implements UnhandledTransactionSet {
 
         String unhandledTxSetId;
-        
+
         @Override
         public void unhandledTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
             assertNotNull(transactionSegments);

@@ -24,7 +24,7 @@ import com.walmartlabs.x12.exceptions.X12ParserException;
 import java.util.List;
 
 public final class X12ParsingUtil {
-    
+
     /**
      * return the numeric part of a version number
      *
@@ -43,14 +43,14 @@ public final class X12ParsingUtil {
             return null;
         }
     }
-    
+
     /**
-     * builds an {@link X12ParserException} w/ consistent message when 
+     * builds an {@link X12ParserException} w/ consistent message when
      * an unexpected segment is encountered
-     * 
-     * the caller of the method must throw this exception 
+     *
+     * the caller of the method must throw this exception
      * if that is what is desired
-     * 
+     *
      * @param expectedSegmentId
      * @param actualSegmentId
      * @return the X12ParserException
@@ -58,14 +58,14 @@ public final class X12ParsingUtil {
     public static X12ParserException handleUnexpectedSegment(String expectedSegmentId, String actualSegmentId) {
         return new X12ParserException(X12ParsingUtil.generateUnexpectedSegmentDetail(expectedSegmentId, actualSegmentId));
     }
-    
+
     /**
-     * builds an {@link X12ParserException} w/ consistent message when 
+     * builds an {@link X12ParserException} w/ consistent message when
      * an unexpected segment is encountered
-     * 
-     * the caller of the method must throw this exception 
+     *
+     * the caller of the method must throw this exception
      * if that is what is desired
-     * 
+     *
      * @param expectedSegmentId
      * @param actualSegmentId
      * @return the X12ErrorDetail
@@ -79,15 +79,15 @@ public final class X12ParsingUtil {
     }
 
     /**
-     * given a set of segment lines it will examine the first 
-     * and last segments and evaluate whether they match 
+     * given a set of segment lines it will examine the first
+     * and last segments and evaluate whether they match
      * the header and trailer values passed into the method
-     * 
+     *
      * @return true if envelope matches otherwise false
      */
     public static boolean isValidEnvelope(List<X12Segment> segmentList, String headerIdentifier, String trailerIdentifier) {
         boolean isValidEnvelope = false;
-        
+
         if (segmentList != null && headerIdentifier != null && trailerIdentifier != null) {
             int segmentCount = segmentList.size();
             int lastSegmentIndex = segmentCount - 1;
@@ -101,12 +101,12 @@ public final class X12ParsingUtil {
                 }
             }
         }
-        
+
         return isValidEnvelope;
     }
-    
+
     /**
-     * The segment list should wrapped in valid transaction envelope (ST/SE) 
+     * The segment list should wrapped in valid transaction envelope (ST/SE)
      * with the transaction type (ST01) matching the provided type
      * @param segmentList
      * @param transactionType
@@ -114,13 +114,13 @@ public final class X12ParsingUtil {
      */
     public static boolean verifyTransactionSetType(List<X12Segment> segmentList, String transactionType) {
         boolean isTransactionType = false;
-        
+
         if (segmentList != null && !segmentList.isEmpty() && transactionType != null) {
-            
-            if (X12ParsingUtil.isValidEnvelope(segmentList, 
+
+            if (X12ParsingUtil.isValidEnvelope(segmentList,
                 X12TransactionSet.TRANSACTION_SET_HEADER,
                 X12TransactionSet.TRANSACTION_SET_TRAILER)) {
-                
+
                 X12Segment firstSegment = segmentList.get(0);
                 if (firstSegment != null) {
                     String segmentType = firstSegment.getElement(1);
@@ -130,14 +130,14 @@ public final class X12ParsingUtil {
                 }
             }
         }
-        
+
         return isTransactionType;
     }
-    
+
     private static String remove0LeftPadding(String value) {
         return value.replaceFirst("^0+(?!$)", "");
     }
-    
+
     private X12ParsingUtil() {
         // you can't make me
     }

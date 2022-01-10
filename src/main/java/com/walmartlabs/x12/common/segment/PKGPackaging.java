@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment;
 
 /**
- * 
+ *
  * Purpose: To describe marking, packaging, loading, and unloading requirements
  *
  */

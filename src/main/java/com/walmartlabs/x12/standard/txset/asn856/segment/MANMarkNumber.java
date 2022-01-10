@@ -17,16 +17,16 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856.segment;
 
 /**
- * 
- * Purpose: To indicate identifying marks and numbers for shipping containers 
+ *
+ * Purpose: To indicate identifying marks and numbers for shipping containers
  */
 public class MANMarkNumber {
 
     public static final String IDENTIFIER = "MAN";
-    
+
     // MAN01
     private String qualifier;
-    
+
     // MAN02
     private String number;
 
@@ -45,6 +45,6 @@ public class MANMarkNumber {
     public void setNumber(String number) {
         this.number = number;
     }
-    
-    
+
+
 }

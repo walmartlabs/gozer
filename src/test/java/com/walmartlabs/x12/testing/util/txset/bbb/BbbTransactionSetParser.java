@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class BbbTransactionSetParser extends AbstractTransactionSetParserChainable {
 
+    @Override
     protected X12TransactionSet doParse(List<X12Segment> txLines, X12Group x12Group) {
         assertNotNull(txLines);
         assertEquals(3, txLines.size());
@@ -35,13 +36,14 @@ public class BbbTransactionSetParser extends AbstractTransactionSetParserChainab
         assertEquals("BBB", txLines.get(0).getElement(1));
         assertEquals("TEST", txLines.get(1).getIdentifier());
         assertEquals("SE", txLines.get(2).getIdentifier());
-        
+
         TypeBbbTransactionSet tx = new TypeBbbTransactionSet();
         tx.setTransactionSetIdentifierCode(txLines.get(0).getElement(1));
         tx.setValue(txLines.get(1).getElement(1));
         return tx;
     }
 
+    @Override
     protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
         boolean isHandled = false;
         if (transactionSegments != null) {

@@ -20,7 +20,7 @@ import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.util.X12ParsingUtil;
 
 public interface X12Parser<T extends X12Document> {
-    
+
     /**
      * parse the X12 transmission into a representative Java object
      *
@@ -30,7 +30,7 @@ public interface X12Parser<T extends X12Document> {
     T parse(String sourceData);
 
     /**
-     * convenience method that will throw X12ParserException 
+     * convenience method that will throw X12ParserException
      * with a message indicating that the segment that was found
      * was not the one that was expected
      * @param expectedSegmentId

@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856.segment;
 
 /**
- * 
+ *
  * Purpose: To identify the type and physical attributes of the pallet, and,
  * gross weight, gross volume, and height of the load and the pallet
  */
@@ -27,10 +27,10 @@ public class PALPalletType {
 
     // PAL02
     private String palletTiers;
-    
+
     // PAL03
     private String palletBlocks;
-    
+
 
     public String getPalletTiers() {
         return palletTiers;
@@ -47,6 +47,6 @@ public class PALPalletType {
     public void setPalletBlocks(String palletBlocks) {
         this.palletBlocks = palletBlocks;
     }
-    
-    
+
+
 }

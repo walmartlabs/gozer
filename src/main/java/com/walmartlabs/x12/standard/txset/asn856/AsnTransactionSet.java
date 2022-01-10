@@ -24,13 +24,14 @@ import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AsnTransactionSet extends AbstractX12TransactionSet {
 
     //
     // BSN
-    // 
+    //
     // BSN 01
     private String purposeCode;
     // BSN 02
@@ -41,20 +42,19 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     private String shipmentTime;
     // BSN 05
     private String hierarchicalStructureCode;
-    
+
     // DTM segments (can appear between BSN and HL*S
     private List<DTMDateTimeReference> dtmReferences;
     // non-DTM segments appearing between BSN and HL*S
     private List<X12Segment> unexpectedSegmentsBeforeLoop;
-    
+
     // HL (Shipment)
     // the first loop in the HL hierarchy
     private Shipment shipment;
-    
-    // looping issues are captured 
-    private boolean loopingValid = true;
+
+    // looping issues are captured
     private List<X12ErrorDetail> loopingErrors;
-    
+
     /**
      * helper method to add DTM to list
      * @param dtm
@@ -67,17 +67,6 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     }
 
     /**
-     * helper method to add X12ErrorDetail for looping errors
-     * @param errorDetail
-     */
-    public void addX12ErrorDetailForLoop(X12ErrorDetail errorDetail) {
-        if (CollectionUtils.isEmpty(loopingErrors)) {
-            loopingErrors = new ArrayList<>();
-        }
-        loopingErrors.add(errorDetail);
-    }
-    
-    /**
      * helper method to add unexpected segments to list
      * that appear before looping
      * @param segment
@@ -88,7 +77,33 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
         }
         unexpectedSegmentsBeforeLoop.add(segment);
     }
-    
+
+    /**
+     * helper method to add X12ErrorDetail for looping errors
+     * @param errorDetail
+     */
+    public void addX12ErrorDetailForLoop(X12ErrorDetail errorDetail) {
+        this.addX12ErrorDetailForLoop(Collections.singletonList(errorDetail));
+    }
+
+    /**
+     * helper method to add multiple X12ErrorDetail for looping errors
+     * @param errorDetail
+     */
+    public void addX12ErrorDetailForLoop(List<X12ErrorDetail> errorDetails) {
+        if (!CollectionUtils.isEmpty(errorDetails)) {
+            if (CollectionUtils.isEmpty(loopingErrors)) {
+                loopingErrors = new ArrayList<>();
+            }
+            loopingErrors.addAll(errorDetails);
+        }
+    }
+
+    @Override
+    public List<X12ErrorDetail> getLoopingErrors() {
+        return loopingErrors;
+    }
+
     public String getPurposeCode() {
         return purposeCode;
     }
@@ -153,20 +168,4 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
         this.unexpectedSegmentsBeforeLoop = unexpectedSegmentsBeforeLoop;
     }
 
-    public boolean isLoopingValid() {
-        return loopingValid;
-    }
-
-    public void setLoopingValid(boolean loopingValid) {
-        this.loopingValid = loopingValid;
-    }
-
-    public List<X12ErrorDetail> getLoopingErrors() {
-        return loopingErrors;
-    }
-
-    public void setLoopingErrors(List<X12ErrorDetail> loopingErrors) {
-        this.loopingErrors = loopingErrors;
-    }
-    
 }

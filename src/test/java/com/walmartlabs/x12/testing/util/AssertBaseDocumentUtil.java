@@ -31,22 +31,22 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * 
+ *
  * assert based on the x12.base.txt document
  *
  */
 public final class AssertBaseDocumentUtil {
 
     public static final String X12_BASE_DOCUMENT_FILE = "src/test/resources/x12.base.txt";
-    
+
     /**
-     * 
+     *
      * check for correct parsing of base document
      * when no parsers  are registered
      */
     public static void assertBaseDocumentNoParsers(StandardX12Document x12) {
         assertNotNull(x12);
-        
+
         // ISA segment
         InterchangeControlEnvelope isa = x12.getInterchangeControlEnvelope();
         assertNotNull(isa);
@@ -66,7 +66,7 @@ public final class AssertBaseDocumentUtil {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-        
+
         // ise trailer
         InterchangeControlEnvelope ise = x12.getInterchangeControlEnvelope();
         assertNotNull(ise);
@@ -76,7 +76,7 @@ public final class AssertBaseDocumentUtil {
         // groups
         assertNotNull(x12.getGroups());
         assertEquals(2, x12.getGroups().size());
-        
+
         // group 1
         // GS*SH*4405197800*999999999*20111206*1045*00*X*004060
         X12Group group1 = x12.getGroups().get(0);
@@ -88,7 +88,7 @@ public final class AssertBaseDocumentUtil {
         assertEquals("00", group1.getHeaderGroupControlNumber());
         assertEquals("X", group1.getResponsibleAgencyCode());
         assertEquals("004060", group1.getVersion());
-        
+
         List<X12TransactionSet> group1TxList = group1.getTransactions();
         assertNull(group1TxList);
 
@@ -103,20 +103,20 @@ public final class AssertBaseDocumentUtil {
         assertEquals("99", group2.getHeaderGroupControlNumber());
         assertEquals("X", group2.getResponsibleAgencyCode());
         assertEquals("004060", group2.getVersion());
-        
+
         List<X12TransactionSet> group2TxList = group2.getTransactions();
         assertNull(group2TxList);
     }
-    
+
     /**
-     * 
+     *
      * check for correct parsing of base document
      * when AAA and BBB parsers  are registered
      * but not the YYZ parser
      */
     public static void assertBaseDocument(StandardX12Document x12) {
         assertNotNull(x12);
-        
+
         // ISA segment
         InterchangeControlEnvelope isa = x12.getInterchangeControlEnvelope();
         assertNotNull(isa);
@@ -136,7 +136,7 @@ public final class AssertBaseDocumentUtil {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-        
+
         // ise trailer
         InterchangeControlEnvelope ise = x12.getInterchangeControlEnvelope();
         assertNotNull(ise);
@@ -146,7 +146,7 @@ public final class AssertBaseDocumentUtil {
         // groups
         assertNotNull(x12.getGroups());
         assertEquals(2, x12.getGroups().size());
-        
+
         // group 1
         // GS*SH*4405197800*999999999*20111206*1045*00*X*004060
         X12Group group1 = x12.getGroups().get(0);
@@ -158,7 +158,7 @@ public final class AssertBaseDocumentUtil {
         assertEquals("00", group1.getHeaderGroupControlNumber());
         assertEquals("X", group1.getResponsibleAgencyCode());
         assertEquals("004060", group1.getVersion());
-        
+
         List<X12TransactionSet> group1TxList = group1.getTransactions();
         assertNotNull(group1TxList);
         assertEquals(2, group1TxList.size());
@@ -170,7 +170,7 @@ public final class AssertBaseDocumentUtil {
         assertTrue(tx2 instanceof TypeBbbTransactionSet);
         assertEquals("BBB", tx2.getTransactionSetIdentifierCode());
         assertEquals("2", ((TypeBbbTransactionSet)tx2).getValue());
-        
+
         // group 2
         // GS*SH*4405197800*999999999*20111206*1045*99*X*004060
         X12Group group2 = x12.getGroups().get(1);
@@ -182,7 +182,7 @@ public final class AssertBaseDocumentUtil {
         assertEquals("99", group2.getHeaderGroupControlNumber());
         assertEquals("X", group2.getResponsibleAgencyCode());
         assertEquals("004060", group2.getVersion());
-        
+
         List<X12TransactionSet> group2TxList = group2.getTransactions();
         assertNotNull(group2TxList);
         assertEquals(1, group2TxList.size());
@@ -191,9 +191,9 @@ public final class AssertBaseDocumentUtil {
         assertEquals("AAA", tx3.getTransactionSetIdentifierCode());
         assertEquals("3", ((TypeAaaTransactionSet)tx3).getAaaOnlyValue());
     }
-    
+
     public AssertBaseDocumentUtil() {
         // you can't make me
     }
-    
+
 }

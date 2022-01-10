@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * this transaction set parser implementation will parse 
- * any transaction set into a {@link GenericTransactionSet} 
+ * this transaction set parser implementation will parse
+ * any transaction set into a {@link GenericTransactionSet}
  * which will hold the basic X12 structures
  * like the {@link X12Segment} and the {@link X12Loop}
- * 
+ *
  * it will NOT be able to parse these basic X12 parts
  * into more specific object types. for that a specific
  * parser for a particular transaction set is required
@@ -56,7 +56,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
 
         return genericTxSet;
     }
-    
+
     /**
      * the first segment in the list of {@link X12Segment} should be an ST
      * the last segment in the list of {@link X12Segment} should be an SE
@@ -87,22 +87,22 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
                 genericTx.setBeginningSegment(currentSegment);
             }
         }
-        
+
         //
         // all segments that appear before the first HL loop
-        // 
+        //
         this.parseSegmentsBeforeHierarchyLoops(segments, genericTx);
-        
+
         //
         // loops
         //
         this.handleLooping(segments, genericTx);
-        
+
         //
         // CTT or AMT
         //
         this.handleOptionalSegments(segments, genericTx);
-        
+
         //
         // SE
         //
@@ -113,21 +113,21 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
             throw X12ParsingUtil.handleUnexpectedSegment("SE", "nothing");
         }
     }
-    
+
     /**
      * parse the segments
      * that appear between the beginning segment
      * and the first loop or the CTT or SE
-     * 
-     * it will also move the segment iterator to segment 
+     *
+     * it will also move the segment iterator to segment
      * that caused the looping to stop
-     * 
+     *
      * @param segments
      * @param txSet
      * @throws X12ParserException if no HL loop is found
      */
     protected void parseSegmentsBeforeHierarchyLoops(SegmentIterator segments, GenericTransactionSet genericTx) {
-        
+
         while (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
             if (this.isLoopSegmentOrOptionalSegmentOrEndingSegment(currentSegment)) {
@@ -142,18 +142,18 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
             }
         }
     }
-    
+
     /**
      * checks for an HL loop, CTT or AMT or SE
      * @return
      */
     private boolean isLoopSegmentOrOptionalSegmentOrEndingSegment(X12Segment segment) {
-        return X12LoopUtil.isHierarchicalLoopStart(segment) 
+        return X12LoopUtil.isHierarchicalLoopStart(segment)
             || X12TransactionSet.TRANSACTION_ITEM_TOTAL.equals(segment.getIdentifier())
             || X12TransactionSet.TRANSACTION_AMOUNT_TOTAL.equals(segment.getIdentifier())
             || X12TransactionSet.TRANSACTION_SET_TRAILER.equals(segment.getIdentifier());
     }
-    
+
     /**
      * checks for CTT or AMT
      * @return
@@ -172,12 +172,12 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
                 segments.previous();
                 break;
             }
-                
+
         }
     }
-    
+
     protected void handleLooping(SegmentIterator segments, GenericTransactionSet genericTx) {
-        
+
         if (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
             if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)) {
@@ -185,7 +185,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
                 int firstLoopSegmentIndex = segments.currentIndex();
                 int indexToSegmentAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(segments);
                 List<X12Segment> loopSegments = segments.subList(firstLoopSegmentIndex, indexToSegmentAfterHierarchicalLoops);
-                
+
                 // manage the loops
                 // assigning the parents and children accordingly
                 X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(loopSegments);
@@ -193,29 +193,28 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
                 // add loops
                 List<X12Loop> loops = loopHolder.getLoops();
                 genericTx.setLoops(loops);
-                
+
                 // add loop errors to tx (if any)
                 List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
-                genericTx.setLoopingValid(CollectionUtils.isEmpty(loopErrors));
-                genericTx.setLoopingErrors(loopHolder.getLoopErrors());
-                
-                // we processed all of the loops 
+                genericTx.addX12ErrorDetailForLoop(loopErrors);
+
+                // we processed all of the loops
                 // so now set the iteraror up
-                // so that the next segment after 
+                // so that the next segment after
                 // the last loop is next
                 segments.reset(indexToSegmentAfterHierarchicalLoops);
             } else {
                 // doesn't start w/ HL
-                // we should back it up 
+                // we should back it up
                 // and let the parser deal w/ this
                 // segment
                 segments.previous();
             }
         }
     }
-    
+
     /**
-     * expects the current segment to be the first HL loop occurring 
+     * expects the current segment to be the first HL loop occurring
      * in the transaction set
      */
     private int findIndexForSegmentAfterHierarchicalLoops(SegmentIterator segments) {
@@ -234,7 +233,7 @@ public class GenericTransactionSetParser extends AbstractTransactionSetParserCha
         if (indexToSegmentAfterHierarchicalLoops == -1) {
             indexToSegmentAfterHierarchicalLoops = segments.currentIndex() - 1;
         }
-        
+
         segments.reset(firstLoopSegmentIndex);
         return indexToSegmentAfterHierarchicalLoops;
     }

@@ -20,7 +20,7 @@ import com.walmartlabs.x12.AbstractX12TransactionSet;
 
 public class TypeAaaTransactionSet extends AbstractX12TransactionSet {
     private String anAaaOnlyValue;
-    
+
     public String getAaaOnlyValue() {
         return anAaaOnlyValue;
     }

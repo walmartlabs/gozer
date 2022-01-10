@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856.segment;
 
 /**
- * 
+ *
  * Purpose: To specify the physical qualities, packaging, weights, and
  * dimensions relating to the item
  */
@@ -27,28 +27,28 @@ public class PO4ItemPhysicalDetail {
 
     // PO402
     private String size;
-    
+
     // PO403
     private String sizeUnitOfMeasure;
-    
+
     // PO408
     private String grossVolume;
-    
+
     // PO409
     private String grossVolumeUnitOfMeasure;
-    
+
     // PO410
     private String length;
-    
+
     // PO411
     private String width;
-    
+
     // PO412
     private String height;
-    
+
     // PO413
     private String dimensionUnitOfMeasurement;
-    
+
     // PO416
     private String assignedIdentification;
 
@@ -123,5 +123,5 @@ public class PO4ItemPhysicalDetail {
     public void setGrossVolumeUnitOfMeasure(String grossVolumeUnitOfMeasure) {
         this.grossVolumeUnitOfMeasure = grossVolumeUnitOfMeasure;
     }
-    
+
 }

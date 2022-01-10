@@ -18,7 +18,6 @@ package com.walmartlabs.x12.standard.txset.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.standard.txset.asn856.segment.SN1ItemDetail;
-import com.walmartlabs.x12.standard.txset.asn856.segment.parser.SN1ItemDetailParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -49,7 +48,7 @@ public class SN1ItemDetailParserTest {
         assertEquals("18", sn1.getNumberOfUnits());
         assertEquals("EA", sn1.getUnitOfMeasurement());
     }
-    
+
     @Test
     public void test_parse_segment_pounds() {
         X12Segment segment = new X12Segment("SN1**21.12*LB");
@@ -58,7 +57,7 @@ public class SN1ItemDetailParserTest {
         assertEquals("21.12", sn1.getNumberOfUnits());
         assertEquals("LB", sn1.getUnitOfMeasurement());
     }
-    
+
     /**
      * the Gozer parser will pass out the bad quantity
      * value so that the application can evaluate it

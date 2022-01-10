@@ -18,7 +18,6 @@ package com.walmartlabs.x12.standard.txset.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.standard.txset.asn856.segment.PRFPurchaseOrderReference;
-import com.walmartlabs.x12.standard.txset.asn856.segment.parser.PRFPurchaseOrderReferenceParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

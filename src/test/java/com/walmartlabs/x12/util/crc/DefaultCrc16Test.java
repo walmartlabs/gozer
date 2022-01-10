@@ -205,7 +205,7 @@ public class DefaultCrc16Test {
         assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), -1));
         assertTrue(crcUtil.verifyBlockOfText("5FA", sb.toString(), 0));
     }
-    
+
     @Test
     public void test_from_customer() {
         String eol = "\r\n";

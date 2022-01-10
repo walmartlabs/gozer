@@ -31,10 +31,8 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * test the Generic Transaction Set parser when registered with the Standard X12
@@ -93,22 +91,21 @@ public class GenericParserTest {
         assertEquals(null, beginSegment.getElement(2));
         assertEquals("2112", beginSegment.getElement(3));
 
-        // segments after the beginning segment 
+        // segments after the beginning segment
         // that appear before the loops
         List<X12Segment> segments = genericTx.getSegmentsBeforeLoops();
         assertNotNull(segments);
         assertEquals(2, segments.size());
         assertEquals("DTM", segments.get(0).getIdentifier());
         assertEquals("19740301", segments.get(0).getElement(2));
-        
+
         assertEquals("REF", segments.get(1).getIdentifier());
         assertEquals("FISH", segments.get(1).getElement(2));
-        
+
         // Loop Errors
-        assertTrue(genericTx.isLoopingValid());
         List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
         assertNull(loopErrors);
-        
+
         // Loops
         List<X12Loop> topLoops = genericTx.getLoops();
         assertNotNull(topLoops);
@@ -128,13 +125,13 @@ public class GenericParserTest {
         assertEquals(1, loopSegmentsForLoopA.size());
         assertEquals("REF", loopSegmentsForLoopA.get(0).getIdentifier());
         assertEquals("RED", loopSegmentsForLoopA.get(0).getElement(2));
-        
+
         List<X12Loop> childLoopsForLoopA = loopA.getChildLoops();
         assertNotNull(childLoopsForLoopA);
         assertEquals(1, childLoopsForLoopA.size());
-        
+
         //
-        // loop B 
+        // loop B
         // child of loop A
         //
         X12Loop loopB = childLoopsForLoopA.get(0);
@@ -149,14 +146,14 @@ public class GenericParserTest {
         assertEquals("REF", loopSegmentsForLoopB.get(0).getIdentifier());
         assertEquals("X", loopSegmentsForLoopB.get(0).getElement(3));
         assertEquals("1", loopSegmentsForLoopB.get(0).getElement(4));
-        
+
         assertEquals("REF", loopSegmentsForLoopB.get(1).getIdentifier());
         assertEquals("X", loopSegmentsForLoopB.get(1).getElement(3));
         assertEquals("2", loopSegmentsForLoopB.get(1).getElement(4));
-        
+
         List<X12Loop> childLoopsForLoopB = loopB.getChildLoops();
         assertNull(childLoopsForLoopB);
-        
+
         //
         // loop C
         //
@@ -172,7 +169,7 @@ public class GenericParserTest {
         List<X12Loop> childLoopsForLoopC = loopC.getChildLoops();
         assertNotNull(childLoopsForLoopC);
         assertEquals(2, childLoopsForLoopC.size());
-        
+
         //
         // loop D
         // child of loop C
@@ -188,11 +185,11 @@ public class GenericParserTest {
         assertEquals(1, loopSegmentsForLoopD.size());
         assertEquals("REF", loopSegmentsForLoopD.get(0).getIdentifier());
         assertEquals("SYRINX", loopSegmentsForLoopD.get(0).getElement(2));
-        
+
         List<X12Loop> childLoopsForLoopD = loopD.getChildLoops();
         assertNull(childLoopsForLoopD);
-        
-        
+
+
         //
         // loop E
         // child of loop C
@@ -208,32 +205,32 @@ public class GenericParserTest {
         assertEquals(1, loopSegmentsForLoopE.size());
         assertEquals("REF", loopSegmentsForLoopE.get(0).getIdentifier());
         assertEquals("BY-TOR", loopSegmentsForLoopE.get(0).getElement(2));
-        
+
         List<X12Loop> childLoopsForLoopE = loopE.getChildLoops();
         assertNull(childLoopsForLoopE);
-        
+
         // CTT
         assertEquals(Integer.valueOf(0), genericTx.getTransactionLineItems());
-        
+
         // SE
         assertEquals(Integer.valueOf(8), genericTx.getExpectedNumberOfSegments());
         assertEquals("0001", genericTx.getTrailerControlNumber());
     }
-    
+
     @Test
     public void test_Parsing_PurchaseOrderDocument() {
         String sourceData = this.samplePurchaseOrder();
         StandardX12Document x12Doc = standardParser.parse(sourceData);
         assertNotNull(x12Doc);
-        
+
         // ISA segment
         this.assertEnvelopeHeader(x12Doc);
-        
+
         // Transaction Sets
         List<X12TransactionSet> txForGroupOne = x12Doc.getGroups().get(0).getTransactions();
         assertNotNull(txForGroupOne);
         assertEquals(1, txForGroupOne.size());
-        
+
         // ST
         GenericTransactionSet genericTx = (GenericTransactionSet) txForGroupOne.get(0);
         assertEquals("850", genericTx.getTransactionSetIdentifierCode());
@@ -246,53 +243,52 @@ public class GenericParserTest {
         assertEquals("00", beginSegment.getElement(1));
         assertEquals("SA", beginSegment.getElement(2));
         assertEquals("08292233294", beginSegment.getElement(3));
-        
-        // segments after the beginning segment 
+
+        // segments after the beginning segment
         // that appear before the loops
         List<X12Segment> segments = genericTx.getSegmentsBeforeLoops();
         assertNotNull(segments);
         assertEquals(28, segments.size());
-        
+
         assertEquals("REF", segments.get(0).getIdentifier());
         assertEquals("DP", segments.get(0).getElement(1));
         assertEquals("038", segments.get(0).getElement(2));
-        
+
         // PID*F****SMALL WIDGET
         assertEquals("PID", segments.get(11).getIdentifier());
         assertEquals("F", segments.get(11).getElement(1));
         assertEquals("SMALL WIDGET", segments.get(11).getElement(5));
-        
+
         // Loops
         List<X12Loop> topLoops = genericTx.getLoops();
         assertNull(topLoops);
-        
+
         // Loop Errors
-        assertTrue(genericTx.isLoopingValid());
         List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
         assertNull(loopErrors);
-        
+
         // CTT
         assertEquals(Integer.valueOf(6), genericTx.getTransactionLineItems());
-        
+
         // SE
         assertEquals(Integer.valueOf(33), genericTx.getExpectedNumberOfSegments());
         assertEquals("000000010", genericTx.getTrailerControlNumber());
     }
-    
+
     @Test
     public void test_Parsing_AdvanceShipNoticeDocument() {
         String sourceData = this.sampleAdvanceShipNotice();
         StandardX12Document x12Doc = standardParser.parse(sourceData);
         assertNotNull(x12Doc);
-        
+
         // ISA segment
         this.assertEnvelopeHeader(x12Doc);
-        
+
         // Transaction Sets
         List<X12TransactionSet> txForGroupOne = x12Doc.getGroups().get(0).getTransactions();
         assertNotNull(txForGroupOne);
         assertEquals(1, txForGroupOne.size());
-        
+
         // ST
         GenericTransactionSet genericTx = (GenericTransactionSet) txForGroupOne.get(0);
         assertEquals("856", genericTx.getTransactionSetIdentifierCode());
@@ -306,22 +302,21 @@ public class GenericParserTest {
         assertEquals("2820967", beginSegment.getElement(2));
         assertEquals("20210329", beginSegment.getElement(3));
 
-        // segments after the beginning segment 
+        // segments after the beginning segment
         // that appear before the loops
         List<X12Segment> segments = genericTx.getSegmentsBeforeLoops();
         assertNull(segments);
-        
+
         // Loop Errors
-        assertTrue(genericTx.isLoopingValid());
         List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
         assertNull(loopErrors);
-        
+
         // Loops
         List<X12Loop> topLoops = genericTx.getLoops();
         assertNotNull(topLoops);
         assertEquals(1, topLoops.size());
-        
-        // Shipment 
+
+        // Shipment
         X12Loop shipmentLoop = topLoops.get(0);
         assertNotNull(shipmentLoop);
         assertEquals("S", shipmentLoop.getCode());
@@ -334,12 +329,12 @@ public class GenericParserTest {
         assertEquals("N1", shipmentSegments.get(5).getIdentifier());
         assertEquals("SF", shipmentSegments.get(5).getElement(1));
         assertEquals("Sunkist Growers Inc", shipmentSegments.get(5).getElement(2));
-        
+
         List<X12Loop> orderLoops = shipmentLoop.getChildLoops();
         assertNotNull(orderLoops);
         assertEquals(1, orderLoops.size());
-        
-        // Order 
+
+        // Order
         X12Loop orderLoop = orderLoops.get(0);
         assertNotNull(orderLoop);
         assertEquals("O", orderLoop.getCode());
@@ -352,12 +347,12 @@ public class GenericParserTest {
         assertEquals("REF", orderSegments.get(2).getIdentifier());
         assertEquals("IA", orderSegments.get(2).getElement(1));
         assertEquals("694349942", orderSegments.get(2).getElement(2));
-        
+
         List<X12Loop> batchLoops = orderLoop.getChildLoops();
         assertNotNull(batchLoops);
         assertEquals(1, batchLoops.size());
-        
-        // Batch 
+
+        // Batch
         X12Loop batchLoop = batchLoops.get(0);
         assertNotNull(batchLoop);
         assertEquals("ZZ", batchLoop.getCode());
@@ -370,18 +365,18 @@ public class GenericParserTest {
         assertEquals("LIN", batchSegments.get(0).getIdentifier());
         assertEquals("LT", batchSegments.get(0).getElement(2));
         assertEquals("BBC", batchSegments.get(0).getElement(3));
-        
+
         List<X12Loop> batchLoopChildren = batchLoop.getChildLoops();
         assertNull(batchLoopChildren);
-        
+
         // CTT
         assertEquals(Integer.valueOf(3), genericTx.getTransactionLineItems());
-        
+
         // SE
         assertEquals(Integer.valueOf(23), genericTx.getExpectedNumberOfSegments());
         assertEquals("0001", genericTx.getTrailerControlNumber());
     }
-    
+
 
     @Test
     public void test_Parsing_AdvanceShipNoticeDocument_bad_loop() {
@@ -389,15 +384,15 @@ public class GenericParserTest {
         sourceData = sourceData.replace("HL*2*1*O", "HL*1*1*O");
         StandardX12Document x12Doc = standardParser.parse(sourceData);
         assertNotNull(x12Doc);
-        
+
         // ISA segment
         this.assertEnvelopeHeader(x12Doc);
-        
+
         // Transaction Sets
         List<X12TransactionSet> txForGroupOne = x12Doc.getGroups().get(0).getTransactions();
         assertNotNull(txForGroupOne);
         assertEquals(1, txForGroupOne.size());
-        
+
         // ST
         GenericTransactionSet genericTx = (GenericTransactionSet) txForGroupOne.get(0);
         assertEquals("856", genericTx.getTransactionSetIdentifierCode());
@@ -409,25 +404,24 @@ public class GenericParserTest {
         assertEquals("BSN", beginSegment.getIdentifier());
 
 
-        // segments after the beginning segment 
+        // segments after the beginning segment
         // that appear before the loops
         List<X12Segment> segments = genericTx.getSegmentsBeforeLoops();
         assertNull(segments);
-        
+
         // Loops
         List<X12Loop> topLoops = genericTx.getLoops();
         assertNotNull(topLoops);
         assertEquals(1, topLoops.size());
-        
+
         // Loop Errors
-        assertFalse(genericTx.isLoopingValid());
         List<X12ErrorDetail> loopErrors = genericTx.getLoopingErrors();
         assertNotNull(loopErrors);
         assertEquals(2, loopErrors.size());
         assertEquals("HL segment with id (1) already exists", loopErrors.get(0).getMessage());
         assertEquals("HL segment with id (3) is missing parent (2)", loopErrors.get(1).getMessage());
-        
-        // Shipment 
+
+        // Shipment
         X12Loop shipmentLoop = topLoops.get(0);
         assertNotNull(shipmentLoop);
         assertEquals("S", shipmentLoop.getCode());
@@ -437,8 +431,8 @@ public class GenericParserTest {
         List<X12Loop> orderLoops = shipmentLoop.getChildLoops();
         assertNotNull(orderLoops);
         assertEquals(1, orderLoops.size());
-        
-        // Order 
+
+        // Order
         X12Loop orderLoop = orderLoops.get(0);
         assertNotNull(orderLoop);
         assertEquals("O", orderLoop.getCode());
@@ -447,12 +441,12 @@ public class GenericParserTest {
 
         List<X12Loop> batchLoops = orderLoop.getChildLoops();
         assertNull(batchLoops);
-        
+
         // SE
         assertEquals(Integer.valueOf(23), genericTx.getExpectedNumberOfSegments());
         assertEquals("0001", genericTx.getTrailerControlNumber());
     }
-    
+
     private String genericX12Document() {
         return new StringBuilder()
             .append("ISA*01*0000000000*01*0000000000*ZZ*ABC*ZZ*123456789012345*101127*1719*U*00400*000003438*0*P*>")
@@ -638,7 +632,7 @@ public class GenericParserTest {
             .append("\n")
             .toString();
     }
-    
+
     private void assertEnvelopeHeader(StandardX12Document x12Doc) {
         // ISA segment
         InterchangeControlEnvelope isa = x12Doc.getInterchangeControlEnvelope();
@@ -659,7 +653,7 @@ public class GenericParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-        
+
         // Groups
         assertEquals(new Integer(1), isa.getNumberOfGroups());
         assertEquals("000003438", isa.getTrailerInterchangeControlNumber());

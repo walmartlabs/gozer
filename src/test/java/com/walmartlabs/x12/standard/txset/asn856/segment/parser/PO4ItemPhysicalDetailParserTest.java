@@ -18,7 +18,6 @@ package com.walmartlabs.x12.standard.txset.asn856.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.standard.txset.asn856.segment.PO4ItemPhysicalDetail;
-import com.walmartlabs.x12.standard.txset.asn856.segment.parser.PO4ItemPhysicalDetailParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -56,7 +55,7 @@ public class PO4ItemPhysicalDetailParserTest {
         assertEquals("CM", po4.getDimensionUnitOfMeasurement());
         assertNull(po4.getAssignedIdentification());
     }
-    
+
     @Test
     public void test_parse_segment_standard() {
         X12Segment segment = new X12Segment("PO4****************RPC6413");
@@ -72,7 +71,7 @@ public class PO4ItemPhysicalDetailParserTest {
         assertNull(po4.getDimensionUnitOfMeasurement());
         assertEquals("RPC6413", po4.getAssignedIdentification());
     }
-    
+
     @Test
     public void test_parse_segment_size_volume() {
         X12Segment segment = new X12Segment("PO4**50*MC*****.34*FO");

@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 /**
- * 
+ *
  * Sample parser that can parse the very simple Sample document
  * First Segment expected to have identifier TST
  *

@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * Represents the Item level of information
- * 
+ *
  */
 public class Item extends X12ParsedLoop {
 
@@ -66,7 +66,7 @@ public class Item extends X12ParsedLoop {
 
     /**
      * helper method to add LIN to list
-     * 
+     *
      * @param lin
      */
     public void addLINItemIdentification(LINItemIdentification lin) {
@@ -75,10 +75,10 @@ public class Item extends X12ParsedLoop {
         }
         itemIdentifications.add(lin);
     }
-    
+
     /**
      * helper method to add PID to list
-     * 
+     *
      * @param pid
      */
     public void addPIDProductIdentification(PIDProductIdentification pid) {
@@ -90,7 +90,7 @@ public class Item extends X12ParsedLoop {
 
     /**
      * helper method to add REF
-     * 
+     *
      * @param ref
      */
     public void addReferenceInformation(REFReferenceInformation ref) {
@@ -99,7 +99,7 @@ public class Item extends X12ParsedLoop {
         }
         refList.add(ref);
     }
-    
+
     /**
      * helper method to add DTM to list
      * @param dtm
@@ -110,7 +110,7 @@ public class Item extends X12ParsedLoop {
         }
         dtmReferences.add(dtm);
     }
-    
+
     public SN1ItemDetail getSn1() {
         return sn1;
     }
@@ -134,7 +134,7 @@ public class Item extends X12ParsedLoop {
     public void setProductIdentifications(List<PIDProductIdentification> productIdentifications) {
         this.productIdentifications = productIdentifications;
     }
-    
+
     public List<DTMDateTimeReference> getDtmReferences() {
         return dtmReferences;
     }

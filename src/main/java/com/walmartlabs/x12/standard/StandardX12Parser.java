@@ -63,7 +63,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
     public static final String GROUP_HEADER_ID = "GS";
     public static final String GROUP_TRAILER_ID = "GE";
-    
+
     private TransactionSetParser transactionParser;
     private UnhandledTransactionSet unhandledTransactionSet;
 
@@ -106,23 +106,23 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
         return x12Doc;
     }
-    
+
     /**
-     * convenience method that will allow a Collection of {@link TransactionSetParser} 
+     * convenience method that will allow a Collection of {@link TransactionSetParser}
      * to be registered w/ the parser
-     * 
+     *
      * Any null value in the Collection will be ignored.
-     * 
-     * Note: if there are one or more {@link TransactionSetParser} already registered 
-     * with the parser, this method will append the parsers in the Collection 
-     * to the existing chain of parsers. 
-     * 
+     *
+     * Note: if there are one or more {@link TransactionSetParser} already registered
+     * with the parser, this method will append the parsers in the Collection
+     * to the existing chain of parsers.
+     *
      * @param transactionParsers - a Collection of TransactionSetParser(s)
      * @return true if all were added, false otherwise
      */
     public boolean registerTransactionSetParser(Collection<TransactionSetParser> transactionParsers) {
         boolean isAdded = false;
-        
+
         if (transactionParsers != null && !transactionParsers.isEmpty()) {
             isAdded = transactionParsers.stream()
                 .filter(Objects::nonNull)
@@ -132,18 +132,18 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
         return isAdded;
     }
-    
+
     /**
-     * convenience method that will allow one or more {@link TransactionSetParser} 
+     * convenience method that will allow one or more {@link TransactionSetParser}
      * to be registered w/ the parser
      * Note: if a transaction set type does not have a registered parser it is ignored
-     * 
+     *
      * @param transactionParsers
      * @return true if non-null and added, otherwise false
      */
     public boolean registerTransactionSetParser(TransactionSetParser txParser) {
         boolean isAdded = false;
-        
+
         if (txParser != null) {
             if (this.transactionParser == null) {
                 // we don't have a transaction set parser
@@ -157,15 +157,15 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                     .registerNextTransactionSetParser(txParser);
             }
         }
-        
+
         return isAdded;
     }
-    
+
     /**
      * register a handler for unhandled transaction sets
-     * an unhandled transaction set is one that did not have 
+     * an unhandled transaction set is one that did not have
      * a {@link TransactionSetParser} registered.
-     * 
+     *
      * @param txUnhandled
      */
     public void registerUnhandledTransactionSet(UnhandledTransactionSet txUnhandled) {
@@ -373,7 +373,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             this.handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
         }
     }
-    
+
     /**
      * register the correct {@link TransactionSetParser} to parse the transaction set(s) and add the resulting objects to the X12 Group
      * @param transactionSegments
@@ -394,5 +394,5 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             LOGGER.warn("No TransactionSetParser has been registered!");
         }
     }
-    
+
 }

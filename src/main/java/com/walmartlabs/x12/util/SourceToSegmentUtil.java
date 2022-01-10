@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.walmartlabs.x12.util;
 
+import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * This utility is used to help parse an EDI transmission
- * 
+ *
  *  It used to be part of the {@link X12Parser} but was
  *  pulled into a utility to make it more reusable
  */
@@ -38,26 +39,26 @@ public final class SourceToSegmentUtil {
     public static final Character DEFAULT_SEGMENT_SEPARATOR = '~';
 
     // note: Java Strings use a zero based index
-    // so these are one less than the value 
+    // so these are one less than the value
     // provided in various EDI documentation
     public static final int DATA_ELEMENT_SEPARATOR_INDEX = 3;
     public static final int REPETITION_ELEMENT_SEPARATOR_INDEX = 82;
     public static final int COMPOSITE_ELEMENT_SEPARATOR_INDEX = 104;
     public static final int SEGMENT_SEPARATOR_INDEX = 105;
-    
+
     /**
-     * parses the source data into a list of segments 
+     * parses the source data into a list of segments
      * 1) assume each segment is on separate line
      * 2) otherwise try 106th character in source data
-     * 
+     *
      * @param sourceData
      * @return a {@link List} of {@link X12Segment} or empty if there are issues w/ source data
      */
     public static List<X12Segment> splitSourceDataIntoSegments(String sourceData) {
-        // assume that the source data has 
+        // assume that the source data has
         // each segment on a separate line
         // and that ALL valid EDI / X12 documents
-        // are > 1 segment 
+        // are > 1 segment
         List<X12Segment> segments = splitSourceDataIntoSegments(sourceData, "\\r?\\n");
         if (segments != null && segments.size() > 1) {
             return segments;
@@ -68,9 +69,9 @@ public final class SourceToSegmentUtil {
             return splitSourceDataIntoSegments(sourceData, segmentDelimiterRegex);
         }
     }
-    
+
     /**
-     * parses the source data into a list of segments 
+     * parses the source data into a list of segments
      * using the the segment delimiter that was passed in
      * @param sourceData
      * @param segmentSeparatorRegEx a regex to split segments
@@ -88,7 +89,7 @@ public final class SourceToSegmentUtil {
                 .collect(Collectors.toList());
         }
     }
-    
+
     /**
      * get the segment delimiter/separator character
      * @param sourceData
@@ -101,7 +102,7 @@ public final class SourceToSegmentUtil {
             return null;
         }
     }
-    
+
     /**
      * get the element delimiter/separator character
      * @param sourceData
@@ -114,9 +115,9 @@ public final class SourceToSegmentUtil {
             return null;
         }
     }
-    
+
     private SourceToSegmentUtil() {
         // you can't make me
     }
-    
+
 }

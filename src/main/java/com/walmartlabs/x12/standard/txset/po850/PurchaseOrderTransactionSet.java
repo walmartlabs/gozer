@@ -19,7 +19,7 @@ package com.walmartlabs.x12.standard.txset.po850;
 import com.walmartlabs.x12.AbstractX12TransactionSet;
 
 /**
- * 
+ *
  * TODO: implement the POJO that will store the state of
  * a parsed PO 850 transaction set
  *

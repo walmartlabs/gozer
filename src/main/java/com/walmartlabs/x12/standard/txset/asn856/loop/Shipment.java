@@ -32,7 +32,7 @@ import java.util.List;
 
 /**
  * Represents the Shipment level of information
- * 
+ *
  */
 public class Shipment extends X12ParsedLoop {
 
@@ -67,7 +67,7 @@ public class Shipment extends X12ParsedLoop {
      */
     private List<N1PartyIdentification> n1PartyIdentifications;
 
-    
+
     /**
      * returns true if the loop passed in is a Shipment loop
      */
@@ -77,7 +77,7 @@ public class Shipment extends X12ParsedLoop {
 
     /**
      * helper method to add TD1
-     * 
+     *
      * @param td1
      */
     public void addTD1CarrierDetail(TD1CarrierDetail td1) {
@@ -86,10 +86,10 @@ public class Shipment extends X12ParsedLoop {
         }
         td1List.add(td1);
     }
-    
+
     /**
      * helper method to add TD5
-     * 
+     *
      * @param td5
      */
     public void addTD5CarrierDetail(TD5CarrierDetail td5) {
@@ -98,10 +98,10 @@ public class Shipment extends X12ParsedLoop {
         }
         td5List.add(td5);
     }
-    
+
     /**
      * helper method to add TD3
-     * 
+     *
      * @param td3
      */
     public void addTD3CarrierDetail(TD3CarrierDetail td3) {
@@ -110,10 +110,10 @@ public class Shipment extends X12ParsedLoop {
         }
         td3List.add(td3);
     }
-    
+
     /**
      * helper method to add REF
-     * 
+     *
      * @param ref
      */
     public void addReferenceInformation(REFReferenceInformation ref) {
@@ -122,7 +122,7 @@ public class Shipment extends X12ParsedLoop {
         }
         refList.add(ref);
     }
-    
+
     /**
      * helper method to add DTM to list
      * @param dtm
@@ -133,7 +133,7 @@ public class Shipment extends X12ParsedLoop {
         }
         dtmReferences.add(dtm);
     }
-    
+
     /**
      * helper method to add N1 to list
      * @param n1
@@ -144,7 +144,7 @@ public class Shipment extends X12ParsedLoop {
         }
         n1PartyIdentifications.add(n1);
     }
-    
+
 
     public List<N1PartyIdentification> getN1PartyIdentifications() {
         return n1PartyIdentifications;
@@ -169,7 +169,7 @@ public class Shipment extends X12ParsedLoop {
     public void setTd5List(List<TD5CarrierDetail> td5List) {
         this.td5List = td5List;
     }
-    
+
     public List<TD3CarrierDetail> getTd3List() {
         return td3List;
     }
@@ -177,7 +177,7 @@ public class Shipment extends X12ParsedLoop {
     public void setTd3List(List<TD3CarrierDetail> td3List) {
         this.td3List = td3List;
     }
-    
+
     public List<DTMDateTimeReference> getDtmReferences() {
         return dtmReferences;
     }

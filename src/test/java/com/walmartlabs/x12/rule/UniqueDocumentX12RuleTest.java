@@ -26,25 +26,25 @@ import java.util.List;
 
 public class UniqueDocumentX12RuleTest {
 
-    
+
     private UniqueDocumentX12Rule rule;
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void test_verify_null() {
         List<X12Segment> segmentList = null;
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }
-    
+
     @Test
     public void test_verify_empty() {
         List<X12Segment> segmentList = new ArrayList<>();
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }
-    
+
     @Test
     public void test_no_duplicates_mix_document() {
         String sourceData = new StringBuilder()
@@ -72,19 +72,19 @@ public class UniqueDocumentX12RuleTest {
             .append("BEG*00*SA*804191**20201022")
             .append("\r\n")
             .append("SE*1*0003")
-            .append("\r\n")            
+            .append("\r\n")
             .append("GE*1*99")
             .append("\r\n")
             .append("IEA*1*000000049")
             .toString();
-        
+
         List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }
-    
-    
+
+
     @Test(expected = X12ParserException.class)
     public void test_duplicates_mix_document() {
         String sourceData = new StringBuilder()
@@ -118,18 +118,18 @@ public class UniqueDocumentX12RuleTest {
             .append("BSN*00*804190*20201022")
             .append("\r\n")
             .append("SE*1*0004")
-            .append("\r\n")            
+            .append("\r\n")
             .append("GE*1*99")
             .append("\r\n")
             .append("IEA*1*000000049")
             .toString();
-        
+
         List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }
-    
+
     @Test(expected = X12ParserException.class)
     public void test_duplicates_po_document() {
         String sourceData = new StringBuilder()
@@ -157,18 +157,18 @@ public class UniqueDocumentX12RuleTest {
             .append("BEG*00*SA*804190**20201022")
             .append("\r\n")
             .append("SE*1*0003")
-            .append("\r\n")            
+            .append("\r\n")
             .append("GE*1*99")
             .append("\r\n")
             .append("IEA*1*000000049")
             .toString();
-        
+
         List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
-        
+
         rule = new UniqueDocumentX12Rule("BEG", 3, 4);
         rule.verify(segmentList);
     }
-    
+
     @Test
     public void test_no_duplicates_no_document_number_or_date() {
         String sourceData = new StringBuilder()
@@ -194,13 +194,13 @@ public class UniqueDocumentX12RuleTest {
             .append("\r\n")
             .append("IEA*1*000000049")
             .toString();
-        
+
         List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }
-    
+
     @Test(expected = X12ParserException.class)
     public void test_duplicates_no_document_number() {
         String sourceData = new StringBuilder()
@@ -226,13 +226,13 @@ public class UniqueDocumentX12RuleTest {
             .append("\r\n")
             .append("IEA*1*000000049")
             .toString();
-        
+
         List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }
-    
+
     @Test
     public void test_no_duplicates_no_document_date() {
         String sourceData = new StringBuilder()
@@ -258,13 +258,13 @@ public class UniqueDocumentX12RuleTest {
             .append("\r\n")
             .append("IEA*1*000000049")
             .toString();
-        
+
         List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }
-    
+
     @Test(expected = X12ParserException.class)
     public void test_duplicates_no_document_date() {
         String sourceData = new StringBuilder()
@@ -290,9 +290,9 @@ public class UniqueDocumentX12RuleTest {
             .append("\r\n")
             .append("IEA*1*000000049")
             .toString();
-        
+
         List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
-        
+
         rule = new UniqueDocumentX12Rule("BSN", 2, 3);
         rule.verify(segmentList);
     }

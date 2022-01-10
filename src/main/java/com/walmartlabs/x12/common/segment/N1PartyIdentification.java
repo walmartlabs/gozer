@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ *
  * Purpose: To identify a party by type of organization, name, and code
  *
  */
@@ -48,15 +48,15 @@ public class N1PartyIdentification {
      * N4 Party Geographic Identification
      */
     private N4GeographicLocation n4;
-    
+
     /*
      * REF
      */
     private List<REFReferenceInformation> refList;
-    
+
     /**
      * helper method to add REF
-     * 
+     *
      * @param ref
      */
     public void addReferenceInformation(REFReferenceInformation ref) {
@@ -65,10 +65,10 @@ public class N1PartyIdentification {
         }
         refList.add(ref);
     }
-    
+
     /**
      * helper method to add N3
-     * 
+     *
      * @param n3
      */
     public void addN3PartyLocation(N3PartyLocation n3) {

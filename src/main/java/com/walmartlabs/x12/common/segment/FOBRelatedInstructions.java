@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment;
 
 /**
- * 
+ *
  * Purpose: To specify transportation instructions related to shipment payment terms
  */
 public class FOBRelatedInstructions {
