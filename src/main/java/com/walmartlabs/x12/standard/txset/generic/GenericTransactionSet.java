@@ -1,13 +1,11 @@
 package com.walmartlabs.x12.standard.txset.generic;
 
-import com.walmartlabs.x12.AbstractX12TransactionSet;
+import com.walmartlabs.x12.AbstractX12TransactionSetWithLoop;
 import com.walmartlabs.x12.X12Segment;
-import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.X12Loop;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,7 +39,7 @@ import java.util.List;
  * SE*10*0001  <---- transaction trailer
  *
  */
-public class GenericTransactionSet extends AbstractX12TransactionSet {
+public class GenericTransactionSet extends AbstractX12TransactionSetWithLoop {
 
     private X12Segment beginningSegment;
 
@@ -51,9 +49,6 @@ public class GenericTransactionSet extends AbstractX12TransactionSet {
 
     // the loops
     private List<X12Loop> loops;
-
-    // looping issues are captured
-    private List<X12ErrorDetail> loopingErrors;
 
     /**
      * helper method to add segment to list
@@ -77,32 +72,6 @@ public class GenericTransactionSet extends AbstractX12TransactionSet {
         loops.add(loop);
     }
     
-    /**
-     * helper method to add X12ErrorDetail for looping errors
-     * @param errorDetail
-     */
-    public void addX12ErrorDetailForLoop(X12ErrorDetail errorDetail) {
-        this.addX12ErrorDetailForLoop(Collections.singletonList(errorDetail));
-    }
-
-    /**
-     * helper method to add multiple X12ErrorDetail for looping errors
-     * @param errorDetail
-     */
-    public void addX12ErrorDetailForLoop(List<X12ErrorDetail> errorDetails) {
-        if (!CollectionUtils.isEmpty(errorDetails)) {
-            if (CollectionUtils.isEmpty(loopingErrors)) {
-                loopingErrors = new ArrayList<>();
-            }
-            loopingErrors.addAll(errorDetails);
-        }
-    }
-    
-    @Override
-    public List<X12ErrorDetail> getLoopingErrors() {
-        return loopingErrors;
-    }
-
     public X12Segment getBeginningSegment() {
         return beginningSegment;
     }

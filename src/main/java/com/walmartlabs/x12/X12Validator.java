@@ -35,7 +35,7 @@ public interface X12Validator<T extends X12Document> {
      * validate the X12 transmission with option to turn on/off the CRC integrity
      * check
      *
-     * @param pojo            the domain object returned by an {@link X12Parser}
+     * @param pojo the domain object returned by an {@link X12Parser}
      * @param performCrcCheck set to true to perform the check
      * @return Set of error details ({@link X12ErrorDetail}
      */

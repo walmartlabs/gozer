@@ -16,18 +16,16 @@ limitations under the License.
 
 package com.walmartlabs.x12.standard.txset.asn856;
 
-import com.walmartlabs.x12.AbstractX12TransactionSet;
+import com.walmartlabs.x12.AbstractX12TransactionSetWithLoop;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
-import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class AsnTransactionSet extends AbstractX12TransactionSet {
+public class AsnTransactionSet extends AbstractX12TransactionSetWithLoop {
 
     //
     // BSN
@@ -52,9 +50,6 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
     // the first loop in the HL hierarchy
     private Shipment shipment;
 
-    // looping issues are captured
-    private List<X12ErrorDetail> loopingErrors;
-
     /**
      * helper method to add DTM to list
      * @param dtm
@@ -76,32 +71,6 @@ public class AsnTransactionSet extends AbstractX12TransactionSet {
             unexpectedSegmentsBeforeLoop = new ArrayList<>();
         }
         unexpectedSegmentsBeforeLoop.add(segment);
-    }
-
-    /**
-     * helper method to add X12ErrorDetail for looping errors
-     * @param errorDetail
-     */
-    public void addX12ErrorDetailForLoop(X12ErrorDetail errorDetail) {
-        this.addX12ErrorDetailForLoop(Collections.singletonList(errorDetail));
-    }
-
-    /**
-     * helper method to add multiple X12ErrorDetail for looping errors
-     * @param errorDetail
-     */
-    public void addX12ErrorDetailForLoop(List<X12ErrorDetail> errorDetails) {
-        if (!CollectionUtils.isEmpty(errorDetails)) {
-            if (CollectionUtils.isEmpty(loopingErrors)) {
-                loopingErrors = new ArrayList<>();
-            }
-            loopingErrors.addAll(errorDetails);
-        }
-    }
-
-    @Override
-    public List<X12ErrorDetail> getLoopingErrors() {
-        return loopingErrors;
     }
 
     public String getPurposeCode() {

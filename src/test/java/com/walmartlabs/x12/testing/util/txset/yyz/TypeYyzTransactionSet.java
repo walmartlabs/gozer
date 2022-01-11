@@ -107,7 +107,6 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
         this.loops = loops;
     }
 
-    @Override
     public List<X12ErrorDetail> getLoopingErrors() {
         return loopingErrors;
     }

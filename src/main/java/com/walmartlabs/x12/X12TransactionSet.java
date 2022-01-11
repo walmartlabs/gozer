@@ -16,11 +16,6 @@ limitations under the License.
 
 package com.walmartlabs.x12;
 
-import com.walmartlabs.x12.exceptions.X12ErrorDetail;
-
-import java.util.Collections;
-import java.util.List;
-
 /**
  *
  * Implementations should store the common ST/SE elements as well as the
@@ -87,16 +82,4 @@ public interface X12TransactionSet {
 
     void setTransactionLineItems(Integer transactionLineItems);
 
-
-    /**
-     * any looping errors will be stored in this list
-     *
-     * possible errors include
-     * orphan loops and those without proper indexing
-     *
-     * @return list of {@link X12ErrorDetail}
-     */
-    default List<X12ErrorDetail> getLoopingErrors() {
-        return Collections.emptyList();
-    }
 }
