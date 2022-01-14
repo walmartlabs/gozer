@@ -112,7 +112,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
      * the last segment in the list of {@link X12Segment} should be an SE
      */
     protected void doParsing(List<X12Segment> transactionSegments, AsnTransactionSet asnTx) {
-        
+
         SegmentIterator segments = new SegmentIterator(transactionSegments);
         X12Segment currentSegment = null;
 
@@ -133,10 +133,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         }
 
         //
-        // DTM segment (optional) can be added between the BSN and HL hierarchy 
-        // 
+        // DTM segment (optional) can be added between the BSN and HL hierarchy
+        //
         this.parseSegmentsBeforeFirstLoop(segments, asnTx);
-        
+
         //
         // Hierarchical Loops
         //
@@ -157,10 +157,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             throw X12ParsingUtil.handleUnexpectedSegment("SE", "nothing");
         }
     }
-    
+
     /**
      * parse the BSN segment
-     * 
+     *
      * @param segment
      * @param asnTx
      * @throws X12ParserException if segment is not BSN
@@ -179,10 +179,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             throw X12ParsingUtil.handleUnexpectedSegment(ASN_TRANSACTION_HEADER, segmentIdentifier);
         }
     }
-    
+
     /**
      * parse a Shipment Loop
-     * 
+     *
      */
     private void parseShipmentLoop(X12Loop unparsedLoop, AsnTransactionSet asnTx) {
         //
@@ -209,7 +209,6 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 });
             }
         } else {
-            asnTx.setLoopingValid(false);
             asnTx.addX12ErrorDetailForLoop(
                 new X12ErrorDetail("HL", "03", "first HL is not a shipment it was " + unparsedLoop.getCode()));
         }
@@ -217,7 +216,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
     /**
      * we always expect the children of a shipment to be an order
-     * 
+     *
      * @param unparsedLoop
      * @param shipment
      */
@@ -243,12 +242,11 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             this.parseEachChildrenLoop(unparsedLoop, order);
 
         } else {
-            asnTx.setLoopingValid(false);
             asnTx.addX12ErrorDetailForLoop(
                 new X12ErrorDetail("HL", "03", "expected Order HL but got " + unparsedLoop.getCode()));
         }
     }
-    
+
     private void parseTareLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
         //
         // should be a Tare
@@ -258,7 +256,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             Tare tare = new Tare();
             tare.copyAttributes(unparsedLoop);
             parentLoop.addParsedChildLoop(tare);
-            
+
             //
             // handle the segments that are associated w/ the Tare Loop
             //
@@ -269,9 +267,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             // these loops can appear in a variety of sequences
             //
             this.parseEachChildrenLoop(unparsedLoop, tare);
-        }        
+        }
     }
-    
+
     private void parsePackLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
         //
         // should be a Pack
@@ -281,7 +279,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             Pack pack = new Pack();
             pack.copyAttributes(unparsedLoop);
             parentLoop.addParsedChildLoop(pack);
-            
+
             //
             // handle the segments that are associated w/ the Pack Loop
             //
@@ -294,7 +292,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             this.parseEachChildrenLoop(unparsedLoop, pack);
         }
     }
-    
+
     private void parseItemLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
         //
         // should be an Item
@@ -304,7 +302,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             Item item = new Item();
             item.copyAttributes(unparsedLoop);
             parentLoop.addParsedChildLoop(item);
-            
+
             //
             // handle the segments that are associated w/ the Item Loop
             //
@@ -315,10 +313,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             // these loops can appear in a variety of sequences
             //
             this.parseEachChildrenLoop(unparsedLoop, item);
-        }        
+        }
     }
-    
-    
+
+
     private void parseBatchLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
         //
         // should be a Batch
@@ -328,7 +326,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             Batch batch = new Batch();
             batch.copyAttributes(unparsedLoop);
             parentLoop.addParsedChildLoop(batch);
-            
+
             //
             // handle the segments that are associated w/ the Batch Loop
             //
@@ -339,11 +337,11 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             // these loops can appear in a variety of sequences
             //
             this.parseEachChildrenLoop(unparsedLoop, batch);
-        }        
+        }
     }
-    
-    
-    
+
+
+
     private void parseEachChildrenLoop(X12Loop unparsedLoop,  X12ParsedLoop parentLoop) {
         List<X12Loop> unparsedLoopChildren = unparsedLoop.getChildLoops();
         if (CollectionUtils.isNotEmpty(unparsedLoopChildren)) {
@@ -352,9 +350,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             });
         }
     }
-    
+
     private void parseChildrenLoop(X12Loop unparsedLoop, X12ParsedLoop parentLoop) {
-        // loops in an order can be in different sequencing 
+        // loops in an order can be in different sequencing
         switch (unparsedLoop.getCode()) {
             case Tare.TARE_LOOP_CODE:
                 this.parseTareLoop(unparsedLoop, parentLoop);
@@ -367,16 +365,16 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case Batch.BATCH_LOOP_CODE:
                 this.parseBatchLoop(unparsedLoop, parentLoop);
-                break;                
+                break;
             default:
                 // TODO: what to do w/ unknown loop
                 break;
         }
     }
-    
+
     /**
-     * template for processing segments associated with a loop 
-     * 
+     * template for processing segments associated with a loop
+     *
      * @param loop
      * @param loopObject
      * @param function
@@ -398,7 +396,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     /**
      * handle the segment lines that are part of the Order (appearing before the next
      * HL loop)
-     * 
+     *
      * @param segment
      * @param segmentIterator
      * @param shipment
@@ -427,17 +425,17 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case FOBRelatedInstructions.IDENTIFIER:
                 shipment.setFob(FOBRelatedInstructionsParser.parse(segment));
-                break;                
+                break;
             default:
                 shipment.addUnparsedSegment(segment);
                 break;
         }
     }
-    
+
     /**
      * handle the segment lines that are part of the Order (appearing before the next
      * HL loop)
-     * 
+     *
      * @param segment
      * @param segmentIterator
      * @param order
@@ -452,17 +450,17 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case TD1CarrierDetail.IDENTIFIER:
                 order.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
-                break;               
+                break;
             default:
                 order.addUnparsedSegment(segment);
                 break;
         }
     }
-    
+
     /**
      * handle the segment lines that are part of the Tare (appearing before the next
      * HL loop)
-     * 
+     *
      * @param segment
      * @param segmentIterator
      * @param tare
@@ -471,13 +469,13 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         switch (segment.getIdentifier()) {
             case PKGPackaging.IDENTIFIER:
                 tare.addPKGPackaging(PKGPackagingParser.parse(segment));
-                break;       
+                break;
             case PALPalletType.IDENTIFIER:
                 tare.setPal(PALPalletTypeParser.parse(segment));
                 break;
             case MANMarkNumber.IDENTIFIER:
                 tare.addMANMarkNumber(MANMarkNumberParser.parse(segment));
-                break;                
+                break;
             default:
                 tare.addUnparsedSegment(segment);
                 break;
@@ -488,7 +486,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     /**
      * handle the segment lines that are part of the Pack (appearing before the next
      * HL loop)
-     * 
+     *
      * @param segment
      * @param segmentIterator
      * @param pack
@@ -501,10 +499,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             case N1PartyIdentification.IDENTIFIER:
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
                 pack.setN1PartyIdentification(n1);
-                break;                
+                break;
             case TD1CarrierDetail.IDENTIFIER:
                 pack.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
-                break;                
+                break;
             case PO4ItemPhysicalDetail.IDENTIFIER:
                 pack.setPo4(PO4ItemPhysicalDetailParser.parse(segment));
                 break;
@@ -516,17 +514,17 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case SN1ItemDetail.IDENTIFIER:
                 pack.setSn1(SN1ItemDetailParser.parse(segment));
-                break;                 
+                break;
             default:
                 pack.addUnparsedSegment(segment);
                 break;
-        }    
+        }
     }
 
     /**
      * handle the segment lines that are part of the Item (appearing before the next
      * HL loop)
-     * 
+     *
      * @param segment
      * @param segmentIterator
      * @param items
@@ -541,24 +539,24 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case SN1ItemDetail.IDENTIFIER:
                 item.setSn1(SN1ItemDetailParser.parse(segment));
-                break;  
+                break;
             case REFReferenceInformation.IDENTIFIER:
                 item.addReferenceInformation(REFReferenceInformationParser.parse(segment));
-                break;                 
+                break;
             case DTMDateTimeReference.IDENTIFIER:
                 DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
                 item.addDTMDateTimeReference(dtm);
-                break;                
+                break;
             default:
                 item.addUnparsedSegment(segment);
                 break;
-        }    
+        }
     }
-    
+
     /**
      * handle the segment lines that are part of the Batch (appearing before the next
      * HL loop)
-     * 
+     *
      * @param segment
      * @param segmentIterator
      * @param items
@@ -580,29 +578,29 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case REFReferenceInformation.IDENTIFIER:
                 batch.addReferenceInformation(REFReferenceInformationParser.parse(segment));
-                break;                
+                break;
             case DTMDateTimeReference.IDENTIFIER:
                 DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
                 batch.addDTMDateTimeReference(dtm);
-                break;                  
+                break;
             default:
                 batch.addUnparsedSegment(segment);
                 break;
-        }    
+        }
     }
 
     /**
      * parse the optional DTM segments
      * that can appear between the beginning segment
      * and the first loop
-     * 
+     *
      * it will also move the segment iterator to first loop
-     * 
+     *
      * @param segments
      * @param txSet
      */
     protected void parseSegmentsBeforeFirstLoop(SegmentIterator segments, AsnTransactionSet txSet) {
-        
+
         while (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
             String segmentId = currentSegment.getIdentifier();
@@ -612,9 +610,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 // we found one of two things
                 // (1) start of loops (HL)
                 // (2) the end of the transaction (SE)
-                // in either case 
-                // we should back up so 
-                // the parser template method 
+                // in either case
+                // we should back up so
+                // the parser template method
                 // starts w/ this segment
                 segments.previous();
                 break;
@@ -630,16 +628,16 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             }
         }
     }
-    
+
     /**
      * parse the HL loops
      * it will also move the segment iterator to first segment after loops
-     * 
+     *
      * @param segments
      * @param txSet
      */
     protected void handleLooping(SegmentIterator segments, AsnTransactionSet asnTx) {
-        
+
         if (segments.hasNext()) {
             X12Segment currentSegment = segments.next();
             if (X12LoopUtil.isHierarchicalLoopStart(currentSegment)) {
@@ -647,28 +645,26 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 int firstLoopSegmentIndex = segments.currentIndex();
                 int indexToSegmentAfterHierarchicalLoops = this.findIndexForSegmentAfterHierarchicalLoops(segments);
                 List<X12Segment> loopSegments = segments.subList(firstLoopSegmentIndex, indexToSegmentAfterHierarchicalLoops);
-                
+
                 // manage the loops
                 // assigning the parents and children accordingly
                 X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(loopSegments);
 
                 // add loop errors to tx (if any)
                 List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
-                asnTx.setLoopingValid(CollectionUtils.isEmpty(loopErrors));
-                asnTx.setLoopingErrors(loopHolder.getLoopErrors());
-                
+                asnTx.addX12ErrorDetailForLoop(loopErrors);
+
                 // handle loops
                 List<X12Loop> loops = loopHolder.getLoops();
                 this.doLoopParsing(loops, asnTx);
 
-                // we processed all of the loops 
+                // we processed all of the loops
                 // so now set the iterator up
-                // so that the next segment after 
+                // so that the next segment after
                 // the last loop is next
                 segments.reset(indexToSegmentAfterHierarchicalLoops);
             } else {
                 // doesn't start w/ HL
-                asnTx.setLoopingValid(false);
                 asnTx.addX12ErrorDetailForLoop(
                     new X12ErrorDetail(currentSegment.getIdentifier(), null, "missing shipment loop"));
                 // we should back it up
@@ -678,9 +674,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             }
         }
     }
-    
+
     /**
-     * expects the current segment to be the first HL loop occurring 
+     * expects the current segment to be the first HL loop occurring
      * in the transaction set
      */
     private int findIndexForSegmentAfterHierarchicalLoops(SegmentIterator segments) {
@@ -699,15 +695,15 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
         if (indexToSegmentAfterHierarchicalLoops == -1) {
             indexToSegmentAfterHierarchicalLoops = segments.currentIndex() - 1;
         }
-        
+
         segments.reset(firstLoopSegmentIndex);
         return indexToSegmentAfterHierarchicalLoops;
     }
-    
+
     /**
      * currently enforcing only 1 top level HL in the transaction set (ie) only one
      * Shipment HL
-     * 
+     *
      * @param loops
      * @param asnTx
      */
@@ -716,11 +712,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             X12Loop firstLoop = loops.get(0);
             this.parseShipmentLoop(firstLoop, asnTx);
         } else {
-            asnTx.setLoopingValid(false);
             asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", null, "expected one top level HL"));
         }
     }
-    
+
     /**
      * checks for CTT or AMT
      */
@@ -736,7 +731,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 segments.previous();
                 break;
             }
-                
+
         }
     }
 }

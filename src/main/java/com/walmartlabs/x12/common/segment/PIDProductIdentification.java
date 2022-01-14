@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment;
 
 /**
- * 
+ *
  * Purpose: To describe a product or process in coded or free-form format
  *
  */
@@ -30,7 +30,7 @@ public class PIDProductIdentification {
 
     // PID02
     private String characteristicCode;
-    
+
     // PID05
     private String description;
 

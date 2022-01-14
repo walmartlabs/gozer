@@ -17,13 +17,14 @@ limitations under the License.
 package com.walmartlabs.x12;
 
 /**
- * 
- * the {@link AbstractX12TransactionSet} is not required when creating a 
- * custom {@link X12TransactionSet}. It is provided as a convenience to handle 
- * common ST/SE elements and the CTT segment. 
+ *
+ * the {@link AbstractX12TransactionSet} is not required when creating a
+ * custom {@link X12TransactionSet}. It is provided as a convenience to handle
+ * common ST/SE elements and the CTT segment.
  *
  */
 public abstract class AbstractX12TransactionSet implements X12TransactionSet {
+
     /*
      * ST
      */
@@ -37,7 +38,7 @@ public abstract class AbstractX12TransactionSet implements X12TransactionSet {
      */
     // CTT 01
     private Integer transactionLineItems;
-    
+
     /*
      * SE
      */
@@ -45,44 +46,54 @@ public abstract class AbstractX12TransactionSet implements X12TransactionSet {
     private Integer expectedNumberOfSegments;
     // SE02
     private String trailerControlNumber;
-    
 
+
+    @Override
     public String getTransactionSetIdentifierCode() {
         return transactionSetIdentifierCode;
     }
 
+    @Override
     public void setTransactionSetIdentifierCode(String transactionSetIdentifierCode) {
         this.transactionSetIdentifierCode = transactionSetIdentifierCode;
     }
 
+    @Override
     public String getHeaderControlNumber() {
         return headerControlNumber;
     }
 
+    @Override
     public void setHeaderControlNumber(String headerControlNumber) {
         this.headerControlNumber = headerControlNumber;
     }
 
+    @Override
     public Integer getExpectedNumberOfSegments() {
         return expectedNumberOfSegments;
     }
 
+    @Override
     public void setExpectedNumberOfSegments(Integer expectedNumberOfSegments) {
         this.expectedNumberOfSegments = expectedNumberOfSegments;
     }
 
+    @Override
     public String getTrailerControlNumber() {
         return trailerControlNumber;
     }
 
+    @Override
     public void setTrailerControlNumber(String trailerControlNumber) {
         this.trailerControlNumber = trailerControlNumber;
     }
-    
+
+    @Override
     public Integer getTransactionLineItems() {
         return transactionLineItems;
     }
 
+    @Override
     public void setTransactionLineItems(Integer transactionLineItems) {
         this.transactionLineItems = transactionLineItems;
     }

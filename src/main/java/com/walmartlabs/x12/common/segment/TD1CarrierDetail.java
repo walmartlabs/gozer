@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment;
 
 /**
- * 
+ *
  * Purpose: To specify the transportation details relative to commodity, weight,
  * and quantityElement
  *

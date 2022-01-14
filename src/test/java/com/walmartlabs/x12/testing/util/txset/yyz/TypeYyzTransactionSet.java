@@ -24,10 +24,10 @@ import com.walmartlabs.x12.standard.X12Loop;
 import java.util.List;
 
 /**
- * 
- * the {@link AbstractX12TransactionSet} is not required when creating a 
- * custom {@link X12TransactionSet}. It is provided as a convenience to handle 
- * common ST/SE elements. 
+ *
+ * the {@link AbstractX12TransactionSet} is not required when creating a
+ * custom {@link X12TransactionSet}. It is provided as a convenience to handle
+ * common ST/SE elements.
  *
  */
 public class TypeYyzTransactionSet implements X12TransactionSet {
@@ -37,7 +37,7 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
     private Integer numSegments;
     private String rushValue;
     private Integer transactionLineItems;
-    
+
     private List<X12Loop> loops;
     private List<X12ErrorDetail> loopingErrors;
 
@@ -50,12 +50,12 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
     public void setTransactionSetIdentifierCode(String transactionSetIdentifierCode) {
         this.transactionSetIdentifierCode = transactionSetIdentifierCode;
     }
-    
+
     @Override
     public String getHeaderControlNumber() {
         return headerControlNumber;
     }
-    
+
     @Override
     public void setHeaderControlNumber(String headerControlNumber) {
         this.headerControlNumber = headerControlNumber;
@@ -70,7 +70,7 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
     public void setTrailerControlNumber(String trailerControlNumber) {
         this.trailerControlNumber = trailerControlNumber;
     }
-    
+
     @Override
     public Integer getExpectedNumberOfSegments() {
         return numSegments;
@@ -80,7 +80,7 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
     public void setExpectedNumberOfSegments(Integer expectedNumberOfSegments) {
         this.numSegments = expectedNumberOfSegments;
     }
-    
+
     public String getRushValue() {
         return rushValue;
     }

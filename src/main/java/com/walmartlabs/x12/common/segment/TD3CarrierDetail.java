@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.common.segment;
 
 /**
- * 
+ *
  * Purpose: To specify transportation details relating to the equipment used by
  * the carrierLoop
  *
@@ -37,7 +37,7 @@ public class TD3CarrierDetail {
     private String equipmentNumber;
     // TD309
     private String sealNumber;
-    
+
 
     public String getEquipmentDescriptionCode() {
         return equipmentDescriptionCode;

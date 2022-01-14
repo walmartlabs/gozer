@@ -49,7 +49,7 @@ public class SegmentIteratorTest {
         assertFalse(iter.hasPrevious());
         assertEquals(-1, iter.previousIndex());
         assertPreviousWithNoSuchElementException(iter);
-        
+
         assertEquals(0, iter.currentIndex());
         assertEquals(-1, iter.lastIndex());
     }
@@ -66,7 +66,7 @@ public class SegmentIteratorTest {
         assertEquals(-1, iter.previousIndex());
         assertEquals(0, iter.currentIndex());
         assertEquals(1, iter.lastIndex());
-        
+
         // advance one
         X12Segment segment = iter.next();
         assertTrue(iter.hasNext());
@@ -75,7 +75,7 @@ public class SegmentIteratorTest {
         assertEquals(0, iter.previousIndex());
         assertEquals(1, iter.currentIndex());
         assertEquals(1, iter.lastIndex());
-        
+
         assertNotNull(segment);
         assertEquals("LINE1", segment.getElement(0));
 
@@ -87,7 +87,7 @@ public class SegmentIteratorTest {
         assertEquals(1, iter.previousIndex());
         assertEquals(2, iter.currentIndex());
         assertEquals(1, iter.lastIndex());
-        
+
         assertNotNull(segment);
         assertEquals("LINE2", segment.getElement(0));
 
@@ -107,7 +107,7 @@ public class SegmentIteratorTest {
         assertEquals(-1, iter.previousIndex());
         assertEquals(0, iter.currentIndex());
         assertEquals(1, iter.lastIndex());
-        
+
         // try getting previous from starting point
         assertPreviousWithNoSuchElementException(iter);
 
@@ -128,8 +128,8 @@ public class SegmentIteratorTest {
         assertEquals(1, iter.previousIndex());
         assertEquals(2, iter.currentIndex());
         assertEquals(1, iter.lastIndex());
-        
-        // move back  
+
+        // move back
         segment = iter.previous();
         assertTrue(iter.hasNext());
         assertTrue(iter.hasPrevious());
@@ -137,7 +137,7 @@ public class SegmentIteratorTest {
         assertEquals(0, iter.previousIndex());
         assertEquals(1, iter.currentIndex());
         assertEquals(1, iter.lastIndex());
-        
+
         assertNotNull(segment);
         assertEquals("LINE2", segment.getElement(0));
 
@@ -149,7 +149,7 @@ public class SegmentIteratorTest {
         assertEquals(-1, iter.previousIndex());
         assertEquals(0, iter.currentIndex());
         assertEquals(1, iter.lastIndex());
-        
+
         assertNotNull(segment);
         assertEquals("LINE1", segment.getElement(0));
 

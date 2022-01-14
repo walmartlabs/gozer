@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class AaaTransactionSetParser extends AbstractTransactionSetParserChainable {
 
+    @Override
     protected X12TransactionSet doParse(List<X12Segment> txLines, X12Group x12Group) {
         assertNotNull(txLines);
         assertEquals(3, txLines.size());
@@ -35,13 +36,14 @@ public class AaaTransactionSetParser extends AbstractTransactionSetParserChainab
         assertEquals("AAA", txLines.get(0).getElement(1));
         assertEquals("TEST", txLines.get(1).getIdentifier());
         assertEquals("SE", txLines.get(2).getIdentifier());
-        
+
         TypeAaaTransactionSet tx = new TypeAaaTransactionSet();
         tx.setTransactionSetIdentifierCode(txLines.get(0).getElement(1));
         tx.setAaaOnlyValue(txLines.get(1).getElement(1));
         return tx;
     }
 
+    @Override
     protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
         boolean isHandled = false;
         if (transactionSegments != null) {

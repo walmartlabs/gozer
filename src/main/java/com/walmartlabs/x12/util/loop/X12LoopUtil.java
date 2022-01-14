@@ -30,35 +30,35 @@ import java.util.Map;
 public final class X12LoopUtil {
 
     /**
-     * check the segment for the start of HL 
+     * check the segment for the start of HL
      * @param segment
      * @return true if HL otherwise false
      */
     public static boolean isHierarchicalLoopStart(X12Segment segment) {
         return segment != null && X12Loop.HIERARCHY_LOOP_ID.equals(segment.getIdentifier());
     }
-    
+
     /**
      * generic method that takes a given set of segment lines and breaks
      * them up into separate hierarchical loops using the HL as the break since
      * there is no terminating segment for the loop - only the start of the next
      * loop
-     * 
+     *
      * this method will only work when the first segment is an HL and when this set
      * of segments has already been extracted from the ST/SE and the parts of the
      * header and trailer of the transaction set
-     * 
+     *
      * the results of processing the HL loops will be returned in {@link X12LoopHolder}
-     * this holder will have a list of {@link X12Loop} as well as a 
-     * list of any errors {@link X12ErrorDetail} that are found 
+     * this holder will have a list of {@link X12Loop} as well as a
+     * list of any errors {@link X12ErrorDetail} that are found
      * while trying to create the loop hierarchy
      */
     public static X12LoopHolder organizeHierarchicalLoops(List<X12Segment> segmentList) {
         X12LoopHolder loopHolder = new X12LoopHolder();
-        
+
         if (segmentList != null && !segmentList.isEmpty()) {
             X12Segment firstSegment = segmentList.get(0);
-            // the segment list starts with HL so we can 
+            // the segment list starts with HL so we can
             // attempt to handle the looping that was provided
             if (X12LoopUtil.isHierarchicalLoopStart(firstSegment)) {
                 loopHolder = X12LoopUtil.processLoops(segmentList);
@@ -69,24 +69,24 @@ public final class X12LoopUtil {
                 loopHolder.addX12ErrorDetail(X12ParsingUtil.generateUnexpectedSegmentDetail("HL", actualSegment));
             }
         }
-        
+
         return loopHolder;
     }
-    
+
     /**
      * handle the loops and build nested structure as defined by the segment lines
-     * 
+     *
      * @param segmentList
      * @return list of loops
-     * 
+     *
      * @throws an {@link X12ParserException} if id is reused an HL segment
      */
     private static X12LoopHolder processLoops(List<X12Segment> segmentList) {
         X12LoopHolder loopHolder = new X12LoopHolder();
-        
+
         List<X12Loop> loops = new ArrayList<>();
         loopHolder.setLoops(loops);
-        
+
         String currLoopId = null;
         Map<String, X12Loop> loopMap = new HashMap<>();
 
@@ -129,10 +129,10 @@ public final class X12LoopUtil {
                 currentLoop.addSegment(x12Segment);
             }
         }
-        
+
         return loopHolder;
     }
-    
+
     private static X12Loop buildHierarchicalLoop(X12Segment x12Segment) {
         // starting new loop
         String loopId = x12Segment.getElement(1);
@@ -142,15 +142,15 @@ public final class X12LoopUtil {
         loop.setHierarchicalId(loopId);
         loop.setParentHierarchicalId(parentLoopId);
         loop.setCode(x12Segment.getElement(3));
-        
+
         return loop;
     }
-    
+
     /**
      * given a loop, look for the parent loop
      * @param loop
      * @param loopMap
-     * 
+     *
      * @throws X12ParserException if the parent loop is missing
      */
     private static void handleParentLoop(X12Loop loop, Map<String, X12Loop> loopMap, X12LoopHolder loopHolder) {
@@ -168,7 +168,7 @@ public final class X12LoopUtil {
             }
         }
     }
-    
+
     private X12LoopUtil() {
         // you can't make me
     }

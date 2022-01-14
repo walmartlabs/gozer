@@ -10,7 +10,7 @@ public final class X12DocumentTestData {
 
     /**
      * read a file and return file contents as a String
-     * 
+     *
      * @param file
      * @return
      */
@@ -23,10 +23,10 @@ public final class X12DocumentTestData {
         }
         return fileContents;
     }
-    
+
     /**
      * read a file and return file contents as byte array
-     * 
+     *
      * @param file
      * @return
      */
@@ -39,7 +39,7 @@ public final class X12DocumentTestData {
         }
         return fileContents;
     }
-    
+
     public X12DocumentTestData() {
         // you can't make me
     }

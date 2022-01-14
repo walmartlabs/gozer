@@ -30,7 +30,7 @@ public abstract class X12ParsedLoop extends X12Loop {
     // and need way to handle that generically
     // (see Tare in ASN 856 for example)
     private List<X12Loop> parsedChildrenLoops;
-    
+
     // all the segments associated with the loop
     // should be parsed as attributes on the subclass
     // of the X12ParsedLoop
@@ -39,7 +39,7 @@ public abstract class X12ParsedLoop extends X12Loop {
     // (the MAN segment would be parsed on the Tare
     // but the PO4 would be unexpected & unparsed)
     private List<X12Segment> unparsedSegments;
-    
+
     /**
      * helper method to copy the attributes
      * from the unparsed loop to this object
@@ -51,7 +51,7 @@ public abstract class X12ParsedLoop extends X12Loop {
         this.setParentHierarchicalId(loop.getParentHierarchicalId());
         this.setSegments(loop.getSegments());
     }
-    
+
     /**
      * helper method to add {@link X12Segment} to list
      * @param segment
@@ -62,7 +62,7 @@ public abstract class X12ParsedLoop extends X12Loop {
         }
         unparsedSegments.add(segment);
     }
-    
+
     /**
      * helper method to add {@link X12Loop} to list
      * @param loop
@@ -73,7 +73,7 @@ public abstract class X12ParsedLoop extends X12Loop {
         }
         parsedChildrenLoops.add(loop);
     }
-    
+
     public List<X12Loop> getParsedChildrenLoops() {
         return parsedChildrenLoops;
     }

@@ -67,7 +67,7 @@ public final class N1PartyIdentificationParser {
                     break;
                 case REFReferenceInformation.IDENTIFIER:
                     n1.addReferenceInformation(REFReferenceInformationParser.parse(nextSegment));
-                    break;                    
+                    break;
                 default:
                     // assume any other identifier is a break out of the N1 loop
                     // and let the other parser deal with it

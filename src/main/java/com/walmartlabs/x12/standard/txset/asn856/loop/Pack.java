@@ -32,12 +32,12 @@ import java.util.List;
 
 /**
  * Represents the Pack level of information
- * 
+ *
  */
 public class Pack extends X12ParsedLoop {
 
     public static final String PACK_LOOP_CODE = "P";
-    
+
     /*
      * MAN: Marking
      */
@@ -66,17 +66,17 @@ public class Pack extends X12ParsedLoop {
      * LIN: Item Identification
      */
     private List<LINItemIdentification> itemIdentifications;
-    
+
     /**
      * returns true if the loop passed in is a Pack loop
      */
     public static boolean isPackLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, PACK_LOOP_CODE);
     }
-    
+
     /**
      * helper method to add TD1
-     * 
+     *
      * @param td1
      */
     public void addTD1CarrierDetail(TD1CarrierDetail td1) {
@@ -88,7 +88,7 @@ public class Pack extends X12ParsedLoop {
 
     /**
      * helper method to add LIN to list
-     * 
+     *
      * @param lin
      */
     public void addLINItemIdentification(LINItemIdentification lin) {
@@ -97,10 +97,10 @@ public class Pack extends X12ParsedLoop {
         }
         itemIdentifications.add(lin);
     }
-    
+
     /**
      * helper method to add PID to list
-     * 
+     *
      * @param pid
      */
     public void addPIDProductIdentification(PIDProductIdentification pid) {
@@ -109,10 +109,10 @@ public class Pack extends X12ParsedLoop {
         }
         productIdentifications.add(pid);
     }
-    
+
     /**
      * helper method to add MAN
-     * 
+     *
      * @param man
      */
     public void addMANMarkNumber(MANMarkNumber man) {
@@ -122,7 +122,7 @@ public class Pack extends X12ParsedLoop {
         manList.add(man);
     }
 
-    
+
     public PO4ItemPhysicalDetail getPo4() {
         return po4;
     }
@@ -178,5 +178,5 @@ public class Pack extends X12ParsedLoop {
     public void setTd1List(List<TD1CarrierDetail> td1List) {
         this.td1List = td1List;
     }
-    
+
 }

@@ -23,13 +23,13 @@ public final class DTMDateTimeReferenceParser {
 
     /**
      * parse the segment
-     * 
+     *
      * @param segment
      * @return
      */
     public static DTMDateTimeReference parse(X12Segment segment) {
         DTMDateTimeReference dtm = null;
-        
+
         if (segment != null) {
             String segmentIdentifier = segment.getIdentifier();
             if (DTMDateTimeReference.IDENTIFIER.equals(segmentIdentifier)) {
@@ -39,10 +39,10 @@ public final class DTMDateTimeReferenceParser {
                 dtm.setTime(segment.getElement(3));
             }
         }
-        
+
         return dtm;
     }
-    
+
 
     private DTMDateTimeReferenceParser() {
         // you can't make me

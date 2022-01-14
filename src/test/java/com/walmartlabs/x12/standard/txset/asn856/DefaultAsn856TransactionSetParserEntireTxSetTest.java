@@ -76,8 +76,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("20190523", asnTx.getShipmentDate());
         assertEquals("171543", asnTx.getShipmentTime());
         assertEquals("0002", asnTx.getHierarchicalStructureCode());
-        
-        assertTrue(asnTx.isLoopingValid());
+
         assertNull(asnTx.getLoopingErrors());
 
         this.verifyTheShipment(asnTx);
@@ -97,7 +96,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<TD1CarrierDetail> td1List = shipment.getTd1List();
         assertNotNull(td1List);
         assertEquals(1, td1List.size());
-        
+
         TD1CarrierDetail td1 = td1List.get(0);
         assertNotNull(td1);
         assertEquals("PLT94", td1.getRawPackagingCode());
@@ -106,30 +105,30 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<TD5CarrierDetail> td5List = shipment.getTd5List();
         assertNotNull(td5List);
         assertEquals(1, td5List.size());
-        
+
         TD5CarrierDetail td5 = td5List.get(0);
         assertNotNull(td5);
         assertEquals("SQCA", td5.getIdentificationCode());
-        
-        // TD3 
+
+        // TD3
         List<TD3CarrierDetail> td3List = shipment.getTd3List();
         assertNotNull(td3List);
         assertEquals(2, td3List.size());
-        
+
         TD3CarrierDetail td3 = td3List.get(0);
         assertNotNull(td3);
         assertEquals("TL", td3.getEquipmentDescriptionCode());
         assertEquals("ABCD", td3.getEquipmentInitial());
         assertEquals("07213567", td3.getEquipmentNumber());
         assertEquals("30394938483234", td3.getSealNumber());
-        
+
         td3 = td3List.get(1);
         assertNotNull(td3);
         assertEquals("TL", td3.getEquipmentDescriptionCode());
         assertEquals("YYZ", td3.getEquipmentInitial());
         assertEquals("98765", td3.getEquipmentNumber());
         assertNull(td3.getSealNumber());
-        
+
         // REF(s)
         List<REFReferenceInformation> refs = shipment.getRefList();
         assertNotNull(refs);
@@ -139,17 +138,17 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(ref);
         assertEquals("UCB", ref.getReferenceIdentificationQualifier());
         assertEquals("711170010491361", ref.getReferenceIdentification());
-        
+
         ref = refs.get(1);
         assertNotNull(ref);
         assertEquals("AO", ref.getReferenceIdentificationQualifier());
         assertEquals("42", ref.getReferenceIdentification());
-        
+
         // DTM(s)
         List<DTMDateTimeReference> dtmList = shipment.getDtmReferences();
         assertNotNull(dtmList);
         assertEquals(2, dtmList.size());
-        
+
         DTMDateTimeReference dtm = dtmList.get(0);
         assertNotNull(dtm);
         assertEquals("011", dtm.getDateTimeQualifier());
@@ -176,11 +175,11 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("WALMART CASA GRANDE PERISHABLE 7013", n1One.getName());
         assertEquals("UL", n1One.getIdentificationCodeQualifier());
         assertEquals("0078742042930", n1One.getIdentificationCode());
-        
+
         List<N3PartyLocation> n3List = n1One.getN3List();
         assertNotNull(n3List);
         assertEquals(1, n3List.size());
-        
+
         N3PartyLocation n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("868 W. PETERS ROAD", n3.getAddressInfoOne());
@@ -197,11 +196,11 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("RESER'S FINE FOODS, INC.", n1Two.getName());
         assertEquals("UL", n1Two.getIdentificationCodeQualifier());
         assertEquals("0090266420000", n1Two.getIdentificationCode());
-        
+
         n3List = n1Two.getN3List();
         assertNotNull(n3List);
         assertEquals(1, n3List.size());
-        
+
         n3 = n3List.get(0);
         assertNotNull(n3);
         assertEquals("15570 S.W. JENKINS ROAD", n3.getAddressInfoOne());
@@ -213,11 +212,11 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
         assertNotNull(shipmentChildLoops);
         assertEquals(2, shipmentChildLoops.size());
-        
-        // always have access to 
-        // segments even though 
+
+        // always have access to
+        // segments even though
         // it is easier to use the
-        // X12Loop instance 
+        // X12Loop instance
         List<X12Segment> shipmentSegments = shipment.getSegments();
         assertNotNull(shipmentSegments);
         assertEquals(15, shipmentSegments.size());
@@ -256,17 +255,17 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<X12Loop> orderChildLoops = order.getParsedChildrenLoops();
         assertNotNull(orderChildLoops);
         assertEquals(1, orderChildLoops.size());
-        
-        // always have access to 
-        // segments even though 
+
+        // always have access to
+        // segments even though
         // it is easier to use the
-        // X12Loop instance 
+        // X12Loop instance
         List<X12Segment> firtOrderSegments = order.getSegments();
         assertNotNull(firtOrderSegments);
         assertEquals(2, firtOrderSegments.size());
         assertEquals("PRF*0391494868", firtOrderSegments.get(0).toString());
         assertEquals("REF*IA*579284804", firtOrderSegments.get(1).toString());
-        
+
 
         //
         // item
@@ -320,7 +319,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<MANMarkNumber> manList = pack.getManList();
         assertNotNull(manList);
         assertEquals(1, manList.size());
-        
+
         MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
@@ -338,7 +337,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         manList = pack.getManList();
         assertNotNull(manList);
         assertEquals(1, manList.size());
-        
+
         man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
@@ -399,12 +398,12 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         List<MANMarkNumber> manList = tare.getManList();
         assertNotNull(manList);
         assertEquals(2, manList.size());
-        
+
         MANMarkNumber man = manList.get(0);
         assertNotNull(man);
         assertEquals("GM", man.getQualifier());
         assertEquals("00100700302232310393", man.getNumber());
-        
+
         man = manList.get(1);
         assertNotNull(man);
         assertEquals("CP", man.getQualifier());
@@ -426,12 +425,12 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         manList = pack.getManList();
         assertNotNull(manList);
         assertEquals(2, manList.size());
-        
+
         man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916933", man.getNumber());
-        
+
         man = manList.get(1);
         assertNotNull(man);
         assertEquals("CP", man.getQualifier());
@@ -522,7 +521,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         manList = pack.getManList();
         assertNotNull(manList);
         assertEquals(1, manList.size());
-        
+
         man = manList.get(0);
         assertNotNull(man);
         assertEquals("UC", man.getQualifier());

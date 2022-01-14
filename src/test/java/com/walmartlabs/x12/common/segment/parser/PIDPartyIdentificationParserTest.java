@@ -47,7 +47,7 @@ public class PIDPartyIdentificationParserTest {
         PIDProductIdentification pid = PIDPartyIdentificationParser.parse(segment);
         assertNull(pid);
     }
-    
+
     @Test
     public void test_parse_segment() {
         X12Segment segment = new X12Segment("PID*F*MSG***PRODUCT OF USA-CALIFORNIA AND CHILE");

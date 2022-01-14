@@ -38,11 +38,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("MIDDLE*2");
         segmentList.add(segment);
         segment = new X12Segment("BOTTOM*3");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertTrue(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
     }
-    
+
     @Test
     public void test_isValidEnvelope_fails_missing_bottom() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -51,11 +51,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("BOTTOM*2");
         segmentList.add(segment);
         segment = new X12Segment("MIDDLE*3");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
     }
-    
+
     @Test
     public void test_isValidEnvelope_fails_missing_top() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -64,11 +64,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("MIDDLE*2");
         segmentList.add(segment);
         segment = new X12Segment("BOTTOM*3");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
     }
-    
+
     @Test
     public void test_isValidEnvelope_fails_missing_both() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -77,23 +77,23 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("MIDDLE*2");
         segmentList.add(segment);
         segment = new X12Segment("ANOTHER*3");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
     }
-    
+
     @Test
     public void test_isValidEnvelope_null() {
         List<X12Segment> segmentList = null;
         assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
     }
-    
+
     @Test
     public void test_isValidEnvelope_empty() {
         List<X12Segment> segmentList = Collections.emptyList();
         assertFalse(X12ParsingUtil.isValidEnvelope(segmentList, "TOP", "BOTTOM"));
     }
-    
+
     @Test
     public void test_verifyTransactionSetType() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -102,11 +102,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("BSN*00****0001");
         segmentList.add(segment);
         segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertTrue(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
     }
-    
+
     @Test
     public void test_verifyTransactionSetType_wrong_type() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -115,11 +115,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("BSN*00****0001");
         segmentList.add(segment);
         segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "999"));
     }
-    
+
     @Test
     public void test_verifyTransactionSetType_partial_header() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -128,11 +128,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("BSN*00****0001");
         segmentList.add(segment);
         segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "999"));
     }
-    
+
     @Test
     public void test_verifyTransactionSetType_wrong_first_line() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -141,11 +141,11 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("BSN*00****0001");
         segmentList.add(segment);
         segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
     }
-    
+
     @Test
     public void test_verifyTransactionSetType_null_type() {
         List<X12Segment> segmentList = new ArrayList<>();
@@ -154,23 +154,23 @@ public class X12ParsingUtilTest {
         segment = new X12Segment("BSN*00****0001");
         segmentList.add(segment);
         segment = new X12Segment("SE*1*0001");
-        segmentList.add(segment);  
-        
+        segmentList.add(segment);
+
         assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, null));
     }
-    
+
     @Test
     public void test_verifyTransactionSetType_null() {
         List<X12Segment> segmentList = null;
         assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
     }
-    
+
     @Test
     public void test_verifyTransactionSetType_empty() {
         List<X12Segment> segmentList = Collections.emptyList();
         assertFalse(X12ParsingUtil.verifyTransactionSetType(segmentList, "856"));
     }
-    
+
     @Test
     public void test_parseVersion() {
         assertNull(X12ParsingUtil.parseVersion(null));

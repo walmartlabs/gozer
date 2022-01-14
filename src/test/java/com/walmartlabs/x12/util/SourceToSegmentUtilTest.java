@@ -36,7 +36,6 @@ import static org.junit.Assert.fail;
 public class SourceToSegmentUtilTest {
 
     private String sourceDataFromFile;
-    private Object object;
 
     @Before
     public void init() throws IOException {
@@ -46,7 +45,7 @@ public class SourceToSegmentUtilTest {
     @Test
     public void test_splitSourceDataIntoSegments_Null() {
         String sourceData = null;
-        
+
         List<X12Segment> segmentsList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
         assertNotNull(segmentsList);
         assertEquals(0, segmentsList.size());
@@ -55,16 +54,16 @@ public class SourceToSegmentUtilTest {
     @Test
     public void test_splitSourceDataIntoSegments_Empty() {
         String sourceData = "";
-        
+
         List<X12Segment> segmentsList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
         assertNotNull(segmentsList);
         assertEquals(0, segmentsList.size());
     }
-    
+
     @Test
     public void test_splitSourceDataIntoSegments_OneSegment() {
         String sourceData = "DXE*1*2";
-        
+
         List<X12Segment> segmentsList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
         assertNotNull(segmentsList);
         assertEquals(1, segmentsList.size());
@@ -79,7 +78,7 @@ public class SourceToSegmentUtilTest {
         assertEquals("DXS*9251230013*DX*004010UCS*1*9254850000", segmentsList.get(0).toString());
         assertEquals("DXE*1*2", segmentsList.get(21).toString());
     }
-    
+
     @Test
     public void test_splitSourceDataIntoSegments_null_delimiter() {
         try {
@@ -90,7 +89,7 @@ public class SourceToSegmentUtilTest {
             fail("unexpected exception");
         }
     }
-    
+
     @Test
     public void test_splitSourceDataIntoSegments_empty_delimiter() {
         try {
@@ -101,7 +100,7 @@ public class SourceToSegmentUtilTest {
             fail("unexpected exception");
         }
     }
-    
+
     @Test
     public void test_splitSourceDataIntoSegments_partial_delimiter() {
         try {
@@ -112,14 +111,14 @@ public class SourceToSegmentUtilTest {
             fail("unexpected exception");
         }
     }
-    
+
     @Test
     public void test_findElementDelimiterCharacter_null() {
         String sourceData = null;
         Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceData);
         assertNull(delimiterChar);
     }
-    
+
     @Test
     public void test_findElementDelimiterCharacter_sourceFile() {
         Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceDataFromFile);
@@ -134,7 +133,7 @@ public class SourceToSegmentUtilTest {
         assertNotNull(delimiterChar);
         assertEquals(new Character('*'), delimiterChar);
     }
-    
+
     @Test
     public void test_findElementDelimiterCharacter_sourceIsaSegmentNonDefaultChar() {
         String sourceData = "ISA~01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>";
@@ -142,14 +141,14 @@ public class SourceToSegmentUtilTest {
         assertNotNull(delimiterChar);
         assertEquals(new Character('~'), delimiterChar);
     }
-    
+
     @Test
     public void test_findElementDelimiterCharacter_sourceShorterThanExpected() {
         String sourceData = "ISA";
         Character delimiterChar = this.invokeFindElementDelimiterCharacter(sourceData);
         assertNull(delimiterChar);
     }
-    
+
     private Character invokeFindElementDelimiterCharacter(String sourceData) {
         Character delimiterChar = null;
         try {

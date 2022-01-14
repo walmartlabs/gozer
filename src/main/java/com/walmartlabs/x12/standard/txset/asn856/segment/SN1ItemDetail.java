@@ -17,7 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856.segment;
 
 /**
- * 
+ *
  * Purpose: To specify line-item detail relative to shipment
  *
  */

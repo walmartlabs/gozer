@@ -221,8 +221,8 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
     protected X12ErrorDetail checkAllowanceAmount(Integer dexVersion, Dex894Allowance dexAllowance) {
         X12ErrorDetail detail = null;
 
-        if (dexAllowance.getAllowanceAmount() == null 
-            && dexAllowance.getAllowancePercent() == null 
+        if (dexAllowance.getAllowanceAmount() == null
+            && dexAllowance.getAllowancePercent() == null
             && dexAllowance.getAllowanceRate() == null) {
 
             detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7205", "Must have allowance rate, percent, or amount");

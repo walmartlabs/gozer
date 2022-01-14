@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Represents the Order level of information
- * 
+ *
  */
 public class Order extends X12ParsedLoop {
 
@@ -55,10 +55,10 @@ public class Order extends X12ParsedLoop {
     public static boolean isOrderLoop(X12Loop loop) {
         return X12Loop.isLoopWithCode(loop, ORDER_LOOP_CODE);
     }
-    
+
     /**
      * helper method to add TD1
-     * 
+     *
      * @param td1
      */
     public void addTD1CarrierDetail(TD1CarrierDetail td1) {
@@ -70,7 +70,7 @@ public class Order extends X12ParsedLoop {
 
     /**
      * helper method to add REF
-     * 
+     *
      * @param ref
      */
     public void addReferenceInformation(REFReferenceInformation ref) {
@@ -103,5 +103,5 @@ public class Order extends X12ParsedLoop {
     public void setTd1List(List<TD1CarrierDetail> td1List) {
         this.td1List = td1List;
     }
-    
+
 }

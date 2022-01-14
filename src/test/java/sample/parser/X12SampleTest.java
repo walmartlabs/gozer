@@ -63,8 +63,8 @@ public class X12SampleTest {
         Set<X12ErrorDetail> errors = defaultValidator.validate(x12);
         assertNotNull(errors);
         assertEquals(1, errors.size());
-        
-        X12ErrorDetail x12Error = new ArrayList<X12ErrorDetail>(errors).get(0);
+
+        X12ErrorDetail x12Error = new ArrayList<>(errors).get(0);
         assertNotNull(x12Error);
         assertEquals("TST", x12Error.getSegmentId());
         assertEquals("01", x12Error.getElementId());
@@ -72,19 +72,19 @@ public class X12SampleTest {
 
         assertEquals(null, ((SampleX12Document) x12).getFunctionalId());
     }
-    
+
     @Test
     public void test_parse_and_validate_failed_bad_delimiter() {
         try {
             defaultParser.parse("BOO*123");
             fail("expected exception!");
-            
+
         } catch (X12ParserException e) {
             assertEquals("invalid functional group code", e.getMessage());
-            
+
             Throwable cause = e.getCause();
             assertNull(cause);
-            
+
             X12ErrorDetail x12Error = e.getErrorDetail();
             assertNotNull(x12Error);
             assertEquals("TST", x12Error.getSegmentId());
@@ -92,5 +92,5 @@ public class X12SampleTest {
             assertEquals("invalid functional group code", x12Error.getMessage());
         }
     }
-    
+
 }

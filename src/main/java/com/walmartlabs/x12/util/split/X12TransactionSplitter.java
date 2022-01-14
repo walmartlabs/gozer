@@ -32,12 +32,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 
- * Given an EDI message 
+ *
+ * Given an EDI message
  * Break it up into multiple messages based on the ST/SE transaction
- * 
+ *
  * This has bare-bones validation
- * 
+ *
  * Each transaction will have the following:
  * - the ISA header
  * - the GS header it is part of
@@ -47,23 +47,23 @@ import java.util.List;
  *
  * Note: no modifications will be made to any of the segments
  * after it is split. This could impact some validations.
- * 
+ *
  * Anything that needs to be verified on the entire EDI
  * message should be registered as an {@link X12Rule} in the splitter.
- * 
+ *
  */
 public class X12TransactionSplitter {
-    
+
     private static final String EOL = "\r\n";
-    
+
     private List<X12Rule> rules;
-    
+
     /**
      * split the EDI message (raw file)
-     * so that each transaction 
-     * is a separate "document" w/ the original 
+     * so that each transaction
+     * is a separate "document" w/ the original
      * ISA and group headers and trailers
-     * 
+     *
      * @param sourceData
      * @return the list of EDI transactions
      * @throws X12ParserException
@@ -76,14 +76,14 @@ public class X12TransactionSplitter {
             return this.split(segmentList);
         }
     }
-    
+
     /**
      * split the EDI message (list of X12Segments)
-     * so that each transaction 
-     * is a separate "document" w/ the original 
+     * so that each transaction
+     * is a separate "document" w/ the original
      * ISA and group headers and trailers
-     * 
-     * @param segmentList 
+     *
+     * @param segmentList
      * @return the list of EDI transactions
      * @throws X12ParserException
      */
@@ -95,14 +95,14 @@ public class X12TransactionSplitter {
             // on the entire EDI message
             // using X12Rule set provided
             this.runRules(segmentList);
-            
+
             // parse and split
             // the EDI message
             List<TransactionHolder> transactionHolders = this.doParse(segmentList);
             return this.doSplit(transactionHolders);
         }
     }
-    
+
     /**
      * add an {@link X12Rule} to the splitter
      * @param rule
@@ -111,28 +111,28 @@ public class X12TransactionSplitter {
         if (this.rules == null) {
             this.rules = new ArrayList<>();
         }
-        
+
         this.rules.add(rule);
     }
-    
+
     /**
      * remove all of the rules
      */
     public void resetX12Rules() {
         rules = null;
     }
-    
+
     private List<TransactionHolder> doParse(List<X12Segment> segmentList) {
         List<TransactionHolder> transactionHolders = new ArrayList<>();
-        
+
         X12Segment isaHeader = null;
         X12Segment iseTrailer = null;
-        
+
         SegmentIterator segments = new SegmentIterator(segmentList);
 
         X12Segment currentSegment = segments.next();
         String currentSegmentId = currentSegment.getIdentifier();
-        
+
         //
         // first segment better be ISA
         //
@@ -142,7 +142,7 @@ public class X12TransactionSplitter {
             // error - should be start of ISA envelope
             this.throwParserException(StandardX12Parser.ENVELOPE_HEADER_ID, currentSegmentId);
         }
-        
+
         //
         // last segment better be ISE
         //
@@ -153,12 +153,12 @@ public class X12TransactionSplitter {
             // error - should be start of ISA envelope
             this.throwParserException(StandardX12Parser.ENVELOPE_TRAILER_ID, currentSegmentId);
         }
-        
+
         while (segments.hasNext()) {
             // manage each group
             List<TransactionHolder> transactionsInGroup = this.doGroup(segments);
             transactionHolders.addAll(transactionsInGroup);
-            
+
             // what's next
             // could be a GS or IEA
             if (segments.hasNext()) {
@@ -179,42 +179,42 @@ public class X12TransactionSplitter {
         }
 
         this.populateIsaEnvelope(isaHeader, iseTrailer, transactionHolders);
-        
+
         return transactionHolders;
     }
-    
+
     private void populateIsaEnvelope(X12Segment isaHeader, X12Segment iseTrailer,
         List<TransactionHolder> transactionHolders) {
 
         this.alterEnvelopeTrailerBasedOnSplit(iseTrailer);
-        
+
         transactionHolders.forEach(txHolder -> {
             txHolder.setIsaHeader(isaHeader);
             txHolder.setIseTrailer(iseTrailer);
         });
     }
-    
+
     private List<TransactionHolder> doGroup(SegmentIterator segments) {
         List<TransactionHolder> transactionsInGroup = new ArrayList<>();
-        
+
         X12Segment groupHeader = null;
-        
+
         X12Segment currentSegment = segments.next();
         String currentSegmentId = currentSegment.getIdentifier();
-        
+
         //
         // first segment better be GS (start of group)
         //
         if (StandardX12Parser.GROUP_HEADER_ID.equals(currentSegmentId)) {
             groupHeader = currentSegment;
-            
+
             // loop until we find the GE (end of group)
             while (segments.hasNext()) {
                 // handle the start of the transaction
                 TransactionHolder transactionHolder = this.doTransaction(segments);
                 transactionHolder.setGsHeader(groupHeader);
                 transactionsInGroup.add(transactionHolder);
-                
+
                 // what's next?
                 // after a transaction it
                 // could be an ST or GE
@@ -223,17 +223,17 @@ public class X12TransactionSplitter {
                     currentSegmentId = currentSegment.getIdentifier();
                     if (StandardX12Parser.GROUP_TRAILER_ID.equals(currentSegmentId)) {
                         // end of the group
-                        
+
                         X12Segment groupTrailer = currentSegment;
-                        
+
                         // extension point
                         this.alterGroupTrailerBasedOnSplit(groupTrailer);
-                        
+
                         // add group trailer to all transactions
                         transactionsInGroup.forEach(txHolder -> {
                             txHolder.setGeTrailer(groupTrailer);
                         });
-                        
+
                         break;
                     } else {
                         // not the end of group
@@ -247,108 +247,108 @@ public class X12TransactionSplitter {
                     this.throwParserExceptionUnexpectedEnd(currentSegmentId);
                 }
             }
-            
-        } else { 
+
+        } else {
             // error
             this.throwParserException("GS", currentSegmentId);
         }
-        
+
         return transactionsInGroup;
     }
-    
+
     /**
-     * an extension point for consumers that 
-     * may want to alter the Group Trailer segment 
+     * an extension point for consumers that
+     * may want to alter the Group Trailer segment
      * based on the splitting that occurred
-     * 
+     *
      * @param groupTrailer
      * @param transactionsInGroup
      */
     protected void alterGroupTrailerBasedOnSplit(X12Segment groupTrailer) {
         // a consumer could decide to replace the transaction count
-        // presumably by overwriting the document value w/ a one 
+        // presumably by overwriting the document value w/ a one
         // since the splitting will be done on the ST/SE boundary
     }
-    
+
     /**
-     * an extension point for consumers that 
-     * may want to alter the Envelope Trailer segment 
+     * an extension point for consumers that
+     * may want to alter the Envelope Trailer segment
      * based on the splitting that occurred
-     * 
+     *
      * @param envelopeTrailer
      */
     protected void alterEnvelopeTrailerBasedOnSplit(X12Segment envelopeTrailer) {
         // a consumer could decide to replace the group count
-        // presumably by overwriting the document value w/ a one 
+        // presumably by overwriting the document value w/ a one
         // since the splitting will be done on the ST/SE boundary
     }
-    
+
     private TransactionHolder doTransaction(SegmentIterator segments) {
-        
+
         TransactionHolder transactionHolder = new TransactionHolder();
-        
-        // start collecting transaction 
+
+        // start collecting transaction
         // segments until we hit the SE (end of transaction)
         // or run out of segments
         X12Segment currentSegment = segments.next();
         String currentSegmentId = currentSegment.getIdentifier();
-        
+
         //
         // first segment better be ST (start of transaction)
         //
         if (X12TransactionSet.TRANSACTION_SET_HEADER.equals(currentSegmentId)) {
             // add the header
             transactionHolder.addSegmentToTransaction(currentSegment);
-            
+
             // loop until we find the SE (end of transaction)
             while (segments.hasNext() && ! X12TransactionSet.TRANSACTION_SET_TRAILER.equals(currentSegmentId)) {
                 currentSegment = segments.next();
                 currentSegmentId = currentSegment.getIdentifier();
                 transactionHolder.addSegmentToTransaction(currentSegment);
             }
-            
+
         } else {
             // error
             this.throwParserException(X12TransactionSet.TRANSACTION_SET_HEADER, currentSegmentId);
         }
-        
+
         //
-        // we should have broken out of loop 
+        // we should have broken out of loop
         // because the current segment is SE (end of transaction)
         //
         if (!X12TransactionSet.TRANSACTION_SET_TRAILER.equals(currentSegmentId)) {
             // error
             this.throwParserException(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegmentId);
         }
-    
+
         return transactionHolder;
     }
-    
+
     private List<String> doSplit(List<TransactionHolder> transactionHolders) {
-        List<String> transactions = new ArrayList<>();  
-        
+        List<String> transactions = new ArrayList<>();
+
         transactionHolders.forEach(transaction -> {
-            
+
             // add headers
             StringBuilder sb = new StringBuilder();
             sb.append(transaction.getIsaHeader().toString()).append(EOL);
             sb.append(transaction.getGsHeader().toString()).append(EOL);
-            
+
             // add each line of transaction
             transaction.getTransaction().forEach(txSegment -> {
                 sb.append(txSegment.toString()).append(EOL);
             });
-            
+
             // add trailers
             sb.append(transaction.getGeTrailer().toString()).append(EOL);
             sb.append(transaction.getIseTrailer().toString());
-            
+
             transactions.add(sb.toString());
         });
-        
+
         return transactions;
     }
-    
+
     private void runRules(List<X12Segment> segmentList) {
         if (rules != null) {
             rules.forEach(rule -> {
@@ -358,26 +358,26 @@ public class X12TransactionSplitter {
             });
         }
     }
-    
+
     private void throwParserException(String expectedSegmentId, String actualSegmentId) {
         StringBuilder sb = new StringBuilder();
         sb.append("expected ").append(expectedSegmentId);
         sb.append(" segment but got ").append(actualSegmentId);
         throw new X12ParserException(new X12ErrorDetail(expectedSegmentId, "", sb.toString()));
     }
-    
+
     private void throwParserExceptionUnexpectedEnd(String actualSegmentId) {
         StringBuilder sb = new StringBuilder();
         sb.append("unexpectedly ran out of segments - last segment id (").append(actualSegmentId).append(")");
         throw new X12ParserException(new X12ErrorDetail("", "", sb.toString()));
     }
-    
+
     /**
      * allow construction w/o rules
      */
     public X12TransactionSplitter() {
     }
-    
+
     /**
      * allow construction w/ rules
      */
@@ -385,15 +385,15 @@ public class X12TransactionSplitter {
         this.rules = rules;
     }
 
-    
+
     public class TransactionHolder {
-   
+
         private X12Segment isaHeader;
         private X12Segment iseTrailer;
-        
+
         private X12Segment gsHeader;
         private X12Segment geTrailer;
-        
+
         private List<X12Segment> transactionSegmentList;
 
         public X12Segment getIsaHeader() {
@@ -435,7 +435,7 @@ public class X12TransactionSplitter {
         public void setTransaction(List<X12Segment> transaction) {
             this.transactionSegmentList = transaction;
         }
-        
+
         /**
          */
         public void addSegmentToTransaction(X12Segment segment) {
@@ -444,6 +444,6 @@ public class X12TransactionSplitter {
             }
             transactionSegmentList.add(segment);
         }
-        
+
     }
 }

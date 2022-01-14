@@ -29,13 +29,13 @@ public class ShipmentTest {
         X12Loop loop = null;
         assertFalse(Shipment.isShipmentLoop(loop));
     }
-    
+
     @Test
     public void test_shipment_loop_check_no_code() {
         X12Loop loop = new X12Loop();
         assertFalse(Shipment.isShipmentLoop(loop));
     }
-    
+
     @Test
     public void test_shipment_loop_check_wrong_code() {
         X12Loop loop = new X12Loop();
@@ -43,7 +43,7 @@ public class ShipmentTest {
         loop.setCode("X");
         assertFalse(Shipment.isShipmentLoop(loop));
     }
-    
+
     @Test
     public void test_shipment_loop_check() {
         X12Loop loop = new X12Loop();

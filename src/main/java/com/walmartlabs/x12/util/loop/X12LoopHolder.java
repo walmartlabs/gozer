@@ -26,12 +26,12 @@ import java.util.List;
 public class X12LoopHolder {
 
     private List<X12Loop> loops;
-    
+
     private List<X12ErrorDetail> loopErrors;
 
     /**
      * helper method to add loop error
-     * 
+     *
      * @param errorDetail
      */
     public void addX12ErrorDetail(X12ErrorDetail errorDetail) {
@@ -40,7 +40,7 @@ public class X12LoopHolder {
         }
         loopErrors.add(errorDetail);
     }
-    
+
     public List<X12Loop> getLoops() {
         return loops;
     }
@@ -56,6 +56,6 @@ public class X12LoopHolder {
     public void setLoopErrors(List<X12ErrorDetail> loopErrors) {
         this.loopErrors = loopErrors;
     }
-    
-    
+
+
 }

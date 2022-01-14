@@ -28,15 +28,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class Asn856ParserTest {
 
@@ -87,7 +83,7 @@ public class Asn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-        
+
         // Groups
         assertEquals(new Integer(1), isa.getNumberOfGroups());
         assertEquals("000000049", isa.getTrailerInterchangeControlNumber());
@@ -105,29 +101,28 @@ public class Asn856ParserTest {
         AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
         assertEquals("856", asnTx.getTransactionSetIdentifierCode());
         assertEquals("0008", asnTx.getHeaderControlNumber());
-        
-        assertTrue(asnTx.isLoopingValid());
+
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertNull(loopErrors);
-        
+
         // BSN
         assertEquals("14", asnTx.getPurposeCode());
         assertEquals("829716", asnTx.getShipmentIdentification());
         assertEquals("20111206", asnTx.getShipmentDate());
         assertEquals("142428", asnTx.getShipmentTime());
         assertEquals("0002", asnTx.getHierarchicalStructureCode());
-        
+
         // SE
         assertEquals(Integer.valueOf(31), asnTx.getExpectedNumberOfSegments());
         assertEquals("0008", asnTx.getTrailerControlNumber());
     }
-    
+
 
     @Test
     public void test_Parsing_Asn856_badLoops() throws IOException {
         String sourceData = X12DocumentTestData.readFile("src/test/resources/asn856/asn856.txt");
         sourceData = sourceData.replace("HL*2*1*O", "HL*2*99*O");
-        
+
         StandardX12Document x12 = asnParser.parse(sourceData);
         assertNotNull(x12);
 
@@ -150,7 +145,7 @@ public class Asn856ParserTest {
         assertEquals("0", isa.getAcknowledgementRequested());
         assertEquals("P", isa.getUsageIndicator());
         assertEquals(">", isa.getElementSeparator());
-        
+
         // Groups
         assertEquals(new Integer(1), isa.getNumberOfGroups());
         assertEquals("000000049", isa.getTrailerInterchangeControlNumber());
@@ -168,9 +163,8 @@ public class Asn856ParserTest {
         AsnTransactionSet asnTx = (AsnTransactionSet) txForGroupOne.get(0);
         assertEquals("856", asnTx.getTransactionSetIdentifierCode());
         assertEquals("0008", asnTx.getHeaderControlNumber());
-        
+
         // check loops
-        assertFalse(asnTx.isLoopingValid());
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertNotNull(loopErrors);
         assertEquals(1, loopErrors.size());
@@ -179,17 +173,17 @@ public class Asn856ParserTest {
         assertNull(loopError.getElementId());
         assertNull(loopError.getLineNumber());
         assertEquals("HL segment with id (2) is missing parent (99)", loopError.getMessage());
-        
+
         // BSN
         assertEquals("14", asnTx.getPurposeCode());
         assertEquals("829716", asnTx.getShipmentIdentification());
         assertEquals("20111206", asnTx.getShipmentDate());
         assertEquals("142428", asnTx.getShipmentTime());
         assertEquals("0002", asnTx.getHierarchicalStructureCode());
-        
+
         // SE
         assertEquals(Integer.valueOf(31), asnTx.getExpectedNumberOfSegments());
         assertEquals("0008", asnTx.getTrailerControlNumber());
     }
-    
+
 }

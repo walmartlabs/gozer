@@ -30,11 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * represents the Batch Loop 
+ * represents the Batch Loop
  *
  */
 public class Batch extends X12ParsedLoop {
-    
+
     public static final String BATCH_LOOP_CODE = "ZZ";
 
     /*
@@ -61,7 +61,7 @@ public class Batch extends X12ParsedLoop {
      * REF
      */
     private List<REFReferenceInformation> refList;
-    
+
     /**
      * returns true if the loop passed in is a Batch loop
      */
@@ -71,7 +71,7 @@ public class Batch extends X12ParsedLoop {
 
     /**
      * helper method to add REF
-     * 
+     *
      * @param ref
      */
     public void addReferenceInformation(REFReferenceInformation ref) {
@@ -80,10 +80,10 @@ public class Batch extends X12ParsedLoop {
         }
         refList.add(ref);
     }
-    
+
     /**
      * helper method to add LIN to list
-     * 
+     *
      * @param lin
      */
     public void addLINItemIdentification(LINItemIdentification lin) {
@@ -92,10 +92,10 @@ public class Batch extends X12ParsedLoop {
         }
         itemIdentifications.add(lin);
     }
-    
+
     /**
      * helper method to add PID to list
-     * 
+     *
      * @param pid
      */
     public void addPIDProductIdentification(PIDProductIdentification pid) {
@@ -104,7 +104,7 @@ public class Batch extends X12ParsedLoop {
         }
         productIdentifications.add(pid);
     }
-    
+
     /**
      * helper method to add N1 to list
      * @param n1
@@ -115,7 +115,7 @@ public class Batch extends X12ParsedLoop {
         }
         n1PartyIdentifications.add(n1);
     }
-    
+
     /**
      * helper method to add DTM to list
      * @param dtm
@@ -166,7 +166,7 @@ public class Batch extends X12ParsedLoop {
     public void setRefList(List<REFReferenceInformation> refList) {
         this.refList = refList;
     }
-    
+
     public List<DTMDateTimeReference> getDtmReferences() {
         return dtmReferences;
     }
@@ -174,5 +174,5 @@ public class Batch extends X12ParsedLoop {
     public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
         this.dtmReferences = dtmReferences;
     }
-    
+
 }

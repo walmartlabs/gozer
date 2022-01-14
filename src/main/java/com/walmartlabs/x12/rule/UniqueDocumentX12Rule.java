@@ -27,14 +27,14 @@ import java.util.Set;
 
 /**
  * turns out that different documents
- * have the document number and date in 
+ * have the document number and date in
  * different spots on the segment line
- * 
+ *
  * for example the document number
- * on the ASN can be found at BSN02 
- * but the document number 
+ * on the ASN can be found at BSN02
+ * but the document number
  * on the PO can be found at BEG03
- * 
+ *
  * therefore this rule can be configured
  * to look for a specific identifier
  * and will take two locations
@@ -46,13 +46,13 @@ public class UniqueDocumentX12Rule implements X12Rule {
     private final String segmentId;
     private final int documentNumberIndex;
     private final int documentDateIndex;
-    
+
     public UniqueDocumentX12Rule(String segmentId, int documentNumberIndex, int documentDateIndex) {
         this.segmentId = segmentId;
         this.documentNumberIndex = documentNumberIndex;
         this.documentDateIndex = documentDateIndex;
     }
-    
+
     @Override
     public void verify(List<X12Segment> segmentList) {
         Set<String> documentNumbers = new HashSet<>();
@@ -69,7 +69,7 @@ public class UniqueDocumentX12Rule implements X12Rule {
                 }
             }
         }
-        
+
     }
 
 }

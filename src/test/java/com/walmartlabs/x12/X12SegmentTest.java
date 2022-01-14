@@ -37,7 +37,7 @@ public class X12SegmentTest {
         assertEquals("9254850000", segment.getElement(5));
         assertEquals(null, segment.getElement(6));
     }
-    
+
     @Test
     public void test_SegmentId_ThreeCharacter_DifferentDelimiter() {
         X12Segment segment = new X12Segment("DXS_9251230013_DX_004010UCS_1_9254850000", '_');
@@ -68,7 +68,7 @@ public class X12SegmentTest {
         assertEquals("9254850000", segment.getElement(5));
         assertEquals(null, segment.getElement(6));
     }
-    
+
     @Test
     public void test_SegmentId_None() {
         X12Segment segment = new X12Segment("*ST*9251230013*DX*004010UCS*1*9254850000");
@@ -84,7 +84,7 @@ public class X12SegmentTest {
         assertEquals("9254850000", segment.getElement(6));
         assertEquals(null, segment.getElement(7));
     }
-    
+
     @Test
     public void test_SegmentId_DifferentDelimiter_null() {
         X12Segment segment = new X12Segment("FOO_BAR", null);
@@ -92,7 +92,7 @@ public class X12SegmentTest {
         assertEquals(1, segment.segmentSize());
         assertEquals("FOO_BAR", segment.getIdentifier());
     }
-    
+
     @Test
     public void test_SegmentId_DifferentDelimiter_Empty() {
         X12Segment segment = new X12Segment("FOO_BAR", Character.MIN_VALUE);
@@ -100,7 +100,7 @@ public class X12SegmentTest {
         assertEquals(1, segment.segmentSize());
         assertEquals("FOO_BAR", segment.getIdentifier());
     }
-    
+
     @Test
     public void test_SegmentId_DifferentDelimiter_UnderScore() {
         X12Segment segment = new X12Segment("FOO_BAR", '_');
@@ -109,7 +109,7 @@ public class X12SegmentTest {
         assertEquals("FOO", segment.getIdentifier());
         assertEquals("BAR", segment.getElement(1));
     }
-    
+
     @Test
     public void test_SegmentId_DifferentDelimiter_Number() {
         X12Segment segment = new X12Segment("FOO0BAR", '0');
@@ -118,7 +118,7 @@ public class X12SegmentTest {
         assertEquals("FOO", segment.getIdentifier());
         assertEquals("BAR", segment.getElement(1));
     }
-    
+
     @Test
     public void test_SegmentId_DifferentDelimiter_Letter() {
         X12Segment segment = new X12Segment("HELLO", 'L');
