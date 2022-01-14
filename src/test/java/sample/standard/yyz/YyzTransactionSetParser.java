@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12.testing.util.txset.yyz;
+package sample.standard.yyz;
 
 import com.walmartlabs.x12.SegmentIterator;
 import com.walmartlabs.x12.X12Segment;

@@ -53,14 +53,14 @@ public class DefaultAsn856TransactionSetParserTest {
     @Test
     public void test_handlesTransactionSet() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = this.getTestSegments();
+        List<X12Segment> segments = this.getTransactionSetSegments();
         assertTrue(txParser.handlesTransactionSet(segments, x12Group));
     }
 
     @Test
     public void test_handlesTransactionSet_fails_invalid_envelope() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = this.getTestSegments();
+        List<X12Segment> segments = this.getTransactionSetSegments();
         // remove the last segment (SE)
         segments.remove(segments.size() - 1);
         assertFalse(txParser.handlesTransactionSet(segments, x12Group));
@@ -69,7 +69,7 @@ public class DefaultAsn856TransactionSetParserTest {
     @Test
     public void test_handlesTransactionSet_OnlyEnvelope() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = this.getEnvelopeOnly();
+        List<X12Segment> segments = this.getTransactionSetEnvelopeOnly();
         assertTrue(txParser.handlesTransactionSet(segments, x12Group));
     }
 
@@ -107,7 +107,7 @@ public class DefaultAsn856TransactionSetParserTest {
     public void test_doParse_OnlyEnvelope() {
         try {
             X12Group x12Group = new X12Group();
-            List<X12Segment> segments = this.getSegmentsOnlyEnvelope();
+            List<X12Segment> segments = this.getTransactionSetEnvelopeOnly();
             txParser.doParse(segments, x12Group);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
@@ -119,7 +119,7 @@ public class DefaultAsn856TransactionSetParserTest {
     public void test_doParse_Missing_SE() {
         try {
             X12Group x12Group = new X12Group();
-            List<X12Segment> segments = this.getTestSegments();
+            List<X12Segment> segments = this.getTransactionSetSegments();
             // remove SE
             segments.remove(segments.size() - 1);
             txParser.doParse(segments, x12Group);
@@ -151,7 +151,7 @@ public class DefaultAsn856TransactionSetParserTest {
     @Test
     public void test_doParse_FirstLoop_NotShipment() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = this.getTestSegments("X", "O");
+        List<X12Segment> segments = this.getTransactionSetSegments("X", "O");
         X12TransactionSet txSet = txParser.doParse(segments, x12Group);
         assertNotNull(txSet);
 
@@ -169,7 +169,7 @@ public class DefaultAsn856TransactionSetParserTest {
     @Test
     public void test_doParseSecondLoop_NotOrder() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = this.getTestSegments("S", "X");
+        List<X12Segment> segments = this.getTransactionSetSegments("S", "X");
         X12TransactionSet txSet = txParser.doParse(segments, x12Group);
         assertNotNull(txSet);
 
@@ -253,7 +253,7 @@ public class DefaultAsn856TransactionSetParserTest {
     @Test
     public void test_doParse() {
         X12Group x12Group = new X12Group();
-        List<X12Segment> segments = this.getTestSegments();
+        List<X12Segment> segments = this.getTransactionSetSegments();
         X12TransactionSet txSet = txParser.doParse(segments, x12Group);
         assertNotNull(txSet);
 
@@ -308,15 +308,6 @@ public class DefaultAsn856TransactionSetParserTest {
         assertEquals(1, tareChildLoops.size());
     }
 
-    private List<X12Segment> getSegmentsOnlyEnvelope() {
-        List<X12Segment> txSegments = new ArrayList<>();
-
-        txSegments.add(new X12Segment("ST*856*368090001"));
-        txSegments.add(new X12Segment("SE*296*368090001"));
-
-        return txSegments;
-    }
-
     private List<X12Segment> getSegmentsNoHierarchicalLoops() {
         List<X12Segment> txSegments = new ArrayList<>();
 
@@ -365,7 +356,7 @@ public class DefaultAsn856TransactionSetParserTest {
         return txSegments;
     }
 
-    private List<X12Segment> getEnvelopeOnly() {
+    private List<X12Segment> getTransactionSetEnvelopeOnly() {
         List<X12Segment> txSegments = new ArrayList<>();
 
         txSegments.add(new X12Segment("ST*856*368090001"));
@@ -373,12 +364,12 @@ public class DefaultAsn856TransactionSetParserTest {
 
         return txSegments;
     }
-
-    private List<X12Segment> getTestSegments() {
-        return getTestSegments("S", "O");
+    
+    private List<X12Segment> getTransactionSetSegments() {
+        return getTransactionSetSegments("S", "O");
     }
 
-    private List<X12Segment> getTestSegments(String firstLoopCode, String secondLoopCode) {
+    private List<X12Segment> getTransactionSetSegments(String firstLoopCode, String secondLoopCode) {
         List<X12Segment> txSegments = new ArrayList<>();
 
         //

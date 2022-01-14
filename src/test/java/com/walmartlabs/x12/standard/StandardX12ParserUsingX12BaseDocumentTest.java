@@ -22,8 +22,8 @@ import com.walmartlabs.x12.standard.txset.TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.UnhandledTransactionSet;
 import com.walmartlabs.x12.testing.util.AssertBaseDocumentUtil;
 import com.walmartlabs.x12.testing.util.X12DocumentTestData;
-import com.walmartlabs.x12.testing.util.txset.aaa.AaaTransactionSetParser;
-import com.walmartlabs.x12.testing.util.txset.bbb.BbbTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.aaa.AaaChainableTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.bbb.BbbChainableTransactionSetParser;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -143,24 +143,24 @@ public class StandardX12ParserUsingX12BaseDocumentTest {
     }
 
     private void registerTransactionSetParsers() {
-        standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
+        standardParser.registerTransactionSetParser(new AaaChainableTransactionSetParser());
         standardParser.registerTransactionSetParser((TransactionSetParser)null);
-        standardParser.registerTransactionSetParser(new BbbTransactionSetParser());
+        standardParser.registerTransactionSetParser(new BbbChainableTransactionSetParser());
     }
 
     private void registerUsingCollection() {
         List<TransactionSetParser> parsers = new ArrayList<>();
-        parsers.add(new AaaTransactionSetParser());
-        parsers.add(new BbbTransactionSetParser());
+        parsers.add(new AaaChainableTransactionSetParser());
+        parsers.add(new BbbChainableTransactionSetParser());
 
         standardParser.registerTransactionSetParser(parsers);
     }
 
     private void registerMixed() {
         List<TransactionSetParser> parsers = new ArrayList<>();
-        parsers.add(new BbbTransactionSetParser());
+        parsers.add(new BbbChainableTransactionSetParser());
 
-        standardParser.registerTransactionSetParser(new AaaTransactionSetParser());
+        standardParser.registerTransactionSetParser(new AaaChainableTransactionSetParser());
         standardParser.registerTransactionSetParser(parsers);
     }
 

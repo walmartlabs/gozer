@@ -48,6 +48,9 @@ public class GenericTransactionSet extends AbstractX12TransactionSetWithLoop {
     private List<X12Segment> segmentsBeforeLoops;
 
     // the loops
+    // once we start processing loops
+    // it will continue until a CTT, AMT or SE 
+    // is reached
     private List<X12Loop> loops;
 
     /**

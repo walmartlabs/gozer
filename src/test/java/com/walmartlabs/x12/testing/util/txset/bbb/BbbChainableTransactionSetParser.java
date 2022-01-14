@@ -26,16 +26,11 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class BbbTransactionSetParser extends AbstractTransactionSetParserChainable {
+public class BbbChainableTransactionSetParser extends AbstractTransactionSetParserChainable {
 
     @Override
     protected X12TransactionSet doParse(List<X12Segment> txLines, X12Group x12Group) {
-        assertNotNull(txLines);
-        assertEquals(3, txLines.size());
-        assertEquals("ST", txLines.get(0).getIdentifier());
-        assertEquals("BBB", txLines.get(0).getElement(1));
-        assertEquals("TEST", txLines.get(1).getIdentifier());
-        assertEquals("SE", txLines.get(2).getIdentifier());
+        this.doAssert(txLines);
 
         TypeBbbTransactionSet tx = new TypeBbbTransactionSet();
         tx.setTransactionSetIdentifierCode(txLines.get(0).getElement(1));
@@ -53,5 +48,14 @@ public class BbbTransactionSetParser extends AbstractTransactionSetParserChainab
             }
         }
         return isHandled;
+    }
+    
+    private void doAssert(List<X12Segment> txLines) {
+        assertNotNull(txLines);
+        assertEquals(3, txLines.size());
+        assertEquals("ST", txLines.get(0).getIdentifier());
+        assertEquals("BBB", txLines.get(0).getElement(1));
+        assertEquals("TEST", txLines.get(1).getIdentifier());
+        assertEquals("SE", txLines.get(2).getIdentifier());
     }
 }

@@ -20,15 +20,21 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 
 import java.util.List;
 
 public class DefaultPo850TransactionSetParser extends AbstractTransactionSetParserChainable {
 
+    public static final String PO_TRANSACTION_TYPE = "850";
+    public static final String PO_TRANSACTION_HEADER = "BEG";
+
     @Override
     protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
-        // TODO Auto-generated method stub
-        return false;
+        // the first segment should be an ST with the 850 transaction type code
+        // Gozer is NOT enforcing the rule that the transaction set should be in a group
+        // with a PO functional id code
+        return X12ParsingUtil.verifyTransactionSetType(transactionSegments, PO_TRANSACTION_TYPE);
     }
 
     @Override

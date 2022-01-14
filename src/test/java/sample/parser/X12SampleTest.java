@@ -34,21 +34,21 @@ import static org.junit.Assert.fail;
 
 public class X12SampleTest {
 
-    X12Parser defaultParser;
-    X12Validator defaultValidator;
+    X12Parser x12Parser;
+    X12Validator x12Validator;
 
     @Before
     public void init() {
-        defaultParser = new SampleX12Parser();
-        defaultValidator = new SampleX12Validator();
+        x12Parser = new SampleX12Parser();
+        x12Validator = new SampleX12Validator();
     }
 
     @Test
     public void test_parse_and_validate() {
-        X12Document x12 = defaultParser.parse("TST*123");
+        X12Document x12 = x12Parser.parse("TST*123");
         assertNotNull(x12);
 
-        Set<X12ErrorDetail> errors = defaultValidator.validate(x12);
+        Set<X12ErrorDetail> errors = x12Validator.validate(x12);
         assertNotNull(errors);
         assertEquals(0, errors.size());
 
@@ -57,10 +57,10 @@ public class X12SampleTest {
 
     @Test
     public void test_parse_and_validate_failed() {
-        X12Document x12 = defaultParser.parse("TST");
+        X12Document x12 = x12Parser.parse("TST");
         assertNotNull(x12);
 
-        Set<X12ErrorDetail> errors = defaultValidator.validate(x12);
+        Set<X12ErrorDetail> errors = x12Validator.validate(x12);
         assertNotNull(errors);
         assertEquals(1, errors.size());
 
@@ -76,7 +76,7 @@ public class X12SampleTest {
     @Test
     public void test_parse_and_validate_failed_bad_delimiter() {
         try {
-            defaultParser.parse("BOO*123");
+            x12Parser.parse("BOO*123");
             fail("expected exception!");
 
         } catch (X12ParserException e) {

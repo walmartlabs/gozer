@@ -18,13 +18,15 @@ package com.walmartlabs.x12.standard.txset;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.testing.util.txset.aaa.AaaTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.aaa.AaaChainableTransactionSetParser;
 import com.walmartlabs.x12.testing.util.txset.aaa.TypeAaaTransactionSet;
-import com.walmartlabs.x12.testing.util.txset.bbb.BbbTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.bbb.BbbChainableTransactionSetParser;
 import com.walmartlabs.x12.testing.util.txset.bbb.TypeBbbTransactionSet;
-import com.walmartlabs.x12.testing.util.txset.yyz.TypeYyzTransactionSet;
-import com.walmartlabs.x12.testing.util.txset.yyz.YyzTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.ccc.CccUnchainableTransactionSetParser;
+import com.walmartlabs.x12.testing.util.txset.ccc.TypeCccTransactionSet;
 import org.junit.Test;
+import sample.standard.yyz.TypeYyzTransactionSet;
+import sample.standard.yyz.YyzTransactionSetParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ public class AbstractTransactionSetParserChainableTest {
 
     @Test
     public void test_chaining_null() {
-        firstParser = new AaaTransactionSetParser();
+        firstParser = new AaaChainableTransactionSetParser();
         assertFalse(firstParser.registerNextTransactionSetParser(null));
 
         //
@@ -54,15 +56,15 @@ public class AbstractTransactionSetParserChainableTest {
 
         //
         // parse BBB
-        // should NOT be successful
+        // should NOT be successful (not registered)
         //
         List<X12Segment> bbbTxSegment = this.generateTransactionSetSegments("BBB");
         txSet = firstParser.parseTransactionSet(bbbTxSegment, null);
         assertNull(txSet);
 
         //
-        // parse YYZ
-        // should NOT be successful
+        // parse CCC
+        // should NOT be successful (not registered)
         //
         List<X12Segment> yyzTxSegment = this.generateTransactionSetSegments("YYZ");
         txSet = firstParser.parseTransactionSet(yyzTxSegment, null);
@@ -71,9 +73,9 @@ public class AbstractTransactionSetParserChainableTest {
 
     @Test
     public void test_chaining_mixed_null() {
-        firstParser = new AaaTransactionSetParser();
+        firstParser = new AaaChainableTransactionSetParser();
         assertFalse(firstParser.registerNextTransactionSetParser(null));
-        assertTrue(firstParser.registerNextTransactionSetParser(new BbbTransactionSetParser()));
+        assertTrue(firstParser.registerNextTransactionSetParser(new BbbChainableTransactionSetParser()));
 
         //
         // parse AAA
@@ -94,22 +96,22 @@ public class AbstractTransactionSetParserChainableTest {
         assertTrue(txSet instanceof TypeBbbTransactionSet);
 
         //
-        // parse YYZ
-        // should NOT be successful
+        // parse CCC
+        // should NOT be successful (not registered)
         //
-        List<X12Segment> yyzTxSegment = this.generateTransactionSetSegments("YYZ");
+        List<X12Segment> yyzTxSegment = this.generateTransactionSetSegments("CCC");
         txSet = firstParser.parseTransactionSet(yyzTxSegment, null);
         assertNull(txSet);
     }
 
     @Test
     public void test_chaining_last_not_chainable() {
-        firstParser = new AaaTransactionSetParser();
-        BbbTransactionSetParser bbbParser = new BbbTransactionSetParser();
-        YyzTransactionSetParser yyzParser = new YyzTransactionSetParser();
+        firstParser = new AaaChainableTransactionSetParser();
+        BbbChainableTransactionSetParser bbbParser = new BbbChainableTransactionSetParser();
+        CccUnchainableTransactionSetParser cccParser = new CccUnchainableTransactionSetParser();
 
         assertTrue(firstParser.registerNextTransactionSetParser(bbbParser));
-        assertTrue(firstParser.registerNextTransactionSetParser(yyzParser));
+        assertTrue(firstParser.registerNextTransactionSetParser(cccParser));
 
         //
         // parse AAA
@@ -130,22 +132,22 @@ public class AbstractTransactionSetParserChainableTest {
         assertTrue(txSet instanceof TypeBbbTransactionSet);
 
         //
-        // parse YYZ
+        // parse CCC
         // should be successful
         //
-        List<X12Segment> yyzTxSegment = this.generateTransactionSetSegments("YYZ");
-        txSet = firstParser.parseTransactionSet(yyzTxSegment, null);
+        List<X12Segment> cccTxSegment = this.generateTransactionSetSegments("CCC");
+        txSet = firstParser.parseTransactionSet(cccTxSegment, null);
         assertNotNull(txSet);
-        assertTrue(txSet instanceof TypeYyzTransactionSet);
+        assertTrue(txSet instanceof TypeCccTransactionSet);
     }
 
     @Test
     public void test_chaining_middle_not_chainable() {
-        firstParser = new AaaTransactionSetParser();
-        BbbTransactionSetParser bbbParser = new BbbTransactionSetParser();
-        YyzTransactionSetParser yyzParser = new YyzTransactionSetParser();
+        firstParser = new AaaChainableTransactionSetParser();
+        BbbChainableTransactionSetParser bbbParser = new BbbChainableTransactionSetParser();
+        CccUnchainableTransactionSetParser cccParser = new CccUnchainableTransactionSetParser();
 
-        assertTrue(firstParser.registerNextTransactionSetParser(yyzParser));
+        assertTrue(firstParser.registerNextTransactionSetParser(cccParser));
         assertFalse(firstParser.registerNextTransactionSetParser(bbbParser));
 
         //
@@ -159,20 +161,20 @@ public class AbstractTransactionSetParserChainableTest {
 
         //
         // parse BBB
-        // should NOT be successful
+        // should NOT be successful  (registered after non-chaining parser)
         //
         List<X12Segment> bbbTxSegment = this.generateTransactionSetSegments("BBB");
         txSet = firstParser.parseTransactionSet(bbbTxSegment, null);
         assertNull(txSet);
 
         //
-        // parse YYZ
+        // parse CCC
         // should be successful
         //
-        List<X12Segment> yyzTxSegment = this.generateTransactionSetSegments("YYZ");
-        txSet = firstParser.parseTransactionSet(yyzTxSegment, null);
+        List<X12Segment> cccTxSegment = this.generateTransactionSetSegments("CCC");
+        txSet = firstParser.parseTransactionSet(cccTxSegment, null);
         assertNotNull(txSet);
-        assertTrue(txSet instanceof TypeYyzTransactionSet);
+        assertTrue(txSet instanceof TypeCccTransactionSet);
     }
 
     protected List<X12Segment> generateTransactionSetSegments(String type) {

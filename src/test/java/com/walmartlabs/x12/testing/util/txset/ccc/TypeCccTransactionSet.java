@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.walmartlabs.x12.testing.util.txset.yyz;
+package com.walmartlabs.x12.testing.util.txset.ccc;
 
 import com.walmartlabs.x12.AbstractX12TransactionSet;
 import com.walmartlabs.x12.X12TransactionSet;
@@ -24,13 +24,15 @@ import com.walmartlabs.x12.standard.X12Loop;
 import java.util.List;
 
 /**
- *
- * the {@link AbstractX12TransactionSet} is not required when creating a
- * custom {@link X12TransactionSet}. It is provided as a convenience to handle
- * common ST/SE elements.
- *
- */
-public class TypeYyzTransactionSet implements X12TransactionSet {
+*
+* the {@link AbstractX12TransactionSet} is not required when creating a
+* custom {@link X12TransactionSet}. It is provided as a convenience to handle
+* common ST/SE elements.
+*
+*/
+public class TypeCccTransactionSet implements X12TransactionSet {
+    private String theCccOnlyValue;
+
     private String transactionSetIdentifierCode;
     private String headerControlNumber;
     private String trailerControlNumber;
@@ -115,4 +117,12 @@ public class TypeYyzTransactionSet implements X12TransactionSet {
         this.loopingErrors = loopingErrors;
     }
 
+    public String getTheCccOnlyValue() {
+        return theCccOnlyValue;
+    }
+
+    public void setTheCccOnlyValue(String theCccOnlyValue) {
+        this.theCccOnlyValue = theCccOnlyValue;
+    }
+    
 }

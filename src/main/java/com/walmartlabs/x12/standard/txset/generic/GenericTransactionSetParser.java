@@ -28,6 +28,10 @@ import java.util.List;
  * parser for a particular transaction set is required
  *
  * This class can serve as a basic reference.
+ * 
+ * Note: once it detects an HL loop segment all
+ * additional segments will be part of the overall
+ * looping until a CTT, AMT or SE is reached
  */
 public class GenericTransactionSetParser extends AbstractTransactionSetParserChainable {
 
