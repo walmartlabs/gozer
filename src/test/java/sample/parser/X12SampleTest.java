@@ -68,7 +68,7 @@ public class X12SampleTest {
         assertNotNull(x12Error);
         assertEquals("TST", x12Error.getSegmentId());
         assertEquals("01", x12Error.getElementId());
-        assertEquals("missing functional id", x12Error.getMessage());
+        assertEquals("missing functional id", x12Error.getIssueText());
 
         assertEquals(null, ((SampleX12Document) x12).getFunctionalId());
     }
@@ -89,7 +89,7 @@ public class X12SampleTest {
             assertNotNull(x12Error);
             assertEquals("TST", x12Error.getSegmentId());
             assertEquals("00", x12Error.getElementId());
-            assertEquals("invalid functional group code", x12Error.getMessage());
+            assertEquals("invalid functional group code", x12Error.getIssueText());
         }
     }
 

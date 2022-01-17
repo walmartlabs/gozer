@@ -63,7 +63,12 @@ public class GenericTransactionSetParserTest {
             txParser.doParse(segments, x12Group);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
-            assertEquals("expected Beginning segment but found SE", e.getMessage());
+            assertEquals("expected one segment but found another", e.getMessage());
+            
+            X12ErrorDetail errorDetail = ((X12ParserException) e).getErrorDetail();
+            assertNotNull(errorDetail);
+            assertEquals("expected one segment but found another", errorDetail.getIssueText());
+            assertEquals("expected Beginning segment but found SE", errorDetail.getInvalidValue());
         }
     }
 

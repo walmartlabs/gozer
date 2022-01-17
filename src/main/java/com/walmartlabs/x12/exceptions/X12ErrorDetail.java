@@ -19,20 +19,22 @@ package com.walmartlabs.x12.exceptions;
 public class X12ErrorDetail {
     private String segmentId;
     private String elementId;
-    private Integer lineNumber;
-    private String message;
-
-    public X12ErrorDetail(String segmentId, String elementId, String msg) {
+    // can be used as TED 02 error text in 824
+    private String issueText;
+    // can be used as TED 07 invalid value in 824
+    private String invalidValue;
+    
+    public X12ErrorDetail(String segmentId, String elementId, String issueText) {
         this.segmentId = segmentId;
         this.elementId = elementId;
-        this.message = msg;
+        this.issueText = issueText;
     }
 
-    public X12ErrorDetail(String segmentId, String elementId, Integer lineNumber, String msg) {
+    public X12ErrorDetail(String segmentId, String elementId, String issueText, String invalidValue) {
         this.segmentId = segmentId;
         this.elementId = elementId;
-        this.lineNumber = lineNumber;
-        this.message = msg;
+        this.issueText = issueText;
+        this.invalidValue = invalidValue;
     }
 
     public String getSegmentId() {
@@ -43,12 +45,12 @@ public class X12ErrorDetail {
         return elementId;
     }
 
-    public Integer getLineNumber() {
-        return lineNumber;
+    public String getIssueText() {
+        return issueText;
     }
-
-    public String getMessage() {
-        return message;
+    
+    public String getInvalidValue() {
+        return invalidValue;
     }
 
     @Override
@@ -56,8 +58,8 @@ public class X12ErrorDetail {
         StringBuilder sb = new StringBuilder("error:");
         sb.append("\\nsegmentId: ").append(segmentId);
         sb.append("\\nelementId: ").append(elementId);
-        sb.append("\\nline number: ").append(lineNumber);
-        sb.append("\\nmessage: ").append(message);
+        sb.append("\\nissue text: ").append(issueText);
+        sb.append("\\nissue value: ").append(invalidValue);
         return sb.toString();
     }
 }

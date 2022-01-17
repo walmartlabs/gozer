@@ -111,7 +111,13 @@ public class DefaultAsn856TransactionSetParserTest {
             txParser.doParse(segments, x12Group);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
-            assertEquals("expected BSN segment but found SE", e.getMessage());
+            assertEquals("expected one segment but found another", e.getMessage());
+            
+            
+            X12ErrorDetail errorDetail = ((X12ParserException) e).getErrorDetail();
+            assertNotNull(errorDetail);
+            assertEquals("expected one segment but found another", errorDetail.getIssueText());
+            assertEquals("expected BSN segment but found SE", errorDetail.getInvalidValue());
         }
     }
 
@@ -125,7 +131,12 @@ public class DefaultAsn856TransactionSetParserTest {
             txParser.doParse(segments, x12Group);
             fail("expected parsing exception");
         } catch (X12ParserException e) {
-            assertEquals("expected SE segment but found SN1", e.getMessage());
+            assertEquals("expected one segment but found another", e.getMessage());
+            
+            X12ErrorDetail errorDetail = ((X12ParserException) e).getErrorDetail();
+            assertNotNull(errorDetail);
+            assertEquals("expected one segment but found another", errorDetail.getIssueText());
+            assertEquals("expected SE segment but found SN1", errorDetail.getInvalidValue());
         }
     }
 
@@ -142,7 +153,7 @@ public class DefaultAsn856TransactionSetParserTest {
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertNotNull(loopErrors);
         assertEquals(1, loopErrors.size());
-        assertEquals("missing shipment loop", loopErrors.get(0).getMessage());
+        assertEquals("missing shipment loop", loopErrors.get(0).getIssueText());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
@@ -160,7 +171,7 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("first HL is not a shipment it was X", loopErrors.get(0).getMessage());
+        assertEquals("first HL is not a shipment it was X", loopErrors.get(0).getIssueText());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
@@ -178,7 +189,7 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("expected Order HL but got X", loopErrors.get(0).getMessage());
+        assertEquals("expected Order HL but got X", loopErrors.get(0).getIssueText());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
@@ -196,7 +207,7 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("expected one top level HL", loopErrors.get(0).getMessage());
+        assertEquals("expected one top level HL", loopErrors.get(0).getIssueText());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());

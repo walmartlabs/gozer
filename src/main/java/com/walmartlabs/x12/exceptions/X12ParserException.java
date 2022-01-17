@@ -40,7 +40,7 @@ public class X12ParserException extends RuntimeException {
     }
 
     public X12ParserException(X12ErrorDetail error) {
-        super(error != null ? error.getMessage() : "");
+        super(error != null ? error.getIssueText() : "");
         this.errorDetail = error;
     }
 

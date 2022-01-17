@@ -105,18 +105,18 @@ public class DefaultDex894ValidatorTest {
         assertEquals(2, errorSet.size());
 
         List<X12ErrorDetail> list = errorSet.stream()
-            .sorted((o1, o2) -> o1.getMessage().compareTo(o2.getMessage()))
+            .sorted((o1, o2) -> o1.getIssueText().compareTo(o2.getIssueText()))
             .collect(Collectors.toList());
 
         X12ErrorDetail xed = list.get(0);
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8202", xed.getElementId());
-        assertEquals("Duplicate invoice numbers on DEX", xed.getMessage());
+        assertEquals("Duplicate invoice numbers on DEX", xed.getIssueText());
 
         xed = list.get(1);
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8202", xed.getElementId());
-        assertEquals("Missing supplier number", xed.getMessage());
+        assertEquals("Missing supplier number", xed.getIssueText());
     }
 
     @Test
@@ -260,7 +260,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail ed = dexValidator.checkForDuplicateInvoiceNumbers(dex);
         assertNotNull(ed);
         assertEquals("G82", ed.getSegmentId());
-        assertEquals("Duplicate invoice numbers on DEX", ed.getMessage());
+        assertEquals("Duplicate invoice numbers on DEX", ed.getIssueText());
     }
 
     @Test
@@ -349,7 +349,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G85", xed.getSegmentId());
         assertEquals("G8501", xed.getElementId());
-        assertEquals("CRC Integrity Check does not match", xed.getMessage());
+        assertEquals("CRC Integrity Check does not match", xed.getIssueText());
     }
 
     @Test
@@ -364,7 +364,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8202", xed.getElementId());
-        assertEquals("Missing supplier number", xed.getMessage());
+        assertEquals("Missing supplier number", xed.getIssueText());
     }
 
     @Test
@@ -380,7 +380,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail x12ErrorDetail = errors.stream().findFirst().get();
         assertEquals("G82", x12ErrorDetail.getSegmentId());
         assertEquals("G8204", x12ErrorDetail.getElementId());
-        assertEquals("Missing receiver location number", x12ErrorDetail.getMessage());
+        assertEquals("Missing receiver location number", x12ErrorDetail.getIssueText());
     }
 
     @Test
@@ -395,7 +395,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8202", xed.getElementId());
-        assertEquals("Missing supplier number", xed.getMessage());
+        assertEquals("Missing supplier number", xed.getIssueText());
     }
 
     @Test
@@ -410,7 +410,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8202", xed.getElementId());
-        assertEquals("Missing supplier number", xed.getMessage());
+        assertEquals("Missing supplier number", xed.getIssueText());
     }
 
     @Test
@@ -425,7 +425,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8202", xed.getElementId());
-        assertEquals("Missing supplier number", xed.getMessage());
+        assertEquals("Missing supplier number", xed.getIssueText());
     }
 
     @Test
@@ -440,7 +440,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8207", xed.getElementId());
-        assertEquals("Missing supplier date", xed.getMessage());
+        assertEquals("Missing supplier date", xed.getIssueText());
     }
 
     @Test
@@ -455,7 +455,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8207", xed.getElementId());
-        assertEquals("Missing supplier date", xed.getMessage());
+        assertEquals("Missing supplier date", xed.getIssueText());
     }
 
     @Test
@@ -470,7 +470,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8207", xed.getElementId());
-        assertEquals("Missing supplier date", xed.getMessage());
+        assertEquals("Missing supplier date", xed.getIssueText());
     }
 
     @Test
@@ -485,7 +485,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8207", xed.getElementId());
-        assertEquals("Missing supplier date", xed.getMessage());
+        assertEquals("Missing supplier date", xed.getIssueText());
     }
 
     @Test
@@ -500,7 +500,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8207", xed.getElementId());
-        assertEquals("Date must be in YYYYMMDD format", xed.getMessage());
+        assertEquals("Date must be in YYYYMMDD format", xed.getIssueText());
     }
 
     @Test
@@ -515,7 +515,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G82", xed.getSegmentId());
         assertEquals("G8207", xed.getElementId());
-        assertEquals("Date must be in YYYYMMDD format", xed.getMessage());
+        assertEquals("Date must be in YYYYMMDD format", xed.getIssueText());
     }
 
     @Test
@@ -551,7 +551,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8302", xed.getElementId());
-        assertEquals("Missing quantity", xed.getMessage());
+        assertEquals("Missing quantity", xed.getIssueText());
     }
 
     @Test
@@ -567,7 +567,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8302", xed.getElementId());
-        assertEquals("Missing quantity", xed.getMessage());
+        assertEquals("Missing quantity", xed.getIssueText());
     }
 
     @Test
@@ -583,7 +583,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8302", xed.getElementId());
-        assertEquals("Quantity must be positive", xed.getMessage());
+        assertEquals("Quantity must be positive", xed.getIssueText());
     }
 
     @Test
@@ -599,7 +599,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8302", xed.getElementId());
-        assertEquals("Quantity must be positive", xed.getMessage());
+        assertEquals("Quantity must be positive", xed.getIssueText());
     }
 
     @Test
@@ -615,7 +615,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8303", xed.getElementId());
-        assertEquals("Missing/unknown unit of measure", xed.getMessage());
+        assertEquals("Missing/unknown unit of measure", xed.getIssueText());
     }
 
     @Test
@@ -631,7 +631,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8303", xed.getElementId());
-        assertEquals("Missing/unknown unit of measure", xed.getMessage());
+        assertEquals("Missing/unknown unit of measure", xed.getIssueText());
     }
 
     @Test
@@ -647,7 +647,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8303", xed.getElementId());
-        assertEquals("Missing/unknown unit of measure", xed.getMessage());
+        assertEquals("Missing/unknown unit of measure", xed.getIssueText());
     }
 
     @Test
@@ -663,7 +663,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8303", xed.getElementId());
-        assertEquals("Missing/unknown unit of measure", xed.getMessage());
+        assertEquals("Missing/unknown unit of measure", xed.getIssueText());
     }
 
     @Test
@@ -679,7 +679,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8304", xed.getElementId());
-        assertEquals("Missing consumer UPC", xed.getMessage());
+        assertEquals("Missing consumer UPC", xed.getIssueText());
     }
 
     @Test
@@ -695,7 +695,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8304", xed.getElementId());
-        assertEquals("Missing consumer UPC", xed.getMessage());
+        assertEquals("Missing consumer UPC", xed.getIssueText());
     }
 
     @Test
@@ -711,7 +711,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8306", xed.getElementId());
-        assertEquals("Missing consumer UPC", xed.getMessage());
+        assertEquals("Missing consumer UPC", xed.getIssueText());
     }
 
     @Test
@@ -727,7 +727,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8306", xed.getElementId());
-        assertEquals("Missing consumer UPC", xed.getMessage());
+        assertEquals("Missing consumer UPC", xed.getIssueText());
     }
 
     @Test
@@ -743,7 +743,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8305", xed.getElementId());
-        assertEquals("Missing consumer qualifier", xed.getMessage());
+        assertEquals("Missing consumer qualifier", xed.getIssueText());
     }
 
     @Test
@@ -776,7 +776,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8307", xed.getElementId());
-        assertEquals("Missing case UPC", xed.getMessage());
+        assertEquals("Missing case UPC", xed.getIssueText());
     }
 
     @Test
@@ -795,7 +795,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8309", xed.getElementId());
-        assertEquals("Missing case count", xed.getMessage());
+        assertEquals("Missing case count", xed.getIssueText());
     }
 
     @Test
@@ -833,7 +833,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8312", xed.getElementId());
-        assertEquals("Missing case UPC", xed.getMessage());
+        assertEquals("Missing case UPC", xed.getIssueText());
     }
 
     @Test
@@ -856,7 +856,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8311", xed.getElementId());
-        assertEquals("Missing case qualifier", xed.getMessage());
+        assertEquals("Missing case qualifier", xed.getIssueText());
     }
 
     @Test
@@ -879,7 +879,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8309", xed.getElementId());
-        assertEquals("Missing case count", xed.getMessage());
+        assertEquals("Missing case count", xed.getIssueText());
     }
 
     @Test
@@ -902,12 +902,12 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = list.get(0);
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8305", xed.getElementId());
-        assertEquals("Missing consumer qualifier", xed.getMessage());
+        assertEquals("Missing consumer qualifier", xed.getIssueText());
 
         xed = list.get(1);
         assertEquals("G83", xed.getSegmentId());
         assertEquals("G8311", xed.getElementId());
-        assertEquals("Missing case qualifier", xed.getMessage());
+        assertEquals("Missing case qualifier", xed.getIssueText());
     }
 
     @Test
@@ -936,17 +936,17 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = list.get(0);
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7201", xed.getElementId());
-        assertEquals("Missing allowance code", xed.getMessage());
+        assertEquals("Missing allowance code", xed.getIssueText());
 
         xed = list.get(1);
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7202", xed.getElementId());
-        assertEquals("Missing method of handling code", xed.getMessage());
+        assertEquals("Missing method of handling code", xed.getIssueText());
 
         xed = list.get(2);
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7205", xed.getElementId());
-        assertEquals("Must have allowance rate, percent, or amount", xed.getMessage());
+        assertEquals("Must have allowance rate, percent, or amount", xed.getIssueText());
     }
 
     @Test
@@ -966,7 +966,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7201", xed.getElementId());
-        assertEquals("Missing allowance code", xed.getMessage());
+        assertEquals("Missing allowance code", xed.getIssueText());
     }
 
     @Test
@@ -986,7 +986,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7202", xed.getElementId());
-        assertEquals("Missing method of handling code", xed.getMessage());
+        assertEquals("Missing method of handling code", xed.getIssueText());
     }
 
     @Test
@@ -1015,7 +1015,7 @@ public class DefaultDex894ValidatorTest {
 
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7202", xed.getElementId());
-        assertEquals("Missing method of handling code", xed.getMessage());
+        assertEquals("Missing method of handling code", xed.getIssueText());
 
         xed = errors.stream()
             .filter(errDetail -> "G7201".equals(errDetail.getElementId()))
@@ -1024,7 +1024,7 @@ public class DefaultDex894ValidatorTest {
 
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7201", xed.getElementId());
-        assertEquals("Missing allowance code", xed.getMessage());
+        assertEquals("Missing allowance code", xed.getIssueText());
     }
 
     @Test
@@ -1044,7 +1044,7 @@ public class DefaultDex894ValidatorTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G72", xed.getSegmentId());
         assertEquals("G7205", xed.getElementId());
-        assertEquals("Must have allowance rate, percent, or amount", xed.getMessage());
+        assertEquals("Must have allowance rate, percent, or amount", xed.getIssueText());
     }
 
     @Test

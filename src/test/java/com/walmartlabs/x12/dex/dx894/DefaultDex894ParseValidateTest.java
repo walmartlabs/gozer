@@ -256,7 +256,7 @@ public class DefaultDex894ParseValidateTest {
         X12ErrorDetail xed = errors.stream().findFirst().get();
         assertEquals("G85", xed.getSegmentId());
         assertEquals("G8501", xed.getElementId());
-        assertEquals("CRC Integrity Check does not match", xed.getMessage());
+        assertEquals("CRC Integrity Check does not match", xed.getIssueText());
     }
 
     @Test
