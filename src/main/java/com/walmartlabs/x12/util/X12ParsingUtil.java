@@ -75,7 +75,7 @@ public final class X12ParsingUtil {
         sb.append(expectedSegmentId);
         sb.append(" segment but found ");
         sb.append(actualSegmentId);
-        return new X12ErrorDetail(actualSegmentId, null, sb.toString());
+        return new X12ErrorDetail(actualSegmentId, null, "expected one segment but found another", sb.toString());
     }
 
     /**

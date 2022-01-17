@@ -107,7 +107,7 @@ public class StandardX12ParserNoRegisteredTransactionSetParserTest {
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.wrong.GS.txt");
 
         exception.expect(X12ParserException.class);
-        exception.expectMessage("expected GS segment but found XX");
+        exception.expectMessage("expected one segment but found another");
 
         standardParser.parse(sourceData);
     }

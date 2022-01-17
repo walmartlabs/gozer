@@ -28,7 +28,10 @@ import java.util.List;
 import java.util.Map;
 
 public final class X12LoopUtil {
-
+    
+    private static final String MISSING_PARENT_ERROR = "HL segment is missing parent";
+    private static final String ALREADY_EXISTS_ERROR = "HL segment already exists";
+    
     /**
      * check the segment for the start of HL
      * @param segment
@@ -107,12 +110,8 @@ public final class X12LoopUtil {
                 // to be found quickly
                 String loopId = loop.getHierarchicalId();
                 if (loopMap.containsKey(loopId)) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("HL segment with id (")
-                        .append(loopId)
-                        .append(") already exists");
-                    loopHolder.addX12ErrorDetail(
-                        new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, sb.toString()));
+                    X12ErrorDetail loopError = loopAlreadyExistsErrorDetail(loop);
+                    loopHolder.addX12ErrorDetail(loopError);
                 } else {
                     loopMap.put(loop.getHierarchicalId(), loop);
                 }
@@ -160,13 +159,25 @@ public final class X12LoopUtil {
             if (parentLoop != null) {
                 parentLoop.addLoop(loop);
             } else {
-                StringBuilder sb = new StringBuilder();
-                sb.append("HL segment with id (").append(loop.getHierarchicalId()).append(")");
-                sb.append(" is missing parent (").append(loop.getParentHierarchicalId()).append(")");
-                loopHolder.addX12ErrorDetail(
-                    new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, sb.toString()));
+                X12ErrorDetail loopError = loopMissingParentErrorDetail(loop);
+                loopHolder.addX12ErrorDetail(loopError);
             }
         }
+    }
+    
+    private static X12ErrorDetail loopAlreadyExistsErrorDetail(X12Loop loop) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("HL segment with id (")
+            .append(loop.getHierarchicalId())
+            .append(") already exists");
+        return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, ALREADY_EXISTS_ERROR, sb.toString());
+    }
+    
+    private static X12ErrorDetail loopMissingParentErrorDetail(X12Loop loop) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("HL segment with id (").append(loop.getHierarchicalId()).append(")");
+        sb.append(" is missing parent (").append(loop.getParentHierarchicalId()).append(")");
+        return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, MISSING_PARENT_ERROR, sb.toString());
     }
 
     private X12LoopUtil() {
