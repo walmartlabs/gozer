@@ -88,6 +88,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     @Override
     protected boolean handlesTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group) {
         // the first segment should be an ST with the 856 transaction type code
+        // Gozer is NOT enforcing the rule that the transaction set should be in a group
+        // with an SH functional id code
         return X12ParsingUtil.verifyTransactionSetType(transactionSegments, ASN_TRANSACTION_TYPE);
     }
 
