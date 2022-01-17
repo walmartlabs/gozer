@@ -25,8 +25,6 @@ import com.walmartlabs.x12.testing.util.txset.bbb.TypeBbbTransactionSet;
 import com.walmartlabs.x12.testing.util.txset.ccc.CccUnchainableTransactionSetParser;
 import com.walmartlabs.x12.testing.util.txset.ccc.TypeCccTransactionSet;
 import org.junit.Test;
-import sample.standard.yyz.TypeYyzTransactionSet;
-import sample.standard.yyz.YyzTransactionSetParser;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -35,6 +35,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * this sample shows how to use the {@link StandardX12Parser}
@@ -184,6 +185,7 @@ public class X12StandardParserWithGenericSampleTest {
         
         // top Loop
         X12Loop topLoop = loops.get(0);
+        assertTrue(X12Loop.isLoopWithCode(topLoop, "S"));
         assertEquals("S", topLoop.getCode());
         assertEquals("1", topLoop.getHierarchicalId());
         assertEquals(null, topLoop.getParentHierarchicalId());
@@ -201,6 +203,7 @@ public class X12StandardParserWithGenericSampleTest {
         assertEquals(1, childLoops.size());
         
         X12Loop loop = childLoops.get(0);
+        assertTrue(X12Loop.isLoopWithCode(loop, "O"));
         assertEquals("O", loop.getCode());
         assertEquals("2", loop.getHierarchicalId());
         assertEquals("1", loop.getParentHierarchicalId());
@@ -211,6 +214,7 @@ public class X12StandardParserWithGenericSampleTest {
         
         // SOI (first item)
         loop = childLoops.get(0);
+        assertTrue(X12Loop.isLoopWithCode(loop, "I"));
         assertEquals("I", loop.getCode());
         assertEquals("3", loop.getHierarchicalId());
         assertEquals("2", loop.getParentHierarchicalId());
@@ -226,6 +230,7 @@ public class X12StandardParserWithGenericSampleTest {
         
         // SOI (2nd item)
         loop = childLoops.get(1);
+        assertTrue(X12Loop.isLoopWithCode(loop, "I"));
         assertEquals("I", loop.getCode());
         assertEquals("4", loop.getHierarchicalId());
         assertEquals("2", loop.getParentHierarchicalId());
