@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BatchFileParser {
+public abstract class BatchFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatchFileParser.class);
     
     protected static final StandardX12Parser x12Parser = new StandardX12Parser();
@@ -26,14 +26,13 @@ public class BatchFileParser {
     private static final Charset LATIN_ONE_CHARSET = StandardCharsets.ISO_8859_1;
     private static final Charset MAC_CHARSET = Charset.forName("x-MacRoman");
 
-    public static void main(String[] args) throws IOException {
+    protected void verifyArgsAndRun(BatchFileParser bfp, String[] args) throws IOException {
         if (args != null && args.length > 0) {
             // get list of files in input folder
             String inputDirectory = args[0];
             Path inputFolder = Paths.get(inputDirectory);
 
             if (Files.exists(inputFolder)) {
-                BatchFileParser bfp = createBatchFileParser();
                 bfp.registerTransactionSetParsers();
                 bfp.runBatch(inputDirectory);
                 
@@ -63,7 +62,7 @@ public class BatchFileParser {
         try (Stream<Path> files = Files.list(inputFolder)) {
             files.filter(Files::isRegularFile)
             .forEach(sourceFile -> {
-                boolean isSuccess = parseFile(sourceFile, okFolder, rejectFolder);
+                boolean isSuccess = this.parseFile(sourceFile, okFolder, rejectFolder);
                 if (isSuccess) {
                     successCount.incrementAndGet();
                 } else {
@@ -82,7 +81,7 @@ public class BatchFileParser {
             LOGGER.info("parsing file {}", sourceFile.getFileName());
             
             // read the file
-            String sourceData = readFile(sourceFile);
+            String sourceData = this.readFile(sourceFile);
 
             // parse the file
             StandardX12Document x12Doc = x12Parser.parse(sourceData);
@@ -91,15 +90,15 @@ public class BatchFileParser {
             this.checkDocument(x12Doc, sourceFile.getFileName(),  okFolder);
             
             // copy the file to OK folder
-            copyFile(sourceFile, okFolder);
+            this.copyFile(sourceFile, okFolder);
             isSuccess = true;
         } catch (X12ParserException e) {
             // copy the file to failed folder
-            copyFile(sourceFile, rejectFolder);
+            this.copyFile(sourceFile, rejectFolder);
             // write file w/ parsing fail reason
-            writeReasonFile(sourceFile, rejectFolder, e.getMessage());
+            this.writeReasonFile(sourceFile, rejectFolder, e.getMessage());
         } catch (UncheckedIOException | IOException e) {
-            writeReasonFile(sourceFile, rejectFolder, e.getMessage());
+            this.writeReasonFile(sourceFile, rejectFolder, e.getMessage());
         }
 
         return isSuccess;
@@ -108,12 +107,12 @@ public class BatchFileParser {
     private String readFile(Path sourceFile) throws IOException {
         String fileContents = null;
         try {
-            fileContents = readFile(sourceFile, UTF8_CHARSET);
+            fileContents = this.readFile(sourceFile, UTF8_CHARSET);
         } catch (UncheckedIOException e) {
             Throwable t = e.getCause();
             if (t != null && t instanceof MalformedInputException) {
                 LOGGER.warn("switching encoding to Latin-1");
-                fileContents = readFile(sourceFile, LATIN_ONE_CHARSET);
+                fileContents = this.readFile(sourceFile, LATIN_ONE_CHARSET);
             } else {
                 throw e;
             }
@@ -152,14 +151,6 @@ public class BatchFileParser {
         if (!Files.exists(folder)) {
             Files.createDirectories(folder);
         }
-    }
-    
-    /**
-     * hack for the moment
-     * can hide this in a subclass to create a different BFP
-     */
-    protected static BatchFileParser createBatchFileParser() {
-        return new BatchFileParser();
     }
     
     /**
