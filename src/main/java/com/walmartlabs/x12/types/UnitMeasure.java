@@ -17,22 +17,51 @@ limitations under the License.
 package com.walmartlabs.x12.types;
 
 /**
- * unit of measure code set of values used on DEX G8303 used on ASN LIN08
+ * unit of measure code set of values for GS1
  */
 public enum UnitMeasure {
     BX("BOX"),
     CA("CASE"),
     CT("CARTON"),
+    CH("CONTAINER"),
     EA("EACH"),
-    DZ("DOZEN"),
-    GA("GALLON"),
-    KE("KEG"),
-    KG("KILOGRAM"),
-    LB("POUND"),
     PK("PACKAGE"),
     PL("PALLET"),
+    SP("SHELF PACKAGE"),
     TK("TANK"),
     UN("UNIT"),
+    CM("CENTIMETER"),
+    IN("INCH"),
+    GA("GALLON"),
+    QT("QUART"),
+    PT("PINT"),
+    CU("CUP"),
+    FO("FLUID OUNCE"),
+    Y2("TABLESPOON"),
+    Y3("TEASPOON"),
+    LT("LITER"),
+    ML("MILLILITER"),
+    UW("MILLIEQUIVALENT"),
+    AM("AMPOULE"),
+    AR("SUPPOSITORY"),
+    AV("CAPSULE"),
+    BO("BOTTLE"),
+    DF("DRAM"),
+    DZ("DOZEN"),
+    KE("KEG"),
+    GS("GROSS"),
+    GX("GRAIN"),
+    KG("KILOGRAM"),
+    MC("MICROGRAM"),
+    ME("MILLIGRAM"),
+    KT("KIT"),
+    LB("POUND"),
+    N9("CARTRIDGE NEEDLE"),
+    SZ("SYRINGE"),
+    U2("TABLET"),
+    VI("VIAL"),
+    X4("DROP"),
+    P1("PERCENT"),
     UNKNOWN("UNKNOWN");
 
     private String description;
@@ -51,7 +80,7 @@ public enum UnitMeasure {
 
     /**
      * Convert the code to an enum
-     * 
+     *
      * @param code
      * @return
      */

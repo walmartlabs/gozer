@@ -16,21 +16,23 @@ limitations under the License.
 
 package com.walmartlabs.x12;
 
-import org.springframework.util.StringUtils;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 /**
  *  Each line in an X12 document is called a segment
  *  Each segment contains one or more elements
  *  The first element identifies the type of segment
- *  
+ *
  *  This class will parse a segment into the individual elements
  */
 public class X12Segment {
-    
+
     private String segmentValue;
     private List<String> segmentElements;
 
@@ -40,9 +42,9 @@ public class X12Segment {
      * @return {@link X12Segment}
      */
     public X12Segment(String segment) {
-        this(segment, X12Parser.DEFAULT_DATA_ELEMENT_SEPARATOR);
+        this(segment, SourceToSegmentUtil.DEFAULT_DATA_ELEMENT_SEPARATOR);
     }
-    
+
     /**
      * create the {@link X12Segment} using the delimiter provided
      * @param segment
@@ -102,7 +104,7 @@ public class X12Segment {
             return Arrays.asList(segment.split(splitRegEx));
         }
     }
-    
+
     private String convertDataElementDelimiterToRegEx(Character dataElementDelimiter) {
         if (dataElementDelimiter != null) {
             if (Character.isLetterOrDigit(dataElementDelimiter.charValue())) {

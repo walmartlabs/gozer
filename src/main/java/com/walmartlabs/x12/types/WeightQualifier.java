@@ -26,11 +26,11 @@ public enum WeightQualifier {
     UNKNOWN("");
 
     private String description;
-    
+
     private WeightQualifier(String desc) {
         this.description = desc;
     }
-    
+
     private void setDescription(String desc) {
         this.description = desc;
     }
@@ -38,7 +38,7 @@ public enum WeightQualifier {
     public String getDescription() {
         return this.description;
     }
-    
+
     /**
      * Convert the code to an enum
      * @param code

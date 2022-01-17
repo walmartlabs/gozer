@@ -19,13 +19,12 @@ import java.util.stream.Stream;
 
 public class BatchFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatchFileParser.class);
-    
-    protected static final StandardX12Parser x12Parser = new StandardX12Parser();
-    
+    private static final StandardX12Parser x12Parser = new StandardX12Parser();
+
     private static final Charset UTF8_CHARSET = StandardCharsets.UTF_8;
     private static final Charset LATIN_ONE_CHARSET = StandardCharsets.ISO_8859_1;
     private static final Charset MAC_CHARSET = Charset.forName("x-MacRoman");
-    
+
     public static void main(String[] args) throws IOException {
         if (args != null && args.length > 0) {
             // get list of files in input folder
@@ -36,6 +35,7 @@ public class BatchFileParser {
                 BatchFileParser bfp = createBatchFileParser();
                 bfp.registerTransactionSetParsers();
                 bfp.runBatch(inputDirectory);
+                
             } else {
                 LOGGER.warn("the input folder does not exist");
             }
@@ -52,13 +52,13 @@ public class BatchFileParser {
         Path rejectFolder = Paths.get(inputDirectory + "/failed");
         this.createFolderIfNotExists(rejectFolder);
         
-        processDirectory(inputFolder, okFolder, rejectFolder);
+        this.processDirectory(inputFolder, okFolder, rejectFolder);
     }
     
     private void processDirectory(Path inputFolder, Path okFolder, Path rejectFolder) throws IOException {
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failedCount = new AtomicInteger(0);
-        
+
         try (Stream<Path> files = Files.list(inputFolder)) {
             files.filter(Files::isRegularFile)
             .forEach(sourceFile -> {
@@ -70,19 +70,19 @@ public class BatchFileParser {
                 }
             });
         }
-        
+
         LOGGER.info("Parsed files - successful {}, failed {}", successCount, failedCount);
     }
 
     private boolean parseFile(Path sourceFile, Path okFolder, Path rejectFolder) {
         boolean isSuccess = false;
-        
+
         try {
             LOGGER.info("parsing file {}", sourceFile.getFileName());
             
             // read the file
             String sourceData = readFile(sourceFile);
-            
+
             // parse the file
             StandardX12Document x12Doc = x12Parser.parse(sourceData);
             
@@ -100,7 +100,7 @@ public class BatchFileParser {
         } catch (UncheckedIOException | IOException e) {
             writeReasonFile(sourceFile, rejectFolder, e.getMessage());
         }
-        
+
         return isSuccess;
     }
     

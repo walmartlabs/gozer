@@ -17,28 +17,9 @@ limitations under the License.
 package com.walmartlabs.x12;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import org.springframework.util.StringUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.walmartlabs.x12.util.X12ParsingUtil;
 
 public interface X12Parser<T extends X12Document> {
-    
-    public static final Character DEFAULT_DATA_ELEMENT_SEPARATOR = '*';
-    public static final Character DEFAULT_REPETITION_ELEMENT_SEPARATOR = '^';
-    public static final Character DEFAULT_COMPOSITE_ELEMENT_SEPARATOR = ':';
-    public static final Character DEFAULT_SEGMENT_SEPARATOR = '~';
-
-    // note: Java Strings use a zero based index
-    // so these are one less than the value 
-    // provided in various EDI documentation
-    public static final int DATA_ELEMENT_SEPARATOR_INDEX = 3;
-    public static final int REPETITION_ELEMENT_SEPARATOR_INDEX = 82;
-    public static final int COMPOSITE_ELEMENT_SEPARATOR_INDEX = 104;
-    public static final int SEGMENT_SEPARATOR_INDEX = 105;
-    
 
     /**
      * parse the X12 transmission into a representative Java object
@@ -49,77 +30,7 @@ public interface X12Parser<T extends X12Document> {
     T parse(String sourceData);
 
     /**
-     * parses the source data into a list of segments 
-     * 1) assume each segment is on separate line
-     * 2) otherwise try 106th character in source data
-     * 
-     * @param sourceData
-     * @return a {@link List} of {@link X12Segment} or empty if there are issues w/ source data
-     */
-    default List<X12Segment> splitSourceDataIntoSegments(String sourceData) {
-        // assume that the source data has 
-        // each segment on a separate line
-        // and that ALL valid EDI / X12 documents
-        // are > 1 segment 
-        List<X12Segment> segments = splitSourceDataIntoSegments(sourceData, "\\r?\\n");
-        if (segments != null && segments.size() > 1) {
-            return segments;
-        } else {
-            // if there is only one line in the source data
-            // now try to get the specified delimiter
-            String segmentDelimiterRegex = "\\" + findSegmentDelimiterCharacter(sourceData);
-            return splitSourceDataIntoSegments(sourceData, segmentDelimiterRegex);
-        }
-    }
-    
-    /**
-     * parses the source data into a list of segments 
-     * using the the segment delimiter that was passed in
-     * @param sourceData
-     * @param segmentSeparatorRegEx a regex to split segments
-     * @return a {@link List} of {@link X12Segment} or empty is either parameter is missing
-     * @throws @{link PatternSyntaxException} if the regular expression is invalid
-     */
-    default List<X12Segment> splitSourceDataIntoSegments(String sourceData, String segmentSeparatorRegEx) {
-        if (StringUtils.isEmpty(sourceData) || StringUtils.isEmpty(segmentSeparatorRegEx)) {
-            return Collections.emptyList();
-        } else {
-            Character segmentDataElementDelimiter = findElementDelimiterCharacter(sourceData);
-            String[] segments = sourceData.split(segmentSeparatorRegEx);
-            return Arrays.stream(segments)
-                .map(segment -> new X12Segment(segment, segmentDataElementDelimiter))
-                .collect(Collectors.toList());
-        }
-    }
-    
-    /**
-     * get the segment delimiter/separator character
-     * @param sourceData
-     * @return the character at the 106th position or null if there are not enough characters
-     */
-    default Character findSegmentDelimiterCharacter(String sourceData) {
-        if (sourceData != null && sourceData.length() > SEGMENT_SEPARATOR_INDEX) {
-            return Character.valueOf(sourceData.charAt(SEGMENT_SEPARATOR_INDEX));
-        } else {
-            return null;
-        }
-    }
-    
-    /**
-     * get the element delimiter/separator character
-     * @param sourceData
-     * @return the character at the 4th position or null if there are not enough characters
-     */
-    default Character findElementDelimiterCharacter(String sourceData) {
-        if (sourceData != null && sourceData.length() > DATA_ELEMENT_SEPARATOR_INDEX) {
-            return Character.valueOf(sourceData.charAt(DATA_ELEMENT_SEPARATOR_INDEX));
-        } else {
-            return null;
-        }
-    }
-    
-    /**
-     * convenience method that will throw X12ParserException 
+     * convenience method that will throw X12ParserException
      * with a message indicating that the segment that was found
      * was not the one that was expected
      * @param expectedSegmentId

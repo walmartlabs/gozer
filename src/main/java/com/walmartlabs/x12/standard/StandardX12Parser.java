@@ -18,7 +18,6 @@ package com.walmartlabs.x12.standard;
 
 import com.walmartlabs.x12.SegmentIterator;
 import com.walmartlabs.x12.X12Parser;
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.exceptions.X12ParserException;
@@ -26,9 +25,11 @@ import com.walmartlabs.x12.standard.txset.AbstractTransactionSetParserChainable;
 import com.walmartlabs.x12.standard.txset.TransactionSetParser;
 import com.walmartlabs.x12.standard.txset.UnhandledTransactionSet;
 import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
+import com.walmartlabs.x12.util.X12ParsingUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,8 +58,8 @@ import java.util.Objects;
 public final class StandardX12Parser implements X12Parser<StandardX12Document> {
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardX12Parser.class);
 
-    public static final String ISA_HEADER_ID = "ISA";
-    public static final String ISA_TRAILER_ID = "IEA";
+    public static final String ENVELOPE_HEADER_ID = "ISA";
+    public static final String ENVELOPE_TRAILER_ID = "IEA";
 
     public static final String GROUP_HEADER_ID = "GS";
     public static final String GROUP_TRAILER_ID = "GE";
@@ -78,14 +79,14 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
         StandardX12Document x12Doc = null;
 
         try {
-            if (!StringUtils.isEmpty(sourceData)) {
+            if (StringUtils.isNotEmpty(sourceData)) {
                 x12Doc = new StandardX12Document();
 
                 // remove any excess white space
                 // and
                 // break document up into segment lines
-                List<X12Segment> segmentList = this.splitSourceDataIntoSegments(sourceData.trim());
-                if (X12ParsingUtil.isValidEnvelope(segmentList, ISA_HEADER_ID, ISA_TRAILER_ID)) {
+                List<X12Segment> segmentList = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData.trim());
+                if (X12ParsingUtil.isValidEnvelope(segmentList, ENVELOPE_HEADER_ID, ENVELOPE_TRAILER_ID)) {
                     // standard parsing of segment lines
                     SegmentIterator segments = new SegmentIterator(segmentList);
                     this.standardParsingTemplate(segments, x12Doc);
@@ -105,23 +106,23 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
         return x12Doc;
     }
-    
+
     /**
-     * convenience method that will allow a Collection of {@link TransactionSetParser} 
+     * convenience method that will allow a Collection of {@link TransactionSetParser}
      * to be registered w/ the parser
-     * 
+     *
      * Any null value in the Collection will be ignored.
-     * 
-     * Note: if there are one or more {@link TransactionSetParser} already registered 
-     * with the parser, this method will append the parsers in the Collection 
-     * to the existing chain of parsers. 
-     * 
+     *
+     * Note: if there are one or more {@link TransactionSetParser} already registered
+     * with the parser, this method will append the parsers in the Collection
+     * to the existing chain of parsers.
+     *
      * @param transactionParsers - a Collection of TransactionSetParser(s)
      * @return true if all were added, false otherwise
      */
     public boolean registerTransactionSetParser(Collection<TransactionSetParser> transactionParsers) {
         boolean isAdded = false;
-        
+
         if (transactionParsers != null && !transactionParsers.isEmpty()) {
             isAdded = transactionParsers.stream()
                 .filter(Objects::nonNull)
@@ -131,18 +132,18 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
         return isAdded;
     }
-    
+
     /**
-     * convenience method that will allow one or more {@link TransactionSetParser} 
+     * convenience method that will allow one or more {@link TransactionSetParser}
      * to be registered w/ the parser
      * Note: if a transaction set type does not have a registered parser it is ignored
-     * 
+     *
      * @param transactionParsers
      * @return true if non-null and added, otherwise false
      */
     public boolean registerTransactionSetParser(TransactionSetParser txParser) {
         boolean isAdded = false;
-        
+
         if (txParser != null) {
             if (this.transactionParser == null) {
                 // we don't have a transaction set parser
@@ -156,15 +157,15 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                     .registerNextTransactionSetParser(txParser);
             }
         }
-        
+
         return isAdded;
     }
-    
+
     /**
      * register a handler for unhandled transaction sets
-     * an unhandled transaction set is one that did not have 
+     * an unhandled transaction set is one that did not have
      * a {@link TransactionSetParser} registered.
-     * 
+     *
      * @param txUnhandled
      */
     public void registerUnhandledTransactionSet(UnhandledTransactionSet txUnhandled) {
@@ -212,7 +213,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                         // we are already in a transaction
                         // and have not encountered the end
                         // so we will stop parsing
-                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
+                        this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
                     } else {
                         insideTransaction = true;
                         transactionSet.add(currentSegment);
@@ -228,14 +229,14 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
                     } else {
                         // we are not in a transaction
                         // so should not have gotten transaction trailer
-                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, currentSegment.getIdentifier());
+                        this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_HEADER, currentSegment.getIdentifier());
                     }
                 } else if (GROUP_TRAILER_ID.equals(currentSegment.getIdentifier())) {
                     if (insideTransaction) {
                         // we are already in a transaction
                         // and have not encountered the end
                         // so we will stop parsing
-                        handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
+                        this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
                     } else {
                         insideGroup = false;
                     }
@@ -248,13 +249,13 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             // if we got here we should have cleanly
             // exited a transaction
             if (insideTransaction) {
-                handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
+                this.handleUnexpectedSegment(X12TransactionSet.TRANSACTION_SET_TRAILER, currentSegment.getIdentifier());
             }
 
             // if we got here we should have cleanly
             // exited a group
             if (insideGroup) {
-                handleUnexpectedSegment(GROUP_TRAILER_ID, currentSegment.getIdentifier());
+                this.handleUnexpectedSegment(GROUP_TRAILER_ID, currentSegment.getIdentifier());
             }
 
             // parse group trailer
@@ -263,7 +264,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             // check for end of message
             if (segments.hasNext()) {
                 currentSegment = segments.next();
-                if (ISA_TRAILER_ID.equals(currentSegment.getIdentifier())) {
+                if (ENVELOPE_TRAILER_ID.equals(currentSegment.getIdentifier())) {
                     this.parseInterchangeControlTrailer(currentSegment, x12Doc);
                 } else {
                     // move back one
@@ -285,7 +286,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
         LOGGER.debug(segment.getIdentifier());
 
         String segmentIdentifier = segment.getIdentifier();
-        if (ISA_HEADER_ID.equals(segmentIdentifier)) {
+        if (ENVELOPE_HEADER_ID.equals(segmentIdentifier)) {
             InterchangeControlEnvelope isa = new InterchangeControlEnvelope();
             isa.setAuthorizationInformationQualifier(segment.getElement(1));
             isa.setAuthorizationInformation(segment.getElement(2));
@@ -306,7 +307,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
 
             x12Doc.setInterchangeControlEnvelope(isa);
         } else {
-            handleUnexpectedSegment(ISA_HEADER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(ENVELOPE_HEADER_ID, segmentIdentifier);
         }
     }
 
@@ -320,12 +321,12 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
         LOGGER.debug(segment.getIdentifier());
 
         String segmentIdentifier = segment.getIdentifier();
-        if (ISA_TRAILER_ID.equals(segmentIdentifier)) {
+        if (ENVELOPE_TRAILER_ID.equals(segmentIdentifier)) {
             InterchangeControlEnvelope isa = x12Doc.getInterchangeControlEnvelope();
             isa.setNumberOfGroups(ConversionUtil.convertStringToInteger(segment.getElement(1)));
             isa.setTrailerInterchangeControlNumber(segment.getElement(2));
         } else {
-            handleUnexpectedSegment(ISA_TRAILER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(ENVELOPE_TRAILER_ID, segmentIdentifier);
         }
     }
 
@@ -351,7 +352,7 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             groupHeader.setResponsibleAgencyCode(segment.getElement(7));
             groupHeader.setVersion(segment.getElement(8));
         } else {
-            handleUnexpectedSegment(GROUP_HEADER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(GROUP_HEADER_ID, segmentIdentifier);
         }
         return groupHeader;
     }
@@ -369,10 +370,10 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             x12Group.setNumberOfTransactions(ConversionUtil.convertStringToInteger(segment.getElement(1)));
             x12Group.setTrailerGroupControlNumber(segment.getElement(2));
         } else {
-            handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
+            this.handleUnexpectedSegment(GROUP_TRAILER_ID, segmentIdentifier);
         }
     }
-    
+
     /**
      * register the correct {@link TransactionSetParser} to parse the transaction set(s) and add the resulting objects to the X12 Group
      * @param transactionSegments
@@ -393,5 +394,5 @@ public final class StandardX12Parser implements X12Parser<StandardX12Document> {
             LOGGER.warn("No TransactionSetParser has been registered!");
         }
     }
-    
+
 }

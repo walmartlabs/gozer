@@ -26,7 +26,7 @@ public final class LINItemIdentificationParser {
 
     /**
      * parse the segment
-     * 
+     *
      * @param segment
      * @return
      */

@@ -34,6 +34,7 @@ public final class PIDPartyIdentificationParser {
             if (PIDProductIdentification.IDENTIFIER.equals(segmentIdentifier)) {
                 pid = new PIDProductIdentification();
                 pid.setItemDescriptionType(segment.getElement(1));
+                pid.setCharacteristicCode(segment.getElement(2));
                 pid.setDescription(segment.getElement(5));
             }
         }

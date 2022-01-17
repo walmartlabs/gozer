@@ -18,9 +18,6 @@ package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
-import com.walmartlabs.x12.common.segment.parser.TD1CarrierDetailParser;
-import com.walmartlabs.x12.exceptions.X12ParserException;
-import com.walmartlabs.x12.types.UnitMeasure;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -51,10 +48,10 @@ public class TD1CarrierDetailParserTest {
         assertEquals("PLT94", td1.getRawPackagingCode());
         assertEquals("PLT", td1.getPackagingCodePartOne());
         assertEquals("94", td1.getPackagingCodePartTwo());
-        assertEquals("1", td1.getLadingQuantity().toString());
+        assertEquals("1", td1.getLadingQuantity());
         assertEquals("G", td1.getWeightQualifier());
-        assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.LB, td1.getUnitOfMeasureCode());
+        assertEquals("31302", td1.getWeight());
+        assertEquals("LB", td1.getUnitOfMeasure());
     }
 
     @Test
@@ -65,10 +62,10 @@ public class TD1CarrierDetailParserTest {
         assertEquals("PLT", td1.getRawPackagingCode());
         assertEquals("PLT", td1.getPackagingCodePartOne());
         assertEquals("", td1.getPackagingCodePartTwo());
-        assertEquals("1", td1.getLadingQuantity().toString());
+        assertEquals("1", td1.getLadingQuantity());
         assertEquals("G", td1.getWeightQualifier());
-        assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.UNKNOWN, td1.getUnitOfMeasureCode());
+        assertEquals("31302", td1.getWeight());
+        assertEquals("XX", td1.getUnitOfMeasure());
     }
 
     @Test
@@ -79,10 +76,10 @@ public class TD1CarrierDetailParserTest {
         assertEquals("PLT999", td1.getRawPackagingCode());
         assertEquals(null, td1.getPackagingCodePartOne());
         assertEquals(null, td1.getPackagingCodePartTwo());
-        assertEquals("1", td1.getLadingQuantity().toString());
+        assertEquals("1", td1.getLadingQuantity());
         assertEquals("G", td1.getWeightQualifier());
-        assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.LB, td1.getUnitOfMeasureCode());
+        assertEquals("31302", td1.getWeight());
+        assertEquals("LB", td1.getUnitOfMeasure());
     }
 
     @Test
@@ -93,16 +90,30 @@ public class TD1CarrierDetailParserTest {
         assertEquals(null, td1.getRawPackagingCode());
         assertEquals(null, td1.getPackagingCodePartOne());
         assertEquals(null, td1.getPackagingCodePartTwo());
-        assertEquals("1", td1.getLadingQuantity().toString());
+        assertEquals("1", td1.getLadingQuantity());
         assertEquals("G", td1.getWeightQualifier());
-        assertEquals("31302.0000", td1.getWeight().toString());
-        assertEquals(UnitMeasure.LB, td1.getUnitOfMeasureCode());
+        assertEquals("31302", td1.getWeight());
+        assertEquals("LB", td1.getUnitOfMeasure());
     }
 
-    @Test(expected = X12ParserException.class)
+    /**
+     * the Gozer parser will pass out the bad quantity
+     * value so that the application can evaluate it
+     * and use the rest of the document to generate
+     * an 824 error message
+     */
+    @Test
     public void test_parse_segment_bad_quantity() {
-        X12Segment segment = new X12Segment("TD1**X****G*31302*LB");
-        TD1CarrierDetailParser.parse(segment);
+        X12Segment segment = new X12Segment("TD1**X****G*FOOBAR*LB");
+        TD1CarrierDetail td1 = TD1CarrierDetailParser.parse(segment);
+        assertNotNull(td1);
+        assertEquals(null, td1.getRawPackagingCode());
+        assertEquals(null, td1.getPackagingCodePartOne());
+        assertEquals(null, td1.getPackagingCodePartTwo());
+        assertEquals("X", td1.getLadingQuantity());
+        assertEquals("G", td1.getWeightQualifier());
+        assertEquals("FOOBAR", td1.getWeight());
+        assertEquals("LB", td1.getUnitOfMeasure());
     }
 
 }

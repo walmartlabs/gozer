@@ -17,16 +17,18 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Parser;
-import com.walmartlabs.x12.X12ParsingUtil;
 import com.walmartlabs.x12.X12Segment;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.types.InvoiceType;
 import com.walmartlabs.x12.types.ProductQualifier;
 import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.ConversionUtil;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
+import com.walmartlabs.x12.util.X12ParsingUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -87,9 +89,9 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
     public Dex894 parse(String sourceData) {
         Dex894 dex = null;
 
-        if (!StringUtils.isEmpty(sourceData)) {
+        if (StringUtils.isNotEmpty(sourceData)) {
             dex = new Dex894();
-            List<X12Segment> segmentLines = this.splitSourceDataIntoSegments(sourceData);
+            List<X12Segment> segmentLines = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
 
             if (!this.isValidEnvelope(segmentLines)) {
                 throw new X12ParserException("invalid envelope");
@@ -328,7 +330,12 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
     }
 
     protected void parseVersion(Dex894 dex) {
-        dex.setVersionNumber(X12ParsingUtil.parseVersion(dex.getVersion()));
+        Integer version = X12ParsingUtil.parseVersion(dex.getVersion());
+        if (version == null) {
+            throw new X12ParserException(new X12ErrorDetail(DefaultDex894Parser.DEX_HEADER_ID, "DXS03", "Invalid version format"));
+        } else {
+            dex.setVersionNumber(version);
+        }
     }
 
     /**
@@ -413,7 +420,7 @@ public class DefaultDex894Parser implements X12Parser<Dex894> {
             // this will do a simple parsing of the G83 elements
             // a separate utility will need to determine the retail selling unit
             dexItem.setItemSequenceNumber(segment.getElement(1));
-            dexItem.setQuantity(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 3));        
+            dexItem.setQuantity(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 3));
             dexItem.setUom(UnitMeasure.convert(segment.getElement(3)));
             dexItem.setUpc(segment.getElement(4));
             dexItem.setConsumerProductQualifier(ProductQualifier.convert(segment.getElement(5)));

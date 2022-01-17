@@ -1,3 +1,19 @@
+/**
+Copyright (c) 2018-present, Walmart, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
+
 package com.walmartlabs.x12;
 
 import java.util.List;
@@ -114,5 +130,38 @@ public class SegmentIterator implements ListIterator<X12Segment> {
     public void set(X12Segment segment) {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * non-standard iterator method
+     * returns the current index
+     */
+    public int currentIndex() {
+        return currentSegmentIdx;
+    }
+
+    /**
+     * non-standard iterator method
+     * returns the index of the last segment line
+     */
+    public int lastIndex() {
+        return (segmentLines.size() - 1);
+    }
+
+    /**
+     * non-standard iterator method
+     * resets the cursor position to the specified index
+     */
+    public void reset(int index) {
+        currentSegmentIdx = index;
+    }
+
+    /**
+     * non-standard iterator method
+     * return a subset of segments from the backing list
+     */
+    public List<X12Segment> subList(int fromIndex, int toIndex) {
+        return segmentLines.subList(fromIndex, toIndex);
+    }
+
 
 }

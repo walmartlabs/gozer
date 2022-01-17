@@ -18,7 +18,19 @@ package sample.parser;
 
 import com.walmartlabs.x12.X12Document;
 
+/**
+ *
+ * a sample document that only supports
+ * a one line message
+ *
+ * TST*NNN
+ *
+ * where NNN is the functional id
+ *
+ */
 public class SampleX12Document implements X12Document {
+    public static final String FUNCTIONAL_GROUP_CODE = "TST";
+
     private String functionalId;
 
     public String getFunctionalId() {

@@ -18,9 +18,7 @@ package com.walmartlabs.x12.common.segment.parser;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
-import com.walmartlabs.x12.types.UnitMeasure;
-import com.walmartlabs.x12.util.ConversionUtil;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TD1CarrierDetailParser {
 
@@ -38,16 +36,16 @@ public final class TD1CarrierDetailParser {
                 td1 = new TD1CarrierDetail();
                 String packagingCode = segment.getElement(1);
                 td1.setRawPackagingCode(packagingCode);
-                if (!StringUtils.isEmpty(packagingCode)) {
+                if (StringUtils.isNotEmpty(packagingCode)) {
                     if (packagingCode.length() == 3 || packagingCode.length() == 5) {
                         td1.setPackagingCodePartOne(packagingCode.substring(0, 3));
                         td1.setPackagingCodePartTwo(packagingCode.substring(3));
                     }
                 }
-                td1.setLadingQuantity(ConversionUtil.convertStringToBigDecimal(segment.getElement(2), 0));
+                td1.setLadingQuantity(segment.getElement(2));
                 td1.setWeightQualifier(segment.getElement(6));
-                td1.setWeight(ConversionUtil.convertStringToBigDecimal(segment.getElement(7), 4));
-                td1.setUnitOfMeasureCode(UnitMeasure.convert(segment.getElement(8)));
+                td1.setWeight(segment.getElement(7));
+                td1.setUnitOfMeasure(segment.getElement(8));
             }
         }
         return td1;

@@ -16,7 +16,6 @@ limitations under the License.
 
 package com.walmartlabs.x12.types;
 
-import com.walmartlabs.x12.types.ProductQualifier;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

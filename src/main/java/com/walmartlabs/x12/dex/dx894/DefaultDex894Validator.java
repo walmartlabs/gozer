@@ -21,7 +21,7 @@ import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.types.UnitMeasure;
 import com.walmartlabs.x12.util.crc.CyclicRedundancyCheck;
 import com.walmartlabs.x12.util.crc.DefaultCrc16;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -221,8 +221,8 @@ public class DefaultDex894Validator implements X12Validator<Dex894> {
     protected X12ErrorDetail checkAllowanceAmount(Integer dexVersion, Dex894Allowance dexAllowance) {
         X12ErrorDetail detail = null;
 
-        if (dexAllowance.getAllowanceAmount() == null 
-            && dexAllowance.getAllowancePercent() == null 
+        if (dexAllowance.getAllowanceAmount() == null
+            && dexAllowance.getAllowancePercent() == null
             && dexAllowance.getAllowanceRate() == null) {
 
             detail = new X12ErrorDetail(DefaultDex894Parser.G72_ID, "G7205", "Must have allowance rate, percent, or amount");

@@ -20,33 +20,35 @@ import com.walmartlabs.x12.X12Parser;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import org.springframework.util.StringUtils;
+import com.walmartlabs.x12.util.SourceToSegmentUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 /**
- * 
- * Sample parser 
- * First Segment expected to have identifier YYZ
+ *
+ * Sample parser that can parse the very simple Sample document
+ * First Segment expected to have identifier TST
  *
  */
 public class SampleX12Parser implements X12Parser<SampleX12Document> {
 
     @Override
     public SampleX12Document parse(String sourceData) {
-        SampleX12Document mockX12 = null;
+        SampleX12Document sampleDoc = null;
 
         try {
-            if (!StringUtils.isEmpty(sourceData)) {
-                mockX12 = new SampleX12Document();
-                List<X12Segment> segments = this.splitSourceDataIntoSegments(sourceData);
+            if (StringUtils.isNotEmpty(sourceData)) {
+                sampleDoc = new SampleX12Document();
+                List<X12Segment> segments = SourceToSegmentUtil.splitSourceDataIntoSegments(sourceData);
                 if (!segments.isEmpty()) {
                     // parse the first segment
                     X12Segment firstSegment = segments.get(0);
-                    if ("YYZ".equals(firstSegment.getIdentifier())) {
-                        mockX12.setFunctionalId(firstSegment.getElement(1));
+                    if (SampleX12Document.FUNCTIONAL_GROUP_CODE.equals(firstSegment.getIdentifier())) {
+                        sampleDoc.setFunctionalId(firstSegment.getElement(1));
                     } else {
-                        X12ErrorDetail error = new X12ErrorDetail("YYZ", "YYZ00", "invalid identifier");
+                        X12ErrorDetail error = new X12ErrorDetail(SampleX12Document.FUNCTIONAL_GROUP_CODE, "00",
+                            "invalid functional group code");
                         throw new X12ParserException(error);
                     }
                 }
@@ -58,7 +60,7 @@ public class SampleX12Parser implements X12Parser<SampleX12Document> {
                 throw new X12ParserException(e);
             }
         }
-        return mockX12;
+        return sampleDoc;
     }
 
 }

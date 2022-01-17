@@ -17,12 +17,11 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.testing.util.X12DocumentTestData;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.junit.Assert.assertNull;
 
@@ -55,19 +54,19 @@ public class DefaultDex894ParserTest {
 
     @Test(expected = X12ParserException.class)
     public void testParsingShipmentWithMissingDxe() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.missing.dxe.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.missing.dxe.txt");
         dexParser.parse(new String(dexBytes));
     }
 
     @Test(expected = X12ParserException.class)
     public void testParsingShipmentWithMismatchedTransactions() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.mismatched.st.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.mismatched.st.txt");
         dexParser.parse(new String(dexBytes));
     }
 
     @Test(expected = X12ParserException.class)
     public void testParsingInvalidSegments() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.invalid.segments.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.invalid.segments.txt");
         dexParser.parse(new String(dexBytes));
     }
 

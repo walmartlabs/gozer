@@ -23,16 +23,19 @@ import com.walmartlabs.x12.standard.X12Group;
 import java.util.List;
 
 public interface TransactionSetParser {
-    
+
     /**
-     * parse the transaction set 
+     * parse the transaction set
      * implementation should NOT add the transaction set to the group
      * the group is available to give the transaction context if needed
-     * 
+     *
+     * it can expect the list of transactionSegments to have the first segment have an id of ST
+     * and the last segment have an id of SE
+     *
      * @param transactionSegments
      * @param x12Group
      * @return the parsed transaction set
      */
     X12TransactionSet parseTransactionSet(List<X12Segment> transactionSegments, X12Group x12Group);
-    
+
 }

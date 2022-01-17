@@ -17,6 +17,7 @@ limitations under the License.
 package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
+import com.walmartlabs.x12.testing.util.X12DocumentTestData;
 import com.walmartlabs.x12.types.InvoiceType;
 import com.walmartlabs.x12.types.ProductQualifier;
 import com.walmartlabs.x12.types.UnitMeasure;
@@ -24,8 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +47,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingValidShipmentMultipleItems() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.2.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.2.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
         Set<X12ErrorDetail> errors = dexValidator.validate(dex);
@@ -244,7 +243,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingValidShipmentWithInvalidCrcAndCheckOn() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.1.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
 
@@ -262,7 +261,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingValidShipmentWithInvalidCrcAndCheckOff() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.1.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
 
@@ -276,7 +275,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingValidShipment() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.1.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.1.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
         Set<X12ErrorDetail> errors = dexValidator.validate(dex);
@@ -453,7 +452,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingShipment_Dex_with_G22() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.g22.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.g22.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
         Set<X12ErrorDetail> errors = dexValidator.validate(dex);
@@ -568,7 +567,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingShipment_Dex4010_with_cases() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.4010.case.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.4010.case.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
         Set<X12ErrorDetail> errors = dexValidator.validate(dex);
@@ -648,7 +647,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingShipment_Dex5010_with_cases() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.5010.case.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.5010.case.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
         Set<X12ErrorDetail> errors = dexValidator.validate(dex);
@@ -729,7 +728,7 @@ public class DefaultDex894ParseValidateTest {
 
     @Test
     public void testParsingMultipleG72() throws IOException {
-        byte[] dexBytes = Files.readAllBytes(Paths.get("src/test/resources/dex/894/dex.sample.multiple.g72.txt"));
+        byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.multiple.g72.txt");
         Dex894 dex = dexParser.parse(new String(dexBytes));
         assertNotNull(dex);
 

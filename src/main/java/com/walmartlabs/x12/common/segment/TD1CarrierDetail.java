@@ -16,12 +16,8 @@ limitations under the License.
 
 package com.walmartlabs.x12.common.segment;
 
-import com.walmartlabs.x12.types.UnitMeasure;
-
-import java.math.BigDecimal;
-
 /**
- * 
+ *
  * Purpose: To specify the transportation details relative to commodity, weight,
  * and quantityElement
  *
@@ -35,14 +31,14 @@ public class TD1CarrierDetail {
     private String packagingCodePartOne;
     private String packagingCodePartTwo;
     // TD102
-    private BigDecimal ladingQuantity;
+    private String ladingQuantity;
 
     // TD106
     private String weightQualifier;
     // TD107
-    private BigDecimal weight;
+    private String weight;
     // TD108
-    private UnitMeasure unitOfMeasureCode;
+    private String unitOfMeasure;
 
     public String getRawPackagingCode() {
         return rawPackagingCode;
@@ -68,11 +64,11 @@ public class TD1CarrierDetail {
         this.packagingCodePartTwo = packagingCodePartTwo;
     }
 
-    public BigDecimal getLadingQuantity() {
+    public String getLadingQuantity() {
         return ladingQuantity;
     }
 
-    public void setLadingQuantity(BigDecimal ladingQuantity) {
+    public void setLadingQuantity(String ladingQuantity) {
         this.ladingQuantity = ladingQuantity;
     }
 
@@ -84,20 +80,20 @@ public class TD1CarrierDetail {
         this.weightQualifier = weightQualifier;
     }
 
-    public BigDecimal getWeight() {
+    public String getWeight() {
         return weight;
     }
 
-    public void setWeight(BigDecimal weight) {
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 
-    public UnitMeasure getUnitOfMeasureCode() {
-        return unitOfMeasureCode;
+    public String getUnitOfMeasure() {
+        return unitOfMeasure;
     }
 
-    public void setUnitOfMeasureCode(UnitMeasure unitOfMeasureCode) {
-        this.unitOfMeasureCode = unitOfMeasureCode;
+    public void setUnitOfMeasure(String unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 
 }

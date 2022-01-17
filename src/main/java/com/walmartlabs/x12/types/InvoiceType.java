@@ -27,7 +27,7 @@ public enum InvoiceType {
 
     /**
      * Convert the code to an enum
-     * 
+     *
      * @param code
      * @return
      */

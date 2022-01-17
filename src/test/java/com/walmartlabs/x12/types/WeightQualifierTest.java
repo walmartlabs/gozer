@@ -18,7 +18,7 @@ package com.walmartlabs.x12.types;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class WeightQualifierTest {
 
