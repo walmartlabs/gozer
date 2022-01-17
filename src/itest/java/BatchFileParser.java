@@ -1,4 +1,5 @@
 import com.walmartlabs.x12.exceptions.X12ParserException;
+import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.StandardX12Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,8 @@ import java.util.stream.Stream;
 
 public class BatchFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatchFileParser.class);
-    private static final StandardX12Parser x12Parser = new StandardX12Parser();
+    
+    protected static final StandardX12Parser x12Parser = new StandardX12Parser();
 
     private static final Charset UTF8_CHARSET = StandardCharsets.UTF_8;
     private static final Charset LATIN_ONE_CHARSET = StandardCharsets.ISO_8859_1;
@@ -31,12 +33,10 @@ public class BatchFileParser {
             Path inputFolder = Paths.get(inputDirectory);
 
             if (Files.exists(inputFolder)) {
-                Path okFolder = Paths.get(inputDirectory + "/success");
-                createFolderIfNotExists(okFolder);
-                Path rejectFolder = Paths.get(inputDirectory + "/failed");
-                createFolderIfNotExists(rejectFolder);
-
-                processDirectory(inputFolder, okFolder, rejectFolder);
+                BatchFileParser bfp = createBatchFileParser();
+                bfp.registerTransactionSetParsers();
+                bfp.runBatch(inputDirectory);
+                
             } else {
                 LOGGER.warn("the input folder does not exist");
             }
@@ -44,8 +44,19 @@ public class BatchFileParser {
             LOGGER.warn("please provide an input folder as an argument");
         }
     }
-
-    private static void processDirectory(Path inputFolder, Path okFolder, Path rejectFolder) throws IOException {
+    
+    private void runBatch(String inputDirectory) throws IOException {
+        Path inputFolder = Paths.get(inputDirectory);
+        
+        Path okFolder = Paths.get(inputDirectory + "/success");
+        this.createFolderIfNotExists(okFolder);
+        Path rejectFolder = Paths.get(inputDirectory + "/failed");
+        this.createFolderIfNotExists(rejectFolder);
+        
+        this.processDirectory(inputFolder, okFolder, rejectFolder);
+    }
+    
+    private void processDirectory(Path inputFolder, Path okFolder, Path rejectFolder) throws IOException {
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failedCount = new AtomicInteger(0);
 
@@ -64,16 +75,21 @@ public class BatchFileParser {
         LOGGER.info("Parsed files - successful {}, failed {}", successCount, failedCount);
     }
 
-    private static boolean parseFile(Path sourceFile, Path okFolder, Path rejectFolder) {
+    private boolean parseFile(Path sourceFile, Path okFolder, Path rejectFolder) {
         boolean isSuccess = false;
 
         try {
+            LOGGER.info("parsing file {}", sourceFile.getFileName());
+            
             // read the file
             String sourceData = readFile(sourceFile);
 
             // parse the file
-            x12Parser.parse(sourceData);
-
+            StandardX12Document x12Doc = x12Parser.parse(sourceData);
+            
+            // check the document
+            this.checkDocument(x12Doc, sourceFile.getFileName(),  okFolder);
+            
             // copy the file to OK folder
             copyFile(sourceFile, okFolder);
             isSuccess = true;
@@ -88,8 +104,8 @@ public class BatchFileParser {
 
         return isSuccess;
     }
-
-    private static String readFile(Path sourceFile) throws IOException {
+    
+    private String readFile(Path sourceFile) throws IOException {
         String fileContents = null;
         try {
             fileContents = readFile(sourceFile, UTF8_CHARSET);
@@ -104,8 +120,8 @@ public class BatchFileParser {
         }
         return fileContents;
     }
-
-    private static String readFile(Path sourceFile, Charset charSet) throws IOException {
+    
+    private String readFile(Path sourceFile, Charset charSet) throws IOException {
         // read the file
         String content = null;
         try (Stream<String> lines = Files.lines(sourceFile, charSet)) {
@@ -113,8 +129,8 @@ public class BatchFileParser {
         }
         return content;
     }
-
-    private static void writeReasonFile(Path sourceFile, Path rejectFolder, String errReason) {
+    
+    private void writeReasonFile(Path sourceFile, Path rejectFolder, String errReason) {
         try {
             Path errFile = rejectFolder.resolve(sourceFile.getFileName() + ".reason.txt");
             Files.write(errFile, errReason.getBytes());
@@ -122,8 +138,8 @@ public class BatchFileParser {
             LOGGER.error(e.getMessage(), e);
          }
     }
-
-    private static void copyFile(Path fileToCopy, Path folder) {
+    
+    private void copyFile(Path fileToCopy, Path folder) {
         try {
             Path targetFile = folder.resolve(fileToCopy.getFileName());
             Files.copy(fileToCopy, targetFile, StandardCopyOption.REPLACE_EXISTING);
@@ -131,11 +147,36 @@ public class BatchFileParser {
            LOGGER.error(e.getMessage(), e);
         }
     }
-
-    private static void createFolderIfNotExists(Path folder) throws IOException {
+    
+    private void createFolderIfNotExists(Path folder) throws IOException {
         if (!Files.exists(folder)) {
             Files.createDirectories(folder);
         }
+    }
+    
+    /**
+     * hack for the moment
+     * can hide this in a subclass to create a different BFP
+     */
+    protected static BatchFileParser createBatchFileParser() {
+        return new BatchFileParser();
+    }
+    
+    /**
+     * override this method 
+     * and register parsers
+     */
+    protected void registerTransactionSetParsers() {
+    }
+    
+    /**
+     * override this method 
+     * check the results of parsing the document 
+     * and write some meta data to a file
+     * @param x12Doc
+     * @throws X12ParserException to indicate an error in the document
+     */
+    protected void checkDocument(StandardX12Document x12Doc, Path sourceFileName, Path okFolder) {
     }
 
 }
