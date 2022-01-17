@@ -19,7 +19,8 @@ import java.util.stream.Stream;
 
 public class BatchFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatchFileParser.class);
-    private static final StandardX12Parser x12Parser = new StandardX12Parser();
+    
+    protected static final StandardX12Parser x12Parser = new StandardX12Parser();
 
     private static final Charset UTF8_CHARSET = StandardCharsets.UTF_8;
     private static final Charset LATIN_ONE_CHARSET = StandardCharsets.ISO_8859_1;

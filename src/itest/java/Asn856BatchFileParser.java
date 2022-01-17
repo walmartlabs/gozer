@@ -1,14 +1,14 @@
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.asn856.AsnTransactionSet;
-import com.walmartlabs.x12.asn856.DefaultAsn856TransactionSetParser;
-import com.walmartlabs.x12.asn856.Shipment;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
+import com.walmartlabs.x12.standard.txset.asn856.AsnTransactionSet;
+import com.walmartlabs.x12.standard.txset.asn856.DefaultAsn856TransactionSetParser;
+import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -95,7 +95,7 @@ public class Asn856BatchFileParser extends BatchFileParser {
             LOGGER.info(sb.toString());
                 
             Shipment shipment = asnTx.getShipment();
-            List<N1PartyIdentification> n1List = shipment.getN1PartyIdenfications();
+            List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
             if (!CollectionUtils.isEmpty(n1List)) {
                 
                 List<N1PartyIdentification> stList = n1List.stream()
