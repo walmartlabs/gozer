@@ -1,20 +1,19 @@
 import com.walmartlabs.x12.X12TransactionSet;
-import com.walmartlabs.x12.common.segment.N1PartyIdentification;
+import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.X12Group;
-import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.txset.asn856.AsnTransactionSet;
 import com.walmartlabs.x12.standard.txset.asn856.DefaultAsn856TransactionSetParser;
-import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Asn856BatchFileParser extends BatchFileParser {
 
@@ -22,13 +21,14 @@ public class Asn856BatchFileParser extends BatchFileParser {
     
     private Path targetFile;
     
-    
-    protected static BatchFileParser createBatchFileParser() {
-        return new Asn856BatchFileParser();
+    public static void main(String[] args) throws IOException {
+        BatchFileParser bfp = new Asn856BatchFileParser();
+        bfp.verifyArgsAndRun(bfp, args);
     }
     
     @Override
     protected void registerTransactionSetParsers() {
+        LOGGER.info("registering ASN TransactionSet Parser");
         x12Parser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
     }
     
@@ -79,6 +79,7 @@ public class Asn856BatchFileParser extends BatchFileParser {
     private void checkTransaction(X12TransactionSet transaction) {
         if ("856".equals(transaction.getTransactionSetIdentifierCode())) {
             StringBuilder sb = new StringBuilder();
+            sb.append("\r\n");
             sb.append("Transaction: 856");
             sb.append("\r\n");
             
@@ -91,31 +92,23 @@ public class Asn856BatchFileParser extends BatchFileParser {
             sb.append("Document Date (BSN03):");
             sb.append(asnTx.getShipmentDate());
             sb.append("\r\n");
+            
+            List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+            if (loopErrors != null) {
+                for(X12ErrorDetail error: loopErrors) {
+                    sb.append(error.getIssueText());
+                    sb.append("\r\n");
+                    if (StringUtils.isNotEmpty(error.getInvalidValue())) {
+                        sb.append(error.getInvalidValue());
+                        sb.append("\r\n");
+                    }
+                }
+            } else {
+                sb.append("No looping errors");
+                sb.append("\r\n");
+            }
                 
             LOGGER.info(sb.toString());
-                
-            Shipment shipment = asnTx.getShipment();
-            List<N1PartyIdentification> n1List = shipment.getN1PartyIdentifications();
-            if (!CollectionUtils.isEmpty(n1List)) {
-                
-                List<N1PartyIdentification> stList = n1List.stream()
-                    .filter(n1 -> "ST".equals(n1.getEntityIdentifierCode()))
-                    .collect(Collectors.toList());
-                
-                if (!CollectionUtils.isEmpty(stList)) {
-                    N1PartyIdentification n1ShipTo= stList.get(0);
-                    sb.append("ST: (N103 - N104):");
-                    sb.append(n1ShipTo.getIdentificationCodeQualifier());
-                    sb.append("-");
-                    sb.append(n1ShipTo.getIdentificationCode());
-                    sb.append("\r\n");
-                } else {
-                    sb.append("ST: (N103 - N104): missing");
-                }
-
-            }
-
-            List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
                 
             this.writeTransactionToFile(sb);
             
