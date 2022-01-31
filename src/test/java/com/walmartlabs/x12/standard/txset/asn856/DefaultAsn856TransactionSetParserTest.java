@@ -207,7 +207,7 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("expected one top level HL", loopErrors.get(0).getIssueText());
+        assertEquals("expected one top level Shipment HL", loopErrors.get(0).getIssueText());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());

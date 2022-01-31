@@ -703,8 +703,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     }
 
     /**
-     * currently enforcing only 1 top level HL in the transaction set (ie) only one
-     * Shipment HL
+     * currently enforcing only 1 top level Shipment HL in the transaction set 
      *
      * @param loops
      * @param asnTx
@@ -714,7 +713,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             X12Loop firstLoop = loops.get(0);
             this.parseShipmentLoop(firstLoop, asnTx);
         } else {
-            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", null, "expected one top level HL"));
+            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", null, "expected one top level Shipment HL"));
         }
     }
 
