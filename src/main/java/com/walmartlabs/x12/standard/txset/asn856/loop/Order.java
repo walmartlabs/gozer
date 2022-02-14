@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.walmartlabs.x12.standard.txset.asn856.loop;
 
+import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
 import com.walmartlabs.x12.standard.X12Loop;
@@ -48,6 +49,12 @@ public class Order extends X12ParsedLoop {
      * REF
      */
     private List<REFReferenceInformation> refList;
+    
+    /*
+     * N1: Party Identifiers
+     */
+    private List<N1PartyIdentification> n1PartyIdentifications;
+
 
     /**
      * returns true if the loop passed in is an Order loop
@@ -79,6 +86,17 @@ public class Order extends X12ParsedLoop {
         }
         refList.add(ref);
     }
+    
+    /**
+     * helper method to add N1 to list
+     * @param n1
+     */
+    public void addN1PartyIdentification(N1PartyIdentification n1) {
+        if (CollectionUtils.isEmpty(n1PartyIdentifications)) {
+            n1PartyIdentifications = new ArrayList<>();
+        }
+        n1PartyIdentifications.add(n1);
+    }
 
     public PRFPurchaseOrderReference getPrf() {
         return prf;
@@ -102,6 +120,14 @@ public class Order extends X12ParsedLoop {
 
     public void setTd1List(List<TD1CarrierDetail> td1List) {
         this.td1List = td1List;
+    }
+    
+    public List<N1PartyIdentification> getN1PartyIdentifications() {
+        return n1PartyIdentifications;
+    }
+
+    public void setN1PartyIdentifications(List<N1PartyIdentification> n1PartyIdentifications) {
+        this.n1PartyIdentifications = n1PartyIdentifications;
     }
 
 }
