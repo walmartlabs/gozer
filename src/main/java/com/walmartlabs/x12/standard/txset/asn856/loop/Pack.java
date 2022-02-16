@@ -42,26 +42,32 @@ public class Pack extends X12ParsedLoop {
      * MAN: Marking
      */
     private List<MANMarkNumber> manList;
+    
     /*
      * N1: Party Identifiers
      */
-    private N1PartyIdentification n1PartyIdentification;
+    private List<N1PartyIdentification> n1PartyIdentifications;
+    
     /*
      * PO4: Item Physical Details
      */
     private PO4ItemPhysicalDetail po4;
+    
     /*
      * PID: Product Identification
      */
     private List<PIDProductIdentification> productIdentifications;
+    
     /*
      * TD1: Carrier Details
      */
     private List<TD1CarrierDetail> td1List;
+    
     /*
      * SN1: Item Detail
      */
     private SN1ItemDetail sn1;
+    
     /*
      * LIN: Item Identification
      */
@@ -121,7 +127,17 @@ public class Pack extends X12ParsedLoop {
         }
         manList.add(man);
     }
-
+    
+    /**
+     * helper method to add N1 to list
+     * @param n1
+     */
+    public void addN1PartyIdentification(N1PartyIdentification n1) {
+        if (CollectionUtils.isEmpty(n1PartyIdentifications)) {
+            n1PartyIdentifications = new ArrayList<>();
+        }
+        n1PartyIdentifications.add(n1);
+    }
 
     public PO4ItemPhysicalDetail getPo4() {
         return po4;
@@ -155,14 +171,6 @@ public class Pack extends X12ParsedLoop {
         this.itemIdentifications = itemIdentifications;
     }
 
-    public N1PartyIdentification getN1PartyIdentification() {
-        return n1PartyIdentification;
-    }
-
-    public void setN1PartyIdentification(N1PartyIdentification n1PartyIdentification) {
-        this.n1PartyIdentification = n1PartyIdentification;
-    }
-
     public List<MANMarkNumber> getManList() {
         return manList;
     }
@@ -177,6 +185,14 @@ public class Pack extends X12ParsedLoop {
 
     public void setTd1List(List<TD1CarrierDetail> td1List) {
         this.td1List = td1List;
+    }
+    
+    public List<N1PartyIdentification> getN1PartyIdentifications() {
+        return n1PartyIdentifications;
+    }
+
+    public void setN1PartyIdentifications(List<N1PartyIdentification> n1PartyIdentifications) {
+        this.n1PartyIdentifications = n1PartyIdentifications;
     }
 
 }

@@ -506,8 +506,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case N1PartyIdentification.IDENTIFIER:
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
-                pack.setN1PartyIdentification(n1);
-                break;
+                pack.addN1PartyIdentification(n1);
+                break; 
             case TD1CarrierDetail.IDENTIFIER:
                 pack.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;

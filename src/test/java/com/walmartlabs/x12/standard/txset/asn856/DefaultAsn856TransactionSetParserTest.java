@@ -26,6 +26,7 @@ import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Order;
+import com.walmartlabs.x12.standard.txset.asn856.loop.Pack;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Tare;
 import com.walmartlabs.x12.standard.txset.asn856.segment.MANMarkNumber;
@@ -338,9 +339,38 @@ public class DefaultAsn856TransactionSetParserTest {
         assertEquals(1, unparsedSegments.size());
         assertEquals("TEST", unparsedSegments.get(0).getElement(2));
 
-        List<X12Loop> tareChildLoops = tare.getParsedChildrenLoops();
-        assertNotNull(tareChildLoops);
-        assertEquals(1, tareChildLoops.size());
+        List<X12Loop> packs = tare.getParsedChildrenLoops();
+        assertNotNull(packs);
+        assertEquals(1, packs.size());
+        
+        // pack
+        X12Loop packLoop = packs.get(0);
+        assertNotNull(packLoop);
+        assertTrue(packLoop instanceof Pack);
+        assertEquals("P", packLoop.getCode());
+
+        // pack segments
+        Pack pack = (Pack) packLoop;
+        manList = pack.getManList();
+        man = manList.get(0);
+        assertNotNull(man);
+        assertEquals("UC", man.getQualifier());
+        assertEquals("10081131916933", man.getNumber());
+
+        n1List = pack.getN1PartyIdentifications();
+        assertNotNull(n1List);
+        assertEquals(2, n1List.size());
+        assertEquals("MF", n1List.get(0).getEntityIdentifierCode());
+        assertEquals("VN", n1List.get(1).getEntityIdentifierCode());
+        
+        unparsedSegments = pack.getUnparsedSegments();
+        assertNull(unparsedSegments);
+
+        List<X12Loop> items = pack.getParsedChildrenLoops();
+        assertNotNull(items);
+        assertEquals(1, items.size());
+
+
     }
 
     private List<X12Segment> getSegmentsNoHierarchicalLoops() {
@@ -434,6 +464,8 @@ public class DefaultAsn856TransactionSetParserTest {
         // Pack
         txSegments.add(new X12Segment("HL*4*3*P"));
         txSegments.add(new X12Segment("MAN*UC*10081131916933"));
+        txSegments.add(new X12Segment("N1*MF*Manufacturer*92*000062535"));
+        txSegments.add(new X12Segment("N1*VN*Vendor*ZZ*0263"));
 
         // Item
         txSegments.add(new X12Segment("HL*5*4*I"));
