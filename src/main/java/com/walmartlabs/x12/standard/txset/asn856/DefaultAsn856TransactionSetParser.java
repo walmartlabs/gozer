@@ -370,6 +370,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             default:
                 // TODO: what to do w/ unknown loop
+                parentLoop.addLoop(unparsedLoop);
                 break;
         }
     }
