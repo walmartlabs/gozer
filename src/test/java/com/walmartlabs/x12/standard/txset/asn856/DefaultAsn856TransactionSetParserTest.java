@@ -20,6 +20,7 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
+import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
@@ -29,6 +30,7 @@ import com.walmartlabs.x12.standard.txset.asn856.loop.Pack;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Tare;
 import com.walmartlabs.x12.standard.txset.asn856.segment.MANMarkNumber;
+import com.walmartlabs.x12.standard.txset.asn856.segment.PRFPurchaseOrderReference;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -191,7 +193,8 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("expected Order HL but got X", loopErrors.get(0).getIssueText());
+        assertEquals("Unexpected child loop", loopErrors.get(0).getIssueText());
+        assertEquals("expected Order HL but got X", loopErrors.get(0).getInvalidValue());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
@@ -293,8 +296,25 @@ public class DefaultAsn856TransactionSetParserTest {
         assertNotNull(orderLoop);
         assertTrue(orderLoop instanceof Order);
         assertEquals("O", orderLoop.getCode());
-
+        
+        // order segments
         Order order = ((Order)orderLoop);
+        PRFPurchaseOrderReference prf = order.getPrf();
+        assertNotNull(prf);
+        assertEquals("471", prf.getPurchaseOrderNumber());
+        assertEquals("20220130", prf.getDate());
+        
+        List<REFReferenceInformation> refList = order.getRefList();
+        assertNotNull(refList);
+        assertEquals(2, refList.size());
+        assertEquals("IA", refList.get(0).getReferenceIdentificationQualifier());
+        assertEquals("IV", refList.get(1).getReferenceIdentificationQualifier());
+
+        List<N1PartyIdentification> n1List = order.getN1PartyIdentifications();
+        assertNotNull(n1List);
+        assertEquals(1, n1List.size());
+        assertEquals("BY", n1List.get(0).getEntityIdentifierCode());
+
         List<X12Loop> tares = order.getParsedChildrenLoops();
         assertNotNull(tares);
         assertEquals(1, tares.size());
@@ -314,6 +334,7 @@ public class DefaultAsn856TransactionSetParserTest {
         assertTrue(tareLoop instanceof Tare);
         assertEquals("T", tareLoop.getCode());
 
+        // tare segments
         Tare tare = (Tare) tareLoop;
         List<MANMarkNumber> manList = tare.getManList();
         MANMarkNumber man = manList.get(0);
@@ -332,7 +353,7 @@ public class DefaultAsn856TransactionSetParserTest {
         List<X12Loop> tareChildLoops = tare.getParsedChildrenLoops();
         assertNotNull(tareChildLoops);
         assertEquals(1, tareChildLoops.size());
-        
+
         List<X12Loop> packs = tare.getParsedChildrenLoops();
         assertNotNull(packs);
         assertEquals(1, packs.size());
@@ -351,11 +372,11 @@ public class DefaultAsn856TransactionSetParserTest {
         assertEquals("UC", man.getQualifier());
         assertEquals("10081131916933", man.getNumber());
 
-        //        List<N1PartyIdentification> n1List = pack.getN1PartyIdentifications();
-        //        assertNotNull(n1List);
-        //        assertEquals(2, n1List.size());
-        //        assertEquals("MF", n1List.get(0).getEntityIdentifierCode());
-        //        assertEquals("VN", n1List.get(1).getEntityIdentifierCode());
+        n1List = pack.getN1PartyIdentifications();
+        assertNotNull(n1List);
+        assertEquals(2, n1List.size());
+        assertEquals("MF", n1List.get(0).getEntityIdentifierCode());
+        assertEquals("VN", n1List.get(1).getEntityIdentifierCode());
         
         unparsedSegments = pack.getUnparsedSegments();
         assertNull(unparsedSegments);
@@ -473,6 +494,8 @@ public class DefaultAsn856TransactionSetParserTest {
         // Pack
         txSegments.add(new X12Segment("HL*5*4*P"));
         txSegments.add(new X12Segment("MAN*UC*10081131916933"));
+        txSegments.add(new X12Segment("N1*MF*Manufacturer*92*000062535"));
+        txSegments.add(new X12Segment("N1*VN*Vendor*ZZ*0263"));
 
         // Item
         txSegments.add(new X12Segment("HL*6*5*I"));

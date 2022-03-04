@@ -203,6 +203,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
             //
             // handle the children loops
+            // expecting all Shipment children 
+            // to be an Order loop
             //
             List<X12Loop> shipmentChildLoops = unparsedLoop.getChildLoops();
             if (CollectionUtils.isNotEmpty(shipmentChildLoops)) {
@@ -245,7 +247,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
         } else {
             asnTx.addX12ErrorDetailForLoop(
-                new X12ErrorDetail("HL", "03", "expected Order HL but got " + unparsedLoop.getCode()));
+                new X12ErrorDetail("HL", "03", "Unexpected child loop", "expected Order HL but got " + unparsedLoop.getCode()));
         }
     }
 
@@ -455,6 +457,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             case TD1CarrierDetail.IDENTIFIER:
                 order.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;
+            case N1PartyIdentification.IDENTIFIER:
+                N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
+                order.addN1PartyIdentification(n1);
+                break;                
             default:
                 order.addUnparsedSegment(segment);
                 break;
@@ -502,8 +508,8 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 break;
             case N1PartyIdentification.IDENTIFIER:
                 N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
-                pack.setN1PartyIdentification(n1);
-                break;
+                pack.addN1PartyIdentification(n1);
+                break; 
             case TD1CarrierDetail.IDENTIFIER:
                 pack.addTD1CarrierDetail(TD1CarrierDetailParser.parse(segment));
                 break;
@@ -654,7 +660,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 // assigning the parents and children accordingly
                 X12LoopHolder loopHolder = X12LoopUtil.organizeHierarchicalLoops(loopSegments);
 
-                // add loop errors to tx (if any)
+                // add loop errors to transaction set (if any)
                 List<X12ErrorDetail> loopErrors = loopHolder.getLoopErrors();
                 asnTx.addX12ErrorDetailForLoop(loopErrors);
 
@@ -705,7 +711,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
     }
 
     /**
-     * currently enforcing only 1 top level Shipment HL in the transaction set 
+     * currently allowing only 1 top level Shipment HL in the transaction set 
      *
      * @param loops
      * @param asnTx
