@@ -301,7 +301,7 @@ public class DefaultAsn856TransactionSetParserTest {
         
         // example of an unexpected child loop 
         // that was not handled in the parser
-        List<X12Loop> unparsedLoops = order.getChildLoops();
+        List<X12Loop> unparsedLoops = order.getUnparsedChildrenLoops();
         assertNotNull(unparsedLoops);
         assertEquals(1, unparsedLoops.size());
         X12Loop unparsedLoop = unparsedLoops.get(0);
@@ -366,7 +366,7 @@ public class DefaultAsn856TransactionSetParserTest {
         
         // example of an unexpected child loop 
         // that was not handled in the parser
-        unparsedLoops = pack.getChildLoops();
+        unparsedLoops = pack.getUnparsedChildrenLoops();
         assertNotNull(unparsedLoops);
         assertEquals(1, unparsedLoops.size());
         
