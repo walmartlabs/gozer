@@ -371,7 +371,9 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 this.parseBatchLoop(unparsedLoop, parentLoop);
                 break;
             default:
-                // TODO: what to do w/ unknown loop
+                // making the unknown child loop 
+                // available to users of Gozer
+                parentLoop.addLoop(unparsedLoop);
                 break;
         }
     }
