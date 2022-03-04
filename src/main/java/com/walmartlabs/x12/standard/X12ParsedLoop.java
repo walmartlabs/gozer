@@ -89,5 +89,15 @@ public abstract class X12ParsedLoop extends X12Loop {
     public void setUnparsedSegments(List<X12Segment> unparsedSegments) {
         this.unparsedSegments = unparsedSegments;
     }
+    
+    /**
+     * wrapper method to make it clear
+     * that the child loops are access
+     * to the unparsed children when
+     * the loop was parsed
+     */
+    public List<X12Loop> getUnparsedChildrenLoops() {
+        return this.getChildLoops();
+    }
 
 }

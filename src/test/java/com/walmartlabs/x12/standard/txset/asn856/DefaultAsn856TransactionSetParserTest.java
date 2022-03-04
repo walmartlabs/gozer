@@ -19,11 +19,13 @@ package com.walmartlabs.x12.standard.txset.asn856;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
+import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Order;
+import com.walmartlabs.x12.standard.txset.asn856.loop.Pack;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Shipment;
 import com.walmartlabs.x12.standard.txset.asn856.loop.Tare;
 import com.walmartlabs.x12.standard.txset.asn856.segment.MANMarkNumber;
@@ -292,9 +294,19 @@ public class DefaultAsn856TransactionSetParserTest {
         assertTrue(orderLoop instanceof Order);
         assertEquals("O", orderLoop.getCode());
 
-        List<X12Loop> tares = ((Order)orderLoop).getParsedChildrenLoops();
+        Order order = ((Order)orderLoop);
+        List<X12Loop> tares = order.getParsedChildrenLoops();
         assertNotNull(tares);
         assertEquals(1, tares.size());
+        
+        // example of an unexpected child loop 
+        // that was not handled in the parser
+        List<X12Loop> unparsedLoops = order.getUnparsedChildrenLoops();
+        assertNotNull(unparsedLoops);
+        assertEquals(1, unparsedLoops.size());
+        X12Loop unparsedLoop = unparsedLoops.get(0);
+        assertEquals("X", unparsedLoop.getCode());
+        assertNull(unparsedLoop.getSegments());
 
         // tare
         X12Loop tareLoop = tares.get(0);
@@ -309,6 +321,9 @@ public class DefaultAsn856TransactionSetParserTest {
         assertEquals("GM", man.getQualifier());
         assertEquals("00100700302232310393", man.getNumber());
 
+        // example of an unexpected segment
+        // that was on the loop but not handled
+        // in the parser
         List<X12Segment> unparsedSegments = tare.getUnparsedSegments();
         assertNotNull(unparsedSegments);
         assertEquals(1, unparsedSegments.size());
@@ -317,6 +332,50 @@ public class DefaultAsn856TransactionSetParserTest {
         List<X12Loop> tareChildLoops = tare.getParsedChildrenLoops();
         assertNotNull(tareChildLoops);
         assertEquals(1, tareChildLoops.size());
+        
+        List<X12Loop> packs = tare.getParsedChildrenLoops();
+        assertNotNull(packs);
+        assertEquals(1, packs.size());
+        
+        // pack
+        X12Loop packLoop = packs.get(0);
+        assertNotNull(packLoop);
+        assertTrue(packLoop instanceof Pack);
+        assertEquals("P", packLoop.getCode());
+
+        // pack segments
+        Pack pack = (Pack) packLoop;
+        manList = pack.getManList();
+        man = manList.get(0);
+        assertNotNull(man);
+        assertEquals("UC", man.getQualifier());
+        assertEquals("10081131916933", man.getNumber());
+
+        //        List<N1PartyIdentification> n1List = pack.getN1PartyIdentifications();
+        //        assertNotNull(n1List);
+        //        assertEquals(2, n1List.size());
+        //        assertEquals("MF", n1List.get(0).getEntityIdentifierCode());
+        //        assertEquals("VN", n1List.get(1).getEntityIdentifierCode());
+        
+        unparsedSegments = pack.getUnparsedSegments();
+        assertNull(unparsedSegments);
+
+        List<X12Loop> items = pack.getParsedChildrenLoops();
+        assertNotNull(items);
+        assertEquals(1, items.size());
+        
+        // example of an unexpected child loop 
+        // that was not handled in the parser
+        unparsedLoops = pack.getUnparsedChildrenLoops();
+        assertNotNull(unparsedLoops);
+        assertEquals(1, unparsedLoops.size());
+        
+        unparsedLoop = unparsedLoops.get(0);
+        assertEquals("Q", unparsedLoop.getCode());
+        assertNotNull(unparsedLoop.getSegments());
+        assertEquals(1, unparsedLoop.getSegments().size());
+        assertEquals("SN1", unparsedLoop.getSegments().get(0).getIdentifier());
+
     }
 
     private List<X12Segment> getSegmentsNoHierarchicalLoops() {
@@ -397,20 +456,32 @@ public class DefaultAsn856TransactionSetParserTest {
         // order
         //
         txSegments.add(new X12Segment("HL*2*1*" + secondLoopCode));
+        txSegments.add(new X12Segment("PRF*471***20220130"));
+        txSegments.add(new X12Segment("REF*IA*123456"));
+        txSegments.add(new X12Segment("REF*IV*465"));
+        txSegments.add(new X12Segment("N1*BY*WAL-MART STORE 1055*UL*99"));
+        
+        // Unexpected loop on the order
+        txSegments.add(new X12Segment("HL*3*2*X"));
 
         // Tare
-        txSegments.add(new X12Segment("HL*3*2*T"));
+        txSegments.add(new X12Segment("HL*4*2*T"));
         txSegments.add(new X12Segment("MAN*GM*00100700302232310393"));
+        // unexpected segemnt on the loop
         txSegments.add(new X12Segment("REF*XX*TEST"));
 
         // Pack
-        txSegments.add(new X12Segment("HL*4*3*P"));
+        txSegments.add(new X12Segment("HL*5*4*P"));
         txSegments.add(new X12Segment("MAN*UC*10081131916933"));
 
         // Item
-        txSegments.add(new X12Segment("HL*5*4*I"));
+        txSegments.add(new X12Segment("HL*6*5*I"));
         txSegments.add(new X12Segment("LIN**UP*039364170623"));
         txSegments.add(new X12Segment("SN1**18*EA"));
+        
+        // Unexpected loop on the pack
+        txSegments.add(new X12Segment("HL*7*5*Q"));
+        txSegments.add(new X12Segment("SN1**99*EA"));
 
         //
         // SE
