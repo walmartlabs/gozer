@@ -31,6 +31,20 @@ public class BarCodeMod10ChecksumTest {
     public void init() {
         util = new BarCodeMod10Checksum();
     }
+    
+    @Test
+    public void test_generateChecksumDigit_null_bytes() {
+        byte[] number = null;
+        String checkDigit = util.generateChecksumDigit(number);
+        assertNull(checkDigit);
+    }
+    
+    @Test
+    public void test_generateChecksumDigit_empty_bytes() {
+        byte[] number = new byte[0];
+        String checkDigit = util.generateChecksumDigit(number);
+        assertNull(checkDigit);
+    }
 
     @Test
     public void test_generateChecksumDigit_null() {

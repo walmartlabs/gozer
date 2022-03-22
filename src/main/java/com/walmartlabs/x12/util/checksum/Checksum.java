@@ -18,10 +18,20 @@ package com.walmartlabs.x12.util.checksum;
 
 public interface Checksum {
     /**
-     * generates a checksum digit from the number
-     * @param number
-     * @return the checksum digit
+     * generates a checksum digit from the value provided 
+     * 
+     * @param documentAsString
+     * @return the checksum value or null if no input is given
      * @throws NumberFormatException
      */
-    String generateChecksumDigit(String number);
+    String generateChecksumDigit(String documentAsString);
+    
+    /**
+     * generates a checksum digit from the value provided 
+     * 
+     * @param documentAsBytes
+     * @return the checksum value or null if no input is given
+     * @throws NumberFormatException
+     */
+    String generateChecksumDigit(byte[] documentAsBytes);
 }
