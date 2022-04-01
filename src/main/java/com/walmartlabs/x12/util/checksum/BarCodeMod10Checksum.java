@@ -24,17 +24,31 @@ public class BarCodeMod10Checksum implements Checksum {
     /**
      * Yet another Modulo 10 to generate checksum digit
      * This implementation assumes that there is NO checksum digit
-     * included in the number provided
+     * included in the value provided
      * https://www.activebarcode.com/codes/checkdigit/modulo10.html
      * https://www.idautomation.com/barcode-faq/upc-ean/#MOD_10
-     * @param number
-     * @return
+     * 
+     * @param documentAsBytes
+     * @return the checksum value or null if no input is given
      */
     @Override
-    public String generateChecksumDigit(String number) {
-        if (number != null && number.length() > 0) {
+    public String generateChecksumDigit(byte[] documentAsBytes) {
+        if (documentAsBytes != null) {
+            return this.generateCheckSumUsingBarCodeMod10(new String(documentAsBytes));
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public String generateChecksumDigit(String documentAsString) {
+        return this.generateCheckSumUsingBarCodeMod10(documentAsString);
+    }
+    
+    private String generateCheckSumUsingBarCodeMod10(String inputValue) {
+        if (inputValue != null && inputValue.length() > 0) {
             // work from rightmost digit
-            StringBuilder sb = new StringBuilder(number);
+            StringBuilder sb = new StringBuilder(inputValue);
             String reversedNumber = sb.reverse().toString();
             char[] val = reversedNumber.toCharArray();
             int even = 0;

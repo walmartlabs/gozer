@@ -21,19 +21,33 @@ public class LuhnMod10Checksum implements Checksum {
     private static final int NINE = 9;
     private static final int TEN = 10;
 
-    @Override
     /**
      * Luhn algorithm (Modulo 10) to generate checksum digit
      * This implementation assumes that there is NO checksum digit
      * included in the number provided
      * https://en.wikipedia.org/wiki/Luhn_algorithm
-     * @param number
-     * @return the checksum digit
+     * 
+     * @param documentAsBytes
+     * @return the checksum value or null if no input is given
      */
-    public String generateChecksumDigit(String number) {
-        if (number != null && number.length() > 0) {
+    @Override
+    public String generateChecksumDigit(byte[] documentAsBytes) {
+        if (documentAsBytes != null) {
+            return this.generateCheckSumUsingLuhnMod10(new String(documentAsBytes));
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public String generateChecksumDigit(String documentAsString) {
+        return this.generateCheckSumUsingLuhnMod10(documentAsString);
+    }
+    
+    private String generateCheckSumUsingLuhnMod10(String inputValue) {
+        if (inputValue != null && inputValue.length() > 0) {
             // work from rightmost digit
-            StringBuilder sb = new StringBuilder(number);
+            StringBuilder sb = new StringBuilder(inputValue);
             String reversedNumber = sb.reverse().toString();
             char[] val = reversedNumber.toCharArray();
             int sum = 0;
