@@ -42,10 +42,12 @@ public class REFReferenceInformationParserTest {
 
     @Test
     public void test_parse_segment() {
-        X12Segment segment = new X12Segment("REF*UCB*711170010491361");
+        X12Segment segment = new X12Segment("REF*UCB*711170010491361*TEST*BM>1234");
         REFReferenceInformation ref = REFReferenceInformationParser.parse(segment);
         assertNotNull(ref);
         assertEquals("UCB", ref.getReferenceIdentificationQualifier());
         assertEquals("711170010491361", ref.getReferenceIdentification());
+        assertEquals("TEST", ref.getDescription());
+        assertEquals("BM>1234", ref.getAdditionalReferenceIdentification());
     }
 }

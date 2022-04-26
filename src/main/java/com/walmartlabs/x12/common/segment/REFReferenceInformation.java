@@ -18,7 +18,18 @@ package com.walmartlabs.x12.common.segment;
 
 /**
  *
- * Purpose: To specify pertinent dates and times
+ * Purpose: Reference Information
+ * 
+ * Contains 4 data elements, the 4th can hold multiple values and is 
+ * usually delimited by a ">" but which can be specified to be 
+ * a different character in the ISA segment
+ * 
+ * REF*PK*1234**BM>4321
+ * 
+ * This object will hold the entire REF04 value in the 
+ * attribute `additionalReferenceIdentification`
+ * expecting a separate process to manage parsing it
+ * into its parts
  *
  */
 public class REFReferenceInformation {
@@ -30,6 +41,12 @@ public class REFReferenceInformation {
 
     // REF02
     private String referenceIdentification;
+    
+    // REF03
+    private String description;
+
+    // REF04
+    private String additionalReferenceIdentification;
 
     public String getReferenceIdentificationQualifier() {
         return referenceIdentificationQualifier;
@@ -47,4 +64,20 @@ public class REFReferenceInformation {
         this.referenceIdentification = referenceIdentification;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAdditionalReferenceIdentification() {
+        return additionalReferenceIdentification;
+    }
+
+    public void setAdditionalReferenceIdentification(String additionalReferenceIdentification) {
+        this.additionalReferenceIdentification = additionalReferenceIdentification;
+    }
+    
 }

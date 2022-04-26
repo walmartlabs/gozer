@@ -35,6 +35,8 @@ public final class REFReferenceInformationParser {
                 ref = new REFReferenceInformation();
                 ref.setReferenceIdentificationQualifier(segment.getElement(1));
                 ref.setReferenceIdentification(segment.getElement(2));
+                ref.setDescription(segment.getElement(3));
+                ref.setAdditionalReferenceIdentification(segment.getElement(4));
             }
         }
         return ref;
