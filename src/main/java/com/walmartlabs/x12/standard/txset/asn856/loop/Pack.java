@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.walmartlabs.x12.standard.txset.asn856.loop;
 
+import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
@@ -72,7 +73,11 @@ public class Pack extends X12ParsedLoop {
      * LIN: Item Identification
      */
     private List<LINItemIdentification> itemIdentifications;
-
+    /*
+     * DTM: Date/Time Reference
+     */
+    private List<DTMDateTimeReference> dtmReferences;
+    
     /**
      * returns true if the loop passed in is a Pack loop
      */
@@ -138,6 +143,17 @@ public class Pack extends X12ParsedLoop {
         }
         n1PartyIdentifications.add(n1);
     }
+    
+    /**
+     * helper method to add DTM to list
+     * @param dtm
+     */
+    public void addDTMDateTimeReference(DTMDateTimeReference dtm) {
+        if (CollectionUtils.isEmpty(dtmReferences)) {
+            dtmReferences = new ArrayList<>();
+        }
+        dtmReferences.add(dtm);
+    }
 
     public PO4ItemPhysicalDetail getPo4() {
         return po4;
@@ -195,4 +211,11 @@ public class Pack extends X12ParsedLoop {
         this.n1PartyIdentifications = n1PartyIdentifications;
     }
 
+    public List<DTMDateTimeReference> getDtmReferences() {
+        return dtmReferences;
+    }
+
+    public void setDtmReferences(List<DTMDateTimeReference> dtmReferences) {
+        this.dtmReferences = dtmReferences;
+    }
 }

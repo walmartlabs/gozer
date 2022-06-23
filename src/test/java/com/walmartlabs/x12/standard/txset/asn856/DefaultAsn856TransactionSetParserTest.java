@@ -378,6 +378,12 @@ public class DefaultAsn856TransactionSetParserTest {
         assertEquals("MF", n1List.get(0).getEntityIdentifierCode());
         assertEquals("VN", n1List.get(1).getEntityIdentifierCode());
         
+        List<DTMDateTimeReference> dtmList = pack.getDtmReferences();
+        assertNotNull(dtmList);
+        assertEquals(1, dtmList.size());
+        assertEquals("510", dtmList.get(0).getDateTimeQualifier());
+        assertEquals("20220623", dtmList.get(0).getDate());
+        
         unparsedSegments = pack.getUnparsedSegments();
         assertNull(unparsedSegments);
 
@@ -496,6 +502,7 @@ public class DefaultAsn856TransactionSetParserTest {
         txSegments.add(new X12Segment("MAN*UC*10081131916933"));
         txSegments.add(new X12Segment("N1*MF*Manufacturer*92*000062535"));
         txSegments.add(new X12Segment("N1*VN*Vendor*ZZ*0263"));
+        txSegments.add(new X12Segment("DTM*510*20220623"));
 
         // Item
         txSegments.add(new X12Segment("HL*6*5*I"));
