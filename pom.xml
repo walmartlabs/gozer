@@ -20,7 +20,7 @@
     <junit.version>4.13.1</junit.version>
     <mockito.version>3.12.4</mockito.version>
     <slf4j.version>1.7.32</slf4j.version>
-    <logback.version>1.2.9</logback.version>
+    <logback.version>1.3.12</logback.version>
     <apache.common.lang.version>3.12.0</apache.common.lang.version>
     <apache.common.collection.version>4.4</apache.common.collection.version>
     <spring.version>5.3.13</spring.version>
