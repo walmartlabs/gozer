@@ -419,10 +419,10 @@ public class GenericParserTest {
         assertNotNull(loopErrors);
         assertEquals(2, loopErrors.size());
         // loop error 1
-        assertEquals("HL segment already exists", loopErrors.get(0).getIssueText());
+        assertEquals("Invalid Looping Structure", loopErrors.get(0).getIssueText());
         assertEquals("HL segment with id (1) already exists", loopErrors.get(0).getInvalidValue());
         // loop error 2
-        assertEquals("HL segment is missing parent", loopErrors.get(1).getIssueText());
+        assertEquals("Invalid Looping Structure", loopErrors.get(1).getIssueText());
         assertEquals("HL segment with id (3) is missing parent (2)", loopErrors.get(1).getInvalidValue());
 
         // Shipment
