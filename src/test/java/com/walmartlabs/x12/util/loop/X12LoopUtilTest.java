@@ -274,7 +274,7 @@ public class X12LoopUtilTest {
         X12ErrorDetail loopError = loopErrors.get(0);
         assertEquals("HL", loopError.getSegmentId());
         assertNull(loopError.getElementId());
-        assertEquals("Invalid Looping Structure", loopError.getIssueText());
+        assertEquals("HL segment is missing parent", loopError.getIssueText());
         assertEquals("HL segment with id (4) is missing parent (3)", loopError.getInvalidValue());
     }
 
@@ -347,7 +347,7 @@ public class X12LoopUtilTest {
         X12ErrorDetail loopError = loopErrors.get(0);
         assertEquals("HL", loopError.getSegmentId());
         assertNull(loopError.getElementId());
-        assertEquals("Invalid Looping Structure", loopError.getIssueText());
+        assertEquals("HL segment already exists", loopError.getIssueText());
         assertEquals("HL segment with id (2) already exists", loopError.getInvalidValue());
     }
 

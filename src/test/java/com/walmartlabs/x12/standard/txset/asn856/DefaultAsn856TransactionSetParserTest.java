@@ -157,8 +157,7 @@ public class DefaultAsn856TransactionSetParserTest {
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertNotNull(loopErrors);
         assertEquals(1, loopErrors.size());
-        assertEquals("Invalid Looping Structure", loopErrors.get(0).getIssueText());
-        assertEquals("missing shipment loop", loopErrors.get(0).getInvalidValue());
+        assertEquals("missing shipment loop", loopErrors.get(0).getIssueText());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
@@ -176,8 +175,7 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("Invalid Looping Structure", loopErrors.get(0).getIssueText());
-        assertEquals("first HL is not a shipment it was X", loopErrors.get(0).getInvalidValue());
+        assertEquals("first HL is not a shipment it was X", loopErrors.get(0).getIssueText());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
@@ -195,7 +193,7 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
-        assertEquals("Invalid Looping Structure", loopErrors.get(0).getIssueText());
+        assertEquals("Unexpected child loop", loopErrors.get(0).getIssueText());
         assertEquals("expected Order HL but got X", loopErrors.get(0).getInvalidValue());
 
         // BSN
