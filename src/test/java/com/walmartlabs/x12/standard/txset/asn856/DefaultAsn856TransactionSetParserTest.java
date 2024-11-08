@@ -212,7 +212,141 @@ public class DefaultAsn856TransactionSetParserTest {
         // looping check
         List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
         assertEquals(1, loopErrors.size());
+        assertEquals("Multiple Shipment Loops", loopErrors.get(0).getIssueText());
+
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+    }
+
+    @Test
+    public void test_doParse_missingShipmentLoops() {
+        X12Group x12Group = new X12Group();
+
+        List<X12Segment> segments = new ArrayList<>();
+        // 2 O loops
+        segments.add(new X12Segment("ST*856*368090001"));
+        segments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        segments.add(new X12Segment("HL*1**O"));
+        segments.add(new X12Segment("HL*2**O"));
+        segments.add(new X12Segment("SE*296*368090001"));
+
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+
+        // looping check
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
         assertEquals("expected one top level Shipment HL", loopErrors.get(0).getIssueText());
+
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+    }
+
+    @Test
+    public void test_doParse_orderWithoutParentLoop() {
+        X12Group x12Group = new X12Group();
+
+        List<X12Segment> segments = new ArrayList<>();
+        // O without parent
+        segments.add(new X12Segment("ST*856*368090001"));
+        segments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        segments.add(new X12Segment("HL*1**S"));
+        segments.add(new X12Segment("HL*2**O"));
+        segments.add(new X12Segment("SE*296*368090001"));
+
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+
+        // looping check
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("Missing parent loop", loopErrors.get(0).getIssueText());
+        assertEquals("Missing parent loop on O loop", loopErrors.get(0).getInvalidValue());
+
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+    }
+
+    @Test
+    public void test_doParse_packWithoutParentLoop() {
+        X12Group x12Group = new X12Group();
+
+        List<X12Segment> segments = new ArrayList<>();
+        // P without parent
+        segments.add(new X12Segment("ST*856*368090001"));
+        segments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        segments.add(new X12Segment("HL*1**S"));
+        segments.add(new X12Segment("HL*2**P"));
+        segments.add(new X12Segment("SE*296*368090001"));
+
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+
+        // looping check
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("Missing parent loop", loopErrors.get(0).getIssueText());
+        assertEquals("Missing parent loop on P loop", loopErrors.get(0).getInvalidValue());
+
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+    }
+
+    @Test
+    public void test_doParse_tareWithoutParentLoop() {
+        X12Group x12Group = new X12Group();
+
+        List<X12Segment> segments = new ArrayList<>();
+        // T without parent
+        segments.add(new X12Segment("ST*856*368090001"));
+        segments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        segments.add(new X12Segment("HL*1**S"));
+        segments.add(new X12Segment("HL*2**T"));
+        segments.add(new X12Segment("SE*296*368090001"));
+
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+
+        // looping check
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("Missing parent loop", loopErrors.get(0).getIssueText());
+        assertEquals("Missing parent loop on T loop", loopErrors.get(0).getInvalidValue());
+
+        // BSN
+        assertEquals("05755986", asnTx.getShipmentIdentification());
+    }
+
+    @Test
+    public void test_doParse_itemWithoutParentLoop() {
+        X12Group x12Group = new X12Group();
+
+        List<X12Segment> segments = new ArrayList<>();
+        // I without parent
+        segments.add(new X12Segment("ST*856*368090001"));
+        segments.add(new X12Segment("BSN*00*05755986*20190523*171543*0002"));
+        segments.add(new X12Segment("HL*1**S"));
+        segments.add(new X12Segment("HL*2**I"));
+        segments.add(new X12Segment("SE*296*368090001"));
+
+        X12TransactionSet txSet = txParser.doParse(segments, x12Group);
+        assertNotNull(txSet);
+
+        AsnTransactionSet asnTx = (AsnTransactionSet) txSet;
+
+        // looping check
+        List<X12ErrorDetail> loopErrors = asnTx.getLoopingErrors();
+        assertEquals(1, loopErrors.size());
+        assertEquals("Missing parent loop", loopErrors.get(0).getIssueText());
+        assertEquals("Missing parent loop on I loop", loopErrors.get(0).getInvalidValue());
 
         // BSN
         assertEquals("05755986", asnTx.getShipmentIdentification());
