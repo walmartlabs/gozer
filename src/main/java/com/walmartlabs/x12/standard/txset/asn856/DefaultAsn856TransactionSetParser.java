@@ -757,7 +757,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             .count();
 
         if (shipmentCount <= 0) {
-            // handled before as default
+            // this scenario has already handled as first HL is not a shipment it was xx
         } else if (shipmentCount == 1) {
             Optional<X12Loop> nonShipmentLoop = loops.stream()
                 .filter(loop -> !Shipment.isShipmentLoop(loop))
