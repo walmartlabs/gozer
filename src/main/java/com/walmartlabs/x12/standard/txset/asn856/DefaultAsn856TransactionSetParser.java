@@ -214,8 +214,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             }
         } else {
             asnTx.addX12ErrorDetailForLoop(
-                new X12ErrorDetail("HL", "03", "Invalid Looping Structure",
-                    "first HL is not a shipment it was " + unparsedLoop.getCode()));
+                new X12ErrorDetail("HL", "03", "first HL is not a shipment it was " + unparsedLoop.getCode()));
         }
     }
 
@@ -248,7 +247,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
 
         } else {
             asnTx.addX12ErrorDetailForLoop(
-                new X12ErrorDetail("HL", "03", "Invalid Looping Structure", "expected Order HL but got " + unparsedLoop.getCode()));
+                new X12ErrorDetail("HL", "03", "Unexpected child loop", "expected Order HL but got " + unparsedLoop.getCode()));
         }
     }
 
@@ -681,8 +680,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             } else {
                 // doesn't start w/ HL
                 asnTx.addX12ErrorDetailForLoop(
-                    new X12ErrorDetail(currentSegment.getIdentifier(), null, "Invalid Looping Structure",
-                        "missing shipment loop"));
+                    new X12ErrorDetail(currentSegment.getIdentifier(), null, "missing shipment loop"));
                 // we should back it up
                 // and let the parser keep going
                 // with that segment

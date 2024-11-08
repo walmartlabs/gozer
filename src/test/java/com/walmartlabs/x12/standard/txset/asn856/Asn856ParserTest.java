@@ -171,7 +171,7 @@ public class Asn856ParserTest {
         X12ErrorDetail loopError = loopErrors.get(0);
         assertEquals("HL", loopError.getSegmentId());
         assertNull(loopError.getElementId());
-        assertEquals("Invalid Looping Structure", loopError.getIssueText());
+        assertEquals("HL segment is missing parent", loopError.getIssueText());
         assertEquals("HL segment with id (2) is missing parent (99)", loopError.getInvalidValue());
 
         // BSN

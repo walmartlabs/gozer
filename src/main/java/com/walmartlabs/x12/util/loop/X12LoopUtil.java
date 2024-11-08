@@ -29,8 +29,9 @@ import java.util.Map;
 
 public final class X12LoopUtil {
     
-    private static final String INVALID_LOOPING_STRUCTURE_ERROR = "Invalid Looping Structure";
-
+    private static final String MISSING_PARENT_ERROR = "HL segment is missing parent";
+    private static final String ALREADY_EXISTS_ERROR = "HL segment already exists";
+    
     /**
      * check the segment for the start of HL
      * @param segment
@@ -169,14 +170,14 @@ public final class X12LoopUtil {
         sb.append("HL segment with id (")
             .append(loop.getHierarchicalId())
             .append(") already exists");
-        return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, INVALID_LOOPING_STRUCTURE_ERROR, sb.toString());
+        return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, ALREADY_EXISTS_ERROR, sb.toString());
     }
     
     private static X12ErrorDetail loopMissingParentErrorDetail(X12Loop loop) {
         StringBuilder sb = new StringBuilder();
         sb.append("HL segment with id (").append(loop.getHierarchicalId()).append(")");
         sb.append(" is missing parent (").append(loop.getParentHierarchicalId()).append(")");
-        return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, INVALID_LOOPING_STRUCTURE_ERROR, sb.toString());
+        return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, MISSING_PARENT_ERROR, sb.toString());
     }
 
     private X12LoopUtil() {
