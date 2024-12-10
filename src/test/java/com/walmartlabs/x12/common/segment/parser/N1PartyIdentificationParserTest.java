@@ -21,6 +21,7 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
 import com.walmartlabs.x12.common.segment.N4GeographicLocation;
+import com.walmartlabs.x12.common.segment.PERAdministrativeCommunication;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -103,6 +104,22 @@ public class N1PartyIdentificationParserTest {
         assertEquals("AZ", n4.getStateOrProvinceCode());
         assertEquals("85193", n4.getPostalCode());
         assertEquals(null, n4.getCountryCode());
+
+        List<PERAdministrativeCommunication> perList = n1.getPerList();
+        assertNotNull(perList);
+        assertEquals(2, perList.size());
+
+        PERAdministrativeCommunication perAdministrativeCommunication = perList.get(0);
+        assertEquals("PY", perAdministrativeCommunication.getContactFunctionCode());
+        assertEquals("FSMA CONTACT", perAdministrativeCommunication.getFreeFormName());
+        assertEquals("TE", perAdministrativeCommunication.getCommunicationNumberQualifier());
+        assertEquals("+18884636332", perAdministrativeCommunication.getCommunicationNumber());
+
+        perAdministrativeCommunication = perList.get(1);
+        assertEquals("PY", perAdministrativeCommunication.getContactFunctionCode());
+        assertEquals("FSMA CONTACT", perAdministrativeCommunication.getFreeFormName());
+        assertEquals("EA", perAdministrativeCommunication.getCommunicationNumberQualifier());
+        assertEquals("FoodSafetyPlanBuilder@fda.hhs.gov", perAdministrativeCommunication.getCommunicationNumber());
 
         assertFalse(iterator.hasNext());
     }
@@ -232,6 +249,8 @@ public class N1PartyIdentificationParserTest {
         segment = new X12Segment("N3*868 W. PETERS ROAD");
         segments.add(segment);
         segment = new X12Segment("N4*CASA GRANDE*AZ*85193");
+        segments.add(segment);
+        segment = new X12Segment("PER*PY*FSMA CONTACT*TE*+18884636332*EA*FoodSafetyPlanBuilder@fda.hhs.gov");
         segments.add(segment);
 
         return segments;

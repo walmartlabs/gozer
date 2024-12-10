@@ -191,7 +191,7 @@ public class X12StandardParserWithGenericSampleTest {
         assertEquals(null, topLoop.getParentHierarchicalId());
         
         List<X12Segment> topLoopSegments = topLoop.getSegments();
-        assertEquals(14, topLoopSegments.size());
+        assertEquals(15, topLoopSegments.size());
         X12Segment segment = topLoopSegments.get(3);
         assertEquals("REF", segment.getIdentifier());
         assertEquals("CN", segment.getElement(1));

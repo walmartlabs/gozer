@@ -19,6 +19,7 @@ package sample.standard.asn;
 import com.walmartlabs.x12.X12Document;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
+import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.standard.InterchangeControlEnvelope;
 import com.walmartlabs.x12.standard.StandardX12Document;
@@ -125,7 +126,7 @@ public class X12StandardParserWithAsnSampleTest {
         assertEquals(null, shipment.getParentHierarchicalId());
         
         List<X12Segment> shipmentSegments = shipment.getSegments();
-        assertEquals(14, shipmentSegments.size());
+        assertEquals(15, shipmentSegments.size());
         
 
         List<REFReferenceInformation> refList = shipment.getRefList();
@@ -135,7 +136,11 @@ public class X12StandardParserWithAsnSampleTest {
         REFReferenceInformation ref = refList.get(1);
         assertEquals("CN", ref.getReferenceIdentificationQualifier());
         assertEquals("5787970539", ref.getReferenceIdentification());
-        
+
+        // n1 of shipment
+        List<N1PartyIdentification> n1 = shipment.getN1PartyIdentifications();
+        assertEquals(3, n1.size());
+
         // children of shipment
         List<X12Loop> childLoops = shipment.getParsedChildrenLoops();
         assertNotNull(childLoops);

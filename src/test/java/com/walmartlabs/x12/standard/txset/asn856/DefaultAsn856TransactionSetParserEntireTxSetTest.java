@@ -23,6 +23,7 @@ import com.walmartlabs.x12.common.segment.LINItemIdentification;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
 import com.walmartlabs.x12.common.segment.N4GeographicLocation;
+import com.walmartlabs.x12.common.segment.PERAdministrativeCommunication;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.common.segment.TD1CarrierDetail;
@@ -208,6 +209,20 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertNotNull(n4);
         assertEquals("BEAVERTON", n4.getCityName());
 
+        List<PERAdministrativeCommunication> perList = n1Two.getPerList();
+        assertEquals(2, perList.size());
+        PERAdministrativeCommunication perAdministrativeCommunication = perList.get(0);
+        assertEquals("PY", perAdministrativeCommunication.getContactFunctionCode());
+        assertEquals("FSMA CONTACT", perAdministrativeCommunication.getFreeFormName());
+        assertEquals("TE", perAdministrativeCommunication.getCommunicationNumberQualifier());
+        assertEquals("+18884636332", perAdministrativeCommunication.getCommunicationNumber());
+
+        perAdministrativeCommunication = perList.get(1);
+        assertEquals("PY", perAdministrativeCommunication.getContactFunctionCode());
+        assertEquals("FSMA CONTACT", perAdministrativeCommunication.getFreeFormName());
+        assertEquals("EA", perAdministrativeCommunication.getCommunicationNumberQualifier());
+        assertEquals("FoodSafetyPlanBuilder@fda.hhs.gov", perAdministrativeCommunication.getCommunicationNumber());
+
         // has 2 Orders
         List<X12Loop> shipmentChildLoops = shipment.getParsedChildrenLoops();
         assertNotNull(shipmentChildLoops);
@@ -219,7 +234,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         // X12Loop instance
         List<X12Segment> shipmentSegments = shipment.getSegments();
         assertNotNull(shipmentSegments);
-        assertEquals(15, shipmentSegments.size());
+        assertEquals(16, shipmentSegments.size());
         assertEquals("TD1*PLT94*1****G*31302*LB", shipmentSegments.get(0).toString());
         assertEquals("N4*BEAVERTON*OR*97006", shipmentSegments.get(14).toString());
     }
@@ -589,6 +604,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         txSegments.add(new X12Segment("N1*SF*RESER'S FINE FOODS, INC.*UL*0090266420000"));
         txSegments.add(new X12Segment("N3*15570 S.W. JENKINS ROAD"));
         txSegments.add(new X12Segment("N4*BEAVERTON*OR*97006"));
+        txSegments.add(new X12Segment("PER*PY*FSMA CONTACT*TE*+18884636332*EA*FoodSafetyPlanBuilder@fda.hhs.gov"));
 
         //
         // order 1

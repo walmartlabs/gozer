@@ -54,6 +54,11 @@ public class N1PartyIdentification {
      */
     private List<REFReferenceInformation> refList;
 
+    /*
+     * PER
+     */
+    private List<PERAdministrativeCommunication> perList;
+
     /**
      * helper method to add REF
      *
@@ -64,6 +69,18 @@ public class N1PartyIdentification {
             refList = new ArrayList<>();
         }
         refList.add(ref);
+    }
+
+    /**
+     * helper method to add PER
+     *
+     * @param per
+     */
+    public void addAdministrativeCommunication(PERAdministrativeCommunication per) {
+        if (CollectionUtils.isEmpty(perList)) {
+            perList = new ArrayList<>();
+        }
+        perList.add(per);
     }
 
     /**
@@ -134,4 +151,11 @@ public class N1PartyIdentification {
         this.refList = refList;
     }
 
+    public List<PERAdministrativeCommunication> getPerList() {
+        return perList;
+    }
+
+    public void setPerList(List<PERAdministrativeCommunication> perList) {
+        this.perList = perList;
+    }
 }
