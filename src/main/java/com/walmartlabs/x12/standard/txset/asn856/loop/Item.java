@@ -18,6 +18,7 @@ package com.walmartlabs.x12.standard.txset.asn856.loop;
 
 import com.walmartlabs.x12.common.segment.DTMDateTimeReference;
 import com.walmartlabs.x12.common.segment.LINItemIdentification;
+import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.PIDProductIdentification;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 import com.walmartlabs.x12.standard.X12Loop;
@@ -56,6 +57,10 @@ public class Item extends X12ParsedLoop {
      * DTM: Date/Time Reference
      */
     private List<DTMDateTimeReference> dtmReferences;
+    /*
+     * N1: Party Identifiers
+     */
+    private List<N1PartyIdentification> n1PartyIdentifications;
 
     /**
      * returns true if the loop passed in is a Item loop
@@ -149,5 +154,25 @@ public class Item extends X12ParsedLoop {
 
     public void setRefList(List<REFReferenceInformation> refList) {
         this.refList = refList;
+    }
+
+    /**
+     * helper method to add N1 to list
+     * @param n1
+     */
+    public void addN1PartyIdentification(N1PartyIdentification n1) {
+        if (CollectionUtils.isEmpty(n1PartyIdentifications)) {
+            n1PartyIdentifications = new ArrayList<>();
+        }
+        n1PartyIdentifications.add(n1);
+    }
+
+
+    public List<N1PartyIdentification> getN1PartyIdentifications() {
+        return n1PartyIdentifications;
+    }
+
+    public void setN1PartyIdentifications(List<N1PartyIdentification> n1PartyIdentifications) {
+        this.n1PartyIdentifications = n1PartyIdentifications;
     }
 }
