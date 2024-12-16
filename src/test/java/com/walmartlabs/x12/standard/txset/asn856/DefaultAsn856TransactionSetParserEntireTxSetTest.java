@@ -574,10 +574,10 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("039364133147", lin.getProductId());
 
         List<N1PartyIdentification> n1 = item.getN1PartyIdentifications();
-        assertEquals(1, n1.size());
+        assertEquals(2, n1.size());
 
         //
-        // shipping from
+        // Manufacturing Plant
         //
         N1PartyIdentification n1One = item.getN1PartyIdentifications().get(0);
         assertNotNull(n1One);
@@ -594,6 +594,24 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         assertEquals("UR", perAdministrativeCommunication.getCommunicationNumberQualifier());
         assertEquals("some-website", perAdministrativeCommunication.getCommunicationNumber());
 
+        //
+        // Field
+        //
+        N1PartyIdentification n1Two = item.getN1PartyIdentifications().get(1);
+        assertNotNull(n1Two);
+        assertEquals("ZW", n1Two.getEntityIdentifierCode());
+        assertEquals("2901 LETTUCE FIELD SW", n1Two.getName());
+
+        List<N3PartyLocation> n3List = n1Two.getN3List();
+        assertNotNull(n3List);
+        assertEquals(1, n3List.size());
+
+        N3PartyLocation n3 = n3List.get(0);
+        assertNotNull(n3);
+        assertEquals("208 APPLE ST", n3.getAddressInfoOne());
+        N4GeographicLocation n4 = n1Two.getN4();
+        assertNotNull(n4);
+        assertEquals("COOLTOWN", n4.getCityName());
     }
 
     private List<X12Segment> getTransactionSetSegments() {
@@ -690,7 +708,9 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         txSegments.add(new X12Segment("SN1**2*EA"));
         txSegments.add(new X12Segment("N1*MP*RESER'S FINE FOODS, INC.*UL*0090266420001"));
         txSegments.add(new X12Segment("PER*PY*FSMA CONTACT*UR*some-website"));
-
+        txSegments.add(new X12Segment("N1*ZW*2901 LETTUCE FIELD SW"));
+        txSegments.add(new X12Segment("N3*208 APPLE ST"));
+        txSegments.add(new X12Segment("N4*COOLTOWN*CA*90839"));
         txSegments.add(new X12Segment("SE*296*368090001"));
 
         return txSegments;
