@@ -581,7 +581,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         //
         N1PartyIdentification n1One = item.getN1PartyIdentifications().get(0);
         assertNotNull(n1One);
-        assertEquals("SF", n1One.getEntityIdentifierCode());
+        assertEquals("MP", n1One.getEntityIdentifierCode());
         assertEquals("RESER'S FINE FOODS, INC.", n1One.getName());
         assertEquals("UL", n1One.getIdentificationCodeQualifier());
         assertEquals("0090266420001", n1One.getIdentificationCode());
@@ -688,7 +688,7 @@ public class DefaultAsn856TransactionSetParserEntireTxSetTest {
         txSegments.add(new X12Segment("HL*12*11*I"));
         txSegments.add(new X12Segment("LIN**UP*039364133147"));
         txSegments.add(new X12Segment("SN1**2*EA"));
-        txSegments.add(new X12Segment("N1*SF*RESER'S FINE FOODS, INC.*UL*0090266420001"));
+        txSegments.add(new X12Segment("N1*MP*RESER'S FINE FOODS, INC.*UL*0090266420001"));
         txSegments.add(new X12Segment("PER*PY*FSMA CONTACT*UR*some-website"));
 
         txSegments.add(new X12Segment("SE*296*368090001"));
