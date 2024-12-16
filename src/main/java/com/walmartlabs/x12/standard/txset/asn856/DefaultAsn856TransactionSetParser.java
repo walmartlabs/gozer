@@ -561,6 +561,10 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
                 DTMDateTimeReference dtm = DTMDateTimeReferenceParser.parse(segment);
                 item.addDTMDateTimeReference(dtm);
                 break;
+            case N1PartyIdentification.IDENTIFIER:
+                N1PartyIdentification n1 = N1PartyIdentificationParser.handleN1Loop(segment, segmentIterator);
+                item.addN1PartyIdentification(n1);
+                break;
             default:
                 item.addUnparsedSegment(segment);
                 break;

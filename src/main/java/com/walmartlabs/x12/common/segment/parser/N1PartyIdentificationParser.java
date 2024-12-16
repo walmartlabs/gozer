@@ -21,6 +21,7 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.common.segment.N1PartyIdentification;
 import com.walmartlabs.x12.common.segment.N3PartyLocation;
 import com.walmartlabs.x12.common.segment.N4GeographicLocation;
+import com.walmartlabs.x12.common.segment.PERAdministrativeCommunication;
 import com.walmartlabs.x12.common.segment.REFReferenceInformation;
 
 public final class N1PartyIdentificationParser {
@@ -67,6 +68,9 @@ public final class N1PartyIdentificationParser {
                     break;
                 case REFReferenceInformation.IDENTIFIER:
                     n1.addReferenceInformation(REFReferenceInformationParser.parse(nextSegment));
+                    break;
+                case PERAdministrativeCommunication.IDENTIFIER:
+                    n1.setPerList(PERAdministrativeCommunicationsParser.parse(nextSegment));
                     break;
                 default:
                     // assume any other identifier is a break out of the N1 loop
