@@ -38,22 +38,22 @@ import com.walmartlabs.x12.standard.txset.asn856.loop.Tare;
 import com.walmartlabs.x12.standard.txset.asn856.segment.MANMarkNumber;
 import com.walmartlabs.x12.standard.txset.asn856.segment.PRFPurchaseOrderReference;
 import com.walmartlabs.x12.standard.txset.asn856.segment.SN1ItemDetail;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultAsn856TransactionSetParserEntireTxSetTest {
 
     private DefaultAsn856TransactionSetParser txParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         txParser = new DefaultAsn856TransactionSetParser();
     }

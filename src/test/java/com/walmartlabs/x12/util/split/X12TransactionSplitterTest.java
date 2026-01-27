@@ -20,10 +20,8 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.rule.X12Rule;
 import com.walmartlabs.x12.testing.util.X12DocumentTestData;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -31,18 +29,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class X12TransactionSplitterTest {
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     private X12TransactionSplitter splitter;
 
-    @Before
+    @BeforeEach
     public void init() {
         splitter = new X12TransactionSplitter();
     }
@@ -97,11 +93,8 @@ public class X12TransactionSplitterTest {
             .append("\r\n")
             .append("IEA*2*000000049")
             .toString();
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("expected ISA segment but got G");
-
-        splitter.split(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
+        assertTrue(thrown.getMessage().contains("expected ISA segment but got G"));
     }
 
     @Test
@@ -120,11 +113,8 @@ public class X12TransactionSplitterTest {
             .append("GE*1*00")
             // missing IEA
             .toString();
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("expected IEA segment but got ISA");
-
-        splitter.split(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
+        assertTrue(thrown.getMessage().contains("expected IEA segment but got ISA"));
     }
 
     @Test
@@ -143,11 +133,8 @@ public class X12TransactionSplitterTest {
             .append("\r\n")
             .append("IEA*2*000000049")
             .toString();
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("expected GS segment but got ST");
-
-        splitter.split(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
+        assertTrue(thrown.getMessage().contains("expected GS segment but got ST"));
     }
 
     @Test
@@ -166,11 +153,8 @@ public class X12TransactionSplitterTest {
             //missing GE
             .append("IEA*2*000000049")
             .toString();
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("expected ST segment but got IEA");
-
-        splitter.split(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
+        assertTrue(thrown.getMessage().contains("expected ST segment but got IEA"));
     }
 
     @Test
@@ -189,11 +173,8 @@ public class X12TransactionSplitterTest {
             .append("\r\n")
             .append("IEA*2*000000049")
             .toString();
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("expected ST segment but got TEST");
-
-        splitter.split(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
+        assertTrue(thrown.getMessage().contains("expected ST segment but got TEST"));
     }
 
     @Test
@@ -212,11 +193,8 @@ public class X12TransactionSplitterTest {
             .append("\r\n")
             .append("IEA*2*000000049")
             .toString();
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("expected SE segment but got IEA");
-
-        splitter.split(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
+        assertTrue(thrown.getMessage().contains("expected SE segment but got IEA"));
     }
 
     @Test
@@ -362,7 +340,7 @@ public class X12TransactionSplitterTest {
         assertEquals(expectedDocFour, docFour);
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void test_split_sourceData_one_group_one_document_rules_fail() throws IOException {
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.base.one.txt");
 
@@ -372,8 +350,7 @@ public class X12TransactionSplitterTest {
             .verify(ArgumentMatchers.anyList());
 
         splitter.registerX12Rule(mockRule);
-
-        splitter.split(sourceData);
+        assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
     }
 
     @Test
@@ -492,12 +469,7 @@ public class X12TransactionSplitterTest {
         splitter.registerX12Rule(mockRuleBoom);
         splitter.registerX12Rule(mockRuleThree);
 
-        try {
-            splitter.split(sourceData);
-            fail("expected X12ParserException");
-        } catch (X12ParserException e) {
-            // expected
-        }
+        assertThrows(X12ParserException.class, () -> splitter.split(sourceData));
 
         Mockito.verify(mockRuleOne, Mockito.times(1)).verify(ArgumentMatchers.anyList());
         Mockito.verify(mockRuleTwo, Mockito.times(1)).verify(ArgumentMatchers.anyList());

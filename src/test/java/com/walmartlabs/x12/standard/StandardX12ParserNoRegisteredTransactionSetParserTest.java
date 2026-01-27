@@ -21,19 +21,19 @@ import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.standard.txset.TransactionSetParser;
 import com.walmartlabs.x12.testing.util.AssertBaseDocumentUtil;
 import com.walmartlabs.x12.testing.util.X12DocumentTestData;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * tests various use cases for the StandardX12Parser
@@ -42,12 +42,9 @@ import static org.junit.Assert.assertNull;
  */
 public class StandardX12ParserNoRegisteredTransactionSetParserTest {
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     private StandardX12Parser standardParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         standardParser = new StandardX12Parser();
     }
@@ -75,41 +72,29 @@ public class StandardX12ParserNoRegisteredTransactionSetParserTest {
     @Test
     public void test_parsingWhenEnvelopeHeaderIsInvalid() {
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.wrong.ISA.txt");
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("Invalid EDI X12 message: must be wrapped in ISA/ISE");
-
-        standardParser.parse(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> standardParser.parse(sourceData));
+        assertTrue(thrown.getMessage().contains("Invalid EDI X12 message: must be wrapped in ISA/ISE"));
     }
 
     @Test
     public void test_parsingWhenEnvelopeHeaderIsMissing() {
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.missing.ISA.txt");
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("Invalid EDI X12 message: must be wrapped in ISA/ISE");
-
-        standardParser.parse(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> standardParser.parse(sourceData));
+        assertTrue(thrown.getMessage().contains("Invalid EDI X12 message: must be wrapped in ISA/ISE"));
     }
 
     @Test
     public void test_parsingWhenEnvelopeTrailerIsMissing() {
         String sourceData = "ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000000049*0*P*>";
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("Invalid EDI X12 message: must be wrapped in ISA/ISE");
-
-        standardParser.parse(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> standardParser.parse(sourceData));
+        assertTrue(thrown.getMessage().contains("Invalid EDI X12 message: must be wrapped in ISA/ISE"));
     }
 
     @Test
     public void test_parsingWhenGroupHeaderIsInvalid() {
         String sourceData = X12DocumentTestData.readFile("src/test/resources/x12.wrong.GS.txt");
-
-        exception.expect(X12ParserException.class);
-        exception.expectMessage("expected one segment but found another");
-
-        standardParser.parse(sourceData);
+        X12ParserException thrown = assertThrows(X12ParserException.class, () -> standardParser.parse(sourceData));
+        assertTrue(thrown.getMessage().contains("expected one segment but found another"));
     }
 
     @Test

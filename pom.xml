@@ -18,7 +18,7 @@
     <!-- Checkstyle updated to 10.x - existing javadoc violations need fixing separately -->
     <checkstyle.fail.on.violation>false</checkstyle.fail.on.violation>
     <checkstyle.fail.on.error>false</checkstyle.fail.on.error>
-    <junit.version>4.13.2</junit.version>
+    <junit.version>5.10.1</junit.version>
     <mockito.version>5.11.0</mockito.version>
     <slf4j.version>2.0.12</slf4j.version>
     <logback.version>1.5.3</logback.version>
@@ -67,8 +67,14 @@
 
     <!-- Test -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
@@ -82,6 +88,21 @@
 
   <build>
     <plugins>
+      <!-- Takari lifecycle plugin configuration -->
+      <!-- Compiler args needed for future JUnit 5 migration -->
+      <!-- Eclipse ECJ (used by Takari) restricts access to internal JUnit 5 classes -->
+      <!-- The add-opens flag allows the compiler to access java.base modules -->
+      <plugin>
+        <groupId>io.takari.maven.plugins</groupId>
+        <artifactId>takari-lifecycle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <compilerId>jdt</compilerId>
+          <compilerArgs>
+            <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
       <!-- code coverage -->
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -107,6 +128,12 @@
             <exclude>**/*Test.*</exclude>
           </excludes>
         </configuration>
+      </plugin>
+      <!-- maven-surefire-plugin for JUnit 5 support -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
       </plugin>
       <!-- checkstyle -->
       <plugin>

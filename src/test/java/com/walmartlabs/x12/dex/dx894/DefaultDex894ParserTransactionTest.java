@@ -20,16 +20,17 @@ import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.types.InvoiceType;
 import com.walmartlabs.x12.types.UnitMeasure;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultDex894ParserTransactionTest {
 
     DefaultDex894Parser dexParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         dexParser = new DefaultDex894Parser();
     }
@@ -65,11 +66,11 @@ public class DefaultDex894ParserTransactionTest {
     }
 
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseTransactionSetHeaderWrongSegmentIdentifier() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         X12Segment segment = new X12Segment("XX*894*569145629");
-        dexParser.parseTransactionSetHeader(segment, dexTx);
+        assertThrows(X12ParserException.class, () -> dexParser.parseTransactionSetHeader(segment, dexTx));
     }
 
     /*
@@ -135,11 +136,11 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals("20171116", dexTx.getTransactionDate());
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseG82WrongSegmentId() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         X12Segment segment = new X12Segment("G89*D*8327063806*051957769*004615*182737015*PL1124*20171116");
-        dexParser.parseG82(segment, dexTx);
+        assertThrows(X12ParserException.class, () -> dexParser.parseG82(segment, dexTx));
     }
 
     /*
@@ -205,11 +206,11 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals(null, dexItem.getInnerPackCount());
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseG83WrongSegmentId() {
         Dex894Item dexItem = new Dex894Item();
         X12Segment segment = new X12Segment("XX*1*48*EA*001410008547****1.83");
-        dexParser.parseG83(segment, dexItem);
+        assertThrows(X12ParserException.class, () -> dexParser.parseG83(segment, dexItem));
     }
 
     /*
@@ -223,11 +224,11 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals("A238", dexTx.getIntegrityCheckValue());
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseG856WrongSegmentId() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         X12Segment segment = new X12Segment("XX*A238");
-        dexParser.parseG85(segment, dexTx);
+        assertThrows(X12ParserException.class, () -> dexParser.parseG85(segment, dexTx));
     }
 
     /*
@@ -241,11 +242,11 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals("C91456300976", dexTx.getElectronicSignature());
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseG86WrongSegmentId() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         X12Segment segment = new X12Segment("XX*C91456300976");
-        dexParser.parseG86(segment, dexTx);
+        assertThrows(X12ParserException.class, () -> dexParser.parseG86(segment, dexTx));
     }
 
     /*
@@ -278,18 +279,18 @@ public class DefaultDex894ParserTransactionTest {
         assertEquals("569145629", dexTx.getTrailerControlNumber());
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseTransactionSetTrailerWrongSegmentCount() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         X12Segment segment = new X12Segment("SE*XX*569145629");
-        dexParser.parseTransactionSetTrailer(segment, dexTx);
+        assertThrows(X12ParserException.class, () -> dexParser.parseTransactionSetTrailer(segment, dexTx));
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseTransactionSetTrailerWrongSegmentIdentifier() {
         Dex894TransactionSet dexTx = new Dex894TransactionSet();
         X12Segment segment = new X12Segment("XX*10*569145629");
-        dexParser.parseTransactionSetTrailer(segment, dexTx);
+        assertThrows(X12ParserException.class, () -> dexParser.parseTransactionSetTrailer(segment, dexTx));
     }
 
 }

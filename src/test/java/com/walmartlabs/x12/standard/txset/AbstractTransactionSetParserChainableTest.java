@@ -24,15 +24,15 @@ import com.walmartlabs.x12.testing.util.txset.bbb.BbbChainableTransactionSetPars
 import com.walmartlabs.x12.testing.util.txset.bbb.TypeBbbTransactionSet;
 import com.walmartlabs.x12.testing.util.txset.ccc.CccUnchainableTransactionSetParser;
 import com.walmartlabs.x12.testing.util.txset.ccc.TypeCccTransactionSet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractTransactionSetParserChainableTest {
 

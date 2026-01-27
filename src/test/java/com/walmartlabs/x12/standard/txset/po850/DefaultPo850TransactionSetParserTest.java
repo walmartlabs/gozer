@@ -3,23 +3,23 @@ package com.walmartlabs.x12.standard.txset.po850;
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.X12TransactionSet;
 import com.walmartlabs.x12.standard.X12Group;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultPo850TransactionSetParserTest {
 
 
     private DefaultPo850TransactionSetParser txParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         txParser = new DefaultPo850TransactionSetParser();
     }

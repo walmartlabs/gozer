@@ -7,7 +7,7 @@ Using GitHub Copilot successfully updated the project to use Java 21 with modern
 
 ### Build & Testing Tools
 - **JaCoCo**: 0.8.2 → 0.8.12 (Java 21 compatibility fix)
-- **JUnit**: 4.13.1 → 4.13.2 (security patches)
+- **JUnit**: 4.13.2 → 5.10.1 (Junit 5 migration)
 - **Mockito**: 3.12.4 → 5.11.0 (major version upgrade)
 
 ### Logging
@@ -52,7 +52,7 @@ Updated for Checkstyle 9.x/10.x compatibility:
 
 ## Known Issues & Future Work
 1. **Checkstyle Violations**: 157 javadoc-related violations need to be addressed in a separate effort
-2. **JUnit 5 Migration**: Attempted but blocked by Eclipse/Takari compiler access restrictions with JUnit 5 annotations
+~~2. **JUnit 5 Migration**: Attempted but blocked by Eclipse/Takari compiler access restrictions with JUnit 5 annotations~~
 3. **Deprecated API Usage**: Some test code uses deprecated Integer constructor (Java 9+)
 4. **Java Agent Warnings**: Dynamic agent loading warnings from Mockito/ByteBuddy (Java 21 feature)
 
