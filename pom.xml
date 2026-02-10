@@ -21,7 +21,7 @@
     <junit.version>4.13.2</junit.version>
     <mockito.version>5.11.0</mockito.version>
     <slf4j.version>2.0.12</slf4j.version>
-    <logback.version>1.5.3</logback.version>
+    <logback.version>1.5.25</logback.version>
     <apache.common.lang.version>3.14.0</apache.common.lang.version>
     <apache.common.collection.version>4.4</apache.common.collection.version>
     <spring.version>5.3.33</spring.version>
