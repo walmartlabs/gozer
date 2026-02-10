@@ -19,8 +19,8 @@ package com.walmartlabs.x12.dex.dx894;
 import com.walmartlabs.x12.exceptions.X12ErrorDetail;
 import com.walmartlabs.x12.types.ProductQualifier;
 import com.walmartlabs.x12.types.UnitMeasure;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,15 +28,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DefaultDex894ValidatorTest {
 
     private DefaultDex894Validator dexValidator;
 
-    @Before
+    @BeforeEach
     public void init() {
         dexValidator = new DefaultDex894Validator();
     }

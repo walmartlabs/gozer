@@ -16,18 +16,20 @@ limitations under the License.
 
 package com.walmartlabs.x12.util.checksum;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BarCodeMod10ChecksumTest {
 
     Checksum util;
 
-    @Before
+    @BeforeEach
     public void init() {
         util = new BarCodeMod10Checksum();
     }
@@ -61,11 +63,13 @@ public class BarCodeMod10ChecksumTest {
     }
 
 
-    @Test (expected = NumberFormatException.class)
+    @Test
     public void test_generateChecksumDigit_nonNumber() {
         String number = "A123";
-        String checkDigit = util.generateChecksumDigit(number);
-        assertNull(checkDigit);
+        NumberFormatException thrown = assertThrows(NumberFormatException.class, () -> util.generateChecksumDigit(number));
+        String message = thrown.getMessage();
+        // JDK NumberFormatException message typically includes the non-numeric character only
+        assertTrue(message == null || message.contains("A"));
     }
 
     @Test

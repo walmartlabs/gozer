@@ -17,9 +17,10 @@ limitations under the License.
 package com.walmartlabs.x12.util;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConversionUtilTest {
 
@@ -38,9 +39,9 @@ public class ConversionUtilTest {
         assertEquals(new Integer(1), ConversionUtil.convertStringToInteger("1"));
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void test_convertStringToInteger_Alpha() {
-        ConversionUtil.convertStringToInteger("X");
+        assertThrows(X12ParserException.class, () -> ConversionUtil.convertStringToInteger("X"));
     }
 
     @Test
@@ -63,8 +64,8 @@ public class ConversionUtilTest {
         assertEquals("-1.00", ConversionUtil.convertStringToBigDecimal("-1", 2).toString());
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void test_convertStringToBigDecimal_Alpha() {
-        ConversionUtil.convertStringToBigDecimal("X", 2);
+        assertThrows(X12ParserException.class, () -> ConversionUtil.convertStringToBigDecimal("X", 2));
     }
 }

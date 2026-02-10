@@ -17,10 +17,10 @@ limitations under the License.
 package com.walmartlabs.x12.standard.txset.asn856.loop;
 
 import com.walmartlabs.x12.standard.X12Loop;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShipmentTest {
 

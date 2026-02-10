@@ -18,8 +18,8 @@ package com.walmartlabs.x12.util;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.testing.util.X12DocumentTestData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -27,17 +27,17 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SourceToSegmentUtilTest {
 
     private String sourceDataFromFile;
 
-    @Before
+    @BeforeEach
     public void init() throws IOException {
         sourceDataFromFile = X12DocumentTestData.readFile("src/test/resources/dex/894/dex.sample.1.txt");
     }

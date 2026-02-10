@@ -25,14 +25,14 @@ import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.StandardX12Parser;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.standard.X12Loop;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * test the Generic Transaction Set parser when registered with the Standard X12
@@ -43,7 +43,7 @@ public class GenericParserTest {
 
     private StandardX12Parser standardParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         standardParser = new StandardX12Parser();
         standardParser.registerTransactionSetParser(new GenericTransactionSetParser());

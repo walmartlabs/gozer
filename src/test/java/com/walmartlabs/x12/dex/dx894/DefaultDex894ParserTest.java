@@ -18,18 +18,19 @@ package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.exceptions.X12ParserException;
 import com.walmartlabs.x12.testing.util.X12DocumentTestData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultDex894ParserTest {
 
     DefaultDex894Parser dexParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         dexParser = new DefaultDex894Parser();
     }
@@ -46,28 +47,28 @@ public class DefaultDex894ParserTest {
         assertNull(dexParser.parse(dexTransmission));
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParsingShipment_invalid() throws IOException {
         String dexTransmission = "invalid";
-        dexParser.parse(dexTransmission);
+        assertThrows(X12ParserException.class, () -> dexParser.parse(dexTransmission));
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParsingShipmentWithMissingDxe() throws IOException {
         byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.missing.dxe.txt");
-        dexParser.parse(new String(dexBytes));
+        assertThrows(X12ParserException.class, () -> dexParser.parse(new String(dexBytes)));
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParsingShipmentWithMismatchedTransactions() throws IOException {
         byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.mismatched.st.txt");
-        dexParser.parse(new String(dexBytes));
+        assertThrows(X12ParserException.class, () -> dexParser.parse(new String(dexBytes)));
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParsingInvalidSegments() throws IOException {
         byte[] dexBytes = X12DocumentTestData.readFileAsBytes("src/test/resources/dex/894/dex.sample.invalid.segments.txt");
-        dexParser.parse(new String(dexBytes));
+        assertThrows(X12ParserException.class, () -> dexParser.parse(new String(dexBytes)));
     }
 
 }

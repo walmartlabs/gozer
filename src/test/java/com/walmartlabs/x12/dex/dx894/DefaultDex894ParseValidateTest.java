@@ -21,24 +21,24 @@ import com.walmartlabs.x12.testing.util.X12DocumentTestData;
 import com.walmartlabs.x12.types.InvoiceType;
 import com.walmartlabs.x12.types.ProductQualifier;
 import com.walmartlabs.x12.types.UnitMeasure;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultDex894ParseValidateTest {
 
     private DefaultDex894Parser dexParser;
     private DefaultDex894Validator dexValidator;
 
-    @Before
+    @BeforeEach
     public void init() {
         dexParser = new DefaultDex894Parser();
         dexValidator = new DefaultDex894Validator();

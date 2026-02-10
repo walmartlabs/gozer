@@ -18,16 +18,17 @@ package com.walmartlabs.x12.dex.dx894;
 
 import com.walmartlabs.x12.X12Segment;
 import com.walmartlabs.x12.exceptions.X12ParserException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultDex894ParserDxsSegmentTest {
 
     DefaultDex894Parser dexParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         dexParser = new DefaultDex894Parser();
     }
@@ -121,11 +122,11 @@ public class DefaultDex894ParserDxsSegmentTest {
         assertEquals(new Integer(2), dex.getNumberOfTransactions());
     }
 
-    @Test(expected = X12ParserException.class)
+    @Test
     public void testParseApplicationTrailerWithInvalidCount() {
         Dex894 dex = new Dex894();
         X12Segment segment = new X12Segment("DXE*1*DX");
-        dexParser.parseApplicationTrailer(segment, dex);
+        assertThrows(X12ParserException.class, () -> dexParser.parseApplicationTrailer(segment, dex));
     }
 
 }

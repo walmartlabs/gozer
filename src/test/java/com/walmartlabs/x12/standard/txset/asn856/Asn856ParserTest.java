@@ -24,21 +24,21 @@ import com.walmartlabs.x12.standard.StandardX12Document;
 import com.walmartlabs.x12.standard.StandardX12Parser;
 import com.walmartlabs.x12.standard.X12Group;
 import com.walmartlabs.x12.testing.util.X12DocumentTestData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class Asn856ParserTest {
 
     private StandardX12Parser asnParser;
 
-    @Before
+    @BeforeEach
     public void init() {
         asnParser = new StandardX12Parser();
         asnParser.registerTransactionSetParser(new DefaultAsn856TransactionSetParser());
