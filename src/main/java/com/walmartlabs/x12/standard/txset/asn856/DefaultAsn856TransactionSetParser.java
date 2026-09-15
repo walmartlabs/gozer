@@ -66,10 +66,12 @@ import com.walmartlabs.x12.util.X12ParsingUtil;
 import com.walmartlabs.x12.util.loop.X12LoopHolder;
 import com.walmartlabs.x12.util.loop.X12LoopUtil;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ASN 856 is the Advance Shipping Notice Used to communicate the contents of a
@@ -725,7 +727,7 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             X12Loop firstLoop = loops.get(0);
             this.parseShipmentLoop(firstLoop, asnTx);
         } else {
-            asnTx.addX12ErrorDetailForLoop(new X12ErrorDetail("HL", null, "expected one top level Shipment HL"));
+            asnTx.addX12ErrorDetailForLoop(this.evaluateX12ErrorDetail(loops));
         }
     }
 
@@ -746,5 +748,33 @@ public class DefaultAsn856TransactionSetParser extends AbstractTransactionSetPar
             }
 
         }
+    }
+
+    private X12ErrorDetail evaluateX12ErrorDetail(List<X12Loop> loops) {
+        long shipmentCount = CollectionUtils.emptyIfNull(loops)
+            .stream()
+            .filter(Shipment::isShipmentLoop)
+            .count();
+
+        if (shipmentCount <= 0) {
+            // this scenario has already handled as first HL is not a shipment it was xx
+        } else if (shipmentCount == 1) {
+            Optional<X12Loop> nonShipmentLoop = loops.stream()
+                .filter(loop -> !Shipment.isShipmentLoop(loop))
+                .findFirst();
+
+            if (nonShipmentLoop.isPresent()) {
+                X12Loop x12Loop = nonShipmentLoop.get();
+                if (StringUtils.isBlank(x12Loop.getParentHierarchicalId())) {
+                    String invalidValue = "Missing parent loop on " + x12Loop.getCode() + " loop";
+                    return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, "Missing parent loop", invalidValue);
+                }
+            }
+        } else {
+            return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, "Multiple Shipment Loops");
+        }
+
+        // default error message
+        return new X12ErrorDetail(X12Loop.HIERARCHY_LOOP_ID, null, "expected one top level Shipment HL");
     }
 }
